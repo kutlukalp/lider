@@ -11,5 +11,7 @@
 
   <modules>
     <module>tr.org.liderahenk.lider-core</module>
+    <module>tr.org.liderahenk.lider-persistence-mariadb</module>
+    <module>tr.org.liderahenk.lider-messaging-xmpp</module>
   </modules>
 </project>
