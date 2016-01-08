@@ -11,6 +11,5 @@
 
   <modules>
     <module>tr.org.liderahenk.lider-core</module>
-    <module>tr.org.liderahenk.lider-core-impl</module>
   </modules>
 </project>
