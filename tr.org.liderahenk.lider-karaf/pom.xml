@@ -26,9 +26,7 @@
     <version>1.0.0-SNAPSHOT</version>
   </parent>
 
-    <groupId>tr.org.liderahenk</groupId>
     <artifactId>tr.org.liderahenk.lider-karaf</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
     <packaging>feature</packaging>
 
     <name>tr.org.liderahenk.lider-karaf-feature</name>
