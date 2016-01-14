@@ -14,5 +14,6 @@
     <module>tr.org.liderahenk.lider-persistence-mariadb</module>
     <module>tr.org.liderahenk.lider-messaging-xmpp</module>
     <module>tr.org.liderahenk.lider-web</module>
+    <module>tr.org.liderahenk.lider-karaf</module>
   </modules>
 </project>
