@@ -30,6 +30,13 @@
 		<module>tr.org.liderahenk.lider-messaging-xmpp</module>
 		<module>tr.org.liderahenk.lider-web</module>
 		<module>tr.org.liderahenk.lider-karaf</module>
+		<module>tr.org.liderahenk.lider-rest-impl</module>
+		<module>tr.org.liderahenk.lider-log-impl</module>
+		<module>tr.org.liderahenk.lider-router-impl</module>
+		<module>tr.org.liderahenk.lider-ldap-impl</module>
+		<module>tr.org.liderahenk.lider-plugin-impl</module>
+		<module>tr.org.liderahenk.lider-messaging-impl</module>
+		<module>tr.org.liderahenk.lider-taskmanager-impl</module>
 	</modules>
 
 	<build>
