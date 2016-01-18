@@ -4,17 +4,15 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>tr.org.liderahenk</groupId>
-	<artifactId>lider.server.parent</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<artifactId>tr.org.liderahenk.lider</artifactId>
 	<packaging>pom</packaging>
-	<name>Lider Server Parent Project</name>
+	<version>1.0.0-SNAPSHOT</version>
+	<name>LiderAhenk Client Management System</name>
 
 	<properties>
+		<liderahenk.version>1.0.0-SNAPSHOT</liderahenk.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<target.dir>target</target.dir>
-		<!--Not using 3.1 at the moment since it recompiles all classes everytime -->
-		<!--https://jira.codehaus.org/browse/MCOMPILER-205 -->
-		<!--<maven.compiler.plugin.version>3.1</maven.compiler.plugin.version> -->
 		<maven.compiler.plugin.version>2.5.1</maven.compiler.plugin.version>
 		<maven.jar.plugin.version>2.3.2</maven.jar.plugin.version>
 		<maven.war.plugin.version>2.6</maven.war.plugin.version>
@@ -24,37 +22,15 @@
 		<checkstyle.maven.plugin.version>2.12</checkstyle.maven.plugin.version>
 		<java.version>1.6</java.version>
 		<junit.version>4.12</junit.version>
-
-		<paxLoggingApiVersion>1.7.1</paxLoggingApiVersion>
-		<paxLoggingServiceVersion>1.7.1</paxLoggingServiceVersion>
-
-		<geronimoJpaSpecVersion>1.1</geronimoJpaSpecVersion>
-		<geronimoJpaSpecVersion>1.1</geronimoJpaSpecVersion>
-		<geronimoJtaSpecVersion>1.1.1</geronimoJtaSpecVersion>
-		<geronimoTransactionVersion>3.1.1</geronimoTransactionVersion>
-		<geronimoServletVersion>1.2</geronimoServletVersion>
-		<geronimoJ2eeConnector15SpecVersion>2.0.0</geronimoJ2eeConnector15SpecVersion>
-		<geronimoJsp21SpecVersion>1.0.1</geronimoJsp21SpecVersion>
-
-		<paxWebJettyBundleVersion>1.1.14</paxWebJettyBundleVersion>
-		<paxWebExtenderWarVersion>1.1.14</paxWebExtenderWarVersion>
-		<paxWebExtenderWhiteboardVersion>1.1.14</paxWebExtenderWhiteboardVersion>
-		<paxWebJspVersion>1.1.14</paxWebJspVersion>
-		<paxWebDeployerVersion>1.1.14</paxWebDeployerVersion>
-		<paxUrlWarVersion>1.3.6</paxUrlWarVersion>
-		<paxWebJettyVersion>1.1.14</paxWebJettyVersion>
-		<paxWebApiVersion>1.1.14</paxWebApiVersion>
-		<paxWebSpiVersion>1.1.14</paxWebSpiVersion>
-		<paxWebRuntimeVersion>1.1.14</paxWebRuntimeVersion>
 	</properties>
 
-	<licenses>
-		<license>
-			<name>GNU LESSER GENERAL PUBLIC LICENSE, Version 3</name>
-			<url>http://www.gnu.org/licenses/lgpl.html</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
+	<modules>
+		<module>tr.org.liderahenk.lider-core</module>
+		<module>tr.org.liderahenk.lider-persistence-mariadb</module>
+		<module>tr.org.liderahenk.lider-messaging-xmpp</module>
+		<module>tr.org.liderahenk.lider-web</module>
+		<module>tr.org.liderahenk.lider-karaf</module>
+	</modules>
 
 	<build>
 		<plugins>
@@ -92,89 +68,6 @@
 		</plugins>
 	</build>
 
-	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
-			<scope>test</scope>
-			<optional>true</optional>
-		</dependency>
-	</dependencies>
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.apache.geronimo.specs</groupId>
-				<artifactId>geronimo-jpa_2.0_spec</artifactId>
-				<version>${geronimoJpaSpecVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.ops4j.pax.logging</groupId>
-				<artifactId>pax-logging-api</artifactId>
-				<version>${paxLoggingApiVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.ops4j.pax.logging</groupId>
-				<artifactId>pax-logging-service</artifactId>
-				<version>${paxLoggingServiceVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.ops4j.pax.web</groupId>
-				<artifactId>pax-web-extender-war</artifactId>
-				<version>${paxWebExtenderWarVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.ops4j.pax.web</groupId>
-				<artifactId>pax-web-extender-whiteboard</artifactId>
-				<version>${paxWebExtenderWhiteboardVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.ops4j.pax.web</groupId>
-				<artifactId>pax-web-deployer</artifactId>
-				<version>${paxWebDeployerVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.ops4j.pax.web</groupId>
-				<artifactId>pax-web-jetty-bundle</artifactId>
-				<version>${paxWebJettyBundleVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.ops4j.pax.web</groupId>
-				<artifactId>pax-web-jsp</artifactId>
-				<version>${paxWebJspVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.ops4j.pax.url</groupId>
-				<artifactId>pax-url-war</artifactId>
-				<version>${paxUrlWarVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.ops4j.pax.web</groupId>
-				<artifactId>pax-web-jetty</artifactId>
-				<version>${paxWebJettyVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.ops4j.pax.web</groupId>
-				<artifactId>pax-web-runtime</artifactId>
-				<version>${paxWebRuntimeVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.ops4j.pax.web</groupId>
-				<artifactId>pax-web-api</artifactId>
-				<version>${paxWebApiVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.ops4j.pax.web</groupId>
-				<artifactId>pax-web-spi</artifactId>
-				<version>${paxWebSpiVersion}</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
-
-
-	<!-- These profiles used to analyse code statically that committed by outside 
-		of the build automation cycle. -->
 	<profiles>
 		<profile>
 			<id>findbugs</id>
@@ -237,12 +130,24 @@
 		</profile>
 	</profiles>
 
-	<modules>
-		<module>lider-core</module>
-		<module>lider-messaging-xmpp</module>
-		<module>lider-persistence-mariadb</module>
-		<!-- <module>lider-web</module> -->
-		<module>lider-karaf</module>
-	</modules>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>tr.org.liderahenk</groupId>
+				<artifactId>tr.org.liderahenk.lider-core</artifactId>
+				<version>${liderahenk.version}</version>
+				<scope>provided</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
 </project>
