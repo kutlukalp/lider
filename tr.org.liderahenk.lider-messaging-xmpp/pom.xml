@@ -17,5 +17,11 @@
 	<artifactId>tr.org.liderahenk.lider-messaging-xmpp</artifactId>
 	<name>tr.org.liderahenk.lider-messaging-xmpp</name>
 
+	<dependencies>
+		<dependency>
+			<groupId>tr.org.liderahenk</groupId>
+			<artifactId>tr.org.liderahenk.lider-core</artifactId>
+		</dependency>
+	</dependencies>
 
 </project>

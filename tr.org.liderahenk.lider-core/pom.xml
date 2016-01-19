@@ -13,7 +13,7 @@
 		<!-- needed for checkstyle/findbugs -->
 		<main.basedir>${project.basedir}/..</main.basedir>
 	</properties>
-	
+
 	<artifactId>tr.org.liderahenk.lider-core</artifactId>
 	<name>tr.org.liderahenk.lider-core</name>
 	<packaging>bundle</packaging>
@@ -34,4 +34,15 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-core-asl</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+		</dependency>
+	</dependencies>
 </project>

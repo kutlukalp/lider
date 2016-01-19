@@ -21,6 +21,7 @@
     <feature name='lider' description='${project.name}' version='${project.version}'>
         <details>LiderAhenk client management system</details>
         <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-core/${project.version}</bundle>
+<!--         <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-persistence-mariadb/${project.version}</bundle> -->
     </feature>
 
 </features>

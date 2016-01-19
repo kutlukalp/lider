@@ -27,6 +27,13 @@
 		<mysql.version>5.1.31</mysql.version>
 		<hibernate.jpa.api.version>1.0.0.Final</hibernate.jpa.api.version>
 		<hibernate.entity.manager.version>4.3.5.Final</hibernate.entity.manager.version>
+		<apacheDirectoryApiVersion>1.0.0-M20</apacheDirectoryApiVersion>
+		<commonsIOVersion>2.4</commonsIOVersion>
+		<jacksonVersion>1.9.13</jacksonVersion>
+		<osgi.compendium.version>4.3.1</osgi.compendium.version>
+		<hazelcastVersion>3.1.7</hazelcastVersion>
+		<osgi.core.version>4.3.1</osgi.core.version>
+		<smackVersion>3.3.1</smackVersion>
 	</properties>
 
 	<modules>
@@ -42,6 +49,7 @@
 		<module>tr.org.liderahenk.lider-plugin-impl</module>
 		<!-- <module>tr.org.liderahenk.lider-messaging-impl</module> -->
 		<module>tr.org.liderahenk.lider-taskmanager-impl</module>
+		<module>tr.org.liderahenk.lider-messaging-impl</module>
 	</modules>
 
 	<build>
@@ -150,7 +158,14 @@
 				<version>${liderahenk.version}</version>
 				<scope>provided</scope>
 			</dependency>
-			
+
+			<dependency>
+				<groupId>tr.org.liderahenk</groupId>
+				<artifactId>tr.org.liderahenk.lider-rest-impl</artifactId>
+				<version>${liderahenk.version}</version>
+				<scope>provided</scope>
+			</dependency>
+
 			<!-- Hibernate Dependecies -->
 
 			<dependency>
@@ -191,8 +206,62 @@
 				<artifactId>mysql-connector-java</artifactId>
 				<version>${mysql.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>${commonsIOVersion}</version>
+			</dependency>
 
+			<dependency>
+				<groupId>org.codehaus.jackson</groupId>
+				<artifactId>jackson-core-asl</artifactId>
+				<version>${jacksonVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.codehaus.jackson</groupId>
+				<artifactId>jackson-mapper-asl</artifactId>
+				<version>${jacksonVersion}</version>
+			</dependency>
 
+			<dependency>
+				<groupId>org.osgi</groupId>
+				<artifactId>org.osgi.compendium</artifactId>
+				<version>${osgi.compendium.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.hazelcast</groupId>
+				<artifactId>hazelcast-all</artifactId>
+				<version>${hazelcastVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.osgi</groupId>
+				<artifactId>org.osgi.core</artifactId>
+				<version>${osgi.core.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.igniterealtime.smack</groupId>
+				<artifactId>smack</artifactId>
+				<version>${smackVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.igniterealtime.smack</groupId>
+				<artifactId>smackx</artifactId>
+				<version>${smackVersion}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.igniterealtime.smack</groupId>
+				<artifactId>smackx-debug</artifactId>
+				<version>${smackVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.igniterealtime.smack</groupId>
+				<artifactId>smackx-jingle</artifactId>
+				<version>${smackVersion}</version>
+			</dependency>
 			<!-- End of Hibernate Dependencies -->
 		</dependencies>
 	</dependencyManagement>
@@ -202,6 +271,15 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>3.8.1</version>
+			<scope>test</scope>
+		</dependency>
+				<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

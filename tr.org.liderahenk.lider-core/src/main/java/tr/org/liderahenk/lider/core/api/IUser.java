@@ -1,5 +1,9 @@
 package tr.org.liderahenk.lider.core.api;
 
+import java.util.List;
+
+import tr.org.liderahenk.lider.core.api.auth.IUserPrivilege;
+
 
 /**
  * 
@@ -12,7 +16,7 @@ public interface IUser {
 	 * 
 	 * @return user's privileges
 	 */
-//    List<? extends IUserPrivilege> getTargetDnPrivileges();
+    List<? extends IUserPrivilege> getTargetDnPrivileges();
     
     /**
      * 
