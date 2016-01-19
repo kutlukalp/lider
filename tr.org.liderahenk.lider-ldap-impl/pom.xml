@@ -1,9 +1,102 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>tr.org.liderahenk</groupId>
-    <artifactId>tr.org.liderahenk.lider</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-  </parent>
-  <artifactId>tr.org.liderahenk.lider-ldap-impl</artifactId>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>tr.org.liderahenk</groupId>
+		<artifactId>tr.org.liderahenk.lider</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>tr.org.liderahenk.lider-ldap-impl</artifactId>
+
+	<dependencies>
+		<dependency>
+			<groupId>tr.org.liderahenk</groupId>
+			<artifactId>tr.org.liderahenk.lider-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.directory.api</groupId>
+			<artifactId>api-ldap-client-api</artifactId>
+			<version>${apacheDirectoryApiVersion}</version>
+			<scope>provided</scope>
+		</dependency>
+
+
+		<dependency>
+			<groupId>antlr</groupId>
+			<artifactId>antlr</artifactId>
+			<version>2.7.7</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.directory.api</groupId>
+			<artifactId>api-ldap-client-api</artifactId>
+			<version>${apacheDirectoryApiVersion}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.directory.api</groupId>
+			<artifactId>api-util</artifactId>
+			<version>${apacheDirectoryApiVersion}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.directory.api</groupId>
+			<artifactId>api-ldap-model</artifactId>
+			<version>${apacheDirectoryApiVersion}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.directory.api</groupId>
+			<artifactId>api-asn1-api</artifactId>
+			<version>${apacheDirectoryApiVersion}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.directory.api</groupId>
+			<artifactId>api-asn1-ber</artifactId>
+			<version>${apacheDirectoryApiVersion}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.directory.api</groupId>
+			<artifactId>api-i18n</artifactId>
+			<version>${apacheDirectoryApiVersion}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.directory.api</groupId>
+			<artifactId>api-ldap-codec-core</artifactId>
+			<version>${apacheDirectoryApiVersion}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.directory.api</groupId>
+			<artifactId>api-ldap-schema-data</artifactId>
+			<version>${apacheDirectoryApiVersion}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.directory.api</groupId>
+			<artifactId>api-ldap-extras-aci</artifactId>
+			<version>${apacheDirectoryApiVersion}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.8</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.directory.api</groupId>
+			<artifactId>api-ldap-codec-standalone</artifactId>
+			<version>${apacheDirectoryApiVersion}</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
 </project>
