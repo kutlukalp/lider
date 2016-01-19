@@ -27,6 +27,13 @@
 		<mysql.version>5.1.31</mysql.version>
 		<hibernate.jpa.api.version>1.0.0.Final</hibernate.jpa.api.version>
 		<hibernate.entity.manager.version>4.3.5.Final</hibernate.entity.manager.version>
+		<geronimoTransactionVersion>3.1.1</geronimoTransactionVersion>
+		<ariesTransactionBlueprintVersion>1.0.1</ariesTransactionBlueprintVersion>
+		<commons.io.version>2.4</commons.io.version>
+		<commons.collections.version>3.2.1</commons.collections.version>
+		<commons.lang.version>2.6</commons.lang.version>
+		<commons.dbcp.version>1.4</commons.dbcp.version>
+		<commons.pool.version>1.6</commons.pool.version>
 	</properties>
 
 	<modules>
@@ -42,6 +49,7 @@
 		<module>tr.org.liderahenk.lider-plugin-impl</module>
 		<!-- <module>tr.org.liderahenk.lider-messaging-impl</module> -->
 		<module>tr.org.liderahenk.lider-taskmanager-impl</module>
+		<module>tr.org.liderahenk.lider-datasource-mariadb</module>
 	</modules>
 
 	<build>
@@ -150,7 +158,7 @@
 				<version>${liderahenk.version}</version>
 				<scope>provided</scope>
 			</dependency>
-			
+
 			<!-- Hibernate Dependecies -->
 
 			<dependency>
@@ -190,6 +198,19 @@
 				<groupId>mysql</groupId>
 				<artifactId>mysql-connector-java</artifactId>
 				<version>${mysql.version}</version>
+			</dependency>
+
+
+			<dependency>
+				<groupId>org.apache.geronimo.components</groupId>
+				<artifactId>geronimo-transaction</artifactId>
+				<version>${geronimoTransactionVersion}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.aries.transaction</groupId>
+				<artifactId>org.apache.aries.transaction.blueprint</artifactId>
+				<version>${ariesTransactionBlueprintVersion}</version>
 			</dependency>
 
 

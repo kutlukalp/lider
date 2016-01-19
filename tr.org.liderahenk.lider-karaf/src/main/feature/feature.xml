@@ -21,6 +21,23 @@
     <feature name='lider' description='${project.name}' version='${project.version}'>
         <details>LiderAhenk client management system</details>
         <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-core/${project.version}</bundle>
+        <feature>lider-persistence</feature>
+    </feature>
+    
+    <feature name='lider-persistence' description='${project.name}' version='${project.version}'>
+        <details>LiderAhenk client management system persistence unit</details>
+        <feature>lider-db-support</feature>
+        <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-datasource-mariadb/${project.version}</bundle>
+        <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-persistence-mariadb/${project.version}</bundle>
+    </feature>
+    
+    <feature name='lider-db-support' description='${project.name}' version='${project.version}'>
+    	<feature>jpa</feature>
+        <feature>transaction</feature>
+        <feature>jndi</feature>
+        <feature>hibernate</feature>
+        <bundle start-level="45">mvn:mysql/mysql-connector-java/${mysql.version}</bundle>
+        <bundle start-level="45">wrap:mvn:c3p0/c3p0/0.9.1.1</bundle>
     </feature>
 
 </features>
