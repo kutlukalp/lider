@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+         xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="
+                 http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+                 http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://svn.apache.org/repos/asf/aries/trunk/blueprint/blueprint-cm/src/main/resources/org/apache/aries/blueprint/compendium/cm/blueprint-cm-1.1.0.xsd
+         ">
+	
+<cm:property-placeholder persistent-id="tr.org.liderahenk.datasource.mariadb.cfg"
+        update-strategy="reload">
+        <cm:default-properties>
+            <cm:property name="server" value="db.mys.pardus.org.tr" />
+            <cm:property name="db" value="liderdb"/>
+            <cm:property name="port" value="3306"/>
+            <cm:property name="user" value="root"/>
+            <cm:property name="password" value="qwert123"/>
+        </cm:default-properties>
+    </cm:property-placeholder>
+  
+  <service 
+      ref="mariadbConnectionPoolDataSource"
+      interface="javax.sql.DataSource">
+      <service-properties>
+      <entry key="osgi.jndi.service.name" value="jdbc/liderdb"/>
+      <entry key="datasource.name" value="MySQL"/>
+      </service-properties>
+  </service>
+  
+  <!-- <service 
+      ref="mariadbXAConnectionPoolDataSource"
+      interface="javax.sql.DataSource">
+      <service-properties>
+        <entry 
+          key="osgi.jndi.service.name"
+          value="jdbc/xamysdb"/>
+        <entry key="datasource.name" value="MySQL"/>
+      </service-properties>
+  </service> -->
+  
+  <service 
+      ref="mariadbXADataSource"
+      interface="javax.sql.XADataSource">
+      <service-properties>
+        <entry 
+          key="osgi.jndi.service.name"
+          value="jdbc/xamysdb"/>
+        <entry key="datasource.name" value="MySQL"/>
+      </service-properties>
+  </service>
+  
+  <!-- <bean id="mariadbXAConnectionPoolDataSource" class="org.apache.commons.dbcp.managed.BasicManagedDataSource" destroy-method="close">
+    <property name="xaDataSourceInstance" ref="mariadbXADataSource" />
+    <property name="transactionManager" ref="transactionManager" />
+</bean> -->
+   
+  <!--  <bean id="mariadbConnectionPoolDataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+    <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+    <property name="url" value="jdbc:mysql://${server}:3306/${db}?characterEncoding=UTF-8"/>
+    <property name="username" value="${user}"/>
+    <property name="password" value="${password}"/>
+</bean> -->
+   
+  <bean
+    id="mariadbXADataSource"
+    class="com.mysql.jdbc.jdbc2.optional.MysqlXADataSource">    
+    <property name="databaseName" value="${db}"/>    
+    <property name="url" value="jdbc:mysql://${server}:3306/${db}?characterEncoding=UTF-8"/>
+    <property name="user" value="${user}"/>
+    <property name="password" value="${password}"/>
+  </bean>
+  
+  <bean
+    id="mariadbConnectionPoolDataSource"
+    class="com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource">    
+    <property name="databaseName" value="${db}"/>    
+    <property name="url" value="jdbc:mysql://${server}:3306/${db}?characterEncoding=UTF-8"/>    
+    <property name="user" value="${user}"/>
+    <property name="password" value="${password}"/>
+  </bean>
+  
+  <reference id="transactionManager" interface="javax.transaction.TransactionManager"/>
+    
+  
+</blueprint>
