@@ -36,12 +36,12 @@ import org.jivesoftware.smackx.pubsub.listener.ItemEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tr.org.pardus.mys.core.api.IConfigurationService;
-import tr.org.pardus.mys.core.api.messaging.IMessageSubscriber;
-import tr.org.pardus.mys.core.api.messaging.INotificationSubscriber;
-import tr.org.pardus.mys.core.api.messaging.IPresenceSubscriber;
-import tr.org.pardus.mys.core.api.messaging.ITaskStatusUpdateSubscriber;
-import tr.org.pardus.mys.ldap.api.ILDAPService;
+import tr.org.liderahenk.lider.core.api.IConfigurationService;
+import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
+import tr.org.liderahenk.lider.core.api.messaging.IMessageSubscriber;
+import tr.org.liderahenk.lider.core.api.messaging.INotificationSubscriber;
+import tr.org.liderahenk.lider.core.api.messaging.IPresenceSubscriber;
+import tr.org.liderahenk.lider.core.api.messaging.ITaskStatusUpdateSubscriber;
 
 /**
  * 
@@ -336,9 +336,7 @@ public class XMPPClientImpl {
 	}
 	
 	private void initConnection() {
-		log.info(
-				"Connecting to server => {}, port => {}, domain => {}", server,
-				port, domain);
+//		log.info("Connecting to server => {}, port => {}, domain => {}", server,port, domain);
 
 		config = new ConnectionConfiguration(server, port, domain);
         config.setSASLAuthenticationEnabled(true);

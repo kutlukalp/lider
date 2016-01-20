@@ -15,6 +15,7 @@ import tr.org.liderahenk.lider.core.api.taskmanager.ITask;
 import tr.org.liderahenk.lider.core.api.taskmanager.ITaskMessage;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskCommState;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskState;
+import tr.org.liderahenk.lider.impl.rest.RestRequestImpl;
 
 /**
  * Task manager implementation for {@link ITask}

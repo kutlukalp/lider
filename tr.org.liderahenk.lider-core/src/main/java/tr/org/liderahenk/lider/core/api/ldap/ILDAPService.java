@@ -6,7 +6,8 @@ package tr.org.liderahenk.lider.core.api.ldap;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+
+import org.apache.directory.api.ldap.model.entry.Entry;
 
 import tr.org.liderahenk.lider.core.api.IUser;
 import tr.org.liderahenk.lider.core.api.ldap.model.LdapEntry;

@@ -2,6 +2,7 @@ package tr.org.liderahenk.lider.impl.taskmanager;
 
 import tr.org.liderahenk.lider.core.api.rest.IRestRequest;
 import tr.org.liderahenk.lider.core.api.taskmanager.ITask;
+import tr.org.liderahenk.lider.core.api.taskmanager.ITaskFactory;
 
 /**
  * Default implementation for {@link ITaskFactory}

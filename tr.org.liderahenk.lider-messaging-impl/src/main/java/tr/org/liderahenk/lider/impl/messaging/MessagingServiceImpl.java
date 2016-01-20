@@ -5,8 +5,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tr.org.pardus.mys.core.api.messaging.IMessage;
-import tr.org.pardus.mys.messaging.api.IMessagingService;
+import tr.org.liderahenk.lider.core.api.messaging.IMessage;
+import tr.org.liderahenk.lider.core.api.messaging.IMessagingService;
 
 /**
  * Default implementation for {@link IMessagingService}

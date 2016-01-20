@@ -3,6 +3,11 @@
  */
 package tr.org.liderahenk.lider.impl.taskmanager;
 
+import static tr.org.liderahenk.lider.core.api.taskmanager.TaskState.TASK_ERROR;
+import static tr.org.liderahenk.lider.core.api.taskmanager.TaskState.TASK_KILLED;
+import static tr.org.liderahenk.lider.core.api.taskmanager.TaskState.TASK_PROCESSED;
+import static tr.org.liderahenk.lider.core.api.taskmanager.TaskState.TASK_WARNING;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -27,15 +32,19 @@ import tr.org.liderahenk.lider.core.api.ldap.model.LdapEntry;
 import tr.org.liderahenk.lider.core.api.messaging.IMessage;
 import tr.org.liderahenk.lider.core.api.messaging.IMessageFactory;
 import tr.org.liderahenk.lider.core.api.messaging.IMessageSubscriber;
+import tr.org.liderahenk.lider.core.api.messaging.IMessagingService;
 import tr.org.liderahenk.lider.core.api.messaging.ITaskStatusUpdateMessage;
 import tr.org.liderahenk.lider.core.api.messaging.ITaskStatusUpdateSubscriber;
 import tr.org.liderahenk.lider.core.api.rest.IRestRequest;
 import tr.org.liderahenk.lider.core.api.taskmanager.ITask;
+import tr.org.liderahenk.lider.core.api.taskmanager.ITaskManager;
 import tr.org.liderahenk.lider.core.api.taskmanager.ITaskMessage;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskCommState;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskServiceException;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskState;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskSubmissionFailedException;
+import tr.org.liderahenk.lider.impl.rest.RestRequestBodyImpl;
+import tr.org.liderahenk.lider.impl.rest.RestRequestImpl;
 
 /**
  * Default implementation for {@link ITaskManager}
@@ -194,11 +203,11 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusUpdateSubscribe
 	{
 		List<String> taskIds = new ArrayList<String>();
 		
-		log.info("creating task for request {}/{}/{}/{}/{}", request.getResource(),
-				request.getAccess(),
-				request.getAttribute(),
-				request.getCommand(),
-				request.getAction() );
+//		log.info("creating task for request {}/{}/{}/{}/{}", request.getResource(),
+//				request.getAccess(),
+//				request.getAttribute(),
+//				request.getCommand(),
+//				request.getAction() );
 		try {
 			
 			IRestRequest restRequest = request;// task.getRequest();

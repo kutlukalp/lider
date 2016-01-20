@@ -12,12 +12,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tr.org.liderahenk.lider.core.api.IConfigurationService;
-import tr.org.liderahenk.lider.core.api.enums.CrudType;
-import tr.org.liderahenk.lider.core.api.taskmanager.ITask;
-import tr.org.liderahenk.lider.core.api.taskmanager.TaskCommState;
-import tr.org.liderahenk.lider.core.api.taskmanager.TaskStoreException;
-
 import com.hazelcast.config.Config;
 import com.hazelcast.config.MapConfig;
 import com.hazelcast.config.MapStoreConfig;
@@ -27,6 +21,14 @@ import com.hazelcast.core.IMap;
 import com.hazelcast.map.EntryBackupProcessor;
 import com.hazelcast.map.EntryProcessor;
 import com.hazelcast.query.SqlPredicate;
+
+import tr.org.liderahenk.lider.core.api.IConfigurationService;
+import tr.org.liderahenk.lider.core.api.enums.CrudType;
+import tr.org.liderahenk.lider.core.api.log.IOperationLogService;
+import tr.org.liderahenk.lider.core.api.taskmanager.ITask;
+import tr.org.liderahenk.lider.core.api.taskmanager.ITaskStore;
+import tr.org.liderahenk.lider.core.api.taskmanager.TaskCommState;
+import tr.org.liderahenk.lider.core.api.taskmanager.TaskStoreException;
 
 /**
  * Default (hazelcast) implementation for {@link ITaskStore}

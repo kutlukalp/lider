@@ -3,8 +3,8 @@ package tr.org.liderahenk.lider.impl.messaging;
 import java.util.Date;
 import java.util.Map;
 
-import tr.org.pardus.mys.core.api.messaging.INotificationMessage;
-import tr.org.pardus.mys.core.api.messaging.MessageType;
+import tr.org.liderahenk.lider.core.api.messaging.INotificationMessage;
+import tr.org.liderahenk.lider.core.api.messaging.MessageType;
 
 
 /**

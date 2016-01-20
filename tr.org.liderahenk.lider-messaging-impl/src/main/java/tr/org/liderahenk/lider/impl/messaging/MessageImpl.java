@@ -1,6 +1,6 @@
 package tr.org.liderahenk.lider.impl.messaging;
 
-import tr.org.pardus.mys.core.api.messaging.IMessage;
+import tr.org.liderahenk.lider.core.api.messaging.IMessage;
 
 /**
  * Default implementation for {@link IMessage}

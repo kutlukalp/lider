@@ -1,5 +1,11 @@
 package tr.org.liderahenk.lider.impl.taskmanager;
 
+import static tr.org.liderahenk.lider.core.api.taskmanager.TaskState.TASK_ERROR;
+import static tr.org.liderahenk.lider.core.api.taskmanager.TaskState.TASK_KILLED;
+import static tr.org.liderahenk.lider.core.api.taskmanager.TaskState.TASK_PROCESSED;
+import static tr.org.liderahenk.lider.core.api.taskmanager.TaskState.TASK_TIMEOUT;
+import static tr.org.liderahenk.lider.core.api.taskmanager.TaskState.TASK_WARNING;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -13,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import tr.org.liderahenk.lider.core.api.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.messaging.IMessage;
 import tr.org.liderahenk.lider.core.api.messaging.IMessageFactory;
+import tr.org.liderahenk.lider.core.api.messaging.IMessagingService;
 import tr.org.liderahenk.lider.core.api.messaging.IPresenceSubscriber;
 import tr.org.liderahenk.lider.core.api.taskmanager.ITask;
 import tr.org.liderahenk.lider.core.api.taskmanager.ITaskMessage;
@@ -23,6 +30,7 @@ import tr.org.liderahenk.lider.core.api.taskmanager.TaskRetryFailedException;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskServiceException;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskState;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskStoreException;
+import tr.org.liderahenk.lider.impl.rest.RestRequestBodyImpl;
 
 /**
  * Default implementation for {@link ITaskService}
@@ -109,7 +117,7 @@ public class TaskServiceImpl implements ITaskService, IPresenceSubscriber {
 			TaskImpl task = taskStore.get(taskId);
 			
 			if( ! task.isActive()){
-				log.debug("task {} in state {} and is not active. will not update task state to {}", taskId, task.getState(), state);
+				//log.debug("task {} in state {} and is not active. will not update task state to {}", taskId, task.getState(), state);
 				return;
 			}
 

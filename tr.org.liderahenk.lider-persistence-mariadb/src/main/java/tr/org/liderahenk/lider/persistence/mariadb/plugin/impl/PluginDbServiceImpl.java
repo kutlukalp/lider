@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import tr.org.liderahenk.lider.core.api.dao.PropertyOrder;
 import tr.org.liderahenk.lider.core.api.plugin.IPluginDbService;
@@ -17,6 +18,7 @@ import tr.org.liderahenk.lider.core.api.plugin.IPluginDbService;
  */
 public class PluginDbServiceImpl implements IPluginDbService{
 	
+	@PersistenceContext(unitName="liderdb")
 	EntityManager em;
 	
 	public void setEntityManager(EntityManager em) {
