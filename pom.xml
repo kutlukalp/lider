@@ -9,20 +9,20 @@
 	<version>1.0.0-SNAPSHOT</version>
 	<name>LiderAhenk Client Management System</name>
 
-<repositories>
-	<repository>
-		<id>mys.releases</id>
-		<name>Pardus
+	<repositories>
+		<repository>
+			<id>mys.releases</id>
+			<name>Pardus
 			MYS Releases Proxy Repository</name>
-		<url>http://193.140.98.177/nexus/content/groups/mys/</url>
-		<releases>
-			<enabled>true</enabled>
-		</releases>
-		<snapshots>
-			<enabled>true</enabled>
-		</snapshots>
-	</repository>
-</repositories>
+			<url>http://193.140.98.177/nexus/content/groups/mys/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 
 	<properties>
 		<liderahenk.version>1.0.0-SNAPSHOT</liderahenk.version>
@@ -61,7 +61,7 @@
 		<jerseyClientVersion>1.17.1</jerseyClientVersion>
 		<fileUploadVersion>1.2.2</fileUploadVersion>
 		<jerseyClientVersion>1.17.1</jerseyClientVersion>
-		
+
 	</properties>
 
 	<modules>
@@ -78,7 +78,7 @@
 		<module>tr.org.liderahenk.lider-messaging-impl</module>
 		<!-- <module>tr.org.liderahenk.lider-taskmanager-impl</module> -->
 		<module>tr.org.liderahenk.lider-datasource-mariadb</module>
-
+		<module>tr.org.liderahenk.lider-query-impl</module>
 	</modules>
 
 	<build>
@@ -191,6 +191,13 @@
 			<dependency>
 				<groupId>tr.org.liderahenk</groupId>
 				<artifactId>tr.org.liderahenk.lider-rest-impl</artifactId>
+				<version>${liderahenk.version}</version>
+				<scope>provided</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>tr.org.liderahenk</groupId>
+				<artifactId>tr.org.liderahenk.lider-query-impl</artifactId>
 				<version>${liderahenk.version}</version>
 				<scope>provided</scope>
 			</dependency>

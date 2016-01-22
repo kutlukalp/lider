@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
-import tr.org.liderahenk.lider.core.api.ldap.model.LdapEntry;
 import tr.org.liderahenk.lider.core.api.messaging.IMessage;
 import tr.org.liderahenk.lider.core.api.messaging.IMessageFactory;
 import tr.org.liderahenk.lider.core.api.messaging.IMessageSubscriber;
@@ -43,6 +42,7 @@ import tr.org.liderahenk.lider.core.api.taskmanager.TaskCommState;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskServiceException;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskState;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskSubmissionFailedException;
+import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 import tr.org.liderahenk.lider.impl.rest.RestRequestBodyImpl;
 import tr.org.liderahenk.lider.impl.rest.RestRequestImpl;
 

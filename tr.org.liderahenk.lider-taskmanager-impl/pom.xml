@@ -20,7 +20,10 @@
 			<groupId>tr.org.liderahenk</groupId>
 			<artifactId>tr.org.liderahenk.lider-rest-impl</artifactId>
 		</dependency>
-		
+		<dependency>
+			<groupId>tr.org.liderahenk</groupId>
+			<artifactId>tr.org.liderahenk.lider-query-impl</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>com.hazelcast</groupId>
 			<artifactId>hazelcast-all</artifactId>
