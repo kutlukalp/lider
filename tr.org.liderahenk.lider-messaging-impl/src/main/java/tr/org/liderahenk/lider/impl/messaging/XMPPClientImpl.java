@@ -406,8 +406,12 @@ public class XMPPClientImpl {
 	}
 
 	private void initConnection() {
+
 		log.info("Connecting to server => {" + server + "}, port => {" + port
 				+ "}, domain => {" + domain + "}");
+
+//		log.info("Connecting to server => {}, port => {}, domain => {}", server,port, domain);
+
 
 		config = XMPPTCPConnectionConfiguration.builder()
 				.setServiceName(server).setPort(port).setHost(domain)

@@ -6,8 +6,6 @@ import java.util.Map;
 
 import tr.org.liderahenk.lider.core.api.messaging.ITaskStatusUpdateMessage;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskState;
-//import tr.org.pardus.mys.core.api.messaging.MessageType;
-
 
 /**
  * Default implementation for {@link ITaskStatusUpdateMessage}

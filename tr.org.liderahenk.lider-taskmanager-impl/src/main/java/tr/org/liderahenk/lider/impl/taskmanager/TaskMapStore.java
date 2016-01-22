@@ -10,14 +10,14 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.hazelcast.core.MapStore;
+
 import tr.org.liderahenk.lider.core.api.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.messaging.IMessagingService;
 import tr.org.liderahenk.lider.core.api.query.CriteriaOperator;
 import tr.org.liderahenk.lider.core.api.taskmanager.ITask;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskCommState;
 import tr.org.liderahenk.lider.core.api.taskmanager.dao.ITaskDao;
-
-import com.hazelcast.core.MapStore;
 
 /**
  * Default implementation for hazelcast's {@link MapStore}

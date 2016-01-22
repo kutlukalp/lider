@@ -42,7 +42,7 @@
 			<groupId>org.osgi</groupId>
 			<artifactId>org.osgi.core</artifactId>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.ops4j.pax.exam</groupId>
 			<artifactId>pax-exam-container-native</artifactId>
 			<version>${exam.version}</version>
@@ -71,6 +71,12 @@
 			<artifactId>pax-url-wrap</artifactId>
 			<version>${url.version}</version>
 			<scope>test</scope>
-		</dependency>
+		</dependency> -->
+		
+		
+		<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+			</dependency>
 	</dependencies>
 </project>

@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: tr.org.pardus.mys.datasource.mariadb
+Bundle-Version: 1.0.0
+Import-Package: javax.sql,
+ javax.transaction,
+ org.apache.commons.dbcp.managed,
+ com.mysql.jdbc.jdbc2.optional
+

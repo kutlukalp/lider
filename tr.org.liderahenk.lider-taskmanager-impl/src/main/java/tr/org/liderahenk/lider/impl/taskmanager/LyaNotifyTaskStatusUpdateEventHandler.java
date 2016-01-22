@@ -8,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
+import tr.org.liderahenk.lider.core.api.messaging.IMessagingService;
+import tr.org.liderahenk.lider.core.api.taskmanager.ITaskService;
 
 /**
  * Lya notification handler implementation for {@link EventHandler}
