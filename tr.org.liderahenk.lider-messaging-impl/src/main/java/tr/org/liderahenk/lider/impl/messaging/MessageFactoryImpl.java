@@ -1,9 +1,8 @@
 package tr.org.liderahenk.lider.impl.messaging;
 
-import tr.org.pardus.mys.core.api.messaging.IMessage;
-import tr.org.pardus.mys.core.api.messaging.IMessageFactory;
-import tr.org.pardus.mys.core.api.taskmanager.ITask;
-import tr.org.pardus.mys.ldap.api.ILDAPService;
+import tr.org.liderahenk.lider.core.api.messaging.IMessage;
+import tr.org.liderahenk.lider.core.api.messaging.IMessageFactory;
+import tr.org.liderahenk.lider.core.api.taskmanager.ITask;
 
 /**
  * Default implementation for {@link IMessageFactory}

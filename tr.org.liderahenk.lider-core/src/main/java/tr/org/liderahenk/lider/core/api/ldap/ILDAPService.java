@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import tr.org.liderahenk.lider.core.api.IUser;
-import tr.org.liderahenk.lider.core.api.ldap.model.LdapEntry;
+import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
 /**
  * Provides LDAP backend services 

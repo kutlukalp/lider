@@ -2,8 +2,8 @@ package tr.org.liderahenk.lider.impl.messaging;
 
 import java.util.Date;
 
-import tr.org.pardus.mys.core.api.taskmanager.ITaskMessage;
-import tr.org.pardus.mys.core.api.taskmanager.MessageLevel;
+import tr.org.liderahenk.lider.core.api.taskmanager.ITaskMessage;
+import tr.org.liderahenk.lider.core.api.taskmanager.MessageLevel;
 
 /**
  * Task manager implementation for {@link ITaskMessage}

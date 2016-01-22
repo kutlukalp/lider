@@ -1,4 +1,4 @@
-package tr.org.liderahenk.lider.core.api.ldap.model;
+package tr.org.liderahenk.lider.core.model.ldap;
 
 import java.util.Map;
 

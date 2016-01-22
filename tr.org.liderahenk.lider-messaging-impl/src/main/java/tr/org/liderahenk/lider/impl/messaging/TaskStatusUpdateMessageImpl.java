@@ -4,10 +4,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import tr.org.pardus.mys.core.api.messaging.IMessageFactory;
-import tr.org.pardus.mys.core.api.messaging.ITaskStatusUpdateMessage;
+import tr.org.liderahenk.lider.core.api.messaging.ITaskStatusUpdateMessage;
+import tr.org.liderahenk.lider.core.api.taskmanager.TaskState;
 //import tr.org.pardus.mys.core.api.messaging.MessageType;
-import tr.org.pardus.mys.core.api.taskmanager.TaskState;
 
 
 /**

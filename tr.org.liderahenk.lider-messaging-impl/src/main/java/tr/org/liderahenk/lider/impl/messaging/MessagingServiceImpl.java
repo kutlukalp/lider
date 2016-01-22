@@ -5,8 +5,8 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tr.org.pardus.mys.core.api.messaging.IMessage;
-import tr.org.pardus.mys.messaging.api.IMessagingService;
+import tr.org.liderahenk.lider.core.api.messaging.IMessage;
+import tr.org.liderahenk.lider.core.api.messaging.IMessagingService;
 
 /**
  * Default implementation for {@link IMessagingService}
@@ -36,9 +36,9 @@ public class MessagingServiceImpl implements IMessagingService {
 	}
 	
 	@Override
-	public void sendMessage(IMessage message, String resource) throws Exception{
-		//xmppClient.sendMessage(message.getMessage(), message.getRecipient());
-		xmppClient.sendIQ(message.getMessage(), message.getRecipient(), resource);
+	public void sendMessage(IMessage message, String resource) throws Exception{  // TODO  vvv send IQ mu send Message mı? 
+		xmppClient.sendMessage(message.getMessage(), message.getRecipient()); 
+//		xmppClient.sendIQ(message.getMessage(), message.getRecipient(), resource);
 	}
 	
 	/**
