@@ -58,7 +58,7 @@
 		<osgi.compendium.version>4.3.1</osgi.compendium.version>
 		<osgi.core.version>4.3.1</osgi.core.version>
 		<apacheWsVersion>2.4.0</apacheWsVersion>
-		<jerseyClientVersion>1.17.1</jerseyClientVersion>
+		<jerseyClientVersion>1.19</jerseyClientVersion>
 		<fileUploadVersion>1.2.2</fileUploadVersion>
 		<jerseyClientVersion>1.17.1</jerseyClientVersion>
 

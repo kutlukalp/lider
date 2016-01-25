@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:ctx="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:osgix="http://www.springframework.org/schema/osgi-compendium"
+       xmlns:osgi="http://www.springframework.org/schema/osgi"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+           http://www.springframework.org/schema/osgi-compendium http://www.springframework.org/schema/osgi-compendium/spring-osgi-compendium.xsd
+           http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd
+           http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+  <!-- <mvc:annotation-driven validator="validator"> -->
+  <mvc:annotation-driven>
+  	<!-- <mvc:message-converters register-defaults="true">
+			<bean id="jacksonMessageConverter"
+    class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter"/>
+    <bean class="org.springframework.http.converter.StringHttpMessageConverter" />
+		</mvc:message-converters> -->
+  </mvc:annotation-driven>
+  
+  <ctx:component-scan base-package="tr.org.liderahenk"/>
+  
+  <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+    <property name="prefix" value="/WEB-INF/views/" />
+    <property name="suffix" value=".jsp" />
+  </bean>
+  
+  
+  <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+	<property name="maxUploadSize" value="30000000"/><!-- Max size in bytes. -->
+  </bean>
+  
+  
+  <!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
+    <mvc:resources location="/, classpath:/META-INF/web-resources/" mapping="/resources/**"/>
+    
+    <!-- <bean id="validator"
+		class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+		<property name="validationMessageSource" ref="messageSource" />
+	</bean> -->
+	
+	<bean
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource"
+		id="messageSource" p:basenames="WEB-INF/i18n/messages,WEB-INF/i18n/application"
+		p:fallbackToSystemLocale="false" />
+		
+	<mvc:interceptors>
+		<bean
+			class="org.springframework.web.servlet.theme.ThemeChangeInterceptor" />
+		<bean
+			class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor"
+			p:paramName="lang" />
+
+	</mvc:interceptors>
+	
+	<bean class="org.springframework.web.servlet.i18n.CookieLocaleResolver"
+		id="localeResolver" p:cookieName="locale" />
+
+	<bean
+		class="org.springframework.ui.context.support.ResourceBundleThemeSource"
+		id="themeSource" />
+	<bean class="org.springframework.web.servlet.theme.CookieThemeResolver"
+		id="themeResolver" p:cookieName="theme" p:defaultThemeName="standard" />
+		
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <!-- Single realm app.  If you have multiple realms, use the 'realms' property instead. -->
+        <property name="realm" ref="StaticRealm"/>
+        <property name="cacheManager" ref="shiroCacheManager"/>
+        <!-- By default the servlet container sessions will be used.  Uncomment this line
+        to use shiro's native sessions (see the JavaDoc for more): -->
+        <!-- <property name="sessionMode" value="native"/> -->
+    </bean>
+    <bean id="shiroCacheManager" class="org.apache.shiro.cache.MemoryConstrainedCacheManager">
+    <!--property name="cacheManager" ref="ehCacheManager" /-->
+    
+    
+    <!-- placeholder configurer -->
+   <!-- <ctx:property-placeholder properties-ref="ldapRealmProps" /> -->
+   
+   <!-- Configuration Admin entry -->
+  <!--  <osgix:cm-properties id="ldapRealmProps" persistent-id="tr.org.pardus.mys.ldap.realm">
+   </osgix:cm-properties> -->
+    </bean>
+    <!-- Define the Shiro Realm implementation you want to use to connect to your back-end -->
+    <!-- StaticRealm: -->
+    <!--  <bean id="StaticRealm" class="tr.org.liderahenk.web.security.LiderLdapRealm" init-method="initRealm">  -->
+    <bean id="StaticRealm" class="tr.org.liderahenk.web.security.LiderLdapRealm">
+       <!--  <property name="credentialsMatcher" ref="credMatcher"/> -->
+       <!-- <osgix:managed-properties persistent-id="tr.org.pardus.mys.ldap.realm"
+                update-strategy="bean-managed" update-method="reload"/> -->
+       <!-- <property name="searchBase" value="${searchBaseDn}"/>
+       <property name="principalSuffix" value="${principalSuffix}"/>
+       <property name="systemUsername" value="${systemUsername}"/>
+       <property name="systemPassword" value="${systemPassword}"/>
+       <property name="url" value="${ldapUrl}"/> -->
+    </bean>
+    <bean id="credMatcher" class="org.apache.shiro.authc.credential.AllowAllCredentialsMatcher"/>
+	
+	<!-- Shiro filter -->
+    <bean id="ShiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager"/>
+        <property name="filters">
+            <util:map>
+            	<entry key="myAuthcAuth">
+                    <bean class="tr.org.liderahenk.web.security.LiderAuthenticationFilter"/>
+                </entry>
+                <entry key="myAuthcBasic">
+                    <bean class="org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter"/>
+                </entry>
+            </util:map>
+        </property>
+        <property name="filterChainDefinitions">
+<!--             <value> 
+                  /rest.web/rest/** = anon
+            	  /rest/** = myAuthcAuth	
+                  /** = myAuthcBasic
+            </value> -->
+          <!--   <value> 
+                  /rest/** = myAuthcAuth
+                  /rest.web/rest/** = myAuthcAuth	
+                  /** = myAuthcBasic
+            </value> -->
+            
+            <!-- <value>
+                /rest.web/rest/** = myAuthcAuth
+            	/** = anon
+            </value> -->
+            
+       		 <!-- Closed for test for production reopen it. 
+       		 <value>
+
+                /task = myAuthcBasic
+                /rest/log/upload = anon
+                /rest/stats = myAuthcAuth
+                /rest/agent/register = myAuthcAuth
+                /rest/agent/validate/credentials = myAuthcAuth
+                /rest.web/rest/** = myAuthcAuth
+                /** = myAuthcAuth
+            </value> -->
+            
+             <value>
+                /** = anon
+            </value>
+        </property>
+    </bean>                 
+</beans>
