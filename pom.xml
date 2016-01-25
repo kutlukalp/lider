@@ -76,7 +76,7 @@
 		<module>tr.org.liderahenk.lider-ldap-impl</module>
 		<module>tr.org.liderahenk.lider-plugin-impl</module>
 		<module>tr.org.liderahenk.lider-messaging-impl</module>
-		<!-- <module>tr.org.liderahenk.lider-taskmanager-impl</module> -->
+		<module>tr.org.liderahenk.lider-taskmanager-impl</module>
 		<module>tr.org.liderahenk.lider-datasource-mariadb</module>
 		<module>tr.org.liderahenk.lider-query-impl</module>
 	</modules>
