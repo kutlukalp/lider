@@ -48,7 +48,7 @@
         <feature>wrapper</feature>
         <feature>eventadmin</feature>
         <bundle start-level="45">mvn:org.apache.mina/mina-core/2.0.10</bundle>
-        <bundle start-level="45">mvn:javax.servlet/com.springsource.javax.servlet.jsp.jstl/1.2.0.v20110728</bundle>
+        <!-- <bundle start-level="45">mvn:javax.servlet/com.springsource.javax.servlet.jsp.jstl/1.2.0.v20110728</bundle> -->
         <bundle start-level="45">mvn:mysql/mysql-connector-java/${mysql.version}</bundle>
         <bundle start-level="45">wrap:mvn:c3p0/c3p0/0.9.1.1</bundle>
         <bundle start-level="45">mvn:commons-io/commons-io/${commons.io.version}</bundle>
@@ -63,8 +63,8 @@
         <bundle start-level="45">mvn:commons-fileupload/commons-fileupload/${file.upload.version}</bundle>
         <bundle start-level="45">mvn:com.sun.jersey/jersey-core/${jersey.client.version}</bundle>
         <bundle start-level="45">mvn:com.sun.jersey/jersey-client/${jersey.client.version}</bundle>
-        <bundle start-level="45">wrap:mvn:org.igniterealtime.smack/smackx/${smack.version}</bundle>
-        <bundle start-level="45">wrap:mvn:org.igniterealtime.smack/smack/${smack.version}</bundle>
+        <!-- <bundle start-level="45">wrap:mvn:org.igniterealtime.smack/smackx/${smack.version}</bundle>
+        <bundle start-level="45">wrap:mvn:org.igniterealtime.smack/smack/${smack.version}</bundle> -->
         <bundle start-level="45">mvn:net.sf.ehcache/ehcache/2.8.0</bundle>
         <bundle start-level="45">mvn:org.apache.shiro/shiro-core/1.2.2</bundle>
         <bundle start-level="45">mvn:org.apache.shiro/shiro-web/1.2.2</bundle>
