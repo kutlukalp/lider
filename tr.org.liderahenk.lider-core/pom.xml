@@ -50,12 +50,6 @@
 			<scope>provided</scope>
 		</dependency>
 
-
-		<!-- <dependency>
-			<groupId>antlr</groupId>
-			<artifactId>antlr</artifactId>
-			<scope>provided</scope>
-		</dependency> -->
 		<dependency>
 			<groupId>org.apache.directory.api</groupId>
 			<artifactId>api-ldap-client-api</artifactId>
@@ -104,10 +98,8 @@
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			<version>1.8</version>
 			<scope>provided</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.apache.directory.api</groupId>
 			<artifactId>api-ldap-codec-standalone</artifactId>

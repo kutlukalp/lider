@@ -55,7 +55,7 @@ import tr.org.liderahenk.lider.core.api.messaging.ITaskStatusUpdateSubscriber;
  */
 public class XMPPClientImpl {
 
-	// 'vvv' ile başlayan yorumlar volkan'ın bundle lar ayağa kalktığında 
+	// 'vvv' ile başlayan yorumlar volkan'ın, lider ayağa kalkabildiğinde debug edilmeli
 	
 	private static Logger log = LoggerFactory.getLogger(XMPPClientImpl.class);
 
@@ -415,7 +415,8 @@ public class XMPPClientImpl {
 
 		config = XMPPTCPConnectionConfiguration.builder()
 				.setServiceName(server).setPort(port).setHost(domain)
-				.setSecurityMode(SecurityMode.ifpossible).build();
+//				.setSecurityMode(SecurityMode.required).build(); //TODO vvv Security mode required olmalı şimdilik disable a çektim
+		.setSecurityMode(SecurityMode.disabled).build();
 
 		// config = new ConnectionConfiguration(server, port, domain); //vvv
 		// setSASLAuthenticationEnabled ?

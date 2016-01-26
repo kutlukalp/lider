@@ -9,20 +9,20 @@
 	<version>1.0.0-SNAPSHOT</version>
 	<name>LiderAhenk Client Management System</name>
 
-	<repositories>
-		<repository>
-			<id>mys.releases</id>
-			<name>Pardus
-			MYS Releases Proxy Repository</name>
-			<url>http://193.140.98.177/nexus/content/groups/mys/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
+	<!-- <repositories> -->
+	<!-- <repository> -->
+	<!-- <id>mys.releases</id> -->
+	<!-- <name>Pardus -->
+	<!-- MYS Releases Proxy Repository</name> -->
+	<!-- <url>http://193.140.98.177/nexus/content/groups/mys/</url> -->
+	<!-- <releases> -->
+	<!-- <enabled>true</enabled> -->
+	<!-- </releases> -->
+	<!-- <snapshots> -->
+	<!-- <enabled>true</enabled> -->
+	<!-- </snapshots> -->
+	<!-- </repository> -->
+	<!-- </repositories> -->
 
 	<properties>
 		<liderahenk.version>1.0.0-SNAPSHOT</liderahenk.version>
@@ -53,7 +53,7 @@
 		<apacheDirectoryServerVersion>2.0.0-M15</apacheDirectoryServerVersion>
 		<jacksonVersion>1.9.13</jacksonVersion>
 		<antlr.version>2.7.7</antlr.version>
-		<smackVersion>3.3.1</smackVersion>
+		<smackVersion>4.1.5</smackVersion>
 		<hazelcastVersion>3.1.7</hazelcastVersion>
 		<osgi.compendium.version>4.3.1</osgi.compendium.version>
 		<osgi.core.version>4.3.1</osgi.core.version>
@@ -61,7 +61,17 @@
 		<jerseyClientVersion>1.19</jerseyClientVersion>
 		<fileUploadVersion>1.2.2</fileUploadVersion>
 		<jerseyClientVersion>1.17.1</jerseyClientVersion>
-
+		<commons.compress>1.7</commons.compress>
+		<springsource.jstl>1.2.0.v20110728</springsource.jstl>
+		<springframework.version>3.1.4.RELEASE</springframework.version>
+		<commons.fileupload>1.2.2</commons.fileupload>
+		<shiro.all>1.2.2</shiro.all>
+		<servlet.api>2.5</servlet.api>
+		<servicemix.specs>2.4.0</servicemix.specs>
+		<jersey.client>1.18.1</jersey.client>
+		<jersey.core>1.18.1</jersey.core>
+		<com.jcraft>0.1.50</com.jcraft>
+		<com.lowagie>2.1.7</com.lowagie>
 	</properties>
 
 	<modules>
@@ -182,19 +192,83 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
+				<groupId>com.jcraft</groupId>
+				<artifactId>jsch</artifactId>
+				<version>${com.jcraft}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.lowagie</groupId>
+				<artifactId>itext</artifactId>
+				<version>${com.lowagie}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.sun.jersey</groupId>
+				<artifactId>jersey-core</artifactId>
+				<version>${jersey.core}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.sun.jersey</groupId>
+				<artifactId>jersey-client</artifactId>
+				<version>${jersey.client}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.servicemix.specs</groupId>
+				<artifactId>org.apache.servicemix.specs.jsr311-api-1.1.1</artifactId>
+				<version>${servicemix.specs}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>servlet-api</artifactId>
+				<version>${servlet.api}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.shiro</groupId>
+				<artifactId>shiro-all</artifactId>
+				<version>${shiro.all}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>commons-fileupload</groupId>
+				<artifactId>commons-fileupload</artifactId>
+				<version>${commons.fileupload}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context</artifactId>
+				<version>${springframework.version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>com.springsource.javax.servlet.jsp.jstl</artifactId>
+				<version>${springsource.jstl}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-compress</artifactId>
+				<version>${commons.compress}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
 				<groupId>tr.org.liderahenk</groupId>
 				<artifactId>tr.org.liderahenk.lider-core</artifactId>
 				<version>${liderahenk.version}</version>
 				<scope>provided</scope>
 			</dependency>
-
 			<dependency>
 				<groupId>tr.org.liderahenk</groupId>
 				<artifactId>tr.org.liderahenk.lider-rest-impl</artifactId>
 				<version>${liderahenk.version}</version>
 				<scope>provided</scope>
 			</dependency>
-
 			<dependency>
 				<groupId>tr.org.liderahenk</groupId>
 				<artifactId>tr.org.liderahenk.lider-query-impl</artifactId>
@@ -327,8 +401,6 @@
 				<version>${apacheDirectoryApiVersion}</version>
 				<scope>provided</scope>
 			</dependency>
-
-
 			<dependency>
 				<groupId>org.codehaus.jackson</groupId>
 				<artifactId>jackson-core-asl</artifactId>
@@ -339,64 +411,57 @@
 				<artifactId>jackson-mapper-asl</artifactId>
 				<version>${jacksonVersion}</version>
 			</dependency>
-
-
 			<dependency>
 				<groupId>commons-io</groupId>
 				<artifactId>commons-io</artifactId>
 				<version>${commons.io.version}</version>
 			</dependency>
-
-
-			<!-- Smack -->
-
 			<dependency>
 				<groupId>org.igniterealtime.smack</groupId>
-				<artifactId>smack</artifactId>
+				<artifactId>smack-core</artifactId>
 				<version>${smackVersion}</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.igniterealtime.smack</groupId>
-				<artifactId>smackx</artifactId>
+				<artifactId>smack-extensions</artifactId>
 				<version>${smackVersion}</version>
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.igniterealtime.smack</groupId>
-				<artifactId>smackx-debug</artifactId>
+				<artifactId>smack-tcp</artifactId>
 				<version>${smackVersion}</version>
+				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.igniterealtime.smack</groupId>
-				<artifactId>smackx-jingle</artifactId>
+				<artifactId>smack-sasl-javax</artifactId>
 				<version>${smackVersion}</version>
+				<scope>provided</scope>
 			</dependency>
-
-			<!-- -->
-
-
+			<dependency>
+				<groupId>org.igniterealtime.smack</groupId>
+				<artifactId>smack-java7</artifactId>
+				<version>${smackVersion}</version>
+				<scope>provided</scope>
+			</dependency>
 			<dependency>
 				<groupId>com.hazelcast</groupId>
 				<artifactId>hazelcast-all</artifactId>
 				<version>${hazelcastVersion}</version>
 				<scope>provided</scope>
 			</dependency>
-
-
 			<dependency>
 				<groupId>org.osgi</groupId>
 				<artifactId>org.osgi.compendium</artifactId>
 				<version>${osgi.compendium.version}</version>
 			</dependency>
-
-
 			<dependency>
 				<groupId>org.osgi</groupId>
 				<artifactId>org.osgi.core</artifactId>
 				<version>${osgi.core.version}</version>
 			</dependency>
-
 		</dependencies>
 	</dependencyManagement>
 
@@ -406,6 +471,20 @@
 			<artifactId>junit</artifactId>
 			<version>3.8.1</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
 		</dependency>
 	</dependencies>
 

@@ -15,17 +15,11 @@
 			<groupId>tr.org.liderahenk</groupId>
 			<artifactId>tr.org.liderahenk.lider-core</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.apache.directory.api</groupId>
 			<artifactId>api-ldap-client-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
-		<!-- <dependency>
-			<groupId>antlr</groupId>
-			<artifactId>antlr</artifactId>
-			<scope>provided</scope>
-		</dependency> -->
 		<dependency>
 			<groupId>org.apache.directory.api</groupId>
 			<artifactId>api-ldap-client-api</artifactId>
@@ -76,7 +70,6 @@
 			<artifactId>commons-codec</artifactId>
 			<scope>provided</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.apache.directory.api</groupId>
 			<artifactId>api-ldap-codec-standalone</artifactId>
