@@ -33,6 +33,8 @@
         <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-web/${project.version}/war</bundle>
         <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-config/${project.version}</bundle>
         <configfile finalname="/etc/tr.org.liderahenk.cfg">mvn:tr.org.liderahenk/tr.org.liderahenk.lider-config/${project.version}/cfg</configfile>
+        <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-cache-impl/${project.version}</bundle>
+        <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-ldap-impl/${project.version}</bundle>
     </feature>
     
     <feature name="lider-support" description="${project.name}" version="${project.version}">
