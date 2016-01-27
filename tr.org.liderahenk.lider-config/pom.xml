@@ -7,17 +7,73 @@
     <artifactId>tr.org.liderahenk.lider</artifactId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
-  <groupId>tr.org.liderahenk</groupId>
+  
   <artifactId>tr.org.liderahenk.lider-config</artifactId>
   <version>1.0-SNAPSHOT</version>
   <name>tr.org.liderahenk.lider-config</name>
   <url>http://maven.apache.org</url>
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
-</project>
+  
+  <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+	<dependencies>
+	
+		<dependency>
+				<groupId>tr.org.liderahenk</groupId>
+				<artifactId>tr.org.liderahenk.lider-core</artifactId>
+				<scope>provided</scope>
+			</dependency>
+	
+	</dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <executions>
+             <execution>
+                <id>filter</id>
+                <phase>generate-resources</phase>
+                <goals>
+                  <goal>resources</goal>
+                </goals>
+             </execution>
+          </executions>
+        </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-artifacts</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>target/classes/features.xml</file>
+                                    <type>xml</type>
+                                </artifact>
+                                <artifact>
+                                    <file>target/classes/tr.org.liderahenk.cfg</file>
+                                    <type>cfg</type>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+  
+  </project>
