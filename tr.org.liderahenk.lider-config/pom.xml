@@ -11,7 +11,7 @@
 
 	<artifactId>tr.org.liderahenk.lider-config</artifactId>
 	<name>tr.org.liderahenk.lider-config</name>
-	<url>http://maven.apache.org</url>
+	<url>http://www.liderahenk.org.tr</url>
 	<packaging>bundle</packaging>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

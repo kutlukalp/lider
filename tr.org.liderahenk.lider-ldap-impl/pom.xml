@@ -9,7 +9,7 @@
 	</parent>
 
 	<artifactId>tr.org.liderahenk.lider-ldap-impl</artifactId>
-
+	<packaging>bundle</packaging>
 	<dependencies>
 		<dependency>
 			<groupId>tr.org.liderahenk</groupId>
@@ -76,5 +76,22 @@
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>2.4.0</version>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Bundle-SymbolicName>tr.org.liderahenk.lider-ldap-impl</Bundle-SymbolicName>
+						<Bundle-Version>1.0.0</Bundle-Version>
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>
