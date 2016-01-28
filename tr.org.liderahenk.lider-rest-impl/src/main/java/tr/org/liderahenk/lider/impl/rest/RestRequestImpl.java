@@ -86,7 +86,8 @@ public class RestRequestImpl implements IRestRequest {
 	}
 
 	public void setPluginName(String pluginName) {
-		this.pluginName = pluginName;
+		// Ensure there is no whitespace characters in the string
+		this.pluginName = pluginName != null ? pluginName.replace("\\s+", "") : null;
 	}
 
 	public String getPluginVersion() {
@@ -94,7 +95,8 @@ public class RestRequestImpl implements IRestRequest {
 	}
 
 	public void setPluginVersion(String pluginVersion) {
-		this.pluginVersion = pluginVersion;
+		// Ensure there is no whitespace characters in the string
+		this.pluginVersion = pluginVersion != null ? pluginVersion.replace("\\s+", "") : null;
 	}
 
 	public Map<String, Object> getParameterMap() {
@@ -126,7 +128,8 @@ public class RestRequestImpl implements IRestRequest {
 	}
 
 	public void setCommandId(String commandId) {
-		this.commandId = commandId;
+		// Ensure there is no whitespace characters in the string
+		this.commandId = commandId != null ? commandId.replace("\\s+", "") : null;
 	}
 
 }
