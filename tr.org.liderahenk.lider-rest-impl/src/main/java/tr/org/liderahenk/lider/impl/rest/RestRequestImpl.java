@@ -1,107 +1,132 @@
 package tr.org.liderahenk.lider.impl.rest;
 
+import java.util.List;
+import java.util.Map;
+
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import tr.org.liderahenk.lider.core.api.rest.IRestRequest;
+import tr.org.liderahenk.lider.core.api.rest.Priority;
+import tr.org.liderahenk.lider.core.api.rest.RestDNType;
+
 /**
- * Default implementation for {@link IRestRequest}
- *  
- * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
+ * Default implementation for {@link IRestRequest}. Request object which is used
+ * to carry plugin parameters and designates which DN entries to process.
+ * 
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RestRequestImpl implements IRestRequest{
-	
-	private String resource;
-	private String access;
-	private String attribute;
-	private String command;
-	private String action;
-	private String user;
-	private RestRequestBodyImpl body;
-	
-	
-	public RestRequestImpl() {
-		// TODO Auto-generated constructor stub
-	}
-	
-	public RestRequestImpl(String resource, String access, String attribute,
-			String command, String action, RestRequestBodyImpl body, String user) {
-		this(resource, access, attribute, command, action, body);
-		this.user = user;
-	}
-	
-	public RestRequestImpl(String resource, String access, String attribute,
-			String command, String action,  RestRequestBodyImpl body) {
-		this.resource = resource;
-		this.access = access;
-		this.attribute = attribute;
-		this.command = command;
-		this.action = action;
-		this.body = body;
-	}
+public class RestRequestImpl implements IRestRequest {
 
-	public RestRequestImpl(IRestRequest req) {
-		this.access = req.getAccess();
-		this.action = req.getAction();
-		this.attribute = req.getAttribute();
-		this.body = (req.getBody()== null) ? null : new RestRequestBodyImpl( req.getBody());
-		this.command = req.getCommand();
-		this.resource = req.getResource();
-		this.user = req.getUser();
-	}
+	private static final long serialVersionUID = -8069305429485863159L;
 
-	@Override
-	public String getResource() {
-		return resource;
-	}
-
-	@Override
-	public String getAccess() {
-		return access;
-	}
-
-	@Override
-	public String getAttribute() {
-		return attribute;
-	}
-
-	@Override
-	public String getCommand() {
-		return command;
-	}
-	
-	@Override
-	public String getAction() {
-		return action;
-	}
-	
-	@Override
-	public String getUser() {
-		return user;
-	}
-	
-	public void setUser(String user) {
-		this.user = user;
-	}
-
-	@Override
-	public RestRequestBodyImpl getBody() {
-		return body;
-	}
-	
-	@Override
-	public String getURL() {
-		//FIXME temporary workaround to get full request url
-		return "/"+getResource()+"/"+getAccess()+"/"+getAttribute()+"/"+getCommand()+"/"+getAction();
-	}
-	
-	public void setURL(String URL){
-		//FIXME @JsonIgnoreProperties(ignoreUnknown = true) doesn't work. need to cheat jackson 
-	}
-	
 	/**
-	 * 
+	 * Contains DN entries which are subject to task execution.
 	 */
-	private static final long serialVersionUID = 2894564680974204428L;
+	private List<String> dnList;
+
+	/**
+	 * This type indicates what kind of DN entries to consider when executing
+	 * tasks. (For example DN list may consists of some OU groups and user may
+	 * only want to execute a task on user DN's inside these groups.)
+	 */
+	private RestDNType dnType;
+
+	/**
+	 * Name of the plugin which executes the task.
+	 */
+	private String pluginName;
+
+	/**
+	 * Version number of the plugin which executes the task.
+	 */
+	private String pluginVersion;
+
+	/**
+	 * Command ID is a unique value in the target plugin that is used to
+	 * distinguish an ICommand class from others.
+	 */
+	private String commandId;
+
+	/**
+	 * Custom parameter map that can be used by the plugin.
+	 */
+	private Map<String, Object> parameterMap;
+
+	/**
+	 * If cron expression is not null or empty, then task will be scheduled on
+	 * the agent.
+	 */
+	private String cronExpression;
+
+	/**
+	 * Priority indicates how important a task compared to others.
+	 */
+	private Priority priority;
+
+	public List<String> getDnList() {
+		return dnList;
+	}
+
+	public void setDnList(List<String> dnList) {
+		this.dnList = dnList;
+	}
+
+	public RestDNType getDnType() {
+		return dnType;
+	}
+
+	public void setDnType(RestDNType dnType) {
+		this.dnType = dnType;
+	}
+
+	public String getPluginName() {
+		return pluginName;
+	}
+
+	public void setPluginName(String pluginName) {
+		this.pluginName = pluginName;
+	}
+
+	public String getPluginVersion() {
+		return pluginVersion;
+	}
+
+	public void setPluginVersion(String pluginVersion) {
+		this.pluginVersion = pluginVersion;
+	}
+
+	public Map<String, Object> getParameterMap() {
+		return parameterMap;
+	}
+
+	public void setParameterMap(Map<String, Object> parameterMap) {
+		this.parameterMap = parameterMap;
+	}
+
+	public String getCronExpression() {
+		return cronExpression;
+	}
+
+	public void setCronExpression(String cronExpression) {
+		this.cronExpression = cronExpression;
+	}
+
+	public Priority getPriority() {
+		return priority;
+	}
+
+	public void setPriority(Priority priority) {
+		this.priority = priority;
+	}
+
+	public String getCommandId() {
+		return commandId;
+	}
+
+	public void setCommandId(String commandId) {
+		this.commandId = commandId;
+	}
+
 }

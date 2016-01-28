@@ -118,5 +118,9 @@ public interface ILDAPService {
 	
 	List<LdapEntry> search(List<LdapSearchFilterAttribute> filterAttributes,
 			String... attributes) throws LdapException;
+
+	List<LdapEntry> findEntries();
+
+	boolean isAhenk(LdapEntry entry);
 	
 }

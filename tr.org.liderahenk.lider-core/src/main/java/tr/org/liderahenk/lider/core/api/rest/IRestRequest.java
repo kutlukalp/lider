@@ -1,77 +1,69 @@
 package tr.org.liderahenk.lider.core.api.rest;
 
-
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 /**
- * Rest request object representing REST requests made to Lider Rest Services
+ * IRestRequest defines the interface which is responsible for keeping
+ * plugin-related parameter map and designating which DN entries to process and
+ * which plugin to use.
  * 
- * <blockquote>RESTFUL URL: /resource/access/attribute/command/action<br>
- * 					Samples:<br>	
- * 						<b>/ObjectClass/ObjectDN_or_ObjectContainerDN/USBPLG/KEYBOARD/ENABLED</b><br>
- * 						<b>/ObjectClass/ObjectDN_or_ObjectContainerDN/USBPLG/CAMERA/DISABLED<br>
- * 						<b>/ObjectClass/ObjectDN_or_ObjectContainerDN/USBPLG/DISK/ENABLED<br>
- * 						<b>/ObjectClass/ObjectDN_or_ObjectContainerDN/SCRIPTPLG/SAVE/SCRIPT</b><br>
- * 						<b>/ObjectClass/ObjectDN_or_ObjectContainerDN/SCRIPTPLG/GET/SCRIPT</b><br>
- * 						<b>/ObjectClass/ObjectDN_or_ObjectContainerDN/SCRIPTPLG/DELETE/SCRIPT</b><br>
- * 						<b>/ObjectClass/ObjectDN_or_ObjectContainerDN/SCRIPTPLG/RUN/SCRIPT</b><br>
- * </blockquote>
- * Note: Any command can use IRestRequestBody.customParameterMap attribute to send their custom parameters
- * 
- * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
- * 
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ *
  */
-public interface IRestRequest extends Serializable{
-	
+public interface IRestRequest extends Serializable {
+
 	/**
-	 * @return ObjectClass of a single target entry or target entries below a container DN ( TaskManager decides the actual case according to the given DN in access attribute),
-	 *  <br>i.e. resource type ==> ObjectClass (PardusUser or PardusComputer etc.), 
-	 * plugin may have extended LDAP schema with new ObjectClass(es) and may even use these new ones in Commands too.
+	 * Contains DN entries which are subject to task execution.
 	 */
-	String getResource();
-	
+	public List<String> getDnList();
+
 	/**
-	 *   
-	 * @return DN of a single target entry or a container of target entries ( TaskManager decides the actual case according to the given DN in access attribute),<br/>
-	 *  i.e. a single entry such as  <br/><b>cn=bduman,ou=people,ou=ank,dc=example,dc=com</b>, <br/>  or all the entries under <b>ou=people,ou=ank,dc=example,dc=com</b> 
-	 *  that have target ObjectClass given in actual <b>resource</b> attribute
-	 */
-	String getAccess();
-	
-	/**
+	 * This type indicates what kind of DN entries to consider when executing
+	 * tasks. (For example DN list may consists of some OU groups and user may
+	 * only want to execute a task on user DN's inside these groups.)
 	 * 
-	 * @return 3rd path variable in REST-style requests
+	 * @return one of these as DN type: {AHENK|USER|ALL}
 	 */
-	String getAttribute();
-	
+	public RestDNType getDnType();
+
 	/**
-	 * 
-	 * @return 4th path variable in REST-style requests
+	 * @return Name of the plugin which executes the task.
 	 */
-	String getCommand();
-	
+	public String getPluginName();
+
 	/**
-	 * 
-	 * @return 5th path variable in REST-style requests
+	 * @return Version number of the plugin which executes the task.
 	 */
-	String getAction();
-	
+	public String getPluginVersion();
+
 	/**
+	 * Command ID is a unique value in the target plugin that is used to
+	 * distinguish an ICommand class from others.
 	 * 
-	 * @return full URL path for request; i.e resource/access/attribute/command/action
+	 * @return command ID
 	 */
-	String getURL();
-	
+	public String getCommandId();
+
 	/**
-	 * 
-	 * @return user making the request
+	 * @return Custom parameter map that can be used by the plugin.
 	 */
-	String getUser();
-	
+	public Map<String, Object> getParameterMap();
+
 	/**
+	 * If cron expression is not null or empty, then task will be scheduled on
+	 * the agent.
 	 * 
-	 * @return (method POST) request body of the request
+	 * @return cron expression
 	 */
-	IRestRequestBody getBody();
-	
+	public String getCronExpression();
+
+	/**
+	 * Priority indicates how important a task compared to others.
+	 * 
+	 * @return priority
+	 */
+	public Priority getPriority();
+
 }

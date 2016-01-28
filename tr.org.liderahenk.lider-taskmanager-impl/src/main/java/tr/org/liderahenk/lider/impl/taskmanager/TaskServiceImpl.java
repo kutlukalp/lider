@@ -30,7 +30,6 @@ import tr.org.liderahenk.lider.core.api.taskmanager.TaskRetryFailedException;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskServiceException;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskState;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskStoreException;
-import tr.org.liderahenk.lider.impl.rest.RestRequestBodyImpl;
 
 /**
  * Default implementation for {@link ITaskService}
@@ -220,24 +219,25 @@ public class TaskServiceImpl implements ITaskService, IPresenceSubscriber {
 
 	@Override
 	public void update(String taskId, int priority) throws TaskServiceException {
-		try {
-			TaskImpl  task = taskStore.get(taskId);
-			
-			log.debug("will update task priority {} for task id: {}", priority, taskId);
-						
-			task.getTaskHistory().add(new TaskMessageImpl(
-					String.format("priority update: %1$s --> %2$s",
-					task.getPriority(), priority)));
-			task.setPriority(priority);
-			((RestRequestBodyImpl)task.getRequest().getBody()).setPriority(priority);
-			onUpdate(task,false);
-		
-			taskStore.update( task );
-			log.debug("successfully updated task priority {} for task id: {}", priority, taskId);
-		} catch (TaskStoreException e) {
-			throw new TaskServiceException(
-					"Task priority update failed", e);
-		}
+		// TODO
+//		try {
+//			TaskImpl  task = taskStore.get(taskId);
+//			
+//			log.debug("will update task priority {} for task id: {}", priority, taskId);
+//						
+//			task.getTaskHistory().add(new TaskMessageImpl(
+//					String.format("priority update: %1$s --> %2$s",
+//					task.getPriority(), priority)));
+//			task.setPriority(priority);
+//			((RestRequestBodyImpl)task.getRequest().getBody()).setPriority(priority);
+//			onUpdate(task,false);
+//		
+//			taskStore.update( task );
+//			log.debug("successfully updated task priority {} for task id: {}", priority, taskId);
+//		} catch (TaskStoreException e) {
+//			throw new TaskServiceException(
+//					"Task priority update failed", e);
+//		}
 		
 	}
 
