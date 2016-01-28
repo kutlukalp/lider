@@ -5,18 +5,21 @@ import tr.org.liderahenk.lider.core.api.autherization.IAuthService;
 /**
  * 
  * <p>
- * This is the interface for server-side plugin command implementations.Any
+ * This is the interface for server-side plugin command implementations. Any
  * class implementing this interface can deploy a new command to the server.
- * ServiceRouter directs RestRequests to the appropriate command if exists
- * according to respective properties.
- * </p>
+ * ServiceRouterImpl directs RestRequestImpl to the appropriate command if
+ * exists according to respective properties.
+ * </p><br/>
  * 
  * <p>
- * The first two parameters (/ObjectClass/ObjectDN_or_ObjectContainerDN) are
- * reserved by the core system, but last three of these parameters may be freely
- * defined by the plugin developer (attribute/command/action) and we match the
- * actual command to run according to actual values of these three parameters,
- * any usage is welcome as long as they form a <b>unique</b> composition!
+ * ServiceRouterImpl tries to find the appropriate command via
+ * ServiceRegistryImpl which keeps ICommand instances according to some specific
+ * key format. This format consist of these properties: <br/>
+ * 
+ * {PLUGIN_NAME}:{PLUGIN_VERSION}:{COMMAND_ID}
+ * 
+ * The first two properties are the plugin name and plugin version respectively,
+ * and the third property is a unique identifier of the command for its plugin.
  * </p>
  *
  * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
@@ -29,7 +32,7 @@ public interface ICommand {
 	 * Any custom plugin command should implement this method and return a
 	 * non-null {@link ICommandResult}, A command may access to
 	 * {@link IAuthService}, ILdapService and more plugin services provided by
-	 * the core system to do its necessary job
+	 * the core system to do its necessary job.
 	 * 
 	 * @return command result {@link ICommandResult}
 	 */
@@ -46,26 +49,26 @@ public interface ICommand {
 
 	/**
 	 * 
-	 * @return id of the plugin implementing this command
+	 * @return id of the plugin implementing this command.
 	 */
 	String getPluginName();
 
 	/**
 	 * 
-	 * @return version of the plugin implementing this command
+	 * @return version of the plugin implementing this command.
 	 */
 	String getPluginVersion();
 
 	/**
-	 * Unique identifier for the command class.
+	 * Unique identifier of this command.
 	 * 
 	 * @return
 	 */
 	String getCommandId();
 
 	/**
-	 * @return true if this command needs agent interaction to fulfill its job,
-	 *         false otherwise
+	 * @return true if this command needs agent interaction to fulfil its job,
+	 *         false otherwise.
 	 */
 	Boolean needsTask();
 

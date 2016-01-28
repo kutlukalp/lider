@@ -22,7 +22,7 @@ import tr.org.liderahenk.lider.core.api.taskmanager.TaskSubmissionFailedExceptio
 /**
  * Default implementation for {@link IRestRequestProcessor}
  * RestRequestProcessorImpl is responsible for authorizing the user which
- * request belongs to. If it is authorized request is delegated to the service
+ * request belongs to. If it is authorized, request is delegated to the service
  * router, otherwise an error response is returned.
  * 
  * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
@@ -62,7 +62,7 @@ public class RestRequestProcessorImpl implements IRestRequestProcessor {
 	@Override
 	public IRestResponse processRequest(String requestBody) {
 
-		IRestRequest restRequest = null;
+		IRestRequest request = null;
 		Subject currentUser = null;
 
 		try {
@@ -72,44 +72,34 @@ public class RestRequestProcessorImpl implements IRestRequestProcessor {
 		}
 
 		try {
-			restRequest = requestFactory.createRequest(requestBody);
+			request = requestFactory.createRequest(requestBody);
 
 			if (config.getAuthorizationEnabled()) {
 				if (currentUser.getPrincipal() != null) {
-
-					// TODO auth!!!!
-					// String authCmdId = restRequest.getAttribute() + "/" +
-					// restRequest.getCommand() + "/"
-					// + restRequest.getAction();
-					// if
-					// (!authService.isAuthorized(currentUser.getPrincipal().toString(),
-					// restRequest.getAccess(),
-					// restRequest.getResource(), authCmdId)) {
-					// return responseFactory.createResponse(restRequest,
-					// RestResponseStatus.ERROR,
-					// Arrays.asList(new String[] { "NOT_AUTHORIZED" }));
-					//
-					// }
+					if (!authService.isAuthorized(currentUser.getPrincipal().toString(), request)) {
+						return responseFactory.createResponse(request, RestResponseStatus.ERROR,
+								Arrays.asList(new String[] { "NOT_AUTHORIZED" }));
+					}
 				} else {
 					logger.warn("Unauthenticated user access, bypassing plugin authorization.");
 				}
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
-			return responseFactory.createResponse(restRequest, RestResponseStatus.ERROR,
+			return responseFactory.createResponse(request, RestResponseStatus.ERROR,
 					Arrays.asList(new String[] { e.getMessage() }));
 		}
 
 		try {
-			return serviceRouter.delegateRequest(restRequest);
+			return serviceRouter.delegateRequest(request);
 		} catch (InvalidRequestException e) {
 			// TODO resposne messages!!
 			// adding some error messages to the response, and a
 			// ResponseRequestStatus.
-			return responseFactory.createResponse(restRequest, RestResponseStatus.ERROR,
+			return responseFactory.createResponse(request, RestResponseStatus.ERROR,
 					Arrays.asList(new String[] { "No matching command found to process request!" }));
 		} catch (TaskSubmissionFailedException e) {
-			return responseFactory.createResponse(restRequest, RestResponseStatus.ERROR, Arrays.asList(
+			return responseFactory.createResponse(request, RestResponseStatus.ERROR, Arrays.asList(
 					new String[] { "Cannot submit task for request!", e.getMessage(), e.getCause().getMessage() }));
 		}
 	}

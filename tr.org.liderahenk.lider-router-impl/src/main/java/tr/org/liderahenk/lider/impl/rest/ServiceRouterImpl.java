@@ -77,16 +77,16 @@ public class ServiceRouterImpl implements IServiceRouter {
 			return responseFactory.createResponse(validationResult);
 		}
 
-		// Execute command, it a task is needed, delegate request to the task
+		// Execute command, if a task is needed, delegate request to the task
 		// manager.
 		// Finally, return result response.
 		ICommandResult commandResult = command.execute(commandContext);
 		if (CommandResultStatus.OK == commandResult.getStatus()) {
 			if (!command.needsTask()) {
-				logger.debug("{} is a IServerCommand, no need to create a task", command);
+				logger.debug("{} does not require task, returning response.", command);
 				return responseFactory.createResponse(commandResult);
 			} else {
-				logger.debug("{} is a ITaskCommand, I will call ITaskManager to create a task for this", command);
+				logger.debug("{} requires task, delegating request to task manager.", command);
 				String[] taskIds = null;
 				try {
 					taskIds = taskManager.addTask(request);

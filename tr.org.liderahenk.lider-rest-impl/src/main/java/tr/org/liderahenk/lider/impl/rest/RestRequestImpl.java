@@ -11,7 +11,7 @@ import tr.org.liderahenk.lider.core.api.rest.RestDNType;
 
 /**
  * Default implementation for {@link IRestRequest}. Request object which is used
- * to carry plugin parameters and designates which DN entries to process.
+ * to carry plugin parameters and designates which LDAP entries to process.
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
