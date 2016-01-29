@@ -1,3 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+	<service ref="router"
+		interface="tr.org.liderahenk.lider.core.api.router.IServiceRouter" />
+
+	<bean id="router" class="tr.org.liderahenk.lider.impl.rest.ServiceRouterImpl">
+		<property name="serviceRegistry" ref="registry" />
+		<property name="responseFactory" ref="responseFactory" />
+		<property name="commandContextFactory" ref="commandContextFactory" />
+		<property name="taskManager" ref="taskManager" />
+	</bean>
+
+	<bean id="registry" class="tr.org.liderahenk.lider.impl.rest.ServiceRegistryImpl">
+		<property name="commands" ref="commands" />
+	</bean>
+
+	<reference id="commandContextFactory"
+		interface="tr.org.liderahenk.lider.core.api.plugin.ICommandContextFactory" />
+
+	<reference id="responseFactory"
+		interface="tr.org.liderahenk.lider.core.api.rest.IResponseFactory" />
+
+	<reference id="taskManager"
+		interface="tr.org.liderahenk.lider.core.api.taskmanager.ITaskManager" />
+
+	<reference-list id="commands" availability="optional"
+		interface="tr.org.liderahenk.lider.core.api.plugin.ICommand" />
+
 </blueprint>
