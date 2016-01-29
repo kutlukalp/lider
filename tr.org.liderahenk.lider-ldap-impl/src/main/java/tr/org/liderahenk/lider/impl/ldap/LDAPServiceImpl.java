@@ -1,6 +1,5 @@
 package tr.org.liderahenk.lider.impl.ldap;
 
-
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -53,8 +52,6 @@ import tr.org.liderahenk.lider.core.api.ldap.LdapSearchFilterAttribute;
 import tr.org.liderahenk.lider.core.api.plugin.ILdapExtension;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
-
-
 /**
  * Default implementation for {@link ILDAPService}
  * 
@@ -63,10 +60,7 @@ import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
  */
 public class LDAPServiceImpl implements ILDAPService {
 
-	/**
-	 * 
-	 */
-	private final static Logger LOG = LoggerFactory.getLogger(LDAPServiceImpl.class);
+	private final static Logger logger = LoggerFactory.getLogger(LDAPServiceImpl.class);
 
 	/**
 	 * 
@@ -109,16 +103,15 @@ public class LDAPServiceImpl implements ILDAPService {
 	}
 
 	public void init() throws Exception {
-		LOG.info("Initializing LDAP service");
-		LOG.info("ldap.server => {}", configurationService.getLdapServer());
-		LOG.info("ldap.port => {}", configurationService.getLdapPort());
-		LOG.info("ldap.user => {}", configurationService.getLdapUser());
-		LOG.info("ldap.password => {}", configurationService.getLdapPassword());
-		LOG.info("ldap.root.dn => {}", configurationService.getLdapRootDn());
+		logger.info("Initializing LDAP service");
+		logger.info("ldap.server => {}", configurationService.getLdapServer());
+		logger.info("ldap.port => {}", configurationService.getLdapPort());
+		logger.info("ldap.user => {}", configurationService.getLdapUser());
+		logger.info("ldap.password => {}", configurationService.getLdapPassword());
+		logger.info("ldap.root.dn => {}", configurationService.getLdapRootDn());
 
 		rootDn = configurationService.getLdapRootDn();
-		authLdapUserSearchBase = configurationService
-				.getAuthLdapUserSearchBase();
+		authLdapUserSearchBase = configurationService.getAuthLdapUserSearchBase();
 		ldapUserJidAttribute = configurationService.getAgentLdapJidAttribute();
 
 		LdapConnectionConfig lconfig = new LdapConnectionConfig();
@@ -129,28 +122,26 @@ public class LDAPServiceImpl implements ILDAPService {
 		// lconfig.setUseTls(true);
 		lconfig.setUseSsl(configurationService.getLdapUseSsl());
 
-		PoolableLdapConnectionFactory factory = new PoolableLdapConnectionFactory(
-				lconfig);
+		PoolableLdapConnectionFactory factory = new PoolableLdapConnectionFactory(lconfig);
 		pool = new LdapConnectionPool(factory);
 		pool.setTestOnBorrow(true);
 		pool.setMaxActive(100);
 		pool.setMaxWait(3000);
 		pool.setWhenExhaustedAction(GenericObjectPool.WHEN_EXHAUSTED_BLOCK);
-		LOG.info("finished initializing LDAP service");
+		logger.info("finished initializing LDAP service");
 
 	}
 
 	public void destroy() {
-		LOG.info("Destroying LDAP service...");
+		logger.info("Destroying LDAP service...");
 		try {
 			pool.close();
 		} catch (Exception e) {
-			LOG.warn("error destroying LDAP service", e);
+			logger.warn("error destroying LDAP service", e);
 		}
 	}
 
-	public void setConfigurationService(
-			IConfigurationService configurationService) {
+	public void setConfigurationService(IConfigurationService configurationService) {
 		this.configurationService = configurationService;
 	}
 
@@ -172,7 +163,7 @@ public class LDAPServiceImpl implements ILDAPService {
 		try {
 			pool.releaseConnection(ldapConnection);
 		} catch (Exception e) {
-			LOG.error(e.getMessage());
+			logger.error(e.getMessage());
 			// throw new LdapException(e);
 		}
 	}
@@ -186,10 +177,10 @@ public class LDAPServiceImpl implements ILDAPService {
 		user = (UserImpl) cacheService.get("ldap:getuser:" + userDN);
 
 		if (user != null) {
-			LOG.debug("cache hit: user dn => {}", userDN);
+			logger.debug("cache hit: user dn => {}", userDN);
 			return user;
 		}
-		LOG.debug("cache miss: user dn => {}, doing ldap search", userDN);
+		logger.debug("cache miss: user dn => {}, doing ldap search", userDN);
 		try {
 			connection = getConnection();
 			Entry resultEntry = connection.lookup(userDN);
@@ -199,29 +190,23 @@ public class LDAPServiceImpl implements ILDAPService {
 				if (null != resultEntry.get("liderPrivilege")) {
 					user.setTargetDnPrivileges(new ArrayList<IUserPrivilege>());
 
-					Iterator<Value<?>> iter = resultEntry.get("liderPrivilege")
-							.iterator();
+					Iterator<Value<?>> iter = resultEntry.get("liderPrivilege").iterator();
 					while (iter.hasNext()) {
 						String privilege = iter.next().getValue().toString();
-						LOG.debug("found user privilege => {}", privilege);
+						logger.debug("found user privilege => {}", privilege);
 						Matcher matcher = pattern.matcher(privilege);
 						if (matcher.matches()) {
-							user.getTargetDnPrivileges()
-									.add(new UserPrivilegeImpl(
-											matcher.group(1), matcher.group(2),
-											Boolean.valueOf(matcher.group(3))));
+							user.getTargetDnPrivileges().add(new UserPrivilegeImpl(matcher.group(1), matcher.group(2),
+									Boolean.valueOf(matcher.group(3))));
 
 						} else {
-							LOG.warn(
-									"invalid pattern in privilege => {}, pattern => {}",
-									privilege, pattern);
+							logger.warn("invalid pattern in privilege => {}, pattern => {}", privilege, pattern);
 						}
 					}
 					// adding privileges from user's groups
-					user.getTargetDnPrivileges().addAll(
-							getGroupPrivileges(userDN));
+					user.getTargetDnPrivileges().addAll(getGroupPrivileges(userDN));
 				}
-				LOG.debug("putting user to cache: user dn => {}", userDN);
+				logger.debug("putting user to cache: user dn => {}", userDN);
 				cacheService.put("ldap:getuser:" + userDN, user);
 				return user;
 			}
@@ -234,59 +219,49 @@ public class LDAPServiceImpl implements ILDAPService {
 
 	}
 
-	private List<IUserPrivilege> getGroupPrivileges(String userDn)
-			throws LdapException {
-		LOG.debug("will search group privileges for user {}", userDn);
+	private List<IUserPrivilege> getGroupPrivileges(String userDn) throws LdapException {
+		logger.debug("will search group privileges for user {}", userDn);
 		LdapConnection connection = null;
 		List<IUserPrivilege> groupPrivileges = new ArrayList<IUserPrivilege>();
 
 		try {
 			connection = getConnection();
 
-			String filter = "(&(objectClass=pardusLider)(member=$1))".replace(
-					"$1", userDn);
+			String filter = "(&(objectClass=pardusLider)(member=$1))".replace("$1", userDn);
 
-			LOG.debug("search filter => {}", filter);
-			LOG.debug("search base dn => {}", this.rootDn);
+			logger.debug("search filter => {}", filter);
+			logger.debug("search base dn => {}", this.rootDn);
 
-			EntryCursor cursor = connection.search(this.rootDn, filter,
-					SearchScope.SUBTREE);
+			EntryCursor cursor = connection.search(this.rootDn, filter, SearchScope.SUBTREE);
 
 			while (cursor.next()) {
 
 				Entry entry = cursor.get();
-				LOG.debug("found group => {}", entry.getDn());
+				logger.debug("found group => {}", entry.getDn());
 
 				if (null != entry) {
 
 					if (null != entry.get("liderPrivilege")) {
 
-						Iterator<Value<?>> iter = entry.get("liderPrivilege")
-								.iterator();
+						Iterator<Value<?>> iter = entry.get("liderPrivilege").iterator();
 						while (iter.hasNext()) {
 
-							String privilege = iter.next().getValue()
-									.toString();
-							LOG.debug("found privilege => {}", privilege);
+							String privilege = iter.next().getValue().toString();
+							logger.debug("found privilege => {}", privilege);
 							Matcher matcher = pattern.matcher(privilege);
 							if (matcher.matches()) {
-								groupPrivileges.add(new UserPrivilegeImpl(
-										matcher.group(1), matcher.group(2),
+								groupPrivileges.add(new UserPrivilegeImpl(matcher.group(1), matcher.group(2),
 										Boolean.valueOf(matcher.group(3))));
 							} else {
-								LOG.warn(
-										"invalid pattern in privilege => {}, pattern => {}",
-										privilege, pattern);
+								logger.warn("invalid pattern in privilege => {}, pattern => {}", privilege, pattern);
 							}
 						}
 					} else {
-						LOG.debug("no privilege found in group => {}",
-								entry.getDn());
+						logger.debug("no privilege found in group => {}", entry.getDn());
 					}
 				}
 			}
-			LOG.debug("finished processing group privileges for user {}",
-					userDn);
+			logger.debug("finished processing group privileges for user {}", userDn);
 		} catch (Exception e) {
 			throw new LdapException(e);
 		} finally {
@@ -322,18 +297,16 @@ public class LDAPServiceImpl implements ILDAPService {
 
 	@Override
 	// FIXME SO SLOW IN PERFORMANCE TESTS!!
-	public List<String> getChilds(String baseDn, String attributeName,
-			String attributeValue, boolean recursive) throws LdapException {
-		LOG.debug("processing getChilds");
+	public List<String> getChilds(String baseDn, String attributeName, String attributeValue, boolean recursive)
+			throws LdapException {
+		logger.debug("processing getChilds");
 		LdapConnection connection = getConnection();
 		List<String> childNodes = new ArrayList<String>();
 		String filter = "";
 		if (recursive) {
-			filter = "(&(" + attributeName + "=" + attributeValue
-					+ ")(agentDnAhenk= " + baseDn + "))";
-		} 
-		else {
-			
+			filter = "(&(" + attributeName + "=" + attributeValue + ")(agentDnAhenk= " + baseDn + "))";
+		} else {
+
 			filter = "(" + attributeName + "=" + attributeValue + ")";
 		}
 
@@ -343,10 +316,11 @@ public class LDAPServiceImpl implements ILDAPService {
 		try {
 
 			SearchScope searchScope = SearchScope.SUBTREE;
-			if (recursive){
-				cursor = connection.search(agentDn, filter, searchScope);}
-			else{
-				cursor = connection.search(baseDn, filter, searchScope);}
+			if (recursive) {
+				cursor = connection.search(agentDn, filter, searchScope);
+			} else {
+				cursor = connection.search(baseDn, filter, searchScope);
+			}
 
 			while (cursor.next()) {
 				childNodes.add(cursor.get().getDn().getName());
@@ -357,14 +331,13 @@ public class LDAPServiceImpl implements ILDAPService {
 		} finally {
 			releaseConnection(connection);
 		}
-		LOG.debug("processed getChilds");
+		logger.debug("processed getChilds");
 		return childNodes;
 
 	}
 
 	@Override
-	public void addEntry(String newDn, Map<String, String[]> attributes)
-			throws LdapException {
+	public void addEntry(String newDn, Map<String, String[]> attributes) throws LdapException {
 		LdapConnection connection = getConnection();
 		try {
 			Dn dn = new Dn(newDn);
@@ -386,8 +359,7 @@ public class LDAPServiceImpl implements ILDAPService {
 			if (ResultCodeEnum.SUCCESS.equals(ldapResult.getResultCode())) {
 				return;
 			} else {
-				LOG.error("could not create LDAP entry: {}",
-						ldapResult.getDiagnosticMessage());
+				logger.error("could not create LDAP entry: {}", ldapResult.getDiagnosticMessage());
 				throw new LdapException(ldapResult.getDiagnosticMessage());
 			}
 		} catch (Exception e) {
@@ -404,7 +376,7 @@ public class LDAPServiceImpl implements ILDAPService {
 		try {
 			entry = connection.getRootDse();
 		} catch (org.apache.directory.api.ldap.model.exception.LdapException e) {
-			LOG.error(e.getMessage());
+			logger.error(e.getMessage());
 			throw new LdapException(e);
 		} finally {
 			releaseConnection(connection);
@@ -417,38 +389,36 @@ public class LDAPServiceImpl implements ILDAPService {
 		LdapConnection conn = null;
 		try {
 			conn = pool.getConnection();
-			EntryCursor cursor = conn.search(entryDn, "(objectClass=*)",
-					SearchScope.OBJECT, requestedAttributes);
+			EntryCursor cursor = conn.search(entryDn, "(objectClass=*)", SearchScope.OBJECT, requestedAttributes);
 			if (cursor.next()) {
 				Entry entry = cursor.get();
 				Map<String, String> attributes = new HashMap<String, String>();
-				for (String attr : requestedAttributes){
+				for (String attr : requestedAttributes) {
 					try {
 						attributes.put(attr, entry.get(attr).getString());
 					} catch (Exception e) {
-						LOG.warn("cannot read attribute value: ",
-								e.getMessage());
-					}}
+						logger.warn("cannot read attribute value: ", e.getMessage());
+					}
+				}
 				return new LdapEntry(entryDn, attributes);
 			} else {
 				return null;
 			}
 		} catch (Exception e) {
-			LOG.error("", e);
+			logger.error("", e);
 		} finally {
 			try {
 				pool.releaseConnection(conn);
 			} catch (Exception e) {
-				LOG.warn("", e);
+				logger.warn("", e);
 			}
 		}
 		return null;
 	}
 
 	@Override
-	public void updateEntry(String entryDn, String attribute, String value)
-			throws LdapException {
-		LOG.info("Replacing attribute " + attribute + " value " + value);
+	public void updateEntry(String entryDn, String attribute, String value) throws LdapException {
+		logger.info("Replacing attribute " + attribute + " value " + value);
 		LdapConnection connection = null;
 
 		connection = getConnection();
@@ -461,8 +431,7 @@ public class LDAPServiceImpl implements ILDAPService {
 					entry.remove(attribute, oldValue);
 				}
 				entry.add(attribute, value);
-				connection.modify(entry,
-						ModificationOperation.REPLACE_ATTRIBUTE);
+				connection.modify(entry, ModificationOperation.REPLACE_ATTRIBUTE);
 			}
 		} catch (Exception e) {
 			throw new LdapException(e);
@@ -470,12 +439,10 @@ public class LDAPServiceImpl implements ILDAPService {
 			releaseConnection(connection);
 		}
 	}
-	
-	
+
 	@Override
-	public void updateEntryAddAtribute(String entryDn, String attribute,
-			String value) throws LdapException {
-		LOG.info("Adding attribute " + attribute + " value " + value);
+	public void updateEntryAddAtribute(String entryDn, String attribute, String value) throws LdapException {
+		logger.info("Adding attribute " + attribute + " value " + value);
 		LdapConnection connection = null;
 
 		connection = getConnection();
@@ -484,11 +451,11 @@ public class LDAPServiceImpl implements ILDAPService {
 			entry = connection.lookup(entryDn);
 			if (entry != null) {
 				entry.put(attribute, value);
-				
+
 				ModifyRequest mr = new ModifyRequestImpl();
 				mr.setName(new Dn(entryDn));
 				mr.add(attribute, value);
-				
+
 				connection.modify(mr);
 			}
 		} catch (Exception e) {
@@ -496,12 +463,12 @@ public class LDAPServiceImpl implements ILDAPService {
 		} finally {
 			releaseConnection(connection);
 		}
-		
+
 	}
-	
+
 	@Override
 	public void updateEntryRemoveAttribute(String entryDn, String attribute) throws LdapException {
-		LOG.info("Removing attribute " + attribute);
+		logger.info("Removing attribute " + attribute);
 		LdapConnection connection = null;
 
 		connection = getConnection();
@@ -509,28 +476,28 @@ public class LDAPServiceImpl implements ILDAPService {
 		try {
 			entry = connection.lookup(entryDn);
 			if (entry != null) {
-				
-				for(Attribute a : entry.getAttributes()){
-					
-					if(a.getAttributeType().getName().equalsIgnoreCase("owner")){
+
+				for (Attribute a : entry.getAttributes()) {
+
+					if (a.getAttributeType().getName().equalsIgnoreCase("owner")) {
 						entry.remove(a);
 					}
 				}
-				
-				connection.modify(entry,
-						ModificationOperation.REMOVE_ATTRIBUTE);
+
+				connection.modify(entry, ModificationOperation.REMOVE_ATTRIBUTE);
 			}
 		} catch (Exception e) {
 			throw new LdapException(e);
 		} finally {
 			releaseConnection(connection);
 		}
-		
+
 	}
-	
+
 	@Override
-	public void updateEntryRemoveAttributeWithValue(String entryDn, String attribute,String value) throws LdapException {
-		LOG.info("Removing attribute " + attribute);
+	public void updateEntryRemoveAttributeWithValue(String entryDn, String attribute, String value)
+			throws LdapException {
+		logger.info("Removing attribute " + attribute);
 		LdapConnection connection = null;
 
 		connection = getConnection();
@@ -538,26 +505,25 @@ public class LDAPServiceImpl implements ILDAPService {
 		try {
 			entry = connection.lookup(entryDn);
 			if (entry != null) {
-				
-				for(Attribute a : entry.getAttributes()){
-					if(a.contains(value)){
+
+				for (Attribute a : entry.getAttributes()) {
+					if (a.contains(value)) {
 						a.remove(value);
 					}
 				}
-				
-				connection.modify(entry,ModificationOperation.REPLACE_ATTRIBUTE);
+
+				connection.modify(entry, ModificationOperation.REPLACE_ATTRIBUTE);
 			}
 		} catch (Exception e) {
 			throw new LdapException(e);
 		} finally {
 			releaseConnection(connection);
 		}
-		
+
 	}
-	
+
 	@Override
-	public String getDN(String baseDn, String attributeName,
-			String attributeValue) throws LdapException {
+	public String getDN(String baseDn, String attributeName, String attributeValue) throws LdapException {
 
 		LdapConnection connection = getConnection();
 		String filter = "(" + attributeName + "=" + attributeValue + ")";
@@ -566,12 +532,12 @@ public class LDAPServiceImpl implements ILDAPService {
 		try {
 			EntryCursor cursor = connection.search(baseDn, filter, searchScope);
 			while (cursor.next()) {
-				LOG.error("cursor:" + cursor.get().getDn().getName());
+				logger.error("cursor:" + cursor.get().getDn().getName());
 				return cursor.get().getDn().getName();
 			}
 
 		} catch (Exception e) {
-			LOG.error("Filter:" + filter + " baseDn: " + baseDn);
+			logger.error("Filter:" + filter + " baseDn: " + baseDn);
 			throw new LdapException(e);
 		} finally {
 			releaseConnection(connection);
@@ -579,7 +545,7 @@ public class LDAPServiceImpl implements ILDAPService {
 
 		return null;
 	}
-	
+
 	@Override
 	public String getDN(String jidAttributeValue) throws LdapException {
 		LdapConnection connection = getConnection();
@@ -589,12 +555,12 @@ public class LDAPServiceImpl implements ILDAPService {
 		try {
 			EntryCursor cursor = connection.search(this.authLdapUserSearchBase, filter, searchScope);
 			while (cursor.next()) {
-				LOG.error("cursor:" + cursor.get().getDn().getName());
+				logger.error("cursor:" + cursor.get().getDn().getName());
 				return cursor.get().getDn().getName();
 			}
 
 		} catch (Exception e) {
-			LOG.error("Filter:" + filter + " baseDn: " + this.authLdapUserSearchBase);
+			logger.error("Filter:" + filter + " baseDn: " + this.authLdapUserSearchBase);
 			throw new LdapException(e);
 		} finally {
 			releaseConnection(connection);
@@ -604,8 +570,8 @@ public class LDAPServiceImpl implements ILDAPService {
 	}
 
 	@Override
-	public List<LdapEntry> search(String attributeName, String attributeValue,
-			String... attributes) throws LdapException {
+	public List<LdapEntry> search(String attributeName, String attributeValue, String... attributes)
+			throws LdapException {
 		List<LdapEntry> result = new ArrayList<LdapEntry>();
 		Map<String, String> attrs = null;
 
@@ -627,20 +593,18 @@ public class LDAPServiceImpl implements ILDAPService {
 				Response response = searchCursor.get();
 				attrs = new HashMap<String, String>();
 				if (response instanceof SearchResultEntry) {
-					Entry resultEntry = ((SearchResultEntry) response)
-							.getEntry();
+					Entry resultEntry = ((SearchResultEntry) response).getEntry();
 					for (String attr : attributes) {
 
-						attrs.put(attr, resultEntry.get(attr) != null ? resultEntry.get(attr).getString():"");
+						attrs.put(attr, resultEntry.get(attr) != null ? resultEntry.get(attr).getString() : "");
 					}
 
-					result.add(new LdapEntry(resultEntry.getDn().toString(),
-							attrs));
+					result.add(new LdapEntry(resultEntry.getDn().toString(), attrs));
 
 				}
 			}
 		} catch (Exception e) {
-			LOG.error(e.getMessage());
+			logger.error(e.getMessage());
 			throw new LdapException(e);
 		} finally {
 			releaseConnection(connection);
@@ -649,9 +613,9 @@ public class LDAPServiceImpl implements ILDAPService {
 		return result;
 
 	}
-	
-	public List<LdapEntry> search(List<LdapSearchFilterAttribute> filterAttributes,
-			String... attributes) throws LdapException {
+
+	public List<LdapEntry> search(List<LdapSearchFilterAttribute> filterAttributes, String... attributes)
+			throws LdapException {
 		List<LdapEntry> result = new ArrayList<LdapEntry>();
 		Map<String, String> attrs = null;
 
@@ -666,9 +630,10 @@ public class LDAPServiceImpl implements ILDAPService {
 			}
 
 			String searchFilterStr = "(&";
-			
-			for(LdapSearchFilterAttribute filterAttr: filterAttributes){
-				searchFilterStr = searchFilterStr + "(" + filterAttr.getAttributeName() + filterAttr.getOperator().getOperator() + filterAttr.getAttributeValue() + ")";
+
+			for (LdapSearchFilterAttribute filterAttr : filterAttributes) {
+				searchFilterStr = searchFilterStr + "(" + filterAttr.getAttributeName()
+						+ filterAttr.getOperator().getOperator() + filterAttr.getAttributeValue() + ")";
 			}
 			searchFilterStr = searchFilterStr + ")";
 			req.setTimeLimit(0);
@@ -679,20 +644,18 @@ public class LDAPServiceImpl implements ILDAPService {
 				Response response = searchCursor.get();
 				attrs = new HashMap<String, String>();
 				if (response instanceof SearchResultEntry) {
-					Entry resultEntry = ((SearchResultEntry) response)
-							.getEntry();
+					Entry resultEntry = ((SearchResultEntry) response).getEntry();
 					for (String attr : attributes) {
 
-						attrs.put(attr, resultEntry.get(attr) != null ? resultEntry.get(attr).getString():"");
+						attrs.put(attr, resultEntry.get(attr) != null ? resultEntry.get(attr).getString() : "");
 					}
 
-					result.add(new LdapEntry(resultEntry.getDn().toString(),
-							attrs));
+					result.add(new LdapEntry(resultEntry.getDn().toString(), attrs));
 
 				}
 			}
 		} catch (Exception e) {
-			LOG.error(e.getMessage());
+			logger.error(e.getMessage());
 			throw new LdapException(e);
 		} finally {
 			releaseConnection(connection);
@@ -705,7 +668,7 @@ public class LDAPServiceImpl implements ILDAPService {
 	@Override
 	public List<String> getLyaUserJids() throws LdapException {
 
-		LOG.debug("searching for lya users");
+		logger.debug("searching for lya users");
 		LdapConnection connection = getConnection();
 		List<String> lyaUsers = new ArrayList<String>();
 
@@ -718,8 +681,7 @@ public class LDAPServiceImpl implements ILDAPService {
 		try {
 
 			SearchScope searchScope = SearchScope.SUBTREE;
-			cursor = connection.search(baseDn, filter, searchScope,
-					jidAttribute);
+			cursor = connection.search(baseDn, filter, searchScope, jidAttribute);
 
 			while (cursor.next()) {
 				lyaUsers.add(cursor.get().get(jidAttribute).getString());
@@ -730,14 +692,13 @@ public class LDAPServiceImpl implements ILDAPService {
 		} finally {
 			releaseConnection(connection);
 		}
-		LOG.debug("returned results for lya users search: {}",
-				lyaUsers.toString());
+		logger.debug("returned results for lya users search: {}", lyaUsers.toString());
 		return lyaUsers;
 
 	}
 
 	public void bindExtension(ILdapExtension extension) throws LdapException {
-		LOG.info("bind extension => {}", extension);
+		logger.info("bind extension => {}", extension);
 		LdapConnection connection = null;
 
 		try {
@@ -751,7 +712,7 @@ public class LDAPServiceImpl implements ILDAPService {
 	}
 
 	public void unbindExtension(ILdapExtension extension) throws LdapException {
-		LOG.info("unbind extension => {}", extension);
+		logger.info("unbind extension => {}", extension);
 	}
 
 	/**
@@ -775,18 +736,18 @@ public class LDAPServiceImpl implements ILDAPService {
 						Entry entry = ldifEntry.getEntry();
 
 						try {
-							if (conn.lookup(dn) != null){
-								LOG.info("Found {}, will not create.", dn);}
-							else{
-								throw new Exception();}
+							if (conn.lookup(dn) != null) {
+								logger.info("Found {}, will not create.", dn);
+							} else {
+								throw new Exception();
+							}
 						} catch (Exception e) {
 							try {
-								conn.add(new DefaultEntry(
-										new DefaultSchemaManager(), entry));
+								conn.add(new DefaultEntry(new DefaultSchemaManager(), entry));
 								count++;
-								LOG.info("Created {}.", dn);
+								logger.info("Created {}.", dn);
 							} catch (org.apache.directory.api.ldap.model.exception.LdapException e1) {
-								LOG.info("Could not create entry " + entry, e1);
+								logger.info("Could not create entry " + entry, e1);
 							}
 						}
 					} else {
@@ -794,13 +755,10 @@ public class LDAPServiceImpl implements ILDAPService {
 						List<Modification> items = ldifEntry.getModifications();
 
 						try {
-							conn.modify(dn, items
-									.toArray(new Modification[items.size()]));
-							LOG.info("Modified: " + dn
-									+ " with modificationItems: " + items);
+							conn.modify(dn, items.toArray(new Modification[items.size()]));
+							logger.info("Modified: " + dn + " with modificationItems: " + items);
 						} catch (org.apache.directory.api.ldap.model.exception.LdapException e) {
-							LOG.info("Could not modify: " + dn
-									+ " with modificationItems: " + items, e);
+							logger.info("Could not modify: " + dn + " with modificationItems: " + items, e);
 						}
 					}
 				}
@@ -809,34 +767,34 @@ public class LDAPServiceImpl implements ILDAPService {
 					try {
 						in.close();
 					} catch (Exception e) {
-						LOG.error("could not close ldif input stream: ", e);
+						logger.error("could not close ldif input stream: ", e);
 					}
 				}
 			}
 		} catch (FileNotFoundException fnfe) {
-			LOG.error("could not find ldif file: ", fnfe);
+			logger.error("could not find ldif file: ", fnfe);
 		} catch (Exception ioe) {
-			LOG.error("unexpected error reading ldif file: ", ioe);
+			logger.error("unexpected error reading ldif file: ", ioe);
 		}
 
 		return count;
 	}
 
 	public void deleteEntry(String dn) throws LdapException {
-		LOG.debug("processing deleteEntry(String dn)  delete Ldap entry...");
+		logger.debug("processing deleteEntry(String dn)  delete Ldap entry...");
 		LdapConnection connection = getConnection();
 		try {
 			connection.delete(new Dn(dn));
 		} catch (Exception e) {
 			throw new LdapException(e);
 		} finally {
-			releaseConnection(connection); 
+			releaseConnection(connection);
 		}
-		LOG.debug("processing deleteEntry(String dn)  delete Ldap entry...");
+		logger.debug("processing deleteEntry(String dn)  delete Ldap entry...");
 	}
 
 	public List<String> getChilds(String baseDn) throws LdapException {
-		LOG.debug("processing getChilds returns dn objects");
+		logger.debug("processing getChilds returns dn objects");
 		LdapConnection connection = getConnection();
 		List<String> childNodes = new ArrayList<String>();
 		String filter = "(objectClass=*)";
@@ -856,12 +814,12 @@ public class LDAPServiceImpl implements ILDAPService {
 		} finally {
 			releaseConnection(connection);
 		}
-		LOG.debug("processed getChilds over basedn " + baseDn);
+		logger.debug("processed getChilds over basedn " + baseDn);
 		return childNodes;
 	}
 
 	public void deleteEntry(Dn dn) throws LdapException {
-		LOG.debug("processing deleteEntry(Dn dn)  delete Ldap entry...");
+		logger.debug("processing deleteEntry(Dn dn)  delete Ldap entry...");
 		LdapConnection connection = getConnection();
 		try {
 			connection.delete(dn);
@@ -870,12 +828,20 @@ public class LDAPServiceImpl implements ILDAPService {
 		} finally {
 			releaseConnection(connection);
 		}
-		LOG.debug("Successfully processed deleteEntry(Dn dn)  delete Ldap entry...");
-		
+		logger.debug("Successfully processed deleteEntry(Dn dn)  delete Ldap entry...");
+
 	}
 
-	
+	@Override
+	public List<LdapEntry> findEntries() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-	
+	@Override
+	public boolean isAhenk(LdapEntry entry) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 }

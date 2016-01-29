@@ -125,46 +125,49 @@ public class TaskStoreHazelcastImpl implements ITaskStore {
 
 	@Override
 	public void insert(ITask task) throws TaskStoreException {
-		taskMap.put(task.getId(), (TaskImpl) task);
-		String hostAddress = "";
-		try {
-			hostAddress = InetAddress.getLocalHost().toString();
-			operationLogService.createLog(new Date(), task.getRequest().getUser(),"lider.taskmanager", task.getId(),
-					task.getRequest().getAction(),  hostAddress, "0",
-					  task.getId() + " başarılı bir şekilde oluşturuldu.", CrudType.Insert, task.getRequest().getAccess() );
-		} catch (Exception e) {
-			log.error("",e);
-		}
+		// TODO
+//		taskMap.put(task.getId(), (TaskImpl) task);
+//		String hostAddress = "";
+//		try {
+//			hostAddress = InetAddress.getLocalHost().toString();
+//			operationLogService.createLog(new Date(), task.getRequest().getUser(),"lider.taskmanager", task.getId(),
+//					task.getRequest().getAction(),  hostAddress, "0",
+//					  task.getId() + " başarılı bir şekilde oluşturuldu.", CrudType.Insert, task.getRequest().getAccess() );
+//		} catch (Exception e) {
+//			log.error("",e);
+//		}
 		
 	}
 
 	@Override
 	public void update(ITask task) throws TaskStoreException {
-		taskMap.replace(task.getId(), (TaskImpl) task);
-		String hostAddress = "";
-		try {
-			hostAddress = InetAddress.getLocalHost().toString();
-			operationLogService.createLog(new Date(), task.getRequest().getUser(),"lider.taskmanager", task.getId(),
-					task.getRequest().getAction(),  hostAddress, "0",
-					  task.getId()+" başarılı bir şekilde güncellendi.", CrudType.Update, task.getRequest().getAccess() );
-		} catch (Exception e) {
-			log.error("",e);
-		}
+		// TODO
+//		taskMap.replace(task.getId(), (TaskImpl) task);
+//		String hostAddress = "";
+//		try {
+//			hostAddress = InetAddress.getLocalHost().toString();
+//			operationLogService.createLog(new Date(), task.getRequest().getUser(),"lider.taskmanager", task.getId(),
+//					task.getRequest().getAction(),  hostAddress, "0",
+//					  task.getId()+" başarılı bir şekilde güncellendi.", CrudType.Update, task.getRequest().getAccess() );
+//		} catch (Exception e) {
+//			log.error("",e);
+//		}
 		
 	}
 	
 	@Override
 	public void delete(ITask task) throws TaskStoreException {
-		taskMap.remove(task.getId());		
-		String hostAddress = "";
-		try {
-			hostAddress = InetAddress.getLocalHost().toString();
-			operationLogService.createLog(new Date(), task.getRequest().getUser(), "lider.taskmanager", task.getId(),
-					task.getRequest().getAction(),  hostAddress, "0",
-					  task.getId()+" başarılı bir şekilde silindi.", CrudType.Delete, task.getRequest().getAccess() );
-		} catch (Exception e) {
-			log.error("",e);
-		}
+		// TODO
+//		taskMap.remove(task.getId());		
+//		String hostAddress = "";
+//		try {
+//			hostAddress = InetAddress.getLocalHost().toString();
+//			operationLogService.createLog(new Date(), task.getRequest().getUser(), "lider.taskmanager", task.getId(),
+//					task.getRequest().getAction(),  hostAddress, "0",
+//					  task.getId()+" başarılı bir şekilde silindi.", CrudType.Delete, task.getRequest().getAccess() );
+//		} catch (Exception e) {
+//			log.error("",e);
+//		}
 		//TODO validate deletion?
 		
 	}

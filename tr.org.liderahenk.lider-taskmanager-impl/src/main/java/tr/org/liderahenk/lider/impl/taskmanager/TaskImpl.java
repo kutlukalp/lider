@@ -65,27 +65,28 @@ public class TaskImpl implements ITask {
 	}
 	
 	public TaskImpl(String targetObjectDN, IRestRequest request) {
-		this.id = String.valueOf(UUID.randomUUID());
-		//TODO plugin_id, rest url, attribute,command,action, 
-		if( request.getUser() != null) 
-		{
-			this.owner = request.getUser();
-		}
-		else{
-			this.owner = "ANONYMOUS";
-		}
-		
-		this.targetObjectDN = targetObjectDN;
-		this.active = true;
-		this.creationDate = new Date();
-		this.changedDate = creationDate;
-		this.version = 0;
-		this.priority = (null != request.getBody().getPriority()) ? request.getBody().getPriority() : 5;
-		this.state = TaskState.CREATED;
-		this.timeout = new Date(creationDate.getTime()+ TaskStoreHazelcastImpl.getTimeout());
-		this.request = (RestRequestImpl) request;
-		this.pluginId = request.getBody().getPluginId();
-		this.pluginVersion = request.getBody().getPluginVersion();
+		// TODO
+//		this.id = String.valueOf(UUID.randomUUID());
+//		//TODO plugin_id, rest url, attribute,command,action, 
+//		if( request.getUser() != null) 
+//		{
+//			this.owner = request.getUser();
+//		}
+//		else{
+//			this.owner = "ANONYMOUS";
+//		}
+//		
+//		this.targetObjectDN = targetObjectDN;
+//		this.active = true;
+//		this.creationDate = new Date();
+//		this.changedDate = creationDate;
+//		this.version = 0;
+//		this.priority = (null != request.getBody().getPriority()) ? request.getBody().getPriority() : 5;
+//		this.state = TaskState.CREATED;
+//		this.timeout = new Date(creationDate.getTime()+ TaskStoreHazelcastImpl.getTimeout());
+//		this.request = (RestRequestImpl) request;
+//		this.pluginId = request.getBody().getPluginId();
+//		this.pluginVersion = request.getBody().getPluginVersion();
 		
 	}
 	
@@ -105,7 +106,7 @@ public class TaskImpl implements ITask {
 		this.owner = task.getOwner();
 		this.priority = task.getPriority();
 		this.parentTaskId = task.getParentTaskId();
-		this.request = new RestRequestImpl(task.getRequest());
+//		this.request = new RestRequestImpl(task.getRequest());
 		this.state = task.getState();
 		this.targetJID = (null == task.getTargetJID()) ? "ERROR" : task.getTargetJID().toLowerCase(Locale.ENGLISH);
 		this.targetObjectDN = task.getTargetObjectDN();

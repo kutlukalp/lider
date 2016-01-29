@@ -1,20 +1,22 @@
 package tr.org.liderahenk.lider.core.api.autherization;
 
+import tr.org.liderahenk.lider.core.api.rest.IRestRequest;
 
 /**
  * Provides authorization services
  *  
  * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
 public interface IAuthService {
-	
+
 	/**
 	 * 
-	 * @param userDn Ldap DN of the user to be authorized
-	 * @param targetDN LDAP DN of the target object 
-	 * @param operation specific operation to be authorized on targetDn
-	 * @return true if userDn is authorized on targetDn to do operation, false otherwise
+	 * 
+	 * @param string
+	 * @param restRequest
+	 * @return
 	 */
-	boolean isAuthorized(String userDn, String targetDN, String resource, String operation);
+	boolean isAuthorized(String string, IRestRequest restRequest);
 }

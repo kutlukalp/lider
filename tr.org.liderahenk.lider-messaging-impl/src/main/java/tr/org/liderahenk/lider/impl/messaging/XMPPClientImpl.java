@@ -8,7 +8,6 @@ import java.util.List;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
 import org.jivesoftware.smack.ConnectionListener;
-import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.SmackException;
@@ -43,7 +42,6 @@ import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
-import tr.org.liderahenk.lider.core.api.messaging.IMessageSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.INotificationSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.IPresenceSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.ITaskStatusUpdateSubscriber;
@@ -55,8 +53,9 @@ import tr.org.liderahenk.lider.core.api.messaging.ITaskStatusUpdateSubscriber;
  */
 public class XMPPClientImpl {
 
-	// 'vvv' ile başlayan yorumlar volkan'ın, lider ayağa kalkabildiğinde debug edilmeli
-	
+	// 'vvv' ile başlayan yorumlar volkan'ın, lider ayağa kalkabildiğinde debug
+	// edilmeli
+
 	private static Logger log = LoggerFactory.getLogger(XMPPClientImpl.class);
 
 	private String server;
@@ -72,12 +71,10 @@ public class XMPPClientImpl {
 	private int maxPingTimeoutCount = 3;
 	private int retryCount = 0;
 	private int pingTimeoutCount = 0;
-	
 
 	private XMPPTCPConnectionConfiguration config;// vvv
 	private XMPPTCPConnection connection; // vvv
 
-	private List<IMessageSubscriber> subscribers;
 	private List<INotificationSubscriber> notificationSubscribers;
 	private List<IPresenceSubscriber> presenceSubscribers;
 	private List<ITaskStatusUpdateSubscriber> taskStatusUpdateSubscribers;
@@ -107,8 +104,7 @@ public class XMPPClientImpl {
 		log.info("xmpp.port => {}", configurationService.getXmppPort());
 		log.info("xmpp.jid => {}", configurationService.getXmppJid());
 		log.info("xmpp.password => {}", configurationService.getXmppPassword());
-		log.info("xmpp.ping.timeout => {}",
-				configurationService.getXmppPingTimeout());
+		log.info("xmpp.ping.timeout => {}", configurationService.getXmppPingTimeout());
 
 		this.server = configurationService.getXmppServer();
 		this.port = configurationService.getXmppPort();
@@ -123,19 +119,20 @@ public class XMPPClientImpl {
 
 		// vvv bu nedir?
 		setStatus(true, "I am here!");
-		
 
 		connection.addConnectionListener(new XMPPConnectionListener());
-		
+
 		// KeepAliveManager.getInstanceFor(connection).setPingInterval(pingTimeout);//vvv
 		PingManager.getInstanceFor(connection).setPingInterval(pingTimeout);
 
-		// KeepAliveManager.getInstanceFor(connection).addPingFailedListener(new XMPPPingFailedListener()); //vvv 
+		// KeepAliveManager.getInstanceFor(connection).addPingFailedListener(new
+		// XMPPPingFailedListener()); //vvv
 		PingManager.getInstanceFor(connection).registerPingFailedListener(new XMPPPingFailedListener());
 
 		// FIXME: NPE deliveryReceiptManager.enableAutoReceipts();
 
-//		connection.getChatManager().addChatListener(new ChatManagerListenerImpl());//vvv
+		// connection.getChatManager().addChatListener(new
+		// ChatManagerListenerImpl());//vvv
 		ChatManager.getInstanceFor(connection).addChatListener(new ChatManagerListenerImpl());
 
 		// vvv
@@ -163,12 +160,12 @@ public class XMPPClientImpl {
 		// PacketTypeFilter(IQ.class));
 		// connection.addAsyncStanzaListener(new AllPacketListener(), new
 		// PacketTypeFilter(Packet.class));
-		
-		connection.addAsyncStanzaListener(new NotificationMessageListener(),new NotificationMessageFilter());
-		connection.addAsyncStanzaListener(new TaskStatusUpdateMessageListener(),new TaskStatusUpdateMessageFilter());
+
+		connection.addAsyncStanzaListener(new NotificationMessageListener(), new NotificationMessageFilter());
+		connection.addAsyncStanzaListener(new TaskStatusUpdateMessageListener(), new TaskStatusUpdateMessageFilter());
 
 		// SmackConfiguration.setPacketReplyTimeout(packetReplyTimeout); // vvv
-		SmackConfiguration.setDefaultPacketReplyTimeout(packetReplyTimeout); 
+		SmackConfiguration.setDefaultPacketReplyTimeout(packetReplyTimeout);
 
 		// roster = connection.getRoster();
 		roster = Roster.getInstanceFor(connection);
@@ -199,8 +196,7 @@ public class XMPPClientImpl {
 						if (presence.getType() == Type.available) {
 							onlineUsers.add(jid.substring(0, jid.indexOf('@')));
 						} else if (presence.getType() == Type.unavailable) {
-							onlineUsers.remove(jid.substring(0,
-									jid.indexOf('@')));
+							onlineUsers.remove(jid.substring(0, jid.indexOf('@')));
 						}
 					} catch (Exception e) {
 						// TODO: handle exception
@@ -211,8 +207,7 @@ public class XMPPClientImpl {
 		}
 	}
 
-	public void setConfigurationService(
-			IConfigurationService configurationService) {
+	public void setConfigurationService(IConfigurationService configurationService) {
 		this.configurationService = configurationService;
 	}
 
@@ -220,18 +215,15 @@ public class XMPPClientImpl {
 		this.ldapService = ldapService;
 	}
 
-	public void setNotificationSubscribers(
-			List<INotificationSubscriber> notificationSubscribers) {
+	public void setNotificationSubscribers(List<INotificationSubscriber> notificationSubscribers) {
 		this.notificationSubscribers = notificationSubscribers;
 	}
 
-	public void setPresenceSubscribers(
-			List<IPresenceSubscriber> presenceSubscribers) {
+	public void setPresenceSubscribers(List<IPresenceSubscriber> presenceSubscribers) {
 		this.presenceSubscribers = presenceSubscribers;
 	}
 
-	public void setTaskStatusUpdateSubscribers(
-			List<ITaskStatusUpdateSubscriber> taskStatusUpdateSubscribers) {
+	public void setTaskStatusUpdateSubscribers(List<ITaskStatusUpdateSubscriber> taskStatusUpdateSubscribers) {
 		this.taskStatusUpdateSubscribers = taskStatusUpdateSubscribers;
 	}
 
@@ -239,8 +231,7 @@ public class XMPPClientImpl {
 		return roster.getPresence(jid + "@" + domain).isAvailable();
 	}
 
-	public void performLogin(String username, String password)
-			throws XMPPException {
+	public void performLogin(String username, String password) throws XMPPException {
 		if (connection != null && connection.isConnected()) {// vvv
 			try {
 				connection.login((CharSequence) username, password);
@@ -308,8 +299,7 @@ public class XMPPClientImpl {
 		log.info("xmpp client is shutdown");
 	}
 
-	public void sendMessage(String message, String buddyJID)
-			throws XMPPException {
+	public void sendMessage(String message, String buddyJID) throws XMPPException {
 		String jidFinal = buddyJID;
 
 		if (buddyJID.indexOf("@") < 0) {
@@ -318,8 +308,7 @@ public class XMPPClientImpl {
 
 		log.debug("Sending msg to user {}, message {}", jidFinal, message);
 
-		Chat chat = ChatManager.getInstanceFor(connection).createChat(jidFinal,
-				null);// vvv
+		Chat chat = ChatManager.getInstanceFor(connection).createChat(jidFinal, null);// vvv
 		try {
 			chat.sendMessage(message);
 		} catch (NotConnectedException e) {
@@ -355,36 +344,6 @@ public class XMPPClientImpl {
 	//
 	// }
 
-	public void messageReceived(String from, String message) throws Exception {
-		// maybe any irrelevant message to task manager no need to print info
-		// trace
-		// log.info(String.format("Message received from user: %1$s", from));
-		log.debug("Message received => {}", message);
-
-		if (message != null) {
-			for (IMessageSubscriber subscriber : subscribers) {
-				log.debug("notifying subscriber => {}", subscriber);
-				try {
-					subscriber.messageReceived(from, message);
-				} catch (Exception e) {
-					log.error("subscriber could not handle message: ", e);
-				}
-				log.debug("notified subscriber => {}", subscriber);
-			}
-
-		} else {
-			log.debug("skipped notifying subscribers since message is null");
-		}
-	}
-
-	/**
-	 * reference-list set by blueprint whiteboard impl. see blueprint.xml for
-	 * details
-	 */
-	public void setSubscribers(List<IMessageSubscriber> subscribers) {
-		this.subscribers = subscribers;
-	}
-
 	public void setServer(String server) {
 		this.server = server;
 	}
@@ -407,16 +366,15 @@ public class XMPPClientImpl {
 
 	private void initConnection() {
 
-		log.info("Connecting to server => {" + server + "}, port => {" + port
-				+ "}, domain => {" + domain + "}");
+		log.info("Connecting to server => {" + server + "}, port => {" + port + "}, domain => {" + domain + "}");
 
-//		log.info("Connecting to server => {}, port => {}, domain => {}", server,port, domain);
+		// log.info("Connecting to server => {}, port => {}, domain => {}",
+		// server,port, domain);
 
-
-		config = XMPPTCPConnectionConfiguration.builder()
-				.setServiceName(server).setPort(port).setHost(domain)
-//				.setSecurityMode(SecurityMode.required).build(); //TODO vvv Security mode required olmalı şimdilik disable a çektim
-		.setSecurityMode(SecurityMode.disabled).build();
+		config = XMPPTCPConnectionConfiguration.builder().setServiceName(server).setPort(port).setHost(domain)
+				// .setSecurityMode(SecurityMode.required).build(); //TODO vvv
+				// Security mode required olmalı şimdilik disable a çektim
+				.setSecurityMode(SecurityMode.disabled).build();
 
 		// config = new ConnectionConfiguration(server, port, domain); //vvv
 		// setSASLAuthenticationEnabled ?
@@ -425,8 +383,7 @@ public class XMPPClientImpl {
 
 		connection = new XMPPTCPConnection(config);
 
-		while (!connection.isConnected()
-				&& retryCount < maxRetryConnectionCount) {
+		while (!connection.isConnected() && retryCount < maxRetryConnectionCount) {
 			retryCount++;
 			try {
 				try {
@@ -478,9 +435,8 @@ public class XMPPClientImpl {
 
 				}
 
-				log.warn("actual roster presence for {} => {}", roster
-						.getPresence(jid).getFrom(), roster.getPresence(jid)
-						.toString());
+				log.warn("actual roster presence for {} => {}", roster.getPresence(jid).getFrom(),
+						roster.getPresence(jid).toString());
 
 			}
 
@@ -518,7 +474,8 @@ public class XMPPClientImpl {
 			// Get the node
 			LeafNode node = mgr.getNode("online_users");
 
-//			node.addItemEventListener(new ItemEventCoordinator()); //vv kaldırdım, incelemeli
+			// node.addItemEventListener(new ItemEventCoordinator()); //vv
+			// kaldırdım, incelemeli
 			node.subscribe(jid);// TODO append domain??
 		} catch (XMPPException e) {
 			log.error("Cannot subscribe pubsub node: ", e);
@@ -543,15 +500,16 @@ public class XMPPClientImpl {
 		public boolean accept(Stanza stanza) {
 			if (stanza instanceof Message) {
 				Message msg = (Message) stanza;
-				if (Message.Type.normal.equals(msg.getType())// all messages from agents are type normal
+				if (Message.Type.normal.equals(msg.getType())// all messages
+																// from agents
+																// are type
+																// normal
 						&& msg.getBody().contains("\"type\": \"NOTIFICATION\"")) {
 					return true;
 				}
 			}
 			return false;
 		}
-
-
 
 		private class ItemEventCoordinator implements ItemEventListener {
 			@Override
@@ -561,9 +519,9 @@ public class XMPPClientImpl {
 			}
 		}
 	}
-	
+
 	class XMPPConnectionListener implements ConnectionListener {
-		
+
 		@Override
 		public void connectionClosed() {
 			log.info("XMPP connection was closed.");
@@ -591,25 +549,32 @@ public class XMPPClientImpl {
 		}
 
 		@Override
-		public void connected(XMPPConnection connection) { //vvv new interface methods
+		public void connected(XMPPConnection connection) { // vvv new interface
+															// methods
 			// TODO Auto-generated method stub
-			
+
 		}
 
 		@Override
-		public void authenticated(XMPPConnection connection, boolean resumed) {//vvv new interface methods
+		public void authenticated(XMPPConnection connection, boolean resumed) {// vvv
+																				// new
+																				// interface
+																				// methods
 			// TODO Auto-generated method stub
-			
+
 		}
 	}
-	
+
 	class TaskStatusUpdateMessageFilter implements PacketFilter {
 
 		@Override
 		public boolean accept(Stanza stanza) {
 			if (stanza instanceof Message) {
 				Message msg = (Message) stanza;
-				if (Message.Type.normal.equals(msg.getType())// all messages from agents are type normal
+				if (Message.Type.normal.equals(msg.getType())// all messages
+																// from agents
+																// are type
+																// normal
 						&& msg.getBody().contains("\"type\": \"TASK_"))
 					return true;
 			}
@@ -621,16 +586,18 @@ public class XMPPClientImpl {
 
 		/** {@inheritDoc} */
 		@Override
-		public void chatCreated(final Chat chat,final boolean createdLocally) {
-			chat.addMessageListener(new ChatMessageListener() { //vvv mesaj listener boş mu kalmalı?
-				
+		public void chatCreated(final Chat chat, final boolean createdLocally) {
+			chat.addMessageListener(new ChatMessageListener() { // vvv mesaj
+																// listener boş
+																// mu kalmalı?
+
 				@Override
 				public void processMessage(Chat arg0, Message arg1) {
 					// TODO Auto-generated method stub
-					
+
 				}
 			});
-//			chat.addMessageListener(new AllMessageListener());
+			// chat.addMessageListener(new AllMessageListener());
 		}
 	}
 
@@ -650,38 +617,9 @@ public class XMPPClientImpl {
 		}
 	}
 
-	
-
-	class AllMessageListener implements MessageListener {
-
-		@Override
-		public void processMessage(Message message) {
-
-			log.debug("processing message");
-			if (!Message.Type.normal.equals(message.getType())) {// all messages from agents are type normal
-				log.debug(
-						"not a chat message type, will not notify subscribers:  {}",
-						message.getBody());
-				return;
-			}
-			String from = message.getFrom();
-			String body = message.getBody();
-			log.debug("from: {}", from);
-			log.debug("message body : {}", message.getBody());
-
-			try {
-				messageReceived(from, body);
-			} catch (Exception e) {
-				log.warn("error processing message", e);
-			}
-		}
-
-	}
-
 	class IQPacketListener implements PacketListener {
 		@Override
-		public void processPacket(Stanza packet)
-				throws NotConnectedException {
+		public void processPacket(Stanza packet) throws NotConnectedException {
 			try {
 				IQ iq = (IQ) packet;
 				if (iq.getType().equals(IQ.Type.result)) {
@@ -690,48 +628,39 @@ public class XMPPClientImpl {
 				log.debug("IQ packet received: {}", iq.toXML());
 			} catch (Exception e) {
 				log.warn("", e);
-			}				
+			}
 		}
 	}
 
 	class NotificationMessageListener implements PacketListener {
 
 		@Override
-		public void processPacket(Stanza packet)
-				throws NotConnectedException {
+		public void processPacket(Stanza packet) throws NotConnectedException {
 
 			try {
 				Message msg = (Message) packet;
-				log.info(
-						"notification message received from => {}, body => {}",
-						msg.getFrom(), msg.getBody());
+				log.info("notification message received from => {}, body => {}", msg.getFrom(), msg.getBody());
 				ObjectMapper mapper = new ObjectMapper();
 				try {
 
-					NotificationMessageImpl notificationMessage = mapper
-							.readValue(msg.getBody(),
-									NotificationMessageImpl.class);
+					NotificationMessageImpl notificationMessage = mapper.readValue(msg.getBody(),
+							NotificationMessageImpl.class);
 					notificationMessage.setFrom(msg.getFrom());
 
 					for (INotificationSubscriber subscriber : notificationSubscribers) {
 						try {
 							subscriber.messageReceived(notificationMessage);
 						} catch (Exception e) {
-							log.error(
-									"subscriber could not handle message: ",
-									e);
+							log.error("subscriber could not handle message: ", e);
 						}
 						log.debug("notified subscriber => {}", subscriber);
 					}
 					// forward notification message to all LYA users
 					for (String jid : ldapService.getLyaUserJids()) {
-						sendMessage(
-								mapper.writeValueAsString(notificationMessage),
-								jid);
+						sendMessage(mapper.writeValueAsString(notificationMessage), jid);
 					}
 				} catch (Exception e) {
-					log.error("could not parse notification message {}: ",
-							msg.getBody(), e);
+					log.error("could not parse notification message {}: ", msg.getBody(), e);
 				}
 
 			} catch (Exception e) {
@@ -740,38 +669,33 @@ public class XMPPClientImpl {
 		}
 	}
 
+	// TODO remove IMessageSubscriber.messageReceived() as it is deprecated.
+	// This method will be used to notify TaskManagerImpl as well as other plugins
+	// TaskManagerImpl uses this notification to update task statuses - emre
 	class TaskStatusUpdateMessageListener implements PacketListener {
 
 		@Override
-		public void processPacket(Stanza packet)
-				throws NotConnectedException {
+		public void processPacket(Stanza packet) throws NotConnectedException {
 
 			try {
 				Message msg = (Message) packet;
-				log.info(
-						"task status update message received from => {}, body => {}",
-						msg.getFrom(), msg.getBody());
+				log.info("task status update message received from => {}, body => {}", msg.getFrom(), msg.getBody());
 				ObjectMapper mapper = new ObjectMapper();
 				try {
 
-					TaskStatusUpdateMessageImpl taskStatusUpdateMessage = mapper
-							.readValue(msg.getBody(),
-									TaskStatusUpdateMessageImpl.class);
+					TaskStatusUpdateMessageImpl taskStatusUpdateMessage = mapper.readValue(msg.getBody(),
+							TaskStatusUpdateMessageImpl.class);
 
 					for (ITaskStatusUpdateSubscriber subscriber : taskStatusUpdateSubscribers) {
 						try {
-							subscriber
-									.messageReceived(taskStatusUpdateMessage);
+							subscriber.messageReceived(taskStatusUpdateMessage);
 						} catch (Exception e) {
-							log.error(
-									"subscriber could not handle message: ",
-									e);
+							log.error("subscriber could not handle message: ", e);
 						}
 						log.debug("notified subscriber => {}", subscriber);
 					}
 				} catch (Exception e) {
-					log.error("could not parse notification message {}: ",
-							msg.getBody(), e);
+					log.error("could not parse notification message {}: ", msg.getBody(), e);
 				}
 
 			} catch (Exception e) {
@@ -783,8 +707,7 @@ public class XMPPClientImpl {
 	class AllPacketListener implements PacketListener {
 
 		@Override
-		public void processPacket(Stanza packet)
-				throws NotConnectedException {
+		public void processPacket(Stanza packet) throws NotConnectedException {
 			try {
 				log.debug("packet received: {}", packet.toXML());
 			} catch (Exception e) {

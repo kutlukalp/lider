@@ -1,20 +1,30 @@
 package tr.org.liderahenk.lider.core.api.router;
 
 import tr.org.liderahenk.lider.core.api.plugin.ICommand;
-import tr.org.liderahenk.lider.core.api.rest.IRestRequest;
 
 /**
  * Service registry keeping list of {@link ICommand} implementations
- *   
- * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
+ * 
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
 public interface IServiceRegistry {
-	
+
 	/**
 	 * 
-	 * @param request {@link IRestRequest} object
-	 * @return matching {@link ICommand} for request, null if no match found
+	 * @param pluginName
+	 * @param pluginVersion
+	 * @param resource
+	 * @param action
+	 * @return
 	 */
-	ICommand lookupCommand( IRestRequest request );
+	public String buildKey(String pluginName, String pluginVersion, String commandId);
+
+	/**
+	 * 
+	 * @param key
+	 * @return
+	 */
+	public ICommand lookupCommand(String key);
+
 }

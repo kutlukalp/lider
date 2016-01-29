@@ -70,8 +70,8 @@ public class MessagingServiceImpl implements IMessagingService {
 
 	@Override
 	public void messageReceived(String jid, String message) throws Exception {
-		xmppClient.messageReceived(jid, message);
-		
+		// TODO emre ?
+//		xmppClient.messageReceived(jid, message); 
 	}
 
 	@Override

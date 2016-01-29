@@ -20,6 +20,10 @@
 	<name>tr.org.liderahenk.lider-web Maven Webapp</name>
 	<dependencies>
 		<dependency>
+			<groupId>tr.org.liderahenk</groupId>
+			<artifactId>tr.org.liderahenk.lider-core</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>com.springsource.javax.servlet.jsp.jstl</artifactId>
 		</dependency>
@@ -112,15 +116,6 @@
 			<plugins>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<configuration>
-						<source>1.6</source>
-						<target>1.6</target>
-					</configuration>
-				</plugin>
-
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-war-plugin</artifactId>
 					<configuration>
 						<!-- Make a skinny WAR -->
@@ -155,133 +150,134 @@
 							<Web-ContextPath>/</Web-ContextPath>
 							<Export-Package>!*</Export-Package>
 							<Import-Package>
-									javax.naming,
-							javax.net.ssl,
-							org.apache.commons.io,
- 							org.apache.commons.compress.archivers.tar,
- 							org.apache.commons.compress.archivers,
-							javax.servlet; version="[2.4.0, 4.0.0)",
-							javax.servlet.http; version="[2.4.0, 4.0.0)",
-							javax.servlet.jsp.jstl.core; version="[1.2,2.0)",
-							<!-- javax.servlet.resources; version="[2.4.0, 4.0.0)",  Karaf uses servlet 3.1-->
-							<!-- Just import EVERYTHING from Apache standard JSTL impl. -->
-							org.apache.taglibs.standard; version="[1.2.0,2)",
-							org.apache.taglibs.standard.extra.spath; version="[1.2.0,2)",
-							org.apache.taglibs.standard.functions; version="[1.2.0,2)",
-							org.apache.taglibs.standard.lang.jstl; version="[1.2.0,2)",
-							org.apache.taglibs.standard.lang.jstl.parser;
-							version="[1.2.0,2)",
-							org.apache.taglibs.standard.lang.jstl.test;
-							version="[1.2.0,2)",
-							org.apache.taglibs.standard.lang.jstl.test.beans;
-							version="[1.2.0,2)",
-							org.apache.taglibs.standard.lang.support;
-							version="[1.2.0,2)",
-							org.apache.taglibs.standard.resources;
-							version="[1.2.0,2)",
-							org.apache.taglibs.standard.tag.common.core;
-							version="[1.2.0,2)",
-							org.apache.taglibs.standard.tag.common.fmt;
-							version="[1.2.0,2)",
-							org.apache.taglibs.standard.tag.common.sql;
-							version="[1.2.0,2)",
-							org.apache.taglibs.standard.tag.common.xml;
-							version="[1.2.0,2)",
-							org.apache.taglibs.standard.tag.el.core;
-							version="[1.2.0,2)",
-							org.apache.taglibs.standard.tag.el.fmt;
-							version="[1.2.0,2)",
-							org.apache.taglibs.standard.tag.el.sql;
-							version="[1.2.0,2)",
-							org.apache.taglibs.standard.tag.el.xml;
-							version="[1.2.0,2)",
-							org.apache.taglibs.standard.tag.rt.core;
-							version="[1.2.0,2)",
-							org.apache.taglibs.standard.tag.rt.fmt;
-							version="[1.2.0,2)",
-							org.apache.taglibs.standard.tag.rt.sql;
-							version="[1.2.0,2)",
-							org.apache.taglibs.standard.tag.rt.xml;
-							version="[1.2.0,2)",
-							org.apache.taglibs.standard.tei;
-							version="[1.2.0,2)",
-							org.apache.taglibs.standard.tlv;
-							version="[1.2.0,2)",
-							org.springframework.web.servlet.tags,
-							org.springframework.web.servlet.tags.form,
-							org.springframework.beans.factory.config,
-							org.springframework.osgi.web.context.support;
-							version="[1.2,2.0)",
-							org.springframework.stereotype,
-							org.springframework.web.bind.annotation,
-							org.springframework.web.context,
-							org.springframework.web.filter,
-							org.springframework.web.servlet,
-							org.springframework.web.servlet.view,
-							org.springframework.http.converter,
-							org.springframework.http.converter.json,
-							org.springframework.context.support,
-							org.springframework.ui.context.support,
-							org.springframework.web.servlet.theme,
-							org.springframework.web.servlet.i18n,
-							org.springframework.web.multipart.commons,
-							org.codehaus.jackson,
-							org.apache.shiro;version=1.2.2,
-							org.apache.shiro.aop;version=1.2.2,
-							org.apache.shiro.authc;version=1.2.2,
-							org.apache.shiro.authc.credential;version=1.2.2,
-							org.apache.shiro.authc.pam;version=1.2.2,
-							org.apache.shiro.authz;version=1.2.2,
-							org.apache.shiro.authz.annotation;version=1.2.2,
-							org.apache.shiro.authz.aop;version=1.2.2,
-							org.apache.shiro.authz.permission;version=1.2.2,
-							org.apache.shiro.cache;version=1.2.2,
-							org.apache.shiro.codec;version=1.2.2,
-							org.apache.shiro.concurrent;version=1.2.2,
-							org.apache.shiro.config;version=1.2.2,
-							org.apache.shiro.crypto;version=1.2.2,
-							org.apache.shiro.crypto.hash;version=1.2.2,
-							org.apache.shiro.crypto.hash.format;version=1.2.2,
-							org.apache.shiro.dao;version=1.2.2,
-							org.apache.shiro.env;version=1.2.2,
-							org.apache.shiro.functor;version=1.2.2,
-							org.apache.shiro.io;version=1.2.2,
-							org.apache.shiro.jndi;version=1.2.2,
-							org.apache.shiro.ldap;version=1.2.2,
-							org.apache.shiro.mgt;version=1.2.2,
-							org.apache.shiro.realm;version=1.2.2,
-							org.apache.shiro.realm.activedirectory;version=1.2.2,
-							org.apache.shiro.realm.jdbc;version=1.2.2,
-							org.apache.shiro.realm.jndi;version=1.2.2,
-							org.apache.shiro.realm.ldap;version=1.2.2,
-							org.apache.shiro.realm.text;version=1.2.2,
-							org.apache.shiro.session;version=1.2.2,
-							org.apache.shiro.session.mgt;version=1.2.2,
-							org.apache.shiro.session.mgt.eis;version=1.2.2,
-							org.apache.shiro.subject;version=1.2.2,
-							org.apache.shiro.subject.support;version=1.2.2,
-							org.apache.shiro.util;version=1.2.2,
-							org.apache.shiro.web.config;version=1.2.2,
-							org.apache.shiro.web.env;version=1.2.2,
-							org.apache.shiro.web.filter;version=1.2.2,
-							org.apache.shiro.web.filter.authc;version=1.2.2,
-							org.apache.shiro.web.filter.authz;version=1.2.2,
-							org.apache.shiro.web.filter.mgt;version=1.2.2,
-							org.apache.shiro.web.filter.session;version=1.2.2,
-							org.apache.shiro.web.mgt;version=1.2.2,
-							org.apache.shiro.web.servlet;version=1.2.2,
-							org.apache.shiro.web.session;version=1.2.2,
-							org.apache.shiro.web.session.mgt;version=1.2.2,
-							org.apache.shiro.web.subject;version=1.2.2,
-							org.apache.shiro.web.subject.support;version=1.2.2,
-							org.apache.shiro.web.tags;version=1.2.2,
-							org.apache.shiro.web.util;version=1.2.2,
-							org.apache.shiro.spring.web;version=1.2.2,
-							javax.ws.rs;
-							version="[1.0.0,4)",
-							javax.ws.rs.core; version="[1.0.0,4)",
-							javax.ws.rs.ext; version="[1.0.0,4)",
-							*
+								javax.naming,
+								javax.net.ssl,
+								org.apache.commons.io,
+								org.apache.commons.compress.archivers.tar,
+								org.apache.commons.compress.archivers,
+								javax.servlet; version="[2.4.0, 4.0.0)",
+								javax.servlet.http; version="[2.4.0, 4.0.0)",
+								javax.servlet.jsp.jstl.core; version="[1.2,2.0)",
+								<!-- javax.servlet.resources; version="[2.4.0, 4.0.0)", Karaf uses 
+									servlet 3.1 -->
+								<!-- Just import EVERYTHING from Apache standard JSTL impl. -->
+								org.apache.taglibs.standard; version="[1.2.0,2)",
+								org.apache.taglibs.standard.extra.spath; version="[1.2.0,2)",
+								org.apache.taglibs.standard.functions; version="[1.2.0,2)",
+								org.apache.taglibs.standard.lang.jstl; version="[1.2.0,2)",
+								org.apache.taglibs.standard.lang.jstl.parser;
+								version="[1.2.0,2)",
+								org.apache.taglibs.standard.lang.jstl.test;
+								version="[1.2.0,2)",
+								org.apache.taglibs.standard.lang.jstl.test.beans;
+								version="[1.2.0,2)",
+								org.apache.taglibs.standard.lang.support;
+								version="[1.2.0,2)",
+								org.apache.taglibs.standard.resources;
+								version="[1.2.0,2)",
+								org.apache.taglibs.standard.tag.common.core;
+								version="[1.2.0,2)",
+								org.apache.taglibs.standard.tag.common.fmt;
+								version="[1.2.0,2)",
+								org.apache.taglibs.standard.tag.common.sql;
+								version="[1.2.0,2)",
+								org.apache.taglibs.standard.tag.common.xml;
+								version="[1.2.0,2)",
+								org.apache.taglibs.standard.tag.el.core;
+								version="[1.2.0,2)",
+								org.apache.taglibs.standard.tag.el.fmt;
+								version="[1.2.0,2)",
+								org.apache.taglibs.standard.tag.el.sql;
+								version="[1.2.0,2)",
+								org.apache.taglibs.standard.tag.el.xml;
+								version="[1.2.0,2)",
+								org.apache.taglibs.standard.tag.rt.core;
+								version="[1.2.0,2)",
+								org.apache.taglibs.standard.tag.rt.fmt;
+								version="[1.2.0,2)",
+								org.apache.taglibs.standard.tag.rt.sql;
+								version="[1.2.0,2)",
+								org.apache.taglibs.standard.tag.rt.xml;
+								version="[1.2.0,2)",
+								org.apache.taglibs.standard.tei;
+								version="[1.2.0,2)",
+								org.apache.taglibs.standard.tlv;
+								version="[1.2.0,2)",
+								org.springframework.web.servlet.tags,
+								org.springframework.web.servlet.tags.form,
+								org.springframework.beans.factory.config,
+								org.springframework.osgi.web.context.support;
+								version="[1.2,2.0)",
+								org.springframework.stereotype,
+								org.springframework.web.bind.annotation,
+								org.springframework.web.context,
+								org.springframework.web.filter,
+								org.springframework.web.servlet,
+								org.springframework.web.servlet.view,
+								org.springframework.http.converter,
+								org.springframework.http.converter.json,
+								org.springframework.context.support,
+								org.springframework.ui.context.support,
+								org.springframework.web.servlet.theme,
+								org.springframework.web.servlet.i18n,
+								org.springframework.web.multipart.commons,
+								org.codehaus.jackson,
+								org.apache.shiro;version=1.2.2,
+								org.apache.shiro.aop;version=1.2.2,
+								org.apache.shiro.authc;version=1.2.2,
+								org.apache.shiro.authc.credential;version=1.2.2,
+								org.apache.shiro.authc.pam;version=1.2.2,
+								org.apache.shiro.authz;version=1.2.2,
+								org.apache.shiro.authz.annotation;version=1.2.2,
+								org.apache.shiro.authz.aop;version=1.2.2,
+								org.apache.shiro.authz.permission;version=1.2.2,
+								org.apache.shiro.cache;version=1.2.2,
+								org.apache.shiro.codec;version=1.2.2,
+								org.apache.shiro.concurrent;version=1.2.2,
+								org.apache.shiro.config;version=1.2.2,
+								org.apache.shiro.crypto;version=1.2.2,
+								org.apache.shiro.crypto.hash;version=1.2.2,
+								org.apache.shiro.crypto.hash.format;version=1.2.2,
+								org.apache.shiro.dao;version=1.2.2,
+								org.apache.shiro.env;version=1.2.2,
+								org.apache.shiro.functor;version=1.2.2,
+								org.apache.shiro.io;version=1.2.2,
+								org.apache.shiro.jndi;version=1.2.2,
+								org.apache.shiro.ldap;version=1.2.2,
+								org.apache.shiro.mgt;version=1.2.2,
+								org.apache.shiro.realm;version=1.2.2,
+								org.apache.shiro.realm.activedirectory;version=1.2.2,
+								org.apache.shiro.realm.jdbc;version=1.2.2,
+								org.apache.shiro.realm.jndi;version=1.2.2,
+								org.apache.shiro.realm.ldap;version=1.2.2,
+								org.apache.shiro.realm.text;version=1.2.2,
+								org.apache.shiro.session;version=1.2.2,
+								org.apache.shiro.session.mgt;version=1.2.2,
+								org.apache.shiro.session.mgt.eis;version=1.2.2,
+								org.apache.shiro.subject;version=1.2.2,
+								org.apache.shiro.subject.support;version=1.2.2,
+								org.apache.shiro.util;version=1.2.2,
+								org.apache.shiro.web.config;version=1.2.2,
+								org.apache.shiro.web.env;version=1.2.2,
+								org.apache.shiro.web.filter;version=1.2.2,
+								org.apache.shiro.web.filter.authc;version=1.2.2,
+								org.apache.shiro.web.filter.authz;version=1.2.2,
+								org.apache.shiro.web.filter.mgt;version=1.2.2,
+								org.apache.shiro.web.filter.session;version=1.2.2,
+								org.apache.shiro.web.mgt;version=1.2.2,
+								org.apache.shiro.web.servlet;version=1.2.2,
+								org.apache.shiro.web.session;version=1.2.2,
+								org.apache.shiro.web.session.mgt;version=1.2.2,
+								org.apache.shiro.web.subject;version=1.2.2,
+								org.apache.shiro.web.subject.support;version=1.2.2,
+								org.apache.shiro.web.tags;version=1.2.2,
+								org.apache.shiro.web.util;version=1.2.2,
+								org.apache.shiro.spring.web;version=1.2.2,
+								javax.ws.rs;
+								version="[1.0.0,4)",
+								javax.ws.rs.core; version="[1.0.0,4)",
+								javax.ws.rs.ext; version="[1.0.0,4)",
+								*
 							</Import-Package>
 							<Bundle-ClassPath>
 								WEB-INF/classes,

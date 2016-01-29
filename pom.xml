@@ -94,6 +94,7 @@
 		<module>tr.org.liderahenk.lider-autherization-impl</module>
 		<module>tr.org.liderahenk.lider-config</module>
 		<module>tr.org.liderahenk.lider-cache-impl</module>
+		<module>tr.org.liderahenk.lider-service-impl</module>
 	</modules>
 
 	<build>
