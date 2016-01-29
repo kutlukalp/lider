@@ -6,6 +6,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tr.org.liderahenk.lider.core.api.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.IUser;
 import tr.org.liderahenk.lider.core.api.auth.IUserPrivilege;
 import tr.org.liderahenk.lider.core.api.autherization.IAuthService;
@@ -30,8 +31,14 @@ public class AuthServiceImpl implements IAuthService {
 
 	private ILDAPService ldapService;
 
+	private IConfigurationService configurationService;
+
 	public void setLdapService(ILDAPService ldapService) {
 		this.ldapService = ldapService;
+	}
+
+	public void setConfigurationService(IConfigurationService configurationService) {
+		this.configurationService = configurationService;
 	}
 
 	@Override
@@ -72,7 +79,7 @@ public class AuthServiceImpl implements IAuthService {
 				}
 
 				// If everything is permitted, return all entries!
-				if (ldapService.getRootDSE().getDn().getName().equalsIgnoreCase(permittedTargetDn)
+				if (configurationService.getLdapRootDn().equalsIgnoreCase(permittedTargetDn)
 						&& ALL_PERMISSION.equalsIgnoreCase(permittedOperations)) {
 					return targetEntries;
 				}

@@ -19,6 +19,9 @@ import tr.org.liderahenk.lider.core.api.rest.RestDNType;
 
 @Embeddable
 public class RestRequestEntityImpl implements IRestRequest{
+	
+	public RestRequestEntityImpl() {
+	}
 
 	public RestRequestEntityImpl(IRestRequest request) {
 		// TODO Auto-generated constructor stub
