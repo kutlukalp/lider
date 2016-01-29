@@ -60,9 +60,9 @@ public class OperationLogImpl implements IOperationLog{
 	private String clientCN;
 	
 	
-//	public OperationLogImpl() {
-//		
-//	}
+	public OperationLogImpl() {
+		
+	}
 //
 //	public OperationLogImpl(Long id, Date date,
 //			String userId, String plugin, String task, String action,

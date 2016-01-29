@@ -89,7 +89,8 @@ public class TaskEntityImpl implements ITask{
 		this.owner = task.getOwner();
 		this.priority = task.getPriority();
 		this.parentTaskId = task.getParentTaskId();
-		this.request = new RestRequestEntityImpl(task.getRequest());
+		//FIXME update object another way
+//		this.request = new RestRequestEntityImpl(task.getRequest());
 		this.state = task.getState();
 		this.targetJID = task.getTargetJID();
 		this.targetObjectDN = task.getTargetObjectDN();

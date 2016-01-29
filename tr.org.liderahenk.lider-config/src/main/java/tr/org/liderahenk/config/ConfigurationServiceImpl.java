@@ -5,6 +5,12 @@ import tr.org.liderahenk.lider.core.api.IConfigurationService;
 
 public class ConfigurationServiceImpl implements IConfigurationService{
 	
+	
+	private String dbServer;
+	private String dbDatabase;
+	private Integer dbPort;
+	private String dbUsername;
+	private String dbPassword;
 	/**
 	 * 
 	 */
@@ -478,6 +484,46 @@ public class ConfigurationServiceImpl implements IConfigurationService{
 
 	public void setMailSmtpWriteTimeout(Integer mailSmtpWriteTimeout) {
 		this.mailSmtpWriteTimeout = mailSmtpWriteTimeout;
+	}
+
+	public String getDbServer() {
+		return dbServer;
+	}
+
+	public void setDbServer(String dbServer) {
+		this.dbServer = dbServer;
+	}
+
+	public String getDbDatabase() {
+		return dbDatabase;
+	}
+
+	public void setDbDatabase(String dbDatabase) {
+		this.dbDatabase = dbDatabase;
+	}
+
+	public Integer getDbPort() {
+		return dbPort;
+	}
+
+	public void setDbPort(Integer dbPort) {
+		this.dbPort = dbPort;
+	}
+
+	public String getDbUsername() {
+		return dbUsername;
+	}
+
+	public void setDbUsername(String dbUsername) {
+		this.dbUsername = dbUsername;
+	}
+
+	public String getDbPassword() {
+		return dbPassword;
+	}
+
+	public void setDbPassword(String dbPassword) {
+		this.dbPassword = dbPassword;
 	}	
 
 }

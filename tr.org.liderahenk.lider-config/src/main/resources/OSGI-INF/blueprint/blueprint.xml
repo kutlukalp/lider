@@ -12,6 +12,12 @@
     </cm:property-placeholder> 
          
 	<bean id="configurationService" class="tr.org.liderahenk.config.ConfigurationServiceImpl">
+		<property name="dbServer" value="${db.server}"/>
+		<property name="dbDatabase" value="${db.database}"/>
+		<property name="dbPort" value="${db.port}"/>
+		<property name="dbUsername" value="${db.username}"/>
+		<property name="dbPassword" value="${db.password}"/>
+	
 		<property name="ldapServer" value="${ldap.server}"/>
 		<property name="ldapPassword" value="${ldap.password}"/>
 		<property name="ldapUser" value="${ldap.user}"/>
