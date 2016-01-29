@@ -9,12 +9,20 @@
 	</parent>
 
 	<artifactId>tr.org.liderahenk.lider-log-impl</artifactId>
+	<name>tr.org.liderahenk.lider-log-impl</name>
+	<url>http://www.liderahenk.org.tr</url>
 	<packaging>bundle</packaging>
+
+	<properties>
+		<!-- needed for checkstyle/findbugs -->
+		<main.basedir>${project.basedir}/..</main.basedir>
+	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>tr.org.liderahenk</groupId>
 			<artifactId>tr.org.liderahenk.lider-core</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -25,7 +33,7 @@
 			<artifactId>commons-compress</artifactId>
 		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<plugins>
 			<plugin>
@@ -35,12 +43,12 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<Bundle-SymbolicName>tr.org.liderahenk.lider-log-impl</Bundle-SymbolicName>
+						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
 						<Bundle-Version>1.0.0</Bundle-Version>
 					</instructions>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
-	
+
 </project>

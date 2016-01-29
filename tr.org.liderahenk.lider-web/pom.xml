@@ -10,18 +10,21 @@
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
+	<artifactId>tr.org.liderahenk.lider-web</artifactId>
+	<name>tr.org.liderahenk.lider-web</name>
+	<url>http://www.liderahenk.org.tr</url>
+	<packaging>war</packaging>
+
 	<properties>
 		<!-- needed for checkstyle/findbugs -->
 		<main.basedir>${project.basedir}/..</main.basedir>
 	</properties>
 
-	<artifactId>tr.org.liderahenk.lider-web</artifactId>
-	<packaging>war</packaging>
-	<name>tr.org.liderahenk.lider-web Maven Webapp</name>
 	<dependencies>
 		<dependency>
 			<groupId>tr.org.liderahenk</groupId>
 			<artifactId>tr.org.liderahenk.lider-core</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -145,7 +148,7 @@
 						<manifestLocation>target/bnd</manifestLocation>
 						<instructions>
 							<Bundle-Name>tr.org.liderahenk.lider-web</Bundle-Name>
-							<Bundle-SymbolicName>tr.org.liderahenk.lider-web</Bundle-SymbolicName>
+							<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
 							<Webapp-Context>/</Webapp-Context>
 							<Web-ContextPath>/</Web-ContextPath>
 							<Export-Package>!*</Export-Package>
@@ -155,8 +158,10 @@
 								org.apache.commons.io,
 								org.apache.commons.compress.archivers.tar,
 								org.apache.commons.compress.archivers,
-								javax.servlet; version="[2.4.0, 4.0.0)",
-								javax.servlet.http; version="[2.4.0, 4.0.0)",
+								javax.servlet;
+								version="[2.4.0, 4.0.0)",
+								javax.servlet.http; version="[2.4.0,
+								4.0.0)",
 								javax.servlet.jsp.jstl.core; version="[1.2,2.0)",
 								<!-- javax.servlet.resources; version="[2.4.0, 4.0.0)", Karaf uses 
 									servlet 3.1 -->
@@ -314,4 +319,5 @@
 			</plugins>
 		</pluginManagement>
 	</build>
+
 </project>

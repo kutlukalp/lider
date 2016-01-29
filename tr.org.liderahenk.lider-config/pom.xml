@@ -3,6 +3,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<groupId>tr.org.liderahenk</groupId>
 		<artifactId>tr.org.liderahenk.lider</artifactId>
@@ -13,12 +14,13 @@
 	<name>tr.org.liderahenk.lider-config</name>
 	<url>http://www.liderahenk.org.tr</url>
 	<packaging>bundle</packaging>
+
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<!-- needed for checkstyle/findbugs -->
+		<main.basedir>${project.basedir}/..</main.basedir>
 	</properties>
 
 	<dependencies>
-
 		<dependency>
 			<groupId>tr.org.liderahenk</groupId>
 			<artifactId>tr.org.liderahenk.lider-core</artifactId>
@@ -32,7 +34,6 @@
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
 		</dependency>
-
 	</dependencies>
 
 	<build>
@@ -68,10 +69,10 @@
 						</goals>
 						<configuration>
 							<artifacts>
-								<artifact>
-									<file>target/classes/features.xml</file>
-									<type>xml</type>
-								</artifact>
+<!-- 								<artifact> -->
+<!-- 									<file>target/classes/features.xml</file> -->
+<!-- 									<type>xml</type> -->
+<!-- 								</artifact> -->
 								<artifact>
 									<file>target/classes/tr.org.liderahenk.cfg</file>
 									<type>cfg</type>
@@ -88,7 +89,7 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<Bundle-SymbolicName>tr.org.liderahenk.lider-config</Bundle-SymbolicName>
+						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
 						<Bundle-Version>1.0.0</Bundle-Version>
 					</instructions>
 				</configuration>
