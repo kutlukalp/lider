@@ -1,4 +1,4 @@
-package tr.org.liderahenk.lider.impl.autherization;
+package tr.org.liderahenk.lider.impl.authorization;
 
 import tr.org.liderahenk.lider.core.api.auth.IRegistrationInfo;
 import tr.org.liderahenk.lider.core.api.auth.RegistrationStatus;

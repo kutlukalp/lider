@@ -1,10 +1,10 @@
-package tr.org.liderahenk.lider.impl.autherization;
+package tr.org.liderahenk.lider.impl.authorization;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import tr.org.liderahenk.lider.core.api.IConfigurationService;
-import tr.org.liderahenk.lider.core.api.autherization.IClientIdMatcher;
+import tr.org.liderahenk.lider.core.api.authorization.IClientIdMatcher;
 
 /**
 * Default implementation of {@link IClientIdMatcher}.

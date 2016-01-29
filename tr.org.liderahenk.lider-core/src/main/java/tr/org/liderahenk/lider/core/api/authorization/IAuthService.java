@@ -1,4 +1,4 @@
-package tr.org.liderahenk.lider.core.api.autherization;
+package tr.org.liderahenk.lider.core.api.authorization;
 
 import java.util.List;
 

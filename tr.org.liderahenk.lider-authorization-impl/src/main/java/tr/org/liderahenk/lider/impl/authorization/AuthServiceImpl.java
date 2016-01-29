@@ -1,4 +1,4 @@
-package tr.org.liderahenk.lider.impl.autherization;
+package tr.org.liderahenk.lider.impl.authorization;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import tr.org.liderahenk.lider.core.api.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.IUser;
 import tr.org.liderahenk.lider.core.api.auth.IUserPrivilege;
-import tr.org.liderahenk.lider.core.api.autherization.IAuthService;
+import tr.org.liderahenk.lider.core.api.authorization.IAuthService;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
 import tr.org.liderahenk.lider.core.api.ldap.LdapException;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
