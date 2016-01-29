@@ -20,14 +20,5 @@ public interface IAuthService {
 	 * @param targetOperation
 	 * @return
 	 */
-	boolean isAuthorized(String userDn, List<LdapEntry> entries, String targetOperation);
-	
-	/**
-	 * 
-	 * @param userDn
-	 * @param entries
-	 * @param targetOperation
-	 * @return
-	 */
 	List<LdapEntry> getPermittedEntries(String userDn, List<LdapEntry> entries, String targetOperation);
 }

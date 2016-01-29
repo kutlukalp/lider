@@ -1,5 +1,6 @@
 package tr.org.liderahenk.lider.impl.autherization;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -34,18 +35,21 @@ public class AuthServiceImpl implements IAuthService {
 	}
 
 	@Override
-	public boolean isAuthorized(String userDn, List<LdapEntry> entries, String targetOperation) {
+	public List<LdapEntry> getPermittedEntries(String userDn, List<LdapEntry> targetEntries, String targetOperation) {
+
+		List<LdapEntry> permittedEntries = new ArrayList<LdapEntry>();
+
 		try {
 			logger.debug("Authorization started for DN: {} and operation: {}",
 					new Object[] { userDn, targetOperation });
 
-			// TODO instead of two ldap queries, just use one to get both user DN
-			// and user privilege attributes!
+			// TODO instead of two ldap queries, just use one to get both user
+			// DN and user privilege attributes!
 			// to do this, we need to change ldap service a little bit first!
 			IUser user = ldapService.getUser(userDn);
 			if (null == user) {
 				logger.warn("Authorization failed. User not found: {}", userDn);
-				return false;
+				return null;
 			}
 
 			// Find user privileges from LDAP.
@@ -54,12 +58,12 @@ public class AuthServiceImpl implements IAuthService {
 
 				logger.debug("Checking privilege info: {}", privilege);
 
-				String permittedTargetDN;
+				String permittedTargetDn;
 				String permittedOperations;
 
 				// Parse privilege and get target DN and operations.
 				try {
-					permittedTargetDN = privilege.getTarget();
+					permittedTargetDn = privilege.getTarget();
 					// permittedOperations may contain more than one operation.
 					permittedOperations = privilege.getOperation();
 				} catch (Exception e) {
@@ -67,55 +71,28 @@ public class AuthServiceImpl implements IAuthService {
 					continue;
 				}
 
-				// If everything is permitted, return true!
-				if (ldapService.getRootDSE().getDn().getName().equalsIgnoreCase(permittedTargetDN)
+				// If everything is permitted, return all entries!
+				if (ldapService.getRootDSE().getDn().getName().equalsIgnoreCase(permittedTargetDn)
 						&& ALL_PERMISSION.equalsIgnoreCase(permittedOperations)) {
-					return true;
+					return targetEntries;
 				}
 
 				// If permittedOperations does not contain targetOperation and
 				// is not 'ALL', then we can safely skip this privilege.
 				if (!ALL_PERMISSION.equalsIgnoreCase(permittedOperations)
-						&& permittedOperations.indexOf(targetOperation) < 0) {
+						&& !permittedOperations.contains(targetOperation)) {
 					continue;
 				}
-				
-				
-				
-				
-				
-				// TODO 
-				
-				
-				
-				
-				
-				
 
-				// If the operation does not interest any DN (such as inserting
-				// some profile/policy into database), which, in this case, DN
-				// list must be empty, or all members of the DN list are
-				// permitted,
-				// if (request.getDnList() == null ||
-				// request.getDnList().isEmpty()
-				// || permittedTargetDnExists(request.getDnList(),
-				// permittedTargetDN)) {
-				//
-				// //
-				// for (int j = 0; j < permittedOperations.length; j++) {
-				// String permittedOperation = permittedOperations[j];
-				// if (permittedOperation.equalsIgnoreCase(operation)
-				// || ALL_PERMISSION.equalsIgnoreCase(permittedOperation)) {
-				// logger.debug(
-				// "Authorization succeeded with privilege: {} Permitted
-				// operation {} for target DN(s): {}",
-				// new Object[] { privilege, permittedOperation, perm });
-				// return true;
-				// }
-				// }
-				//
-				// }
-
+				// Now permitted operation is equals to the target operation,
+				// we just need to check each target DNs whether they are one of
+				// the permitted DNs
+				for (LdapEntry entry : targetEntries) {
+					String targetDn = entry.getDistinguishedName();
+					if (permittedTargetDn.equalsIgnoreCase(targetDn) || targetDn.indexOf(permittedTargetDn) >= 0) {
+						permittedEntries.add(entry);
+					}
+				}
 			}
 
 		} catch (LdapException e) {
@@ -124,31 +101,7 @@ public class AuthServiceImpl implements IAuthService {
 
 		logger.warn("Authorization failed. Please check request parameters.");
 
-		return false;
-	}
-
-	/**
-	 * Checks if permitted target DN exists in the DN list.
-	 * 
-	 * @param dnList
-	 * @param permittedTargetDN
-	 * @return true if permitted target DN exists in the list, false otherwise.
-	 */
-	private boolean permittedTargetDnExists(List<String> dnList, String permittedTargetDN) {
-		if (dnList != null && !dnList.isEmpty()) {
-			for (String dn : dnList) {
-				if (permittedTargetDN.equalsIgnoreCase(dn) || dn.indexOf(permittedTargetDN) >= 0) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public List<LdapEntry> getPermittedEntries(String userDn, List<LdapEntry> entries, String targetOperation) {
-		// TODO Auto-generated method stub
-		return null;
+		return permittedEntries;
 	}
 
 }
