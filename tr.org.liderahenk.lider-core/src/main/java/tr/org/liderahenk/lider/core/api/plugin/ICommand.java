@@ -1,7 +1,5 @@
 package tr.org.liderahenk.lider.core.api.plugin;
 
-import tr.org.liderahenk.lider.core.api.autherization.IAuthService;
-
 /**
  * 
  * <p>
@@ -9,7 +7,8 @@ import tr.org.liderahenk.lider.core.api.autherization.IAuthService;
  * class implementing this interface can deploy a new command to the server.
  * ServiceRouterImpl directs RestRequestImpl to the appropriate command if
  * exists according to respective properties.
- * </p><br/>
+ * </p>
+ * <br/>
  * 
  * <p>
  * ServiceRouterImpl tries to find the appropriate command via
@@ -30,9 +29,9 @@ public interface ICommand {
 
 	/**
 	 * Any custom plugin command should implement this method and return a
-	 * non-null {@link ICommandResult}, A command may access to
-	 * {@link IAuthService}, ILdapService and more plugin services provided by
-	 * the core system to do its necessary job.
+	 * non-null {@link ICommandResult}, A command may access to IAuthService,
+	 * ILdapService and more plugin services provided by the core system to do
+	 * its necessary job.
 	 * 
 	 * @return command result {@link ICommandResult}
 	 */

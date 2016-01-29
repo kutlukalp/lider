@@ -1,12 +1,10 @@
-/**
- * 
- */
 package tr.org.liderahenk.lider.impl.taskmanager;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +40,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusUpdateSubscribe
 	private IMessagingService messagingService;
 	private IMessageFactory messageFactory;
 	private IConfigurationService config;
+	private EventAdmin eventAdmin;
 
 	public void init() {
 		logger.info("Initializing Task Manager...");
@@ -65,6 +64,11 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusUpdateSubscribe
 
 	public void setMessagingService(IMessagingService messagingService) {
 		this.messagingService = messagingService;
+	}
+
+	// TODO fire event for tr/org/pardus/mys/taskmanager/task/update
+	public void setEventAdmin(EventAdmin eventAdmin) {
+		this.eventAdmin = eventAdmin;
 	}
 
 	@Override

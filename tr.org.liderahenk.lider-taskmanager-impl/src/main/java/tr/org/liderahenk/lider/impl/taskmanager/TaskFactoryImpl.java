@@ -6,20 +6,19 @@ import tr.org.liderahenk.lider.core.api.taskmanager.ITaskFactory;
 
 /**
  * Default implementation for {@link ITaskFactory}
- *  
+ * 
  * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
  *
  */
 public class TaskFactoryImpl implements ITaskFactory {
-	
+
 	@Override
-	public ITask create(String targetObjectDN,IRestRequest request) {
+	public ITask create(String targetObjectDN, IRestRequest request) {
 		return new TaskImpl(targetObjectDN, request);
 	}
 
 	@Override
-	public TaskImpl create(String targetObjectDN, IRestRequest request,
-			ITask parentTask) {
+	public TaskImpl create(String targetObjectDN, IRestRequest request, ITask parentTask) {
 		return new TaskImpl(targetObjectDN, request, parentTask.getId());
 	}
 

@@ -1,7 +1,6 @@
 package tr.org.liderahenk.lider.impl.taskmanager;
 
 import java.io.Serializable;
-import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,7 +22,6 @@ import com.hazelcast.map.EntryProcessor;
 import com.hazelcast.query.SqlPredicate;
 
 import tr.org.liderahenk.lider.core.api.IConfigurationService;
-import tr.org.liderahenk.lider.core.api.enums.CrudType;
 import tr.org.liderahenk.lider.core.api.log.IOperationLogService;
 import tr.org.liderahenk.lider.core.api.taskmanager.ITask;
 import tr.org.liderahenk.lider.core.api.taskmanager.ITaskStore;

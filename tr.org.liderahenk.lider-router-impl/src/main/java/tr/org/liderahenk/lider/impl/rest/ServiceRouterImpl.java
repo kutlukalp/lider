@@ -20,6 +20,7 @@ import tr.org.liderahenk.lider.core.api.router.IServiceRouter;
 import tr.org.liderahenk.lider.core.api.router.InvalidRequestException;
 import tr.org.liderahenk.lider.core.api.taskmanager.ITaskManager;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskSubmissionFailedException;
+import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
 /**
  * Default implementation for {@link IServiceRouter}. ServiceRouterImpl handles
@@ -56,7 +57,7 @@ public class ServiceRouterImpl implements IServiceRouter {
 	}
 
 	@Override
-	public IRestResponse delegateRequest(IRestRequest request)
+	public IRestResponse delegateRequest(IRestRequest request, List<LdapEntry> entries)
 			throws InvalidRequestException, TaskSubmissionFailedException {
 
 		// Try to find related ICommand instance.

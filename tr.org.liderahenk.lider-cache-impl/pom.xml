@@ -3,6 +3,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<groupId>tr.org.liderahenk</groupId>
 		<artifactId>tr.org.liderahenk.lider</artifactId>
@@ -13,9 +14,10 @@
 	<name>tr.org.liderahenk.lider-cache-impl</name>
 	<url>http://www.liderahenk.org.tr</url>
 	<packaging>bundle</packaging>
-	
+
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<!-- needed for checkstyle/findbugs -->
+		<main.basedir>${project.basedir}/..</main.basedir>
 	</properties>
 
 	<dependencies>
@@ -24,14 +26,12 @@
 			<artifactId>tr.org.liderahenk.lider-core</artifactId>
 			<scope>provided</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
 			<artifactId>ehcache</artifactId>
 		</dependency>
 	</dependencies>
-	
-	
+
 	<build>
 		<plugins>
 			<plugin>
@@ -41,13 +41,12 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<Bundle-SymbolicName>tr.org.liderahenk.lider-cache-impl</Bundle-SymbolicName>
+						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
 						<Bundle-Version>1.0.0</Bundle-Version>
 					</instructions>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
-
 
 </project>

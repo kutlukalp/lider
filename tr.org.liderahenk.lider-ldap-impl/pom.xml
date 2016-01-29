@@ -9,11 +9,20 @@
 	</parent>
 
 	<artifactId>tr.org.liderahenk.lider-ldap-impl</artifactId>
+	<name>tr.org.liderahenk.lider-ldap-impl</name>
+	<url>http://www.liderahenk.org.tr</url>
 	<packaging>bundle</packaging>
+
+	<properties>
+		<!-- needed for checkstyle/findbugs -->
+		<main.basedir>${project.basedir}/..</main.basedir>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>tr.org.liderahenk</groupId>
 			<artifactId>tr.org.liderahenk.lider-core</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.directory.api</groupId>
@@ -86,7 +95,7 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<Bundle-SymbolicName>tr.org.liderahenk.lider-ldap-impl</Bundle-SymbolicName>
+						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
 						<Bundle-Version>1.0.0</Bundle-Version>
 					</instructions>
 				</configuration>

@@ -1,3 +1,92 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+	<service ref="taskManager">
+		<interfaces>
+			<value>tr.org.liderahenk.lider.core.api.taskmanager.ITaskManager
+			</value>
+			<value>tr.org.liderahenk.lider.core.api.messaging.ITaskStatusUpdateSubscriber
+			</value>
+		</interfaces>
+	</service>
+
+	<service ref="taskFactory"
+		interface="tr.org.liderahenk.lider.core.api.taskmanager.ITaskFactory" />
+
+	<service ref="taskService" auto-export="interfaces" />
+
+	<service ref="taskStore" interface="tr.org.pardus.mys.taskmanager.api.ITaskStore" />
+
+	<service ref="taskStatusUpdateHandler" interface="org.osgi.service.event.EventHandler">
+		<service-properties>
+			<entry key="event.topics" value="tr/org/pardus/mys/taskmanager/task/update" />
+		</service-properties>
+	</service>
+	<bean id="taskStatusUpdateHandler"
+		class="tr.org.liderahenk.lider.impl.taskmanager.TaskStatusUpdateEventHandler">
+		<property name="taskAwareCommands" ref="taskAwareCommands" />
+	</bean>
+
+	<service ref="lyaNotifyTaskStatusUpdateHandler" interface="org.osgi.service.event.EventHandler">
+		<service-properties>
+			<entry key="event.topics" value="tr/org/pardus/mys/taskmanager/task/update" />
+		</service-properties>
+	</service>
+	<bean id="lyaNotifyTaskStatusUpdateHandler"
+		class="tr.org.liderahenk.lider.impl.taskmanager.LyaNotifyTaskStatusUpdateEventHandler">
+		<property name="messagingService" ref="messagingService" />
+	</bean>
+
+	<bean id="taskManager"
+		class="tr.org.liderahenk.lider.impl.taskmanager.TaskManagerImpl">
+		<property name="taskService" ref="taskService" />
+		<property name="ldapService" ref="ldapService" />
+		<property name="messagingService" ref="messagingService" />
+		<property name="messageFactory" ref="messageFactory" />
+		<property name="config" ref="configurationService" />
+		<property name="eventAdmin" ref="eventAdmin" />
+	</bean>
+
+	<bean id="taskService"
+		class="tr.org.liderahenk.lider.impl.taskmanager.TaskServiceImpl">
+		<property name="taskStore" ref="taskStore" />
+		<property name="messagingService" ref="messagingService" />
+		<property name="messageFactory" ref="messageFactory" />
+		<property name="config" ref="configurationService" />
+	</bean>
+
+	<bean id="taskStore"
+		class="tr.org.liderahenk.lider.impl.taskmanager.TaskStoreHazelcastImpl"
+		init-method="init" destroy-method="destroy">
+		<property name="operationLogService" ref="logService" />
+		<property name="taskMapStore" ref="taskMapStore" />
+		<property name="config" ref="configurationService" />
+	</bean>
+
+	<bean id="taskFactory"
+		class="tr.org.liderahenk.lider.impl.taskmanager.TaskFactoryImpl" />
+
+	<bean id="taskMapStore" class="tr.org.liderahenk.lider.impl.taskmanager.TaskMapStore"
+		init-method="init" destroy-method="destroy" depends-on="taskManagerDao">
+		<property name="taskManagerDao" ref="taskManagerDao" />
+		<property name="config" ref="configurationService" />
+		<property name="messagingService" ref="messagingService" />
+	</bean>
+
+	<reference id="ldapService"
+		interface="tr.org.liderahenk.lider.core.api.ldap.ILDAPService" />
+	<reference id="messagingService"
+		interface="tr.org.liderahenk.lider.core.api.messaging.IMessagingService" />
+	<reference id="messageFactory"
+		interface="tr.org.liderahenk.lider.core.api.messaging.IMessageFactory" />
+	<reference id="taskManagerDao"
+		interface="tr.org.liderahenk.lider.core.api.taskmanager.dao.ITaskDao" />
+	<reference id="logService"
+		interface="tr.org.liderahenk.lider.core.api.log.IOperationLogService" />
+	<reference id="configurationService"
+		interface="tr.org.liderahenk.lider.core.api.IConfigurationService" />
+	<reference-list id="taskAwareCommands"
+		interface="tr.org.liderahenk.lider.core.api.plugin.ITaskAwareCommand" />
+	<reference id="eventAdmin" interface="org.osgi.service.event.EventAdmin" />
+
 </blueprint>
