@@ -10,50 +10,46 @@ import tr.org.liderahenk.lider.core.api.rest.IRestResponseBody;
 import tr.org.liderahenk.lider.core.api.rest.RestResponseStatus;
 
 /**
- * Default implementation for {@link IRestResponse} 
- *  
+ * Default implementation for {@link IRestResponse}
+ * 
  * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
  *
  */
 public class RestResponseImpl implements IRestResponse {
-	
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -5095818044483623056L;
-	
-	private RestResponseStatus status; 
-	private String pluginId;
+
+	private RestResponseStatus status;
+	private String pluginName;
 	private String pluginVersion;
 	private List<String> messages;
 	private RestResponseBodyImpl responseBody;
-	
+
 	public RestResponseImpl() {
 	}
-	
-	public RestResponseImpl( RestResponseStatus status, List<String> messages ) {
+
+	public RestResponseImpl(RestResponseStatus status, List<String> messages) {
 		this.status = status;
 		this.messages = messages;
 	}
 
-	public RestResponseImpl( ICommandResult commandResult, String[] tasks ) {
-		
+	public RestResponseImpl(ICommandResult commandResult, String[] tasks) {
+
 		this.messages = commandResult.getMessages();
-		this.pluginId = commandResult.getCommand().getPluginId();
+		this.pluginName = commandResult.getCommand().getPluginName();
 		this.pluginVersion = commandResult.getCommand().getPluginVersion();
-		this.responseBody = new RestResponseBodyImpl(pluginId, pluginVersion,commandResult.getResultMap(), tasks);
-		
-		switch (commandResult.getStatus())
-		{
-			case OK:
-				this.status = RestResponseStatus.OK;
-				break;
-			case ERROR:
-				this.status = RestResponseStatus.ERROR;
-				break;
-			case WARNING:
-				this.status = RestResponseStatus.WARNING;
-				break;
+		this.responseBody = new RestResponseBodyImpl(pluginName, pluginVersion, commandResult.getResultMap(), tasks);
+
+		switch (commandResult.getStatus()) {
+		case OK:
+			this.status = RestResponseStatus.OK;
+			break;
+		case ERROR:
+			this.status = RestResponseStatus.ERROR;
+			break;
+		case WARNING:
+			this.status = RestResponseStatus.WARNING;
+			break;
 		}
 	}
 
@@ -61,25 +57,21 @@ public class RestResponseImpl implements IRestResponse {
 	public RestResponseStatus getStatus() {
 		return status;
 	}
-	
-	@Override
-	public String getPluginId() {
-		return pluginId;
+
+	public String getPluginName() {
+		return pluginName;
 	}
-	
 
 	@Override
 	public List<String> getMessages() {
 		return messages;
 	}
 
-
 	@Override
 	public String getPluginVersion() {
 		return pluginVersion;
 	}
 
-	
 	@Override
 	public String toJson() {
 		ObjectMapper mapper = new ObjectMapper();
@@ -87,8 +79,8 @@ public class RestResponseImpl implements IRestResponse {
 			return mapper.writeValueAsString(this);
 		} catch (Exception e) {
 			e.printStackTrace();
-		} 
-		
+		}
+		// FIXME
 		return "unable to serialize response to JSON!";
 	}
 
@@ -97,6 +89,4 @@ public class RestResponseImpl implements IRestResponse {
 		return responseBody;
 	}
 
-	
-	
 }

@@ -1,6 +1,8 @@
 package tr.org.liderahenk.lider.impl.rest;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -9,15 +11,18 @@ import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.autherization.IAuthService;
+import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
 import tr.org.liderahenk.lider.core.api.rest.IRequestFactory;
 import tr.org.liderahenk.lider.core.api.rest.IResponseFactory;
 import tr.org.liderahenk.lider.core.api.rest.IRestRequest;
 import tr.org.liderahenk.lider.core.api.rest.IRestRequestProcessor;
 import tr.org.liderahenk.lider.core.api.rest.IRestResponse;
+import tr.org.liderahenk.lider.core.api.rest.RestDNType;
 import tr.org.liderahenk.lider.core.api.rest.RestResponseStatus;
 import tr.org.liderahenk.lider.core.api.router.IServiceRouter;
 import tr.org.liderahenk.lider.core.api.router.InvalidRequestException;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskSubmissionFailedException;
+import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
 /**
  * Default implementation for {@link IRestRequestProcessor}
@@ -38,6 +43,7 @@ public class RestRequestProcessorImpl implements IRestRequestProcessor {
 	private IResponseFactory responseFactory;
 	private IAuthService authService;
 	private IConfigurationService config;
+	private ILDAPService ldapService;
 
 	public void setConfig(IConfigurationService config) {
 		this.config = config;
@@ -64,6 +70,7 @@ public class RestRequestProcessorImpl implements IRestRequestProcessor {
 
 		IRestRequest request = null;
 		Subject currentUser = null;
+		List<LdapEntry> targetEntries = null;
 
 		try {
 			currentUser = SecurityUtils.getSubject();
@@ -74,9 +81,21 @@ public class RestRequestProcessorImpl implements IRestRequestProcessor {
 		try {
 			request = requestFactory.createRequest(requestBody);
 
+			// This is the default format for operation definitions. (such as
+			// BROWSER/SAVE, USB/ENABLE etc.)
+			String targetOperation = request.getPluginName() + "/" + request.getCommandId();
+
+			// DN list may contain any combination of Ahenk, User and Group DNs,
+			// and DN type indicates what kind of DNs in this list are subject
+			// to command execution. Therefore we need to find these LDAP
+			// entries first before authorization and command execution phases.
+			targetEntries = findTargetEntries(request.getDnList(), request.getDnType());
+
 			if (config.getAuthorizationEnabled()) {
 				if (currentUser.getPrincipal() != null) {
-					if (!authService.isAuthorized(currentUser.getPrincipal().toString(), request)) {
+					targetEntries = authService.getPermittedEntries(currentUser.getPrincipal().toString(),
+							targetEntries, targetOperation);
+					if (targetEntries == null || targetEntries.isEmpty()) {
 						return responseFactory.createResponse(request, RestResponseStatus.ERROR,
 								Arrays.asList(new String[] { "NOT_AUTHORIZED" }));
 					}
@@ -91,7 +110,7 @@ public class RestRequestProcessorImpl implements IRestRequestProcessor {
 		}
 
 		try {
-			return serviceRouter.delegateRequest(request);
+			return serviceRouter.delegateRequest(request, targetEntries);
 		} catch (InvalidRequestException e) {
 			// TODO resposne messages!!
 			// adding some error messages to the response, and a
@@ -102,6 +121,18 @@ public class RestRequestProcessorImpl implements IRestRequestProcessor {
 			return responseFactory.createResponse(request, RestResponseStatus.ERROR, Arrays.asList(
 					new String[] { "Cannot submit task for request!", e.getMessage(), e.getCause().getMessage() }));
 		}
+	}
+
+	private List<LdapEntry> findTargetEntries(List<String> dnList, RestDNType dnType) {
+		List<LdapEntry> entries = null;
+		if (dnList != null && !dnList.isEmpty() && dnType != null) {
+			entries = new ArrayList<LdapEntry>();
+			// For each DN, find its target child entries according to DN type:
+			for (String dn : dnList) {
+//				search(attributeName, attributeValue, attributes)
+			}
+		}
+		return entries;
 	}
 
 }

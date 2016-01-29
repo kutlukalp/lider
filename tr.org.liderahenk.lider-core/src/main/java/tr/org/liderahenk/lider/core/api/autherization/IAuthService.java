@@ -1,6 +1,8 @@
 package tr.org.liderahenk.lider.core.api.autherization;
 
-import tr.org.liderahenk.lider.core.api.rest.IRestRequest;
+import java.util.List;
+
+import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
 /**
  * Provides authorization services
@@ -13,10 +15,19 @@ public interface IAuthService {
 
 	/**
 	 * 
-	 * 
-	 * @param string
-	 * @param restRequest
+	 * @param userDn
+	 * @param entries
+	 * @param targetOperation
 	 * @return
 	 */
-	boolean isAuthorized(String string, IRestRequest restRequest);
+	boolean isAuthorized(String userDn, List<LdapEntry> entries, String targetOperation);
+	
+	/**
+	 * 
+	 * @param userDn
+	 * @param entries
+	 * @param targetOperation
+	 * @return
+	 */
+	List<LdapEntry> getPermittedEntries(String userDn, List<LdapEntry> entries, String targetOperation);
 }

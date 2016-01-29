@@ -16,24 +16,25 @@ public interface IRestResponseBody extends Serializable {
 	 * 
 	 * @return id of plugin that made {@link IRestResponse}
 	 */
-	String getPluginId();
-	
+	String getPluginName();
+
 	/**
 	 * 
 	 * @return version of plugin that made {@link IRestResponse}
 	 */
 	String getPluginVersion();
-	
+
 	/**
-	 * Any plugin can return the customParams Map<String,String>  passing necessary custom params to their clients,
-	 * then they are accesible with this method. They can serialize/deserialize it from/to their custom objects too
+	 * Any plugin can return the customParams Map<String,String> passing
+	 * necessary custom params to their clients, then they are accesible with
+	 * this method. They can serialize/deserialize it from/to their custom
+	 * objects too
+	 * 
 	 * @return custom params Map<String,String>
 	 */
 	Map<String, Object> getResultMap();
-	
-	 
+
 	String getRequestId();
 
-	
 	String[] getTasks();
 }

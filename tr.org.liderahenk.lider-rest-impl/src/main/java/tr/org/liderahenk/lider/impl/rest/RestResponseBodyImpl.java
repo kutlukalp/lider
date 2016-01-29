@@ -10,39 +10,39 @@ import tr.org.liderahenk.lider.core.api.rest.IRestResponseBody;
 
 /**
  * Default implementation for {@link IRestResponseBody}
- *  
+ * 
  * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
  *
  */
 public class RestResponseBodyImpl implements IRestResponseBody {
-	
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 3329435461350839639L;
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger(RestResponseBodyImpl.class);
-	
-	private String pluginId;
+
+	private String pluginName;
 	private String pluginVersion;
 	private Map<String, Object> resultMap;
 	private String requestId;
 	private String[] tasks;
-	
+
 	/**
 	 * 
 	 */
 	public RestResponseBodyImpl() {
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	/**
 	 * 
 	 * @param pluginId
 	 * @param pluginVersion
 	 */
-	public RestResponseBodyImpl( String pluginId, String pluginVersion ) {
-		this.pluginId = pluginId;
+	public RestResponseBodyImpl(String pluginName, String pluginVersion) {
+		this.pluginName = pluginName;
 		this.pluginVersion = pluginVersion;
 	}
 
@@ -53,17 +53,16 @@ public class RestResponseBodyImpl implements IRestResponseBody {
 	 * @param resultMap
 	 * @param tasks
 	 */
-	public RestResponseBodyImpl( String pluginId, String pluginVersion,
-			Map<String,Object> resultMap,
+	public RestResponseBodyImpl(String pluginName, String pluginVersion, Map<String, Object> resultMap,
 			String[] tasks) {
-		this(pluginId,pluginVersion);
+		this(pluginName, pluginVersion);
 		this.resultMap = resultMap;
 		this.tasks = tasks;
 	}
 
 	@Override
-	public String getPluginId() {
-		return pluginId;
+	public String getPluginName() {
+		return pluginName;
 	}
 
 	@Override
@@ -72,18 +71,17 @@ public class RestResponseBodyImpl implements IRestResponseBody {
 	}
 
 	@Override
-	public Map<String,Object> getResultMap() {
+	public Map<String, Object> getResultMap() {
 		return resultMap;
 	}
-	
-	
+
 	@Override
 	public String getRequestId() {
 		return requestId;
 	}
-	
-	public RestResponseBodyImpl fromJson( String json ){
-		ObjectMapper mapper = new ObjectMapper(); 
+
+	public RestResponseBodyImpl fromJson(String json) {
+		ObjectMapper mapper = new ObjectMapper();
 		try {
 			return mapper.readValue(json, RestResponseBodyImpl.class);
 		} catch (Exception e) {
@@ -91,9 +89,9 @@ public class RestResponseBodyImpl implements IRestResponseBody {
 		}
 		return null;
 	}
-	
-	public void setPluginId(String pluginId) {
-		this.pluginId = pluginId;
+
+	public void setPluginName(String pluginName) {
+		this.pluginName = pluginName;
 	}
 
 	public void setPluginVersion(String pluginVersion) {
@@ -104,11 +102,9 @@ public class RestResponseBodyImpl implements IRestResponseBody {
 	public String[] getTasks() {
 		return tasks;
 	}
-	
+
 	public void setTasks(String[] tasks) {
 		this.tasks = tasks;
 	}
-
-	
 
 }

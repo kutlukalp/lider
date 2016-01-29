@@ -50,6 +50,7 @@ import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
 import tr.org.liderahenk.lider.core.api.ldap.LdapException;
 import tr.org.liderahenk.lider.core.api.ldap.LdapSearchFilterAttribute;
 import tr.org.liderahenk.lider.core.api.plugin.ILdapExtension;
+import tr.org.liderahenk.lider.core.api.rest.RestDNType;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
 /**

@@ -5,13 +5,12 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tr.org.liderahenk.lider.core.api.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.IUser;
 import tr.org.liderahenk.lider.core.api.auth.IUserPrivilege;
 import tr.org.liderahenk.lider.core.api.autherization.IAuthService;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
 import tr.org.liderahenk.lider.core.api.ldap.LdapException;
-import tr.org.liderahenk.lider.core.api.rest.IRestRequest;
+import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
 /**
  * Default implementation of {@link IAuthService}. AuthServiceImpl handles
@@ -35,11 +34,8 @@ public class AuthServiceImpl implements IAuthService {
 	}
 
 	@Override
-	public boolean isAuthorized(String userDn, IRestRequest request) {
+	public boolean isAuthorized(String userDn, List<LdapEntry> entries, String targetOperation) {
 		try {
-			// This is the default format for operation definitions. (such as
-			// BROWSER/SAVE, USB/ENABLE etc.)
-			String targetOperation = request.getPluginName() + "/" + request.getCommandId();
 			logger.debug("Authorization started for DN: {} and operation: {}",
 					new Object[] { userDn, targetOperation });
 
@@ -147,6 +143,12 @@ public class AuthServiceImpl implements IAuthService {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public List<LdapEntry> getPermittedEntries(String userDn, List<LdapEntry> entries, String targetOperation) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
