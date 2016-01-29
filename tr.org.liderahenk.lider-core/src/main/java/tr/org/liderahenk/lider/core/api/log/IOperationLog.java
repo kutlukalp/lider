@@ -17,4 +17,5 @@ public interface IOperationLog extends IBaseObject{
 	 String getLogText();
 	 String getChecksum();
 	 CrudType getCrudType();
+
 }
