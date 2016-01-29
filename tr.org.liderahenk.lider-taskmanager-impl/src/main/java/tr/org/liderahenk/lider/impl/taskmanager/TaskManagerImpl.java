@@ -72,14 +72,11 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusUpdateSubscribe
 	}
 
 	@Override
-	public String[] addTask(IRestRequest request) throws TaskSubmissionFailedException {
+	public String[] addTask(IRestRequest request, List<LdapEntry> entries) throws TaskSubmissionFailedException {
 
 		List<String> taskIds = new ArrayList<String>();
 
 		try {
-
-			// TODO requeste gore ele alinacak ogeleri bul!
-			List<LdapEntry> entries = ldapService.findEntries();
 
 			if (entries != null && !entries.isEmpty()) {
 

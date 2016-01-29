@@ -1,8 +1,10 @@
 package tr.org.liderahenk.lider.core.api.taskmanager;
 
+import java.util.List;
 import java.util.Set;
 
 import tr.org.liderahenk.lider.core.api.rest.IRestRequest;
+import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
 /**
  * Provides {@link ITask} lifecycle management services
@@ -15,6 +17,7 @@ public interface ITaskManager {
 
 	/**
 	 * creates a task for request
+	 * @param entries 
 	 * 
 	 * @param {@link
 	 * 			IRestRequest} to be submitted as a task
@@ -25,7 +28,7 @@ public interface ITaskManager {
 	 *             on any failure during task creation
 	 * 
 	 */
-	String[] addTask(IRestRequest request) throws TaskSubmissionFailedException;
+	String[] addTask(IRestRequest request, List<LdapEntry> entries) throws TaskSubmissionFailedException;
 
 	/**
 	 * changes an ongoing task priority
