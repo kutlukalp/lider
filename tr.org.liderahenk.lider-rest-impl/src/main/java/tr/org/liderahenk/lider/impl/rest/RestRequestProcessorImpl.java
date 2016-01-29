@@ -124,13 +124,13 @@ public class RestRequestProcessorImpl implements IRestRequestProcessor {
 		}
 	}
 
+	// TODO Read attributes from properties file:
 	private List<LdapEntry> findTargetEntries(List<String> dnList, RestDNType dnType) {
 		List<LdapEntry> entries = null;
-		// TODO Read privilege attribute from properties file:
-		String[] attributes = new String[] { "liderPrivilege" };
+		String[] attributes = new String[] { "liderPrivilege" }; // ??
 		String attributeName = "objectClass";
-		String attributeValue = dnType == RestDNType.AHENK ? config.getAgentLdapIdAttribute()
-				: (dnType == RestDNType.USER ? config.getAuthLdapUserAttribute() : "*");
+		String attributeValue = dnType == RestDNType.AHENK ? "pardusDevice" // ??
+				: (dnType == RestDNType.USER ? "pardusAccount" : "*"); // ??
 		if (dnList != null && !dnList.isEmpty() && dnType != null) {
 			entries = new ArrayList<LdapEntry>();
 			// For each DN, find its target child entries according to DN type:
