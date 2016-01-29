@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+	xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+                 http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+                 http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://svn.apache.org/repos/asf/aries/trunk/blueprint/blueprint-cm/src/main/resources/org/apache/aries/blueprint/compendium/cm/blueprint-cm-1.1.0.xsd
+         ">
+
+	<service ref="messagingServiceImpl"
+		interface="tr.org.liderahenk.lider.core.api.messaging.IMessagingService" />
+	<service ref="messageFactory"
+		interface="tr.org.liderahenk.lider.core.api.messaging.IMessageFactory" />
+
+	<bean id="messagingServiceImpl"
+		class="tr.org.liderahenk.lider.impl.messaging.MessagingServiceImpl">
+		<property name="xmppClient" ref="xmppClient" />
+	</bean>
+
+	<bean id="xmppClient" class="tr.org.liderahenk.lider.impl.messaging.XMPPClientImpl"
+		init-method="init" destroy-method="destroy">
+		<property name="presenceSubscribers" ref="presenceSubscribersRef" />
+		<property name="notificationSubscribers" ref="notificationSubscribersRef" />
+		<property name="taskStatusUpdateSubscribers" ref="taskStatusUpdateSubscribersRef" />
+		<property name="ldapService" ref="ldapService" />
+		<property name="configurationService" ref="configurationService" />
+	</bean>
+
+	<bean id="messageFactory"
+		class="tr.org.liderahenk.lider.impl.messaging.MessageFactoryImpl">
+	</bean>
+
+	<reference-list id="notificationSubscribersRef"
+		interface="tr.org.liderahenk.lider.core.api.messaging.INotificationSubscriber"
+		availability="optional" />
+	<reference-list id="presenceSubscribersRef"
+		interface="tr.org.liderahenk.lider.core.api.messaging.IPresenceSubscriber"
+		availability="optional" />
+	<reference-list id="taskStatusUpdateSubscribersRef"
+		interface="tr.org.liderahenk.lider.core.api.messaging.ITaskStatusUpdateSubscriber"
+		availability="optional" />
+	<reference id="ldapService"
+		interface="tr.org.liderahenk.lider.core.api.ldap.ILDAPService" />
+	<reference id="configurationService"
+		interface="tr.org.liderahenk.lider.core.api.IConfigurationService" />
+
+</blueprint>

@@ -1,6 +1,3 @@
-/**
- * 
- */
 package tr.org.liderahenk.lider.core.api.ldap;
 
 import java.util.List;
