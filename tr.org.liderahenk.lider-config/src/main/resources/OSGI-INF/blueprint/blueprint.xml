@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+         xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="
+                 http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+                 http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://svn.apache.org/repos/asf/aries/trunk/blueprint/blueprint-cm/src/main/resources/org/apache/aries/blueprint/compendium/cm/blueprint-cm-1.1.0.xsd
+         ">
+         
+    <cm:property-placeholder persistent-id="tr.org.liderahenk"
+      update-strategy="reload">
+    </cm:property-placeholder> 
+         
+	<bean id="configurationService" class="tr.org.liderahenk.config.ConfigurationServiceImpl">
+		<property name="ldapServer" value="${ldap.server}"/>
+		<property name="ldapPassword" value="${ldap.password}"/>
+		<property name="ldapUser" value="${ldap.user}"/>
+		<property name="ldapPort" value="${ldap.port}"/>
+		<property name="ldapRootDn" value="${ldap.root.dn}"/>
+		<property name="ldapUseSsl" value="${ldap.use.ssl}"/>
+		
+		<property name="xmppServer" value="${xmpp.server}" />
+		<property name="xmppServerPublicIP" value="${xmpp.server.public.ip}" />
+        <property name="xmppPort" value="${xmpp.port}"/>
+        <property name="xmppJid" value="${xmpp.jid}"/>
+        <property name="xmppPassword" value="${xmpp.password}"/>
+        <property name="xmppDomain" value="${xmpp.domain}"/>
+        <property name="xmppPingTimeout" value="${xmpp.ping.timeout}"/>
+        
+        <property name="agentLdapBaseDn" value="${agent.ldap.base.dn}" />
+		<property name="agentLdapIdAttribute" value="${agent.ldap.id.attribute}" />
+		<property name="agentLdapJidAttribute" value="${agent.ldap.jid.attribute}" />
+		
+		<property name="authLdapUserSearchBase" value="${auth.ldap.user.search.base}" />
+		<property name="authLdapUserFilter" value="${auth.ldap.user.filter}" />
+		<property name="authLdapUserAttribute" value="${auth.ldap.user.attribute}" />
+		<property name="authorizationEnabled" value="${auth.authorization.enabled}" />
+        <property name="authLdapUserObjectClasses" value="${auth.ldap.user.objectclasses}" />
+   	    <property name="servers" value="${servers}" />
+   	    <property name="privateKey" value="${privateKey}" />
+		
+		<property name="taskManagerTaskTimeout" value="${taskmanager.task.timeout}" />
+		<property name="taskManagerMulticastEnabled" value="${taskmanager.multicast.enabled}" />
+		<property name="taskManagerLogXmppMessagesEnabled" value="${taskmanager.log.xmpp.messages.enabled}" />
+		
+		<property name="syslogRecordMaxQueryDay" value="${syslog.record.max.query.day}" />
+		
+		<property name="mailAddress" value="${mail.address}" />
+		<property name="mailPassword" value="${mail.password}" />
+		<property name="mailHost" value="${mail.host}" />
+		<property name="mailSmtpPort" value="${mail.smtp.port}" />
+		<property name="mailSmtpAuth" value="${mail.smtp.auth}" />
+		
+		<property name="mailSmtpStartTlsEnable" value="${mail.smtp.starttls.enable}" />
+		<property name="mailSmtpSslEnable" value="${mail.smtp.ssl.enable}" />
+		<property name="mailSmtpConnTimeout" value="${mail.smtp.connectiontimeout}" />
+		<property name="mailSmtpTimeout" value="${mail.smtp.timeout}" />
+		<property name="mailSmtpWriteTimeout" value="${mail.smtp.writetimeout}" />
+		
+		<property name="userMailAttribute" value="${ldap.user.mail.attribute}" />
+	</bean>
+	
+	
+	<service ref="configurationService" interface="tr.org.liderahenk.lider.core.api.IConfigurationService" />        
+	
+
+</blueprint>
