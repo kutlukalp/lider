@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import tr.org.liderahenk.lider.core.api.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.autherization.IAuthService;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
+import tr.org.liderahenk.lider.core.api.ldap.LdapException;
 import tr.org.liderahenk.lider.core.api.rest.IRequestFactory;
 import tr.org.liderahenk.lider.core.api.rest.IResponseFactory;
 import tr.org.liderahenk.lider.core.api.rest.IRestRequest;
@@ -125,11 +126,23 @@ public class RestRequestProcessorImpl implements IRestRequestProcessor {
 
 	private List<LdapEntry> findTargetEntries(List<String> dnList, RestDNType dnType) {
 		List<LdapEntry> entries = null;
+		// TODO Read privilege attribute from properties file:
+		String[] attributes = new String[] { "liderPrivilege" };
+		String attributeName = "objectClass";
+		String attributeValue = dnType == RestDNType.AHENK ? config.getAgentLdapIdAttribute()
+				: (dnType == RestDNType.USER ? config.getAuthLdapUserAttribute() : "*");
 		if (dnList != null && !dnList.isEmpty() && dnType != null) {
 			entries = new ArrayList<LdapEntry>();
 			// For each DN, find its target child entries according to DN type:
 			for (String dn : dnList) {
-//				search(attributeName, attributeValue, attributes)
+				try {
+					List<LdapEntry> result = ldapService.search(dn, attributeName, attributeValue, attributes);
+					if (result != null && !result.isEmpty()) {
+						entries.addAll(result);
+					}
+				} catch (LdapException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		return entries;

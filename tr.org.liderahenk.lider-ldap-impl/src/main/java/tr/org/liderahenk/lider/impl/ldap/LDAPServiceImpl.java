@@ -50,7 +50,6 @@ import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
 import tr.org.liderahenk.lider.core.api.ldap.LdapException;
 import tr.org.liderahenk.lider.core.api.ldap.LdapSearchFilterAttribute;
 import tr.org.liderahenk.lider.core.api.plugin.ILdapExtension;
-import tr.org.liderahenk.lider.core.api.rest.RestDNType;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
 /**
@@ -571,7 +570,7 @@ public class LDAPServiceImpl implements ILDAPService {
 	}
 
 	@Override
-	public List<LdapEntry> search(String attributeName, String attributeValue, String... attributes)
+	public List<LdapEntry> search(String baseDn, String attributeName, String attributeValue, String[] attributes)
 			throws LdapException {
 		List<LdapEntry> result = new ArrayList<LdapEntry>();
 		Map<String, String> attrs = null;
@@ -587,7 +586,7 @@ public class LDAPServiceImpl implements ILDAPService {
 			}
 
 			req.setTimeLimit(0);
-			req.setBase(new Dn(configurationService.getLdapRootDn()));
+			req.setBase(new Dn(baseDn));
 			req.setFilter("(" + attributeName + "=" + attributeValue + ")");
 			SearchCursor searchCursor = connection.search(req);
 			while (searchCursor.next()) {
@@ -612,7 +611,12 @@ public class LDAPServiceImpl implements ILDAPService {
 
 		}
 		return result;
+	}
 
+	@Override
+	public List<LdapEntry> search(String attributeName, String attributeValue, String... attributes)
+			throws LdapException {
+		return this.search(configurationService.getLdapRootDn(), attributeName, attributeValue, attributes);
 	}
 
 	public List<LdapEntry> search(List<LdapSearchFilterAttribute> filterAttributes, String... attributes)

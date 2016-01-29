@@ -9,7 +9,6 @@ import java.util.Map;
 import org.apache.directory.api.ldap.model.entry.Entry;
 
 import tr.org.liderahenk.lider.core.api.IUser;
-import tr.org.liderahenk.lider.core.api.rest.RestDNType;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
 /**
@@ -117,5 +116,8 @@ public interface ILDAPService {
 	List<LdapEntry> findEntries();
 
 	boolean isAhenk(LdapEntry entry);
+
+	List<LdapEntry> search(String baseDn, String attributeName, String attributeValue, String[] attributes)
+			throws LdapException;
 
 }
