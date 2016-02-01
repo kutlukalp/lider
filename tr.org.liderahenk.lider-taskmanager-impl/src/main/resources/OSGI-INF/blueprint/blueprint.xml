@@ -15,7 +15,7 @@
 
 	<service ref="taskService" auto-export="interfaces" />
 
-	<service ref="taskStore" interface="tr.org.pardus.mys.taskmanager.api.ITaskStore" />
+	<service ref="taskStore" interface="tr.org.liderahenk.lider.core.api.taskmanager.ITaskStore" />
 
 	<service ref="taskStatusUpdateHandler" interface="org.osgi.service.event.EventHandler">
 		<service-properties>

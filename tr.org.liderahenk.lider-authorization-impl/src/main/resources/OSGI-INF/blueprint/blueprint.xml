@@ -28,7 +28,8 @@
 		<property name="config" ref="configurationService" />
 	</bean>
 
-	<reference id="ldapService" interface="tr.org.pardus.mys.ldap.api.ILDAPService" />
+	<reference id="ldapService"
+		interface="tr.org.liderahenk.lider.core.api.ldap.ILDAPService" />
 	<reference id="configurationService"
-		interface="tr.org.pardus.mys.core.api.IConfigurationService" />
+		interface="tr.org.liderahenk.lider.core.api.IConfigurationService" />
 </blueprint>
