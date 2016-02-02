@@ -20,69 +20,29 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>tr.org.liderahenk</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>tr.org.liderahenk.lider-core</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.directory.api</groupId>
 			<artifactId>api-ldap-client-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.directory.api</groupId>
-			<artifactId>api-ldap-client-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.directory.api</groupId>
-			<artifactId>api-util</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.directory.api</groupId>
-			<artifactId>api-ldap-model</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.directory.api</groupId>
-			<artifactId>api-asn1-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.directory.api</groupId>
-			<artifactId>api-asn1-ber</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.directory.api</groupId>
-			<artifactId>api-i18n</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.directory.api</groupId>
-			<artifactId>api-ldap-codec-core</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.directory.api</groupId>
 			<artifactId>api-ldap-schema-data</artifactId>
-			<scope>provided</scope>
 		</dependency>
+		<!-- DO NOT REMOVE! These three dependencies are required at runtime: -->
 		<dependency>
 			<groupId>org.apache.directory.api</groupId>
 			<artifactId>api-ldap-extras-aci</artifactId>
-			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.directory.api</groupId>
+			<artifactId>api-ldap-net-mina</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.directory.api</groupId>
-			<artifactId>api-ldap-codec-standalone</artifactId>
-			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 

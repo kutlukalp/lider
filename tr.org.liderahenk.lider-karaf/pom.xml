@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -9,8 +8,8 @@
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>tr.org.liderahenk.lider-karaf</artifactId>
-	<name>tr.org.liderahenk.lider-karaf-feature</name>
+	<artifactId>lider-features</artifactId>
+	<name>LiderAhenk Karaf Features</name>
 	<url>http://www.liderahenk.org.tr</url>
 	<packaging>feature</packaging>
 
@@ -19,13 +18,93 @@
 		<main.basedir>${project.basedir}/..</main.basedir>
 	</properties>
 
+	<dependencies>
+		<!-- lider-server-core dependencies -->
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>tr.org.liderahenk.lider-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>tr.org.liderahenk.lider-persistence-mariadb</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>tr.org.liderahenk.lider-messaging-xmpp</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>tr.org.liderahenk.lider-web</artifactId>
+			<type>war</type>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>tr.org.liderahenk.lider-rest-impl</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>tr.org.liderahenk.lider-log-impl</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>tr.org.liderahenk.lider-router-impl</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>tr.org.liderahenk.lider-ldap-impl</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>tr.org.liderahenk.lider-taskmanager-impl</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>tr.org.liderahenk.lider-datasource-mariadb</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>tr.org.liderahenk.lider-query-impl</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>tr.org.liderahenk.lider-authorization-impl</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>tr.org.liderahenk.lider-config</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>tr.org.liderahenk.lider-cache-impl</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>tr.org.liderahenk.lider-service-impl</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+
 	<build>
 		<pluginManagement>
 			<plugins>
 				<plugin>
 					<groupId>org.apache.karaf.tooling</groupId>
 					<artifactId>karaf-maven-plugin</artifactId>
-					<version>4.0.3</version>
+					<version>${karaf.maven.plugin}</version>
 					<extensions>true</extensions>
 				</plugin>
 				<!--This plugin's configuration is used to store Eclipse m2e settings 
@@ -68,8 +147,10 @@
 			<plugin>
 				<groupId>org.apache.karaf.tooling</groupId>
 				<artifactId>karaf-maven-plugin</artifactId>
+				<extensions>true</extensions>
 				<configuration>
 					<startLevel>50</startLevel>
+					<includeTransitiveDependency>true</includeTransitiveDependency>
 					<aggregateFeatures>true</aggregateFeatures>
 					<!-- <resolver>(obr)</resolver> -->  <!-- This is adding resolver attribute to feature but feature tag have not 
 						got resolver attribute -->

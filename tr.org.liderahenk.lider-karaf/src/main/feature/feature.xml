@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
+	DO NOT MODIFY THIS FILE UNLESS ABSOLUTELY NECESSARY!
 
-	feature:repo-add  mvn:tr.org.liderahenk/tr.org.liderahenk.lider-karaf/1.0.0-SNAPSHOT/xml/features
+	HOW TO INSTALL LIDER CORE BUNDLES INTO KARAF:
+	
+	feature:repo-add  mvn:tr.org.liderahenk/lider-features/1.0.0-SNAPSHOT/xml/features
+	feature:install lider-features
 
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with
@@ -17,86 +21,28 @@
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+    
+    DO NOT MODIFY THIS FILE UNLESS ABSOLUTELY NECESSARY!
 -->
-<features name="${project.artifactId}-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.3.0">
-   
-    <feature name="lider" description="${project.name}" version="${project.version}">
-        <details>LiderAhenk client management system</details>
-        <feature>lider-support</feature>
-       	<feature>lider-apps</feature>
-    </feature>
-    
-    
-    <feature name="lider-apps" description="${project.name}" version="${project.version}">
-        <details>LiderAhenk client management system test feature for deploying without dependencies (for auto dependency resolve)</details>
-        <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-core/${project.version}</bundle>
-        <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-datasource-mariadb/${project.version}</bundle>
-        <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-persistence-mariadb/${project.version}</bundle>
-        <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-web/${project.version}/war</bundle>
-        <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-config/${project.version}</bundle>
-        <configfile finalname="/etc/tr.org.liderahenk.cfg">mvn:tr.org.liderahenk/tr.org.liderahenk.lider-config/${project.version}/cfg</configfile>
-        <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-cache-impl/${project.version}</bundle>
-        <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-ldap-impl/${project.version}</bundle>
-        <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-log-impl/${project.version}</bundle>
-    </feature>
-    
-    <feature name="lider-support" description="${project.name}" version="${project.version}">
-    	<feature>jpa</feature>
-        <feature>transaction</feature>
-        <feature>jndi</feature>
-        <feature>war</feature>
-        <feature>hibernate</feature>
-        <feature>webconsole</feature>
-        <feature>spring-web</feature>
-        <feature>spring</feature>
-        <feature>spring-dm</feature>
-        <feature>spring-dm-web</feature>
-        <feature>config</feature>
-        <feature>wrapper</feature>
-        <feature>eventadmin</feature>
-        
-        <feature>lider-apacheds</feature>
-        
-        <bundle start-level="45">mvn:org.apache.mina/mina-core/2.0.10</bundle>
-        <!-- <bundle start-level="45">mvn:javax.servlet/com.springsource.javax.servlet.jsp.jstl/1.2.0.v20110728</bundle> -->
-        <bundle start-level="45">mvn:mysql/mysql-connector-java/${mysql.version}</bundle>
-        <bundle start-level="45">wrap:mvn:c3p0/c3p0/0.9.1.1</bundle>
-        <bundle start-level="45">mvn:commons-io/commons-io/${commons.io.version}</bundle>
-        <bundle start-level="45">mvn:commons-collections/commons-collections/${commons.collections.version}</bundle>
-        <bundle start-level="45">mvn:commons-dbcp/commons-dbcp/${commons.dbcp.version}</bundle>
-        <bundle start-level="45">mvn:commons-lang/commons-lang/${commons.lang.version}</bundle>
-        <bundle start-level="45">mvn:org.apache.commons/commons-compress/1.7</bundle>
-        <bundle start-level="45" >mvn:org.codehaus.jackson/jackson-core-asl/${jackson.version}</bundle>
-        <bundle start-level="45">mvn:org.codehaus.jackson/jackson-mapper-asl/${jackson.version}</bundle>
-        <bundle start-level="45">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jsr311-api-1.1.1/${apache.ws.version}</bundle>
-        <bundle start-level="45">mvn:com.sun.jersey/jersey-client/${jersey.client.version}</bundle>
-        <bundle start-level="45">mvn:commons-fileupload/commons-fileupload/${file.upload.version}</bundle>
-        <bundle start-level="45">mvn:com.sun.jersey/jersey-core/${jersey.client.version}</bundle>
-        <bundle start-level="45">mvn:com.sun.jersey/jersey-client/${jersey.client.version}</bundle>
-       <!--  <bundle start-level="45">wrap:mvn:org.igniterealtime.smack/smack-core/${smack.version}</bundle> -->
-        <!--<bundle start-level="45">wrap:mvn:org.igniterealtime.smack/smack/${smack.version}</bundle> -->
-        <bundle start-level="45">mvn:net.sf.ehcache/ehcache/2.8.0</bundle>
-        <bundle start-level="45">mvn:org.apache.shiro/shiro-core/1.2.2</bundle>
-        <bundle start-level="45">mvn:org.apache.shiro/shiro-web/1.2.2</bundle>
-        <bundle start-level="45">mvn:org.apache.shiro/shiro-spring/1.2.2</bundle>
-        <bundle start-level="45">mvn:org.apache.shiro/shiro-ehcache/1.2.2</bundle>
-        <bundle start-level="45">mvn:commons-beanutils/commons-beanutils/1.8.3</bundle>
-    </feature>
-    
-    <feature name="lider-apacheds"  version="${project.version}">
-		<bundle start-level="45">wrap:mvn:antlr/antlr/${antlr.version}</bundle>
-        <bundle start-level="45">mvn:org.apache.directory.api/api-ldap-client-api/${apache.directory.api.version}</bundle>
-        <bundle start-level="45">mvn:org.apache.directory.api/api-ldap-codec-core/${apache.directory.api.version}</bundle>
-        <bundle start-level="45">mvn:org.apache.directory.api/api-asn1-api/${apache.directory.api.version}</bundle>
-        <bundle start-level="45">mvn:org.apache.directory.api/api-asn1-ber/${apache.directory.api.version}</bundle>
-        <bundle start-level="45">mvn:org.apache.directory.api/api-util/${apache.directory.api.version}</bundle>
-        <bundle start-level="45">mvn:org.apache.directory.api/api-i18n/${apache.directory.api.version}</bundle>
-        <bundle start-level="45">mvn:org.apache.directory.api/api-ldap-model/${apache.directory.api.version}</bundle>
-        <bundle start-level="45">mvn:org.apache.directory.api/api-ldap-extras-aci/${apache.directory.api.version}</bundle>
-        <bundle start-level="45">mvn:org.apache.directory.api/api-ldap-schema-data/${apache.directory.api.version}</bundle>
-        <bundle start-level="45">mvn:org.apache.directory.api/api-ldap-net-mina/${apache.directory.api.version}</bundle>
-        <bundle start-level="45">mvn:commons-codec/commons-codec/1.8</bundle>
-        <bundle start-level="45">mvn:commons-pool/commons-pool/${commons.pool.version}</bundle>
-    </feature>
-  
+<features name="${project.artifactId}-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.0.0">
+	<feature name="lider-features" description="${project.name}" version="${project.version}">
+		<feature prerequisite="true">lider-ahenk-config</feature>
+		<feature prerequisite="true">jpa</feature>
+		<feature prerequisite="true">transaction</feature>
+		<feature prerequisite="true">jndi</feature>
+		<feature prerequisite="true">war</feature>
+		<feature prerequisite="true">hibernate</feature>
+		<feature prerequisite="true">webconsole</feature>
+		<feature prerequisite="true">spring-web</feature>
+		<feature prerequisite="true">spring</feature>
+		<feature prerequisite="true">spring-dm</feature>
+		<feature prerequisite="true">spring-dm-web</feature>
+		<feature prerequisite="true">config</feature>
+		<feature prerequisite="true">wrapper</feature>
+		<feature prerequisite="true">eventadmin</feature>
+	</feature>
+	<feature name="lider-ahenk-config" description="Contains necessary config files for lider-server-core" version="${project.version}">
+		<!-- New configuration files must be added here in order to copy them into Karaf instance: -->
+		<configfile finalname="/etc/tr.org.liderahenk.cfg">mvn:tr.org.liderahenk/tr.org.liderahenk.lider-config/${project.version}/cfg</configfile>
+	</feature>
 </features>

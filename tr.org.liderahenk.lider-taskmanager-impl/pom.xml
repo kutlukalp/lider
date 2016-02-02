@@ -20,24 +20,20 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>tr.org.liderahenk</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>tr.org.liderahenk.lider-core</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>tr.org.liderahenk</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>tr.org.liderahenk.lider-rest-impl</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>tr.org.liderahenk</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>tr.org.liderahenk.lider-query-impl</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.hazelcast</groupId>
 			<artifactId>hazelcast-all</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>

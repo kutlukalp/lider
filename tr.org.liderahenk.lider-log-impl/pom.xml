@@ -20,9 +20,8 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>tr.org.liderahenk</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>tr.org.liderahenk.lider-core</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>

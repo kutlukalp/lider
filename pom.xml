@@ -10,9 +10,11 @@
 	<name>LiderAhenk Client Management System</name>
 
 	<properties>
-		<liderahenk.version>1.0.0-SNAPSHOT</liderahenk.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<target.dir>target</target.dir>
+		<!--Not using 3.1 at the moment since it recompiles all classes everytime -->
+		<!--https://jira.codehaus.org/browse/MCOMPILER-205 -->
+		<!--<maven.compiler.plugin.version>3.1</maven.compiler.plugin.version> -->
 		<maven.compiler.plugin.version>2.5.1</maven.compiler.plugin.version>
 		<maven.jar.plugin.version>2.3.2</maven.jar.plugin.version>
 		<maven.war.plugin.version>2.6</maven.war.plugin.version>
@@ -22,7 +24,7 @@
 		<checkstyle.maven.plugin.version>2.12</checkstyle.maven.plugin.version>
 		<java.version>1.6</java.version>
 		<junit.version>4.12</junit.version>
-		<log4j.version>1.2.16</log4j.version>
+		<log4j.version>1.2.17</log4j.version>
 		<slf4j.version>1.6.1</slf4j.version>
 		<mysql.version>5.1.31</mysql.version>
 		<hibernate.jpa.api.version>1.0.0.Final</hibernate.jpa.api.version>
@@ -35,23 +37,21 @@
 		<commons.dbcp.version>1.4</commons.dbcp.version>
 		<commons.pool.version>1.6</commons.pool.version>
 		<apache.directory.api.version>1.0.0-M20</apache.directory.api.version>
-		<apache.directory.server.version>2.0.0-M15</apache.directory.server.version>
 		<jackson.version>1.9.13</jackson.version>
 		<antlr.version>2.7.7</antlr.version>
 		<smack.version>4.1.5</smack.version>
 		<hazelcast.version>3.1.7</hazelcast.version>
-		<osgi.compendium.version>4.3.1</osgi.compendium.version>
 		<osgi.core.version>4.3.1</osgi.core.version>
 		<apache.ws.version>2.4.0</apache.ws.version>
 		<jersey.client.version>1.19</jersey.client.version>
 		<file.upload.version>1.2.2</file.upload.version>
 		<jersey.client.version>1.17.1</jersey.client.version>
-		<commons.compress>1.7</commons.compress>
+		<commons.compress.version>1.7</commons.compress.version>
 		<springsource.jstl>1.2.0.v20110728</springsource.jstl>
-		<springframework.version>3.1.4.RELEASE</springframework.version>
+		<spring.framework.version>3.1.4.RELEASE</spring.framework.version>
 		<commons.fileupload>1.2.2</commons.fileupload>
-		<shiro.all>1.2.2</shiro.all>
-		<servlet.api>2.5</servlet.api>
+		<shiro.version>1.2.2</shiro.version>
+		<servlet.api.version>2.5</servlet.api.version>
 		<servicemix.specs>2.4.0</servicemix.specs>
 		<jersey.client>1.18.1</jersey.client>
 		<jersey.core>1.18.1</jersey.core>
@@ -59,7 +59,18 @@
 		<com.lowagie>2.1.7</com.lowagie>
 		<ehcache.version>2.8.0</ehcache.version>
 		<commons.beanutils.version>1.8.3</commons.beanutils.version>
+		<aries.blueprint.version>1.1.0</aries.blueprint.version>
+		<commons.codec.version>1.10</commons.codec.version>
+		<commons.lang.version>2.6</commons.lang.version>
 	</properties>
+
+	<licenses>
+		<license>
+			<name>GNU LESSER GENERAL PUBLIC LICENSE, Version 3</name>
+			<url>http://www.gnu.org/licenses/lgpl.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
 
 	<modules>
 		<module>tr.org.liderahenk.lider-core</module>
@@ -181,99 +192,19 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>commons-beanutils</groupId>
-				<artifactId>commons-beanutils</artifactId>
-				<version>${commons.beanutils.version}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>net.sf.ehcache</groupId>
-				<artifactId>ehcache</artifactId>
-				<version>${ehcache.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.jcraft</groupId>
-				<artifactId>jsch</artifactId>
-				<version>${com.jcraft}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.lowagie</groupId>
-				<artifactId>itext</artifactId>
-				<version>${com.lowagie}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.sun.jersey</groupId>
-				<artifactId>jersey-core</artifactId>
-				<version>${jersey.core}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>com.sun.jersey</groupId>
-				<artifactId>jersey-client</artifactId>
-				<version>${jersey.client}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.servicemix.specs</groupId>
-				<artifactId>org.apache.servicemix.specs.jsr311-api-1.1.1</artifactId>
-				<version>${servicemix.specs}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>javax.servlet</groupId>
-				<artifactId>servlet-api</artifactId>
-				<version>${servlet.api}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.shiro</groupId>
-				<artifactId>shiro-all</artifactId>
-				<version>${shiro.all}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>commons-fileupload</groupId>
-				<artifactId>commons-fileupload</artifactId>
-				<version>${commons.fileupload}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.springframework</groupId>
-				<artifactId>spring-context</artifactId>
-				<version>${springframework.version}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>javax.servlet</groupId>
-				<artifactId>com.springsource.javax.servlet.jsp.jstl</artifactId>
-				<version>${springsource.jstl}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-compress</artifactId>
-				<version>${commons.compress}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
 				<groupId>tr.org.liderahenk</groupId>
 				<artifactId>tr.org.liderahenk.lider-core</artifactId>
-				<version>${liderahenk.version}</version>
-				<scope>provided</scope>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>tr.org.liderahenk</groupId>
+				<groupId>${project.groupId}</groupId>
 				<artifactId>tr.org.liderahenk.lider-rest-impl</artifactId>
-				<version>${liderahenk.version}</version>
-				<scope>provided</scope>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>tr.org.liderahenk</groupId>
+				<groupId>${project.groupId}</groupId>
 				<artifactId>tr.org.liderahenk.lider-query-impl</artifactId>
-				<version>${liderahenk.version}</version>
-				<scope>provided</scope>
+				<version>${project.version}</version>
 			</dependency>
 			<!-- Hibernate Dependecies -->
 			<dependency>
@@ -303,72 +234,7 @@
 				<version>${aries.transaction.blueprint.version}</version>
 			</dependency>
 			<!-- End of Hibernate Dependencies -->
-			<dependency>
-				<groupId>org.apache.directory.api</groupId>
-				<artifactId>api-ldap-client-api</artifactId>
-				<version>${apache.directory.api.version}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.directory.api</groupId>
-				<artifactId>api-util</artifactId>
-				<version>${apache.directory.api.version}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.directory.api</groupId>
-				<artifactId>api-ldap-model</artifactId>
-				<version>${apache.directory.api.version}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.directory.api</groupId>
-				<artifactId>api-asn1-api</artifactId>
-				<version>${apache.directory.api.version}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.directory.api</groupId>
-				<artifactId>api-asn1-ber</artifactId>
-				<version>${apache.directory.api.version}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.directory.api</groupId>
-				<artifactId>api-i18n</artifactId>
-				<version>${apache.directory.api.version}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.directory.api</groupId>
-				<artifactId>api-ldap-codec-core</artifactId>
-				<version>${apache.directory.api.version}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.directory.api</groupId>
-				<artifactId>api-ldap-schema-data</artifactId>
-				<version>${apache.directory.api.version}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.directory.api</groupId>
-				<artifactId>api-ldap-extras-aci</artifactId>
-				<version>${apache.directory.api.version}</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>commons-codec</groupId>
-				<artifactId>commons-codec</artifactId>
-				<version>1.8</version>
-				<scope>provided</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.directory.api</groupId>
-				<artifactId>api-ldap-codec-standalone</artifactId>
-				<version>${apache.directory.api.version}</version>
-				<scope>provided</scope>
-			</dependency>
+			<!-- REST/Web Dependencies -->
 			<dependency>
 				<groupId>org.codehaus.jackson</groupId>
 				<artifactId>jackson-core-asl</artifactId>
@@ -380,50 +246,141 @@
 				<version>${jackson.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>commons-io</groupId>
-				<artifactId>commons-io</artifactId>
-				<version>${commons.io.version}</version>
+				<groupId>com.sun.jersey</groupId>
+				<artifactId>jersey-core</artifactId>
+				<version>${jersey.core}</version>
 			</dependency>
+			<dependency>
+				<groupId>com.sun.jersey</groupId>
+				<artifactId>jersey-client</artifactId>
+				<version>${jersey.client}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.servicemix.specs</groupId>
+				<artifactId>org.apache.servicemix.specs.jsr311-api-1.1.1</artifactId>
+				<version>${servicemix.specs}</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>servlet-api</artifactId>
+				<version>${servlet.api.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.shiro</groupId>
+				<artifactId>shiro-all</artifactId>
+				<version>${shiro.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.shiro</groupId>
+				<artifactId>shiro-guice</artifactId>
+				<version>${shiro.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context</artifactId>
+				<version>${spring.framework.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-webmvc</artifactId>
+				<version>${spring.framework.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>com.springsource.javax.servlet.jsp.jstl</artifactId>
+				<version>${springsource.jstl}</version>
+			</dependency>
+			<!-- End of REST/Web Dependencies -->
+			<!-- XMPP Dependencies -->
 			<dependency>
 				<groupId>org.igniterealtime.smack</groupId>
 				<artifactId>smack-core</artifactId>
 				<version>${smack.version}</version>
-				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.igniterealtime.smack</groupId>
 				<artifactId>smack-extensions</artifactId>
 				<version>${smack.version}</version>
-				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.igniterealtime.smack</groupId>
 				<artifactId>smack-tcp</artifactId>
 				<version>${smack.version}</version>
-				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.igniterealtime.smack</groupId>
 				<artifactId>smack-sasl-javax</artifactId>
 				<version>${smack.version}</version>
-				<scope>provided</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.igniterealtime.smack</groupId>
 				<artifactId>smack-java7</artifactId>
 				<version>${smack.version}</version>
-				<scope>provided</scope>
 			</dependency>
+			<!-- End of XMPP Dependencies -->
+			<!-- Apache Commons Dependencies -->
+			<dependency>
+				<groupId>commons-beanutils</groupId>
+				<artifactId>commons-beanutils</artifactId>
+				<version>${commons.beanutils.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>${commons.lang3.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-compress</artifactId>
+				<version>${commons.compress.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>${commons.io.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-codec</groupId>
+				<artifactId>commons-codec</artifactId>
+				<version>${commons.codec.version}</version>
+			</dependency>
+			<!-- End of Apache Commons Dependencies -->
+			<!-- LDAP Dependencies -->
+			<dependency>
+				<groupId>org.apache.directory.api</groupId>
+				<artifactId>api-ldap-client-api</artifactId>
+				<version>${apache.directory.api.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.directory.api</groupId>
+				<artifactId>api-ldap-schema-data</artifactId>
+				<version>${apache.directory.api.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.directory.api</groupId>
+				<artifactId>api-ldap-extras-aci</artifactId>
+				<version>${apache.directory.api.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.directory.api</groupId>
+				<artifactId>api-ldap-net-mina</artifactId>
+				<version>${apache.directory.api.version}</version>
+			</dependency>
+			<!-- End of LDAP Dependencies -->
 			<dependency>
 				<groupId>com.hazelcast</groupId>
 				<artifactId>hazelcast-all</artifactId>
 				<version>${hazelcast.version}</version>
-				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>net.sf.ehcache</groupId>
+				<artifactId>ehcache</artifactId>
+				<version>${ehcache.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.osgi</groupId>
 				<artifactId>org.osgi.compendium</artifactId>
-				<version>${osgi.compendium.version}</version>
+				<version>${osgi.core.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.osgi</groupId>
@@ -438,6 +395,7 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>${junit.version}</version>
+			<optional>true</optional>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -454,6 +412,11 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.aries.blueprint</groupId>
+			<artifactId>org.apache.aries.blueprint</artifactId>
+			<version>${aries.blueprint.version}</version>
 		</dependency>
 	</dependencies>
 
