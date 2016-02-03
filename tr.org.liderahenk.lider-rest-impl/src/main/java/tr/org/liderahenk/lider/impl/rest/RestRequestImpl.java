@@ -65,6 +65,34 @@ public class RestRequestImpl implements IRestRequest {
 	 */
 	private Priority priority;
 
+	public RestRequestImpl() {
+		super();
+	}
+
+	public RestRequestImpl(List<String> dnList, RestDNType dnType, String pluginName, String pluginVersion,
+			String commandId, Map<String, Object> parameterMap, String cronExpression, Priority priority) {
+		super();
+		this.dnList = dnList;
+		this.dnType = dnType;
+		this.pluginName = pluginName;
+		this.pluginVersion = pluginVersion;
+		this.commandId = commandId;
+		this.parameterMap = parameterMap;
+		this.cronExpression = cronExpression;
+		this.priority = priority;
+	}
+
+	public RestRequestImpl(IRestRequest request) {
+		this.commandId = request.getCommandId();
+		this.cronExpression = request.getCronExpression();
+		this.dnList = request.getDnList();
+		this.dnType = request.getDnType();
+		this.parameterMap = request.getParameterMap();
+		this.pluginName = request.getPluginName();
+		this.pluginVersion = request.getPluginVersion();
+		this.priority = request.getPriority();
+	}
+
 	public List<String> getDnList() {
 		return dnList;
 	}

@@ -3,162 +3,143 @@ package tr.org.liderahenk.lider.persistence.model.impl;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.AssociationOverride;
-import javax.persistence.AssociationOverrides;
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.Embedded;
-import javax.persistence.JoinColumn;
-import javax.persistence.Transient;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 import tr.org.liderahenk.lider.core.api.rest.IRestRequest;
 import tr.org.liderahenk.lider.core.api.rest.Priority;
 import tr.org.liderahenk.lider.core.api.rest.RestDNType;
 
+/**
+ * Entity class for IRestRequest objects.
+ * 
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ * @see tr.org.liderahenk.lider.impl.rest.RestRequestImpl
+ *
+ */
 @Embeddable
-public class RestRequestEntityImpl implements IRestRequest{
-	
+public class RestRequestEntityImpl implements IRestRequest {
+
+	private static final long serialVersionUID = -8172658877775426084L;
+
+	@Column(name = "DN_LIST")
+	private List<String> dnList;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "DN_TYPE")
+	private RestDNType dnType;
+
+	@Column(name = "PLUGIN_NAME")
+	private String pluginName;
+
+	@Column(name = "PLUGIN_VERSION")
+	private String pluginVersion;
+
+	@Column(name = "COMMAND_ID")
+	private String commandId;
+
+	@Column(name = "PARAMETER_MAP")
+	private Map<String, Object> parameterMap;
+
+	@Column(name = "CRON_EXPRESSION")
+	private String cronExpression;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "PRIORITY")
+	private Priority priority;
+
 	public RestRequestEntityImpl() {
+		super();
+	}
+
+	public RestRequestEntityImpl(List<String> dnList, RestDNType dnType, String pluginName, String pluginVersion,
+			String commandId, Map<String, Object> parameterMap, String cronExpression, Priority priority) {
+		super();
+		this.dnList = dnList;
+		this.dnType = dnType;
+		this.pluginName = pluginName;
+		this.pluginVersion = pluginVersion;
+		this.commandId = commandId;
+		this.parameterMap = parameterMap;
+		this.cronExpression = cronExpression;
+		this.priority = priority;
 	}
 
 	public RestRequestEntityImpl(IRestRequest request) {
-		// TODO Auto-generated constructor stub
+		this.dnList = request.getDnList();
+		this.dnType = request.getDnType();
+		this.pluginName = request.getPluginName();
+		this.pluginVersion = request.getPluginVersion();
+		this.commandId = request.getCommandId();
+		this.parameterMap = request.getParameterMap();
+		this.cronExpression = request.getCronExpression();
+		this.priority = request.getPriority();
 	}
 
-	@Override
 	public List<String> getDnList() {
-		// TODO Auto-generated method stub
-		return null;
+		return dnList;
 	}
 
-	@Override
+	public void setDnList(List<String> dnList) {
+		this.dnList = dnList;
+	}
+
 	public RestDNType getDnType() {
-		// TODO Auto-generated method stub
-		return null;
+		return dnType;
 	}
 
-	@Override
+	public void setDnType(RestDNType dnType) {
+		this.dnType = dnType;
+	}
+
 	public String getPluginName() {
-		// TODO Auto-generated method stub
-		return null;
+		return pluginName;
 	}
 
-	@Override
+	public void setPluginName(String pluginName) {
+		this.pluginName = pluginName;
+	}
+
 	public String getPluginVersion() {
-		// TODO Auto-generated method stub
-		return null;
+		return pluginVersion;
 	}
 
-	@Override
+	public void setPluginVersion(String pluginVersion) {
+		this.pluginVersion = pluginVersion;
+	}
+
 	public String getCommandId() {
-		// TODO Auto-generated method stub
-		return null;
+		return commandId;
 	}
 
-	@Override
+	public void setCommandId(String commandId) {
+		this.commandId = commandId;
+	}
+
 	public Map<String, Object> getParameterMap() {
-		// TODO Auto-generated method stub
-		return null;
+		return parameterMap;
 	}
 
-	@Override
+	public void setParameterMap(Map<String, Object> parameterMap) {
+		this.parameterMap = parameterMap;
+	}
+
 	public String getCronExpression() {
-		// TODO Auto-generated method stub
-		return null;
+		return cronExpression;
 	}
 
-	@Override
+	public void setCronExpression(String cronExpression) {
+		this.cronExpression = cronExpression;
+	}
+
 	public Priority getPriority() {
-		// TODO Auto-generated method stub
-		return null;
+		return priority;
 	}
 
-//	/**
-//	 * 
-//	 */
-//	private static final long serialVersionUID = -4355421110535971298L;
-//	private String resource;
-//	private String access;
-//	private String attribute;
-//	private String command;
-//	private String action;
-//	private String user;
-//	
-//	
-//	@Embedded
-//	 @AttributeOverrides( {
-//	       @AttributeOverride(name = "pluginId", column = @Column(name = "plugin_id")),
-//	       @AttributeOverride(name = "pluginVersion", column = @Column(name = "plugin_version")),
-//	       @AttributeOverride(name = "priority", column = @Column(name = "task_priority"))
-//	    })
-////	@AssociationOverrides( { @AssociationOverride(name = "pluginId", joinColumns = @JoinColumn(name = "plugin_Id")),
-////		@AssociationOverride(name = "pluginVersion", joinColumns = @JoinColumn(name = "plugin_version"))})
-//	private RestRequestBodyEntityImpl body;
-//	
-//	public RestRequestEntityImpl() {
-//	}
-//	
-//	public RestRequestEntityImpl(IRestRequest req) throws Exception {
-//		this.access = req.getAccess();
-//		this.action = req.getAction();
-//		this.attribute = req.getAttribute();
-//		this.body = (req.getBody()== null) ? null : new RestRequestBodyEntityImpl( req.getBody());
-//		this.command = req.getCommand();
-//		this.resource = req.getResource();
-//		this.user = req.getUser();
-//	}
-//	
-//	public String getResource() {
-//		return resource;
-//	}
-//	public void setResource(String resource) {
-//		this.resource = resource;
-//	}
-//	public String getAccess() {
-//		return access;
-//	}
-//	public void setAccess(String access) {
-//		this.access = access;
-//	}
-//	public String getAttribute() {
-//		return attribute;
-//	}
-//	public void setAttribute(String attribute) {
-//		this.attribute = attribute;
-//	}
-//	public String getCommand() {
-//		return command;
-//	}
-//	public void setCommand(String command) {
-//		this.command = command;
-//	}
-//	public String getAction() {
-//		return action;
-//	}
-//	public void setAction(String action) {
-//		this.action = action;
-//	}
-//	public RestRequestBodyEntityImpl getBody() {
-//		return body;
-//	}
-//	public void setBody(RestRequestBodyEntityImpl body) {
-//		this.body = body;
-//	}
-//	
-//	public String getUser() {
-//		return user;
-//	}
-//	
-//	public void setUser(String user) {
-//		this.user = user;
-//	}
-//	
-//	@Transient
-//	public String getURL(){
-//		return null;
-//	}
+	public void setPriority(Priority priority) {
+		this.priority = priority;
+	}
 
-	
 }

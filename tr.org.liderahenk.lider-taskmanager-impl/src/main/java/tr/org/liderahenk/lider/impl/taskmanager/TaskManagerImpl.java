@@ -83,73 +83,73 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusUpdateSubscribe
 				// Single LDAP entry/Single task
 				if (entries.size() == 1) {
 
-//					LdapEntry entry = entries.get(0);
-//					TaskImpl task = new TaskImpl(); // TODO
-//					String jid = entry.get(config.getAgentLdapJidAttribute());
-//					task.setTargetJID(jid);
-//
-//					IMessage message = messageFactory.create(task);
-//
-//					if (!messagingService.isRecipientOnline(message.getRecipient())) {
-//						logger.warn("{} is OFFLINE, marking task comm state accordingly", message.getRecipient());
-//						task.setCommState(TaskCommState.AGENT_OFFLINE);
-//					} else {
-//						task.setCommState(TaskCommState.AGENT_ONLINE);
-//					}
-//
-//					task.setTargetJID(message.getRecipient());
-//					task.setParent(false);
-//
-//					taskService.insert(task);
-//
-//					taskIds.add(task.getId());
-//
-//					messagingService.sendMessage(message);
+					LdapEntry entry = entries.get(0);
+					TaskImpl task = new TaskImpl(); // TODO
+					String jid = entry.get(config.getAgentLdapJidAttribute());
+					task.setTargetJID(jid);
+
+					IMessage message = messageFactory.create(task);
+
+					if (!messagingService.isRecipientOnline(message.getRecipient())) {
+						logger.warn("{} is OFFLINE, marking task comm state accordingly", message.getRecipient());
+						task.setCommState(TaskCommState.AGENT_OFFLINE);
+					} else {
+						task.setCommState(TaskCommState.AGENT_ONLINE);
+					}
+
+					task.setTargetJID(message.getRecipient());
+					task.setParent(false);
+
+					taskService.insert(task);
+
+					taskIds.add(task.getId());
+
+					messagingService.sendMessage(message);
 				}
-				// Multiple task! Create a parent task to group them.
-//				else {
-//
-//					// Create & insert parent task
-//					TaskImpl parentTask = new TaskImpl(); // TODO
-//					parentTask.setParent(true);
-//					taskService.insert(parentTask);
-//
-//					for (LdapEntry entry : entries) {
-//
-//						TaskImpl subTask = new TaskImpl(); // TODO
-//						String jid = entry.get(config.getAgentLdapJidAttribute());
-//						subTask.setTargetJID(jid);
-//
-//						// If LDAP entry belongs to an agent, try to send a task
-//						// to the agent immediately.
-//						// But if it belongs to a user, don't send it now, just
-//						// save it into the database.
-//						// (When a user logs in an agent-installed machine,
-//						// agent will automatically query user's saved tasks and
-//						// execute them.
-//						if (ldapService.isAhenk(entry)) {
-//
-//							IMessage message = messageFactory.create(subTask);
-//							logger.info("Sending task to --> " + message.getRecipient());
-//
-//							if (!messagingService.isRecipientOnline(message.getRecipient())) {
-//								logger.warn("{} is OFFLINE, marking task comm state accordingly",
-//										message.getRecipient());
-//								subTask.setCommState(TaskCommState.AGENT_OFFLINE);
-//							} else {
-//								subTask.setCommState(TaskCommState.AGENT_ONLINE);
-//							}
-//
-//							subTask.setTargetJID(message.getRecipient()); // TODO
-//																			// ???
-//
-//							messagingService.sendMessage(message);
-//						}
-//
-//						taskService.insert(subTask);
-//						taskIds.add(subTask.getId());
-//					}
-//				}
+				// Multiple tasks! Create a parent task to group them.
+				else {
+
+					// Create & insert parent task
+					TaskImpl parentTask = new TaskImpl(); // TODO
+					parentTask.setParent(true);
+					taskService.insert(parentTask);
+
+					for (LdapEntry entry : entries) {
+
+						TaskImpl subTask = new TaskImpl(); // TODO
+						String jid = entry.get(config.getAgentLdapJidAttribute());
+						subTask.setTargetJID(jid);
+
+						// If LDAP entry belongs to an agent, try to send a task
+						// to the agent immediately.
+						// But if it belongs to a user, don't send it now, just
+						// save it into the database.
+						// (When a user logs in an agent-installed machine,
+						// agent will automatically query user's saved tasks and
+						// execute them.
+						if (ldapService.isAhenk(entry)) {
+
+							IMessage message = messageFactory.create(subTask);
+							logger.info("Sending task to --> " + message.getRecipient());
+
+							if (!messagingService.isRecipientOnline(message.getRecipient())) {
+								logger.warn("{} is OFFLINE, marking task comm state accordingly",
+										message.getRecipient());
+								subTask.setCommState(TaskCommState.AGENT_OFFLINE);
+							} else {
+								subTask.setCommState(TaskCommState.AGENT_ONLINE);
+							}
+
+							subTask.setTargetJID(message.getRecipient()); // TODO
+																			// ???
+
+							messagingService.sendMessage(message);
+						}
+
+						taskService.insert(subTask);
+						taskIds.add(subTask.getId());
+					}
+				}
 
 			} else {
 				// TODO throw exception

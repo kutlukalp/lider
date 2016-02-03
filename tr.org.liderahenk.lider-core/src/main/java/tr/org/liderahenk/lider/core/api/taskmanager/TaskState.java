@@ -22,7 +22,6 @@ public enum TaskState {
 	TASK_PROCESSED,
 	TASK_WARNING,
 	TASK_ERROR,
-	TASK_TIMEOUT,//task timed-out on agent
+	TASK_TIMEOUT,
 	TASK_KILLED;
-	
 }
