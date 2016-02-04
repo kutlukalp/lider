@@ -1,5 +1,8 @@
 package tr.org.liderahenk.lider.persistence.model.impl;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -7,6 +10,13 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.Lob;
+import javax.persistence.Transient;
+
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 
 import tr.org.liderahenk.lider.core.api.rest.IRestRequest;
 import tr.org.liderahenk.lider.core.api.rest.Priority;
@@ -24,8 +34,9 @@ public class RestRequestEntityImpl implements IRestRequest {
 
 	private static final long serialVersionUID = -8172658877775426084L;
 
+	@Lob
 	@Column(name = "DN_LIST")
-	private List<String> dnList;
+	private String dnListJsonString;
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "DN_TYPE")
@@ -40,8 +51,9 @@ public class RestRequestEntityImpl implements IRestRequest {
 	@Column(name = "COMMAND_ID")
 	private String commandId;
 
+	@Lob
 	@Column(name = "PARAMETER_MAP")
-	private Map<String, Object> parameterMap;
+	private String parameterMapJsonString;
 
 	@Column(name = "CRON_EXPRESSION")
 	private String cronExpression;
@@ -55,35 +67,43 @@ public class RestRequestEntityImpl implements IRestRequest {
 	}
 
 	public RestRequestEntityImpl(List<String> dnList, RestDNType dnType, String pluginName, String pluginVersion,
-			String commandId, Map<String, Object> parameterMap, String cronExpression, Priority priority) {
+			String commandId, Map<String, Object> parameterMap, String cronExpression, Priority priority)
+					throws JsonGenerationException, JsonMappingException, IOException {
 		super();
-		this.dnList = dnList;
+		ObjectMapper mapper = new ObjectMapper();
+		this.dnListJsonString = mapper.writeValueAsString(dnList);
 		this.dnType = dnType;
 		this.pluginName = pluginName;
 		this.pluginVersion = pluginVersion;
 		this.commandId = commandId;
-		this.parameterMap = parameterMap;
+		this.parameterMapJsonString = mapper.writeValueAsString(parameterMap);
 		this.cronExpression = cronExpression;
 		this.priority = priority;
 	}
 
-	public RestRequestEntityImpl(IRestRequest request) {
-		this.dnList = request.getDnList();
+	public RestRequestEntityImpl(IRestRequest request)
+			throws JsonGenerationException, JsonMappingException, IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		this.dnListJsonString = mapper.writeValueAsString(request.getDnList());
 		this.dnType = request.getDnType();
 		this.pluginName = request.getPluginName();
 		this.pluginVersion = request.getPluginVersion();
 		this.commandId = request.getCommandId();
-		this.parameterMap = request.getParameterMap();
+		this.parameterMapJsonString = mapper.writeValueAsString(request.getParameterMap());
 		this.cronExpression = request.getCronExpression();
 		this.priority = request.getPriority();
 	}
 
+	@Transient
 	public List<String> getDnList() {
-		return dnList;
-	}
-
-	public void setDnList(List<String> dnList) {
-		this.dnList = dnList;
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			return mapper.readValue(dnListJsonString, new TypeReference<ArrayList<String>>() {
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	public RestDNType getDnType() {
@@ -118,12 +138,16 @@ public class RestRequestEntityImpl implements IRestRequest {
 		this.commandId = commandId;
 	}
 
+	@Transient
 	public Map<String, Object> getParameterMap() {
-		return parameterMap;
-	}
-
-	public void setParameterMap(Map<String, Object> parameterMap) {
-		this.parameterMap = parameterMap;
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			return mapper.readValue(parameterMapJsonString, new TypeReference<HashMap<String, Object>>() {
+			});
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	public String getCronExpression() {
@@ -140,6 +164,22 @@ public class RestRequestEntityImpl implements IRestRequest {
 
 	public void setPriority(Priority priority) {
 		this.priority = priority;
+	}
+
+	public String getDnListJsonString() {
+		return dnListJsonString;
+	}
+
+	public void setDnListJsonString(String dnListJsonString) {
+		this.dnListJsonString = dnListJsonString;
+	}
+
+	public String getParameterMapJsonString() {
+		return parameterMapJsonString;
+	}
+
+	public void setParameterMapJsonString(String parameterMapJsonString) {
+		this.parameterMapJsonString = parameterMapJsonString;
 	}
 
 }

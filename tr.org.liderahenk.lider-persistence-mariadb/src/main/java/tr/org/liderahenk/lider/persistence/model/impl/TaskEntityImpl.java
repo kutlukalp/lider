@@ -1,5 +1,6 @@
 package tr.org.liderahenk.lider.persistence.model.impl;
 
+import java.io.IOException;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -12,6 +13,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 
 import tr.org.liderahenk.lider.core.api.taskmanager.ITask;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskCommState;
@@ -101,7 +105,7 @@ public class TaskEntityImpl implements ITask {
 		this.parent = parent;
 	}
 
-	public TaskEntityImpl(ITask task) {
+	public TaskEntityImpl(ITask task) throws JsonGenerationException, JsonMappingException, IOException {
 		this.active = task.isActive();
 		this.changedDate = task.getChangedDate();
 		this.commState = task.getCommState();
