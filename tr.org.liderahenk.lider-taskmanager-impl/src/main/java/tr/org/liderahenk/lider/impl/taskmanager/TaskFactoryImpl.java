@@ -12,15 +12,16 @@ import tr.org.liderahenk.lider.core.api.taskmanager.ITaskFactory;
  */
 public class TaskFactoryImpl implements ITaskFactory {
 
-	@Override
-	public ITask create(String targetObjectDN, IRestRequest request) {
-		return new TaskImpl(targetObjectDN, request);
-	}
-
-	@Override
-	public TaskImpl create(String targetObjectDN, IRestRequest request, ITask parentTask) {
-		return new TaskImpl(targetObjectDN, request, parentTask.getId());
-	}
+	// TODO
+//	@Override
+//	public ITask create(String targetObjectDN, IRestRequest request) {
+//		return new TaskImpl(targetObjectDN, request);
+//	}
+//
+//	@Override
+//	public TaskImpl create(String targetObjectDN, IRestRequest request, ITask parentTask) {
+//		return new TaskImpl(targetObjectDN, request, parentTask.getId());
+//	}
 
 	@Override
 	public ITask create() {

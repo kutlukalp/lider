@@ -1,6 +1,7 @@
 package tr.org.liderahenk.lider.impl.taskmanager;
 
 import java.io.Serializable;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -50,7 +51,6 @@ public class TaskStoreHazelcastImpl implements ITaskStore {
 	private IMap<String, TaskImpl> taskMap;
 	
 	public TaskStoreHazelcastImpl() {
-		
 	}
 	
 	public static long getTimeout() {
@@ -98,7 +98,7 @@ public class TaskStoreHazelcastImpl implements ITaskStore {
 		cfg.getMapConfigs().put("default", mapConfig);
 
         instance = Hazelcast.newHazelcastInstance(cfg);
-        taskMap = instance.getMap("tasks");//instance.getMap("tasks");
+        taskMap = instance.getMap("tasks");
         taskMap.addIndex("targetObjectDN", false);
         taskMap.addIndex("targetJID", false);
         taskMap.addIndex("state", false);
@@ -123,58 +123,51 @@ public class TaskStoreHazelcastImpl implements ITaskStore {
 
 	@Override
 	public void insert(ITask task) throws TaskStoreException {
-		// TODO
-//		taskMap.put(task.getId(), (TaskImpl) task);
-//		String hostAddress = "";
-//		try {
-//			hostAddress = InetAddress.getLocalHost().toString();
+		taskMap.put(task.getId(), (TaskImpl) task);
+		String hostAddress = "";
+		try {
+			hostAddress = InetAddress.getLocalHost().toString();
 //			operationLogService.createLog(new Date(), task.getRequest().getUser(),"lider.taskmanager", task.getId(),
 //					task.getRequest().getAction(),  hostAddress, "0",
 //					  task.getId() + " başarılı bir şekilde oluşturuldu.", CrudType.Insert, task.getRequest().getAccess() );
-//		} catch (Exception e) {
-//			log.error("",e);
-//		}
-		
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
 	}
 
 	@Override
 	public void update(ITask task) throws TaskStoreException {
-		// TODO
-//		taskMap.replace(task.getId(), (TaskImpl) task);
-//		String hostAddress = "";
-//		try {
-//			hostAddress = InetAddress.getLocalHost().toString();
+		taskMap.replace(task.getId(), (TaskImpl) task);
+		String hostAddress = "";
+		try {
+			hostAddress = InetAddress.getLocalHost().toString();
 //			operationLogService.createLog(new Date(), task.getRequest().getUser(),"lider.taskmanager", task.getId(),
 //					task.getRequest().getAction(),  hostAddress, "0",
 //					  task.getId()+" başarılı bir şekilde güncellendi.", CrudType.Update, task.getRequest().getAccess() );
-//		} catch (Exception e) {
-//			log.error("",e);
-//		}
-		
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
 	}
 	
 	@Override
 	public void delete(ITask task) throws TaskStoreException {
-		// TODO
-//		taskMap.remove(task.getId());		
-//		String hostAddress = "";
-//		try {
-//			hostAddress = InetAddress.getLocalHost().toString();
+		taskMap.remove(task.getId());		
+		String hostAddress = "";
+		try {
+			hostAddress = InetAddress.getLocalHost().toString();
 //			operationLogService.createLog(new Date(), task.getRequest().getUser(), "lider.taskmanager", task.getId(),
 //					task.getRequest().getAction(),  hostAddress, "0",
 //					  task.getId()+" başarılı bir şekilde silindi.", CrudType.Delete, task.getRequest().getAccess() );
-//		} catch (Exception e) {
-//			log.error("",e);
-//		}
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+		}
 		//TODO validate deletion?
-		
 	}
 
 	@Override
 	public TaskImpl get(String taskId) throws TaskStoreException {
 		return (TaskImpl) taskMap.get(taskId);
 	}
-	
 	
 	@Override
 	public List<ITask> find(Map<String, Object> criteria) throws TaskStoreException
@@ -243,7 +236,6 @@ public class TaskStoreHazelcastImpl implements ITaskStore {
 					return null;
 				}
 				log.debug("starting TimeoutEntryProcessor.process for task id => {}, state => {} ", entry.getValue().getId(), entry.getValue().getCommState());
-				value.getTaskHistory().add(new TaskMessageImpl(String.format("agent state: %1$s --> %2$s", value.getCommState(), TaskCommState.AGENT_TIMEDOUT)));
 				value.setCommState(TaskCommState.AGENT_TIMEDOUT);
 				value.setChangedDate(new Date());
 				value.setTimeout(new Date(System.currentTimeMillis() + timeout));
@@ -255,8 +247,8 @@ public class TaskStoreHazelcastImpl implements ITaskStore {
 				
 				return value;
 			}
+			
             return null;
-            
 		}
 
 		@Override

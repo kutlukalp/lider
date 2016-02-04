@@ -6,8 +6,6 @@ import static tr.org.liderahenk.lider.core.api.taskmanager.TaskState.TASK_PROCES
 import static tr.org.liderahenk.lider.core.api.taskmanager.TaskState.TASK_TIMEOUT;
 import static tr.org.liderahenk.lider.core.api.taskmanager.TaskState.TASK_WARNING;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -20,10 +18,9 @@ import tr.org.liderahenk.lider.core.api.messaging.IMessage;
 import tr.org.liderahenk.lider.core.api.messaging.IMessageFactory;
 import tr.org.liderahenk.lider.core.api.messaging.IMessagingService;
 import tr.org.liderahenk.lider.core.api.messaging.IPresenceSubscriber;
+import tr.org.liderahenk.lider.core.api.rest.Priority;
 import tr.org.liderahenk.lider.core.api.taskmanager.ITask;
-import tr.org.liderahenk.lider.core.api.taskmanager.ITaskMessage;
 import tr.org.liderahenk.lider.core.api.taskmanager.ITaskService;
-import tr.org.liderahenk.lider.core.api.taskmanager.MessageLevel;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskCommState;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskRetryFailedException;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskServiceException;
@@ -46,6 +43,7 @@ public class TaskServiceImpl implements ITaskService, IPresenceSubscriber {
 	private IMessagingService messagingService;
 	private IMessageFactory messageFactory;
 
+	// TODO mark task as finished!
 	private TaskState[] passiveStates = new TaskState[] { TASK_PROCESSED, TASK_WARNING, TASK_ERROR, TASK_KILLED,
 			TASK_TIMEOUT };
 
@@ -115,8 +113,6 @@ public class TaskServiceImpl implements ITaskService, IPresenceSubscriber {
 				return;
 			}
 
-			task.getTaskHistory().add(
-					new TaskMessageImpl(String.format("agent state: %1$s --> %2$s", task.getCommState(), commState)));
 			task.setCommState(commState);
 			onUpdate(task, false);
 
@@ -152,29 +148,22 @@ public class TaskServiceImpl implements ITaskService, IPresenceSubscriber {
 	}
 
 	@Override
-	public void update(String taskId, int priority) throws TaskServiceException {
-		// TODO
-		// try {
-		// TaskImpl task = taskStore.get(taskId);
-		//
-		// log.debug("will update task priority {} for task id: {}", priority,
-		// taskId);
-		//
-		// task.getTaskHistory().add(new TaskMessageImpl(
-		// String.format("priority update: %1$s --> %2$s",
-		// task.getPriority(), priority)));
-		// task.setPriority(priority);
-		// ((RestRequestBodyImpl)task.getRequest().getBody()).setPriority(priority);
-		// onUpdate(task,false);
-		//
-		// taskStore.update( task );
-		// log.debug("successfully updated task priority {} for task id: {}",
-		// priority, taskId);
-		// } catch (TaskStoreException e) {
-		// throw new TaskServiceException(
-		// "Task priority update failed", e);
-		// }
+	public void update(String taskId, Priority priority) throws TaskServiceException {
+		try {
+			TaskImpl task = taskStore.get(taskId);
 
+			logger.debug("will update task priority {} for task id: {}", priority, taskId);
+
+			task.getRequest().setPriority(priority);
+			onUpdate(task, false);
+
+			taskStore.update(task);
+
+			logger.debug("successfully updated task priority {} for task id: {}", priority, taskId);
+
+		} catch (TaskStoreException e) {
+			throw new TaskServiceException("Task priority update failed", e);
+		}
 	}
 
 	@Override
@@ -218,14 +207,11 @@ public class TaskServiceImpl implements ITaskService, IPresenceSubscriber {
 			if (!subTasks.isEmpty()) {
 				// retry subtasks, not parent
 				for (TaskImpl subTask : subTasks) {
-					subTask.setTaskHistory(new ArrayList<TaskMessageImpl>());
 					IMessage message = messageFactory.create(subTask);
 					messagingService.sendMessage(message);
 					// update( subTask.getId(), TaskCommState.AGENT_RETRY );
-
 				}
 			} else {
-				task.setTaskHistory(new ArrayList<TaskMessageImpl>());
 				IMessage message = messageFactory.create(task);
 				messagingService.sendMessage(message);
 				// update( task.getId(), TaskCommState.AGENT_RETRY );

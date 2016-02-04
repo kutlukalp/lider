@@ -9,22 +9,23 @@ import tr.org.liderahenk.lider.core.api.rest.IRestRequest;
  */
 public interface ITaskFactory {
 	
-	/**
-	 * 
-	 * @param targetObjectDN target agent for task
-	 * @param request to create task from
-	 * @return task object
-	 */
-	ITask create(String targetObjectDN, IRestRequest request);
-
-	/**
-	 * 
-	 * @param targetObjectDN target agent for task
-	 * @param request to create task from
-	 * @param parentTask if this is a subtask
-	 * @return task object
-	 */
-	ITask create(String targetObjectDN, IRestRequest request, ITask parentTask);
+	// TODO
+//	/**
+//	 * 
+//	 * @param targetObjectDN target agent for task
+//	 * @param request to create task from
+//	 * @return task object
+//	 */
+//	ITask create(String targetObjectDN, IRestRequest request);
+//
+//	/**
+//	 * 
+//	 * @param targetObjectDN target agent for task
+//	 * @param request to create task from
+//	 * @param parentTask if this is a subtask
+//	 * @return task object
+//	 */
+//	ITask create(String targetObjectDN, IRestRequest request, ITask parentTask);
 
 	/**
 	 * 

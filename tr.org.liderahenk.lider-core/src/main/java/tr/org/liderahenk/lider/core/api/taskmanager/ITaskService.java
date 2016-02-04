@@ -3,6 +3,8 @@ package tr.org.liderahenk.lider.core.api.taskmanager;
 import java.util.List;
 import java.util.Map;
 
+import tr.org.liderahenk.lider.core.api.rest.Priority;
+
 /**
  * Provides {@link ITask} related database services.
  * 
@@ -65,7 +67,7 @@ public interface ITaskService {
 	 * @param priority
 	 * @throws TaskServiceException
 	 */
-	void update(String taskId, int priority) throws TaskServiceException;
+	void update(String taskId, Priority priority) throws TaskServiceException;
 
 	/**
 	 * deletes task from underlying {@link ITaskStore}
