@@ -371,7 +371,8 @@ public class XMPPClientImpl {
 		// log.info("Connecting to server => {}, port => {}, domain => {}",
 		// server,port, domain);
 
-		config = XMPPTCPConnectionConfiguration.builder().setServiceName(server).setPort(port).setHost(domain)
+		config = XMPPTCPConnectionConfiguration.builder().setServiceName(server).setPort(port)
+				.setHost(domain)
 				// .setSecurityMode(SecurityMode.required).build(); //TODO vvv
 				// Security mode required olmalı şimdilik disable a çektim
 				.setSecurityMode(SecurityMode.disabled).build();
@@ -409,6 +410,7 @@ public class XMPPClientImpl {
 
 			@Override
 			public void presenceChanged(Presence presence) {
+				
 				Type presenceType = presence.getType();
 				String jid = presence.getFrom();
 				log.info("presence changed {} => {}", jid, presenceType);
@@ -511,12 +513,14 @@ public class XMPPClientImpl {
 			return false;
 		}
 
-		private class ItemEventCoordinator implements ItemEventListener {
-			@Override
-			public void handlePublishedItems(ItemPublishEvent items) {
-				log.info("Item count: " + items.getItems().size());
-				log.info(items.getSubscriptions().toString());
-			}
+	}
+	
+
+	class ItemEventCoordinator implements ItemEventListener {
+		@Override
+		public void handlePublishedItems(ItemPublishEvent items) {
+			log.info("Item count: " + items.getItems().size());
+			log.info(items.getSubscriptions().toString());
 		}
 	}
 

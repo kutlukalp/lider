@@ -33,6 +33,13 @@
         <property name="xmppDomain" value="${xmpp.domain}"/>
         <property name="xmppPingTimeout" value="${xmpp.ping.timeout}"/>
         
+        <property name="xmppUserName" value="${xmpp.username}"/>
+        <property name="xmppServiceName" value="${xmpp.service.name}"/>
+        <property name="xmppHost" value="${xmpp.host}"/>
+        <property name="xmppMaxRetryConnectionCount" value="${xmpp.max.retry.connection.count}"/>
+        <property name="xmppPacketReplayTimeout" value="${xmpp.packet.replay.timeout}"/>
+        
+        
         <property name="agentLdapBaseDn" value="${agent.ldap.base.dn}" />
 		<property name="agentLdapIdAttribute" value="${agent.ldap.id.attribute}" />
 		<property name="agentLdapJidAttribute" value="${agent.ldap.jid.attribute}" />
