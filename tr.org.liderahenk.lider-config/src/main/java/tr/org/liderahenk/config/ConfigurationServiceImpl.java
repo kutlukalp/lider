@@ -11,135 +11,53 @@ public class ConfigurationServiceImpl implements IConfigurationService{
 	private Integer dbPort;
 	private String dbUsername;
 	private String dbPassword;
-	/**
-	 * 
-	 */
+
 	private String ldapServer;
-	/**
-	 * 
-	 */
 	private String ldapPort;
-	/**
-	 * 
-	 */
 	private String ldapUser;
-	/**
-	 * 
-	 */
 	private String ldapPassword;
-	/**
-	 * 
-	 */
 	private String ldapRootDn;
-	
-	/**
-	 * 
-	 */
 	private Boolean ldapUseSsl;
 	
-	/**
-	 * 
-	 */
+	private int xmppMaxRetryConnectionCount;
+	private int xmppPacketReplayTimeout;
+	private String  xmppUserName;
+	private String  xmppServiceName;
+	private String  xmppHost;
 	private String xmppServer;//do we need internal/external xmpp server address/IP??
-	/**
-	 * 
-	 */
 	private String xmppServerPublicIP;// we will broadcast this xmpp server IP to external clients
-	/**
-	 * 
-	 */
 	private Integer xmppPort;
-	/**
-	 * 
-	 */
 	private String xmppJid;
-	/**
-	 * 
-	 */
 	private String xmppPassword;
-	/**
-	 * 
-	 */
 	private String xmppDomain;
-	/**
-	 * 
-	 */
 	private Integer xmppPingTimeout;
-	/**
-	 * 
-	 */
-	private String agentLdapBaseDn;
-	/**
-	 * 
-	 */
-	private String agentLdapIdAttribute;
-	/**
-	 * 
-	 */
-	private String agentLdapJidAttribute;
 	
-	/**
-	 * 
-	 */
+	private String agentLdapBaseDn;
+	private String agentLdapIdAttribute;
+	private String agentLdapJidAttribute;
 	private String authLdapUserSearchBase;
-	/**
-	 * 
-	 */
 	private String authLdapUserFilter;
-	/**
-	 * 
-	 */
 	private String authLdapUserAttribute;
-	/**
-	 * 
-	 */
 	private String authLdapUserObjectClasses;
 	
 	private String userMailAttribute;
-	
-	/**
-	 * 
-	 */
 	private Long taskManagerTaskTimeout;
-	/**
-	 * 
-	 */
 	private Boolean taskManagerMulticastEnabled;
-	/**
-	 * 
-	 */
 	private Boolean taskManagerLogXmppMessagesEnabled;
-	
-	/**
-	 * 
-	 */
 	private Boolean authorizationEnabled;
-	
 	private String servers;
-	
 	private String privateKey;
-	
-
 	private Integer syslogRecordMaxQueryDay;
 	
 	private String mailAddress;
-	
 	private String mailPassword;
-	
 	private String mailHost;
-	
 	private Integer mailSmtpPort;
-	
 	private Boolean mailSmtpAuth;
-	
 	private Boolean mailSmtpStartTlsEnable;
-	
 	private Boolean mailSmtpSslEnable;
-	
 	private Integer mailSmtpConnTimeout;
-	
 	private Integer mailSmtpTimeout;
-	
 	private Integer mailSmtpWriteTimeout;
 	
 	@Override
@@ -524,6 +442,46 @@ public class ConfigurationServiceImpl implements IConfigurationService{
 
 	public void setDbPassword(String dbPassword) {
 		this.dbPassword = dbPassword;
-	}	
+	}
 
+	public int getXmppMaxRetryConnectionCount() {
+		return xmppMaxRetryConnectionCount;
+	}
+
+	public void setXmppMaxRetryConnectionCount(int xmppMaxRetryConnectionCount) {
+		this.xmppMaxRetryConnectionCount = xmppMaxRetryConnectionCount;
+	}
+
+	public int getXmppPacketReplayTimeout() {
+		return xmppPacketReplayTimeout;
+	}
+
+	public void setXmppPacketReplayTimeout(int xmppPacketReplayTimeout) {
+		this.xmppPacketReplayTimeout = xmppPacketReplayTimeout;
+	}
+
+	public String getXmppUserName() {
+		return xmppUserName;
+	}
+
+	public void setXmppUserName(String xmppUserName) {
+		this.xmppUserName = xmppUserName;
+	}
+
+	public String getXmppServiceName() {
+		return xmppServiceName;
+	}
+
+	public void setXmppServiceName(String xmppServiceName) {
+		this.xmppServiceName = xmppServiceName;
+	}
+
+	public String getXmppHost() {
+		return xmppHost;
+	}
+
+	public void setXmppHost(String xmppHost) {
+		this.xmppHost = xmppHost;
+	}	
+	
 }
