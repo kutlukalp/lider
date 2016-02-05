@@ -18,7 +18,6 @@ import tr.org.liderahenk.lider.core.api.plugin.IPluginDbService;
  */
 public class PluginDbServiceImpl implements IPluginDbService{
 	
-	@PersistenceContext(unitName="liderdb")
 	EntityManager em;
 	
 	public void setEntityManager(EntityManager em) {
