@@ -1,6 +1,4 @@
-/**
- * 
- */
+
 package tr.org.liderahenk.lider.impl.messaging;
 
 import java.io.IOException;
@@ -52,9 +50,10 @@ import tr.org.liderahenk.lider.core.api.messaging.IPresenceSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.ITaskStatusUpdateSubscriber;
 
 /**
- * @author volkansahin <bm.volkansahin@gmail.com>
+ * @author  <a href="mailto:bm.volkansahin@gmail.com">volkansahin</a>
  * 
  */
+
 public class XMPPClientImpl {
 
 	private static final String NODE = "online_users";
@@ -69,29 +68,30 @@ public class XMPPClientImpl {
 	private IQPacketListener iqListener = new IQPacketListener();
 	private TaskStatusUpdateListener taskStatusListener = new TaskStatusUpdateListener();
 	
+	/**
+	 * connection and settings parameters are got from tr.org.liderahenk.cfg
+	 */
 	
 	private String username;
 	private String password;
-	private String serviceName;	//xmpp server url
-	private String host; 		//domain name like liderahenk.org.tr
-	private Integer port;		//5222
-	
-	private String jid;
+	private String serviceName;		//xmpp server url
+	private String host; 			//domain name like liderahenk.org.tr
+	private Integer port;			//5222
+	private String jid;				//full username (ex:username@localhost/resource)
 	private int maxRetryConnectionCount ;
 	private int retryCount=0;
-	// milliseconds
 	private int maxPingTimeoutCount;
 	private int pingTimeoutCount=0;
-	private int packetReplyTimeout; 
-	private int pingTimeout ;
+	private int packetReplyTimeout; // milliseconds
+	private int pingTimeout ;		// milliseconds
 	
 	private List<INotificationSubscriber> notificationSubscribers;
 	private List<ITaskStatusUpdateSubscriber> taskStatusUpdateSubscribers;
 	private List<IPresenceSubscriber> presenceSubscribers;
 	private List<String> onlineUsers = new ArrayList<String>();
 	
-	private XMPPTCPConnectionConfiguration config;
 	private XMPPTCPConnection connection; 
+	private XMPPTCPConnectionConfiguration config;
 	
 	private Roster roster;
 	private IConfigurationService configurationService;
@@ -115,13 +115,10 @@ public class XMPPClientImpl {
 	}
 	
 	
-	/**
-	 * 
-	 */
 	private void setServerSettings() {
 		PingManager.getInstanceFor(connection).setPingInterval(pingTimeout);
-		DeliveryReceiptManager.getInstanceFor(connection).setAutoReceiptMode(AutoReceiptMode.always);
-		
+		DeliveryReceiptManager.getInstanceFor(connection).setAutoReceiptMode(AutoReceiptMode.always);//Specifies when incoming message delivery receipt 
+																									//requests should be automatically acknowledged with an receipt.
 		SmackConfiguration.setDefaultPacketReplyTimeout(packetReplyTimeout);
 		roster = Roster.getInstanceFor(connection);
 	}
@@ -144,9 +141,6 @@ public class XMPPClientImpl {
 		}
 	}
 
-	/**
-	 * 
-	 */
 	public void disconnect(){
 		if( null != connection && connection.isConnected()){
 			ChatManager.getInstanceFor(connection).removeChatListener(chatManagerListener);
@@ -167,9 +161,6 @@ public class XMPPClientImpl {
 	}
 	
 	
-	/**
-	 * 
-	 */
 	private void addListeners() {
 
 		connection.addConnectionListener(new XMPPConnectionListener());
@@ -177,10 +168,14 @@ public class XMPPClientImpl {
 		PingManager.getInstanceFor(connection).registerPingFailedListener(pingFailedListener);
 		ChatManager.getInstanceFor(connection).addChatListener(chatManagerListener);
 		
+		/**
+		 * Stanza packet types listeners like iq,message,presence,...
+		 */
 		connection.addAsyncStanzaListener(packetListener,packetListener);
 		connection.addAsyncStanzaListener(notificationListener,notificationListener);
 		connection.addAsyncStanzaListener(taskStatusListener,taskStatusListener);
 		connection.addAsyncStanzaListener(iqListener,iqListener);
+		
 		roster.addRosterListener(rosterListener);
 		
 		log.debug("Listeners are added.");
@@ -196,7 +191,7 @@ public class XMPPClientImpl {
 		try {
 			LeafNode node = new PubSubManager(connection).getNode(NODE);
 			node.addItemEventListener(new ItemEventCoordinator()); 
-			node.subscribe(jid);							// TODO append domain??
+			node.subscribe(jid);							// TODO check subscription
 			
 		} catch (XMPPException e) {
 			log.error("Cannot subscribe pubsub node: ", e);
@@ -207,8 +202,9 @@ public class XMPPClientImpl {
 		}
 	}
 
+	
 	/**
-	 * 
+	 * get online users from roster and store in onlineUsers<String>
 	 */
 	private void getInitialOnlineUsers() {
 
@@ -237,10 +233,6 @@ public class XMPPClientImpl {
 		}
 	}
 
-
-	/**
-	 * 
-	 */
 	public void loginAnonymously(){
 		if (connection != null && connection.isConnected()) {
 			try {
@@ -255,9 +247,6 @@ public class XMPPClientImpl {
 		}
 	}
 	
-	/**
-	 * 
-	 */
 	private void login(String username, String password) {
 
 		if (connection != null && connection.isConnected()) {
@@ -275,9 +264,6 @@ public class XMPPClientImpl {
 	}
 	
 
-	/**
-	 * 
-	 */
 	private void connect() {
 
 		connection = new XMPPTCPConnection(config);
@@ -301,9 +287,6 @@ public class XMPPClientImpl {
 	}
 
 
-	/**
-	 * 
-	 */
 	private void createXmppTcpConfiguration() {
 		
 		config = XMPPTCPConnectionConfiguration.builder()
@@ -316,12 +299,6 @@ public class XMPPClientImpl {
 		log.debug("XMPP TCP Configuration created.");
 	}
 
-	
-
-
-	/**
-	 * 
-	 */
 	private void setParameters() {
 		
 		setUsername(configurationService.getXmppUserName());
