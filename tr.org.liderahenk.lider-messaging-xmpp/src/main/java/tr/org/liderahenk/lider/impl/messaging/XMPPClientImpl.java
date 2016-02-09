@@ -98,7 +98,7 @@ public class XMPPClientImpl {
 	private ILDAPService ldapService;
 	
 	
-	private void init() {
+	public void init() {
 
 		log.info("xmpp service initialization is started");
 		
@@ -112,6 +112,11 @@ public class XMPPClientImpl {
 		subscribePubsub();
 		
 		log.info("xmpp service initialized");
+	}
+
+
+	public void destroy(){
+		
 	}
 	
 	
