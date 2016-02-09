@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+	DO NOT MODIFY THIS FILE UNLESS ABSOLUTELY NECESSARY!
+	HOW TO INSTALL LIDER CORE BUNDLES INTO KARAF:
+	
+	feature:repo-add  mvn:tr.org.liderahenk/lider-features/1.0.0-SNAPSHOT/xml/features
+	feature:install lider-features
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+       http://www.apache.org/licenses/LICENSE-2.0
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    
+    DO NOT MODIFY THIS FILE UNLESS ABSOLUTELY NECESSARY!
+-->
+<features name="${project.artifactId}-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.0.0">
+	<feature name="lider-features" description="${project.name}" version="${project.version}">
+		<feature prerequisite="true">lider-ahenk-config</feature>
+		<feature prerequisite="true">jpa</feature>
+		<feature prerequisite="true">transaction</feature>
+		<feature prerequisite="true">jndi</feature>
+		<feature prerequisite="true">war</feature>
+		<feature prerequisite="true">hibernate</feature>
+		<feature prerequisite="true">webconsole</feature>
+		<feature prerequisite="true">spring-web</feature>
+		<feature prerequisite="true">spring</feature>
+		<feature prerequisite="true">spring-dm</feature>
+		<feature prerequisite="true">spring-dm-web</feature>
+		<feature prerequisite="true">config</feature>
+		<feature prerequisite="true">wrapper</feature>
+		<feature prerequisite="true">eventadmin</feature>
+		<feature>lider-apps</feature>
+	</feature>
+	<feature name="lider-ahenk-config" description="Contains necessary config files for lider-server-core" version="${project.version}">
+		<!-- New configuration files must be added here in order to copy them into Karaf instance: -->
+		<configfile finalname="/etc/tr.org.liderahenk.cfg">mvn:tr.org.liderahenk/tr.org.liderahenk.lider-config/${project.version}/cfg</configfile>
+	</feature>
+	<feature name="lider-apps" description="${project.name}" version="${project.version}">
+        <details>LiderAhenk client management system test feature for deploying without dependencies (for auto dependency resolve)</details>
+        <bundle start-level="80">mvn:tr.org.liderahenk/tr.org.liderahenk.lider-core/${project.version}</bundle>
+        <bundle start-level="80">mvn:tr.org.liderahenk/tr.org.liderahenk.lider-datasource-mariadb/${project.version}</bundle>
+       <!-- <bundle start-level="80"> mvn:tr.org.liderahenk/tr.org.liderahenk.lider-persistence-mariadb/${project.version}</bundle>
+         <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-web/${project.version}/war</bundle> 
+        <bundle start-level="80">mvn:tr.org.liderahenk/tr.org.liderahenk.lider-config/${project.version}</bundle>
+        <bundle start-level="80">mvn:tr.org.liderahenk/tr.org.liderahenk.lider-cache-impl/${project.version}</bundle>
+        <bundle start-level="80">mvn:tr.org.liderahenk/tr.org.liderahenk.lider-ldap-impl/${project.version}</bundle>
+        <bundle start-level="80">mvn:tr.org.liderahenk/tr.org.liderahenk.lider-log-impl/${project.version}</bundle>-->
+    </feature>
+</features>
