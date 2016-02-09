@@ -6,7 +6,22 @@
 	<service ref="restResponseFactory"
 		interface="tr.org.liderahenk.lider.core.api.rest.IResponseFactory" />
 
+	<service ref="restRequestProcessor" interface="tr.org.liderahenk.lider.core.api.rest.IRestRequestProcessor" />
+
 	<bean id="restRequestFactory" class="tr.org.liderahenk.lider.impl.rest.RequestFactoryImpl" />
 	<bean id="restResponseFactory" class="tr.org.liderahenk.lider.impl.rest.ResponseFactoryImpl" />
+
+
+	<bean id="restRequestProcessor" class="tr.org.liderahenk.lider.impl.rest.RestRequestProcessorImpl">
+		<property name="serviceRouter" ref="serviceRouter" />
+		<property name="requestFactory" ref="restRequestFactory" />
+		<property name="responseFactory" ref="restResponseFactory" />
+		<property name="authService" ref="authServiceRef"/>
+		<property name="config" ref="configurationService"/>	
+	</bean>
+
+	<reference id="configurationService" interface="tr.org.liderahenk.lider.core.api.IConfigurationService" />
+	<reference id="serviceRouter" interface="tr.org.liderahenk.lider.core.api.router.IServiceRouter" />
+	<reference id="authServiceRef" interface="tr.org.liderahenk.lider.core.api.authorization.IAuthService"/>
 
 </blueprint>
