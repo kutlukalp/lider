@@ -36,13 +36,15 @@ public class ClientIdMatcherImpl implements IClientIdMatcher {
 	}
 	
 	@Override
-	public String getXmppServer() {
-		return config.getXmppServerPublicIP();//xmppServer;
+	public String getXmppServer() { // TODO
+//		return config.getXmppServerPublicIP();//xmppServer;
+		return null;
 	}
 	
 	@Override
-	public String getXmppDomain() {
-		return config.getXmppDomain();//xmppServer;
+	public String getXmppDomain() { // TODO
+//		return config.getXmppDomain();//xmppServer;
+		return null;
 	}
 	
 	@Override
