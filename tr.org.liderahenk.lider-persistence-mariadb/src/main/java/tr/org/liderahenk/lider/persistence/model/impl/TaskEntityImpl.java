@@ -1,207 +1,181 @@
 package tr.org.liderahenk.lider.persistence.model.impl;
 
+import java.io.IOException;
 import java.util.Date;
 
-import javax.persistence.AssociationOverride;
-import javax.persistence.AssociationOverrides;
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
-import tr.org.liderahenk.lider.core.api.rest.IRestRequest;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+
 import tr.org.liderahenk.lider.core.api.taskmanager.ITask;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskCommState;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskState;
 
-@Entity(name="Task")
-@Table(name="TASK")
-public class TaskEntityImpl implements ITask{
+/**
+ * Entity class for ITask objects.
+ * 
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ * @see tr.org.liderahenk.lider.impl.taskmanager.TaskImpl
+ *
+ */
+@Entity
+@Table(name = "TASK")
+public class TaskEntityImpl implements ITask {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -2057571043079904092L;
+
 	@Id
+	@Column(name = "ID")
 	private String id;
+
+	@Column(name = "ACTIVE")
 	private boolean active = true;
-	
+
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "CREATION_DATE")
 	private Date creationDate;
+
 	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "CHANGED_DATE")
 	private Date changedDate;
+
+	@Column(name = "VERSION")
 	private Integer version;
-//	private Integer order;
-//	private Integer priority;
-	
-	@Enumerated(EnumType.STRING)
-	private TaskState state;
-	
-	@Enumerated(EnumType.STRING)
-	private TaskCommState commState;
-	
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date timeout;
-	
+
 	@Embedded
-	 @AttributeOverrides( {
-	       @AttributeOverride(name = "pluginVersion", column = @Column(name = "plugin_version"))
-	    })
-	@AssociationOverrides( {
-		@AssociationOverride(name = "pluginVersion", joinColumns = @JoinColumn(name = "plugin_version"))})
 	private RestRequestEntityImpl request;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "STATE")
+	private TaskState state;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "COMM_STATE")
+	private TaskCommState commState;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "TIMEOUT")
+	private Date timeout;
+
+	@Column(name = "OWNER")
+	private String owner;
+
+	@Column(name = "TARGET_OBJECT_DN")
 	private String targetObjectDN;
+
+	@Column(name = "PARENT_TASK_ID")
 	private String parentTaskId;
-	
+
+	@Column(name = "TARGET_JID")
 	private String targetJID;
 
-	private String owner;
-	
+	@Column(name = "PARENT")
 	private boolean parent = false;
-	
-//	@Column(name="ppp",updatable=false,insertable=false)
-	private String pluginId;
-	
-	private String pluginVersion;
-	
+
 	public TaskEntityImpl() {
 	}
-	
-	public TaskEntityImpl(ITask task) throws Exception {
-		this.id = task.getId();
+
+	public TaskEntityImpl(String id, boolean active, Date creationDate, Date changedDate, Integer version,
+			RestRequestEntityImpl request, TaskState state, TaskCommState commState, Date timeout, String owner,
+			String targetObjectDN, String parentTaskId, String targetJID, boolean parent) {
+		super();
+		this.id = id;
+		this.active = active;
+		this.creationDate = creationDate;
+		this.changedDate = changedDate;
+		this.version = version;
+		this.request = request;
+		this.state = state;
+		this.commState = commState;
+		this.timeout = timeout;
+		this.owner = owner;
+		this.targetObjectDN = targetObjectDN;
+		this.parentTaskId = parentTaskId;
+		this.targetJID = targetJID;
+		this.parent = parent;
+	}
+
+	public TaskEntityImpl(ITask task) throws JsonGenerationException, JsonMappingException, IOException {
 		this.active = task.isActive();
 		this.changedDate = task.getChangedDate();
 		this.commState = task.getCommState();
 		this.creationDate = task.getCreationDate();
+		this.id = task.getId();
 		this.owner = task.getOwner();
+		this.parent = task.isParent();
 		this.parentTaskId = task.getParentTaskId();
-		//FIXME update object another way
-//		this.request = new RestRequestEntityImpl(task.getRequest());
+		this.request = new RestRequestEntityImpl(task.getRequest());
 		this.state = task.getState();
 		this.targetJID = task.getTargetJID();
 		this.targetObjectDN = task.getTargetObjectDN();
-		this.timeout =task.getTimeout();
+		this.timeout = task.getTimeout();
 		this.version = task.getVersion();
-		this.parent = task.isParent();
 	}
-	
-	@Override
+
 	public String getId() {
 		return id;
 	}
-	
+
 	public void setId(String id) {
 		this.id = id;
 	}
 
-	@Override
 	public boolean isActive() {
-		return this.active;
+		return active;
 	}
-	
+
 	public void setActive(boolean active) {
 		this.active = active;
 	}
 
-	@Override
 	public Date getCreationDate() {
 		return creationDate;
-	}
-
-	@Override
-	public Date getChangedDate() {
-		return changedDate;
-	}
-	
-	public void setChangedDate(Date changedDate) {
-		this.changedDate = changedDate;
-	}
-
-	@Override
-	public Integer getVersion() {
-		return version;
-	}
-	
-	public void setVersion(Integer version) {
-		this.version = version;
-	}
-
-
-	@Override
-	public TaskState getState() {
-		return state;
 	}
 
 	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
 	}
 
-//	public void setOrder(Integer order) {
-//		this.order = order;
-//	}
-//
-//	public void setPriority(Integer priority) {
-//		this.priority = priority;
-//	}
+	public Date getChangedDate() {
+		return changedDate;
+	}
+
+	public void setChangedDate(Date changedDate) {
+		this.changedDate = changedDate;
+	}
+
+	public Integer getVersion() {
+		return version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
+	}
+
+	public RestRequestEntityImpl getRequest() {
+		return request;
+	}
 
 	public void setRequest(RestRequestEntityImpl request) {
 		this.request = request;
 	}
 
-	@Override
-	public Date getTimeout() {
-		return timeout;
-	}
-	
-	public void setTimeout(Date timeout) {
-		this.timeout = timeout;
+	public TaskState getState() {
+		return state;
 	}
 
-	@Override
-	public IRestRequest getRequest() {
-		return request;
-	}
-
-	@Override
-	public String getParentTaskId() {
-		return parentTaskId;
-	}
-	
 	public void setState(TaskState state) {
 		this.state = state;
-	}
-	
-	
-	public void setParentTaskId(String parentTaskId) {
-		this.parentTaskId = parentTaskId;
-	}
-
-
-	@Override
-	public String getTargetObjectDN() {
-		
-		return targetObjectDN;
-	}
-	
-	public void setTargetObjectDN(String targetObjectDN) {
-		this.targetObjectDN = targetObjectDN;
-	}
-
-	public String getTargetJID() {
-		return targetJID;
-	}
-
-	public void setTargetJID(String targetJID) {
-		this.targetJID = targetJID;
 	}
 
 	public TaskCommState getCommState() {
@@ -212,7 +186,14 @@ public class TaskEntityImpl implements ITask{
 		this.commState = commState;
 	}
 
-	@Override
+	public Date getTimeout() {
+		return timeout;
+	}
+
+	public void setTimeout(Date timeout) {
+		this.timeout = timeout;
+	}
+
 	public String getOwner() {
 		return owner;
 	}
@@ -220,41 +201,46 @@ public class TaskEntityImpl implements ITask{
 	public void setOwner(String owner) {
 		this.owner = owner;
 	}
-	
-	
-	public void setParent(boolean parent) {
-		this.parent = parent;
+
+	public String getTargetObjectDN() {
+		return targetObjectDN;
 	}
-	
-	@Override
+
+	public void setTargetObjectDN(String targetObjectDN) {
+		this.targetObjectDN = targetObjectDN;
+	}
+
+	public String getParentTaskId() {
+		return parentTaskId;
+	}
+
+	public void setParentTaskId(String parentTaskId) {
+		this.parentTaskId = parentTaskId;
+	}
+
+	public String getTargetJID() {
+		return targetJID;
+	}
+
+	public void setTargetJID(String targetJID) {
+		this.targetJID = targetJID;
+	}
+
 	public boolean isParent() {
 		return parent;
 	}
-	
-	
-	public String getPluginId() {
-		return pluginId;
+
+	public void setParent(boolean parent) {
+		this.parent = parent;
 	}
-	
-	public void setPluginId(String pluginId) {
-		this.pluginId = pluginId;
-	}
-	
-	public String getPluginVersion() {
-		return pluginVersion;
-	}
-	
-	public void setPluginVersion(String pluginVersion) {
-		this.pluginVersion = pluginVersion;
-	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
-		if ( this == obj)
+		if (this == obj)
 			return true;
-		if(! (obj instanceof TaskEntityImpl))
+		if (!(obj instanceof TaskEntityImpl))
 			return false;
-		return getId().equals(((TaskEntityImpl)obj).getId());
+		return getId().equals(((TaskEntityImpl) obj).getId());
 	}
 
 	@Override
@@ -262,4 +248,5 @@ public class TaskEntityImpl implements ITask{
 	public String toJSON() {
 		return null;
 	}
+
 }
