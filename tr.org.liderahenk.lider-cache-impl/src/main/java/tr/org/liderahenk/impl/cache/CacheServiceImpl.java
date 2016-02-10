@@ -1,4 +1,4 @@
-package tr.org.liderahenk.cache;
+package tr.org.liderahenk.impl.cache;
 
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
@@ -11,9 +11,11 @@ public class CacheServiceImpl implements ICacheService {
 	private CacheManager manager;
 
 	public void init() {
+
+		
 		Configuration configuration = new Configuration().defaultCache(new CacheConfiguration("defaultCache", 1000))
 				.cache(new CacheConfiguration("lider-cache", 1000).timeToIdleSeconds(5).timeToLiveSeconds(120));
-		manager = new CacheManager(configuration);
+		manager = CacheManager.create(configuration);
 	}
 
 	public void destroy() {
