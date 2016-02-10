@@ -2,36 +2,30 @@ package tr.org.liderahenk.config;
 
 import tr.org.liderahenk.lider.core.api.IConfigurationService;
 
+/**
+ * This class provides configurations throughout the system. Configurations are
+ * read from <code>${KARAF_HOME}/etc/tr.org.liderahenk.cfg</code> file.
+ * 
+ * @author <a href="mailto:bm.volkansahin@gmail.com">volkansahin</a>
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ *
+ */
+public class ConfigurationServiceImpl implements IConfigurationService {
 
-public class ConfigurationServiceImpl implements IConfigurationService{
-	
-	
+	// Database configuration
 	private String dbServer;
 	private String dbDatabase;
 	private Integer dbPort;
 	private String dbUsername;
 	private String dbPassword;
 
+	// LDAP configuration
 	private String ldapServer;
 	private String ldapPort;
 	private String ldapUser;
 	private String ldapPassword;
 	private String ldapRootDn;
 	private Boolean ldapUseSsl;
-	
-	private int xmppMaxRetryConnectionCount;
-	private int xmppPacketReplayTimeout;
-	private String  xmppUserName;
-	private String  xmppServiceName;
-	private String  xmppHost;
-	private String xmppServer;//do we need internal/external xmpp server address/IP??
-	private String xmppServerPublicIP;// we will broadcast this xmpp server IP to external clients
-	private Integer xmppPort;
-	private String xmppJid;
-	private String xmppPassword;
-	private String xmppDomain;
-	private Integer xmppPingTimeout;
-	
 	private String agentLdapBaseDn;
 	private String agentLdapIdAttribute;
 	private String agentLdapJidAttribute;
@@ -39,16 +33,18 @@ public class ConfigurationServiceImpl implements IConfigurationService{
 	private String authLdapUserFilter;
 	private String authLdapUserAttribute;
 	private String authLdapUserObjectClasses;
-	
-	private String userMailAttribute;
-	private Long taskManagerTaskTimeout;
-	private Boolean taskManagerMulticastEnabled;
-	private Boolean taskManagerLogXmppMessagesEnabled;
-	private Boolean authorizationEnabled;
-	private String servers;
-	private String privateKey;
-	private Integer syslogRecordMaxQueryDay;
-	
+
+	// XMPP configuration
+	private String xmppUserName;
+	private String xmppPassword;
+	private String xmppHost; // host name/server name
+	private Integer xmppPort;
+	private String xmppServiceName; // service name / XMPP domain
+	private Integer xmppPingTimeout;
+	private int xmppMaxRetryConnectionCount;
+	private int xmppPacketReplayTimeout;
+
+	// Mail configuration
 	private String mailAddress;
 	private String mailPassword;
 	private String mailHost;
@@ -59,7 +55,17 @@ public class ConfigurationServiceImpl implements IConfigurationService{
 	private Integer mailSmtpConnTimeout;
 	private Integer mailSmtpTimeout;
 	private Integer mailSmtpWriteTimeout;
-	
+	private String userMailAttribute;
+
+	// Other configuration
+	private Long taskManagerTaskTimeout;
+	private Boolean taskManagerMulticastEnabled;
+	private Boolean taskManagerLogXmppMessagesEnabled;
+	private Boolean authorizationEnabled;
+	private String servers;
+	private String privateKey;
+	private Integer syslogRecordMaxQueryDay;
+
 	@Override
 	public String getLdapServer() {
 		return ldapServer;
@@ -68,12 +74,12 @@ public class ConfigurationServiceImpl implements IConfigurationService{
 	public void setLdapServer(String ldapServer) {
 		this.ldapServer = ldapServer;
 	}
-	
+
 	@Override
 	public String getLdapPort() {
 		return ldapPort;
 	}
-	
+
 	public void setLdapPort(String ldapPort) {
 		this.ldapPort = ldapPort;
 	}
@@ -82,7 +88,7 @@ public class ConfigurationServiceImpl implements IConfigurationService{
 	public String getLdapUser() {
 		return ldapUser;
 	}
-	
+
 	public void setLdapUser(String ldapUser) {
 		this.ldapUser = ldapUser;
 	}
@@ -91,54 +97,27 @@ public class ConfigurationServiceImpl implements IConfigurationService{
 	public String getLdapPassword() {
 		return ldapPassword;
 	}
-	
+
 	public void setLdapPassword(String ldapPassword) {
 		this.ldapPassword = ldapPassword;
 	}
-	
+
 	@Override
 	public String getLdapRootDn() {
 		return ldapRootDn;
 	}
-	
+
 	public void setLdapRootDn(String ldapRootDn) {
 		this.ldapRootDn = ldapRootDn;
 	}
-	
+
 	@Override
 	public Boolean getLdapUseSsl() {
 		return ldapUseSsl;
 	}
-	
+
 	public void setLdapUseSsl(Boolean ldapUseSsl) {
 		this.ldapUseSsl = ldapUseSsl;
-	}
-	
-	@Override
-	public String getXmppServer() {
-		return xmppServer;
-	}
-
-	public void setXmppServer(String xmppServer) {
-		this.xmppServer = xmppServer;
-	}
-	
-	@Override
-	public String getXmppServerPublicIP() {
-		return xmppServerPublicIP;
-	}
-	
-	public void setXmppServerPublicIP(String xmppServerPublic) {
-		this.xmppServerPublicIP = xmppServerPublic;
-	}
-	
-	@Override
-	public String getXmppDomain() {
-		return xmppDomain;
-	}
-	
-	public void setXmppDomain(String xmppDomain) {
-		this.xmppDomain = xmppDomain;
 	}
 
 	@Override
@@ -151,15 +130,6 @@ public class ConfigurationServiceImpl implements IConfigurationService{
 	}
 
 	@Override
-	public String getXmppJid() {
-		return xmppJid;
-	}
-
-	public void setXmppJid(String xmppJid) {
-		this.xmppJid = xmppJid;
-	}
-
-	@Override
 	public String getXmppPassword() {
 		return xmppPassword;
 	}
@@ -167,12 +137,12 @@ public class ConfigurationServiceImpl implements IConfigurationService{
 	public void setXmppPassword(String xmppPassword) {
 		this.xmppPassword = xmppPassword;
 	}
-	
+
 	@Override
 	public Integer getXmppPingTimeout() {
 		return xmppPingTimeout;
 	}
-	
+
 	public void setXmppPingTimeout(Integer xmppPingTimeout) {
 		this.xmppPingTimeout = xmppPingTimeout;
 	}
@@ -208,7 +178,7 @@ public class ConfigurationServiceImpl implements IConfigurationService{
 	public String getAuthLdapUserSearchBase() {
 		return authLdapUserSearchBase;
 	}
-	
+
 	public void setAuthLdapUserSearchBase(String authLdapUserSearchBase) {
 		this.authLdapUserSearchBase = authLdapUserSearchBase;
 	}
@@ -235,7 +205,7 @@ public class ConfigurationServiceImpl implements IConfigurationService{
 	public Long getTaskManagerTaskTimeout() {
 		return taskManagerTaskTimeout;
 	}
-	
+
 	public void setTaskManagerTaskTimeout(Long taskManagerTaskTimeout) {
 		this.taskManagerTaskTimeout = taskManagerTaskTimeout;
 	}
@@ -244,9 +214,8 @@ public class ConfigurationServiceImpl implements IConfigurationService{
 	public Boolean getTaskManagerMulticastEnabled() {
 		return taskManagerMulticastEnabled;
 	}
-	
-	public void setTaskManagerMulticastEnabled(
-			Boolean taskManagerMulticastEnabled) {
+
+	public void setTaskManagerMulticastEnabled(Boolean taskManagerMulticastEnabled) {
 		this.taskManagerMulticastEnabled = taskManagerMulticastEnabled;
 	}
 
@@ -254,17 +223,16 @@ public class ConfigurationServiceImpl implements IConfigurationService{
 	public Boolean getTaskManagerLogXmppMessagesEnabled() {
 		return taskManagerLogXmppMessagesEnabled;
 	}
-	
-	public void setTaskManagerLogXmppMessagesEnabled(
-			Boolean taskManagerLogXmppMessagesEnabled) {
+
+	public void setTaskManagerLogXmppMessagesEnabled(Boolean taskManagerLogXmppMessagesEnabled) {
 		this.taskManagerLogXmppMessagesEnabled = taskManagerLogXmppMessagesEnabled;
 	}
-	
+
 	@Override
 	public Boolean getAuthorizationEnabled() {
 		return authorizationEnabled;
 	}
-	
+
 	public void setAuthorizationEnabled(Boolean authorizationEnabled) {
 		this.authorizationEnabled = authorizationEnabled;
 	}
@@ -273,7 +241,7 @@ public class ConfigurationServiceImpl implements IConfigurationService{
 	public String getAuthLdapUserObjectClasses() {
 		return authLdapUserObjectClasses;
 	}
-	
+
 	public void setAuthLdapUserObjectClasses(String authLdapUserObjectClasses) {
 		this.authLdapUserObjectClasses = authLdapUserObjectClasses;
 	}
@@ -282,7 +250,7 @@ public class ConfigurationServiceImpl implements IConfigurationService{
 	public String getServers() {
 		return servers;
 	}
-	
+
 	public void setServers(String servers) {
 		this.servers = servers;
 	}
@@ -291,11 +259,10 @@ public class ConfigurationServiceImpl implements IConfigurationService{
 	public String getPrivateKey() {
 		return privateKey;
 	}
-	
+
 	public void setPrivateKey(String privateKey) {
 		this.privateKey = privateKey;
 	}
-
 
 	public Integer getSyslogRecordMaxQueryDay() {
 		return this.syslogRecordMaxQueryDay;
@@ -482,6 +449,6 @@ public class ConfigurationServiceImpl implements IConfigurationService{
 
 	public void setXmppHost(String xmppHost) {
 		this.xmppHost = xmppHost;
-	}	
-	
+	}
+
 }
