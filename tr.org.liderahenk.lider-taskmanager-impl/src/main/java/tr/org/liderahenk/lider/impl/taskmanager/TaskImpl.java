@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import tr.org.liderahenk.lider.core.api.taskmanager.ITask;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskCommState;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskState;
-import tr.org.liderahenk.lider.impl.rest.RestRequestImpl;
+import tr.org.liderahenk.lider.impl.rest.service.RestRequestImpl;
 
 /**
  * Task implementation for {@link ITask}.

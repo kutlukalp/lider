@@ -14,6 +14,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tr.org.liderahenk.lider.core.api.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.messaging.IMessage;
 import tr.org.liderahenk.lider.core.api.messaging.IMessageFactory;
 import tr.org.liderahenk.lider.core.api.messaging.IMessagingService;
@@ -42,11 +43,16 @@ public class TaskServiceImpl implements ITaskService, IPresenceSubscriber {
 	private TaskStoreHazelcastImpl taskStore;
 	private IMessagingService messagingService;
 	private IMessageFactory messageFactory;
+	private IConfigurationService config;
 
 	// TODO mark task as finished!
 	private TaskState[] passiveStates = new TaskState[] { TASK_PROCESSED, TASK_WARNING, TASK_ERROR, TASK_KILLED,
 			TASK_TIMEOUT };
 
+	public void setConfig(IConfigurationService config) {
+		this.config = config;
+	}
+	
 	public void setMessageFactory(IMessageFactory messageFactory) {
 		this.messageFactory = messageFactory;
 	}
