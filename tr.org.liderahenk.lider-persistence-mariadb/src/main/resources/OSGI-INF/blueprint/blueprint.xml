@@ -17,7 +17,6 @@
 		<tx:transaction method="*" value="Required" />
 	</bean>
 
-
 	<bean id="operationLogDao"
 		class="tr.org.liderahenk.lider.persistence.log.dao.impl.OperationLogDaoImpl">
 		<tx:transaction method="*" value="Required" />
