@@ -4,15 +4,15 @@
 	<service ref="router"
 		interface="tr.org.liderahenk.lider.core.api.router.IServiceRouter" />
 
-	<bean id="router" class="tr.org.liderahenk.lider.impl.rest.ServiceRouterImpl">
+	<bean id="router" class="tr.org.liderahenk.lider.impl.router.ServiceRouterImpl">
 		<property name="serviceRegistry" ref="registry" />
 		<property name="responseFactory" ref="responseFactory" />
 		<property name="commandContextFactory" ref="commandContextFactory" />
 		<property name="taskManager" ref="taskManager" />
 	</bean>
 
-	<bean id="registry" class="tr.org.liderahenk.lider.impl.rest.ServiceRegistryImpl">
-		<property name="commands" ref="commands" />
+	<bean id="registry" class="tr.org.liderahenk.lider.impl.router.ServiceRegistryImpl">
+		<property name="registeredCommmands" ref="commands" />
 	</bean>
 
 	<reference id="commandContextFactory"
