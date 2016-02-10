@@ -12,11 +12,28 @@
 
 	<service ref="commandContextFactory"
 		interface="tr.org.liderahenk.lider.core.api.plugin.ICommandContextFactory" />
+		
+	<service ref="restRequestFactory"
+		interface="tr.org.liderahenk.lider.core.api.rest.IRequestFactory" />
+	<service ref="restResponseFactory"
+		interface="tr.org.liderahenk.lider.core.api.rest.IResponseFactory" />
+		
+		
+	<service ref="sampleCommandImpl">
+		<interfaces>
+            <value>tr.org.liderahenk.lider.core.api.plugin.ICommand</value>
+            <value>tr.org.liderahenk.lider.core.api.plugin.ITaskAwareCommand</value>
+        </interfaces>
+	</service>
 
 	<bean id="commandResultFactory"
 		class="tr.org.liderahenk.lider.impl.service.CommandResultFactoryImpl" />
 
 	<bean id="commandContextFactory"
 		class="tr.org.liderahenk.lider.impl.service.CommandContextFactoryImpl" />
-
+		
+	<bean id="restRequestFactory" class="tr.org.liderahenk.lider.impl.rest.service.RequestFactoryImpl" />
+	<bean id="restResponseFactory" class="tr.org.liderahenk.lider.impl.rest.service.ResponseFactoryImpl" />
+	
+	<bean id="sampleCommandImpl" class="tr.org.liderahenk.lider.impl.command.SampleCommand"/>
 </blueprint>
