@@ -21,11 +21,22 @@
 		class="tr.org.liderahenk.lider.persistence.log.dao.impl.OperationLogDaoImpl">
 		<tx:transaction method="*" value="Required" />
 	</bean>
+	
+	<bean id="taskDao"
+		class="tr.org.liderahenk.lider.persistence.task.dao.TaskDaoImpl">
+		<tx:transaction method="*" value="Required" />
+		<property name="taskCriteriaBuilder" ref="criteriaBuilder"></property>
+	</bean>
+	
+	<bean id="criteriaBuilder" class="tr.org.liderahenk.lider.persistence.task.model.impl.TaskCriteriaBuilder"/>
 
 	<service ref="pluginDbService"
 		interface="tr.org.liderahenk.lider.core.api.plugin.IPluginDbService" />
 
 	<service ref="operationLogDao"
 		interface="tr.org.liderahenk.lider.core.api.log.dao.OperationLogDao" />
+		
+	<service ref="taskDao"
+		interface="tr.org.liderahenk.lider.core.api.taskmanager.dao.ITaskDao" />
 
 </blueprint>
