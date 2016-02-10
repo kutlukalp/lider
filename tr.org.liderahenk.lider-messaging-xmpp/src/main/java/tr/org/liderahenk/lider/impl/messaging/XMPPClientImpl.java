@@ -109,7 +109,7 @@ public class XMPPClientImpl {
 		setServerSettings();
 		addListeners();
 		getInitialOnlineUsers();
-		subscribePubsub();
+//		subscribePubsub();
 		
 		log.info("xmpp service initialized");
 	}
