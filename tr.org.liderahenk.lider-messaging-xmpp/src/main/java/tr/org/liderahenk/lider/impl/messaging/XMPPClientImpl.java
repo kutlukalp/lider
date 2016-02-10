@@ -50,7 +50,7 @@ import tr.org.liderahenk.lider.core.api.messaging.IPresenceSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.ITaskStatusUpdateSubscriber;
 
 /**
- * @author  <a href="mailto:bm.volkansahin@gmail.com">volkansahin</a>
+ * @author <a href="mailto:bm.volkansahin@gmail.com">volkansahin</a>
  * 
  */
 
@@ -59,49 +59,48 @@ public class XMPPClientImpl {
 	private static final String NODE = "online_users";
 
 	private static Logger log = LoggerFactory.getLogger(XMPPClientImpl.class);
-	
+
 	private ChatManagerListenerImpl chatManagerListener = new ChatManagerListenerImpl();
 	private XMPPPingFailedListener pingFailedListener = new XMPPPingFailedListener();
 	private RosterListenerImpl rosterListener = new RosterListenerImpl();
-	private AllPacketListener packetListener =new AllPacketListener();
+	private AllPacketListener packetListener = new AllPacketListener();
 	private NotificationListener notificationListener = new NotificationListener();
 	private IQPacketListener iqListener = new IQPacketListener();
 	private TaskStatusUpdateListener taskStatusListener = new TaskStatusUpdateListener();
-	
+
 	/**
 	 * connection and settings parameters are got from tr.org.liderahenk.cfg
 	 */
-	
+
 	private String username;
 	private String password;
-	private String serviceName;		//xmpp server url
-	private String host; 			//domain name like liderahenk.org.tr
-	private Integer port;			//5222
-	private String jid;				//full username (ex:username@localhost/resource)
-	private int maxRetryConnectionCount ;
-	private int retryCount=0;
+	private String serviceName; // xmpp server url
+	private String host; // domain name like liderahenk.org.tr
+	private Integer port; // 5222
+	private String jid; // full username (ex:username@localhost/resource)
+	private int maxRetryConnectionCount;
+	private int retryCount = 0;
 	private int maxPingTimeoutCount;
-	private int pingTimeoutCount=0;
+	private int pingTimeoutCount = 0;
 	private int packetReplyTimeout; // milliseconds
-	private int pingTimeout ;		// milliseconds
-	
+	private int pingTimeout; // milliseconds
+
 	private List<INotificationSubscriber> notificationSubscribers;
 	private List<ITaskStatusUpdateSubscriber> taskStatusUpdateSubscribers;
 	private List<IPresenceSubscriber> presenceSubscribers;
 	private List<String> onlineUsers = new ArrayList<String>();
-	
-	private XMPPTCPConnection connection; 
+
+	private XMPPTCPConnection connection;
 	private XMPPTCPConnectionConfiguration config;
-	
+
 	private Roster roster;
 	private IConfigurationService configurationService;
 	private ILDAPService ldapService;
-	
-	
+
 	public void init() {
 
 		log.info("xmpp service initialization is started");
-		
+
 		setParameters();
 		createXmppTcpConfiguration();
 		connect();
@@ -110,26 +109,35 @@ public class XMPPClientImpl {
 		addListeners();
 		getInitialOnlineUsers();
 //		subscribePubsub();
-		
+
 		log.info("xmpp service initialized");
 	}
 
-
-	public void destroy(){
+	public void destroy() {
 		this.disconnect();
 	}
-	
-	
+
 	private void setServerSettings() {
 		PingManager.getInstanceFor(connection).setPingInterval(pingTimeout);
-		DeliveryReceiptManager.getInstanceFor(connection).setAutoReceiptMode(AutoReceiptMode.always);//Specifies when incoming message delivery receipt 
-																									//requests should be automatically acknowledged with an receipt.
+		DeliveryReceiptManager.getInstanceFor(connection).setAutoReceiptMode(AutoReceiptMode.always);// Specifies
+																										// when
+																										// incoming
+																										// message
+																										// delivery
+																										// receipt
+																										// requests
+																										// should
+																										// be
+																										// automatically
+																										// acknowledged
+																										// with
+																										// an
+																										// receipt.
 		SmackConfiguration.setDefaultPacketReplyTimeout(packetReplyTimeout);
 		roster = Roster.getInstanceFor(connection);
 	}
 
-
-	public void sendMessage(String message, String buddyJID){
+	public void sendMessage(String message, String buddyJID) {
 		String jidFinal = buddyJID;
 
 		if (buddyJID.indexOf("@") < 0) {
@@ -146,8 +154,8 @@ public class XMPPClientImpl {
 		}
 	}
 
-	public void disconnect(){
-		if( null != connection && connection.isConnected()){
+	public void disconnect() {
+		if (null != connection && connection.isConnected()) {
 			ChatManager.getInstanceFor(connection).removeChatListener(chatManagerListener);
 			roster.removeRosterListener(rosterListener);
 			connection.removeAsyncStanzaListener(packetListener);
@@ -155,49 +163,48 @@ public class XMPPClientImpl {
 			connection.removeAsyncStanzaListener(taskStatusListener);
 			connection.removeAsyncStanzaListener(iqListener);
 			log.debug("Listeners are removed.");
-			
+
 			PingManager.getInstanceFor(connection).setPingInterval(-1);
 			log.info("disabled xmpp ping manager");
-			
+
 			connection.disconnect();
-			
+
 			log.info("Xmpp connection closed successfully");
 		}
 	}
-	
-	
+
 	private void addListeners() {
 
 		connection.addConnectionListener(new XMPPConnectionListener());
-		
+
 		PingManager.getInstanceFor(connection).registerPingFailedListener(pingFailedListener);
 		ChatManager.getInstanceFor(connection).addChatListener(chatManagerListener);
-		
+
 		/**
 		 * Stanza packet types listeners like iq,message,presence,...
 		 */
-		connection.addAsyncStanzaListener(packetListener,packetListener);
-		connection.addAsyncStanzaListener(notificationListener,notificationListener);
-		connection.addAsyncStanzaListener(taskStatusListener,taskStatusListener);
-		connection.addAsyncStanzaListener(iqListener,iqListener);
-		
+		connection.addAsyncStanzaListener(packetListener, packetListener);
+		connection.addAsyncStanzaListener(notificationListener, notificationListener);
+		connection.addAsyncStanzaListener(taskStatusListener, taskStatusListener);
+		connection.addAsyncStanzaListener(iqListener, iqListener);
+
 		roster.addRosterListener(rosterListener);
-		
+
 		log.debug("Listeners are added.");
 	}
-	
-	
-	/** It will provide access to general information about the service, 
-	 * as well as create or retrieve pubsub LeafNode instances. 
-	 * These instances provide the bulk of the functionality as defined in the pubsub 
-	 * specification XEP-0060.
+
+	/**
+	 * It will provide access to general information about the service, as well
+	 * as create or retrieve pubsub LeafNode instances. These instances provide
+	 * the bulk of the functionality as defined in the pubsub specification
+	 * XEP-0060.
 	 */
 	private void subscribePubsub() {
 		try {
 			LeafNode node = new PubSubManager(connection).getNode(NODE);
-			node.addItemEventListener(new ItemEventCoordinator()); 
-			node.subscribe(jid);							// TODO check subscription
-			
+			node.addItemEventListener(new ItemEventCoordinator());
+			node.subscribe(jid); // TODO check subscription
+
 		} catch (XMPPException e) {
 			log.error("Cannot subscribe pubsub node: ", e);
 		} catch (NoResponseException e) {
@@ -207,7 +214,6 @@ public class XMPPClientImpl {
 		}
 	}
 
-	
 	/**
 	 * get online users from roster and store in onlineUsers<String>
 	 */
@@ -238,7 +244,7 @@ public class XMPPClientImpl {
 		}
 	}
 
-	public void loginAnonymously(){
+	public void loginAnonymously() {
 		if (connection != null && connection.isConnected()) {
 			try {
 				connection.loginAnonymously();
@@ -251,13 +257,13 @@ public class XMPPClientImpl {
 			}
 		}
 	}
-	
+
 	private void login(String username, String password) {
 
 		if (connection != null && connection.isConnected()) {
 			try {
 				connection.login(username, password);
-				log.debug("<"+username+"> is logged in");
+				log.debug("<" + username + "> is logged in");
 			} catch (XMPPException e) {
 				e.printStackTrace();
 			} catch (SmackException e) {
@@ -267,7 +273,6 @@ public class XMPPClientImpl {
 			}
 		}
 	}
-	
 
 	private void connect() {
 
@@ -291,44 +296,36 @@ public class XMPPClientImpl {
 		log.debug("Connected Xmpp server.");
 	}
 
-
 	private void createXmppTcpConfiguration() {
-		
-		config = XMPPTCPConnectionConfiguration.builder()
-				.setServiceName(serviceName)
-				.setHost(host)
-				.setPort(port)
-				.setSecurityMode(SecurityMode.disabled) //TODO SSL Conf.
-//				.setDebuggerEnabled(true)
-//				.setCustomSSLContext(context)
+
+		config = XMPPTCPConnectionConfiguration.builder().setServiceName(serviceName).setHost(host).setPort(port)
+				.setSecurityMode(SecurityMode.disabled) // TODO SSL Conf.
+				// .setDebuggerEnabled(true)
+				// .setCustomSSLContext(context)
 				.build();
 		log.debug("XMPP TCP Configuration created.");
 	}
 
 	private void setParameters() {
-		
-		setUsername(configurationService.getXmppUserName());							//TODO parameters will be fixed
+		setUsername(configurationService.getXmppUserName());
 		setPassword(configurationService.getXmppPassword());
-		setServiceName("im.mys.pardus.org.tr");
+		setServiceName(configurationService.getXmppServiceName());
 		setHost(configurationService.getXmppHost());
 		setPort(configurationService.getXmppPort());
-		setJid("lider_sunucu@im.mys.pardus.org.tr");
-		setMaxRetryConnectionCount(configurationService.getXmppMaxRetryConnectionCount()); //5
+		setJid(configurationService.getXmppUserName() + "@" + configurationService.getXmppServiceName());
+		setMaxRetryConnectionCount(configurationService.getXmppMaxRetryConnectionCount()); // 5
 		setMaxPingTimeoutCount(configurationService.getXmppPingTimeout());
-		setPacketReplyTimeout(configurationService.getXmppPacketReplayTimeout()); 			//1000
+		setPacketReplyTimeout(configurationService.getXmppPacketReplayTimeout()); // 1000
 		setPingTimeout(configurationService.getXmppPingTimeout());
-	
-		
 		log.debug("Parameters are read.");
-		
 	}
 
-	
 	public boolean isRecipientOnline(String jid) {
 		return roster.getPresence(jid + "@" + host).isAvailable();
 	}
-	
-	//********************************** getter settters ******************************************//
+
+	// ********************************** getter settters
+	// ******************************************//
 
 	/**
 	 * @return the chatManagerListener
@@ -337,14 +334,13 @@ public class XMPPClientImpl {
 		return chatManagerListener;
 	}
 
-
 	/**
-	 * @param chatManagerListener the chatManagerListener to set
+	 * @param chatManagerListener
+	 *            the chatManagerListener to set
 	 */
 	public void setChatManagerListener(ChatManagerListenerImpl chatManagerListener) {
 		this.chatManagerListener = chatManagerListener;
 	}
-
 
 	/**
 	 * @return the pingFailedListener
@@ -353,14 +349,13 @@ public class XMPPClientImpl {
 		return pingFailedListener;
 	}
 
-
 	/**
-	 * @param pingFailedListener the pingFailedListener to set
+	 * @param pingFailedListener
+	 *            the pingFailedListener to set
 	 */
 	public void setPingFailedListener(XMPPPingFailedListener pingFailedListener) {
 		this.pingFailedListener = pingFailedListener;
 	}
-
 
 	/**
 	 * @return the rosterListener
@@ -369,14 +364,13 @@ public class XMPPClientImpl {
 		return rosterListener;
 	}
 
-
 	/**
-	 * @param rosterListener the rosterListener to set
+	 * @param rosterListener
+	 *            the rosterListener to set
 	 */
 	public void setRosterListener(RosterListenerImpl rosterListener) {
 		this.rosterListener = rosterListener;
 	}
-
 
 	/**
 	 * @return the packetListener
@@ -385,14 +379,13 @@ public class XMPPClientImpl {
 		return packetListener;
 	}
 
-
 	/**
-	 * @param packetListener the packetListener to set
+	 * @param packetListener
+	 *            the packetListener to set
 	 */
 	public void setPacketListener(AllPacketListener packetListener) {
 		this.packetListener = packetListener;
 	}
-
 
 	/**
 	 * @return the notificationListener
@@ -401,14 +394,13 @@ public class XMPPClientImpl {
 		return notificationListener;
 	}
 
-
 	/**
-	 * @param notificationListener the notificationListener to set
+	 * @param notificationListener
+	 *            the notificationListener to set
 	 */
 	public void setNotificationListener(NotificationListener notificationListener) {
 		this.notificationListener = notificationListener;
 	}
-
 
 	/**
 	 * @return the iqListener
@@ -417,14 +409,13 @@ public class XMPPClientImpl {
 		return iqListener;
 	}
 
-
 	/**
-	 * @param iqListener the iqListener to set
+	 * @param iqListener
+	 *            the iqListener to set
 	 */
 	public void setIqListener(IQPacketListener iqListener) {
 		this.iqListener = iqListener;
 	}
-
 
 	/**
 	 * @return the taskStatusListener
@@ -433,14 +424,13 @@ public class XMPPClientImpl {
 		return taskStatusListener;
 	}
 
-
 	/**
-	 * @param taskStatusListener the taskStatusListener to set
+	 * @param taskStatusListener
+	 *            the taskStatusListener to set
 	 */
 	public void setTaskStatusListener(TaskStatusUpdateListener taskStatusListener) {
 		this.taskStatusListener = taskStatusListener;
 	}
-
 
 	/**
 	 * @return the username
@@ -449,14 +439,13 @@ public class XMPPClientImpl {
 		return username;
 	}
 
-
 	/**
-	 * @param username the username to set
+	 * @param username
+	 *            the username to set
 	 */
 	public void setUsername(String username) {
 		this.username = username;
 	}
-
 
 	/**
 	 * @return the password
@@ -465,14 +454,13 @@ public class XMPPClientImpl {
 		return password;
 	}
 
-
 	/**
-	 * @param password the password to set
+	 * @param password
+	 *            the password to set
 	 */
 	public void setPassword(String password) {
 		this.password = password;
 	}
-
 
 	/**
 	 * @return the serviceName
@@ -481,14 +469,13 @@ public class XMPPClientImpl {
 		return serviceName;
 	}
 
-
 	/**
-	 * @param serviceName the serviceName to set
+	 * @param serviceName
+	 *            the serviceName to set
 	 */
 	public void setServiceName(String serviceName) {
 		this.serviceName = serviceName;
 	}
-
 
 	/**
 	 * @return the host
@@ -497,14 +484,13 @@ public class XMPPClientImpl {
 		return host;
 	}
 
-
 	/**
-	 * @param host the host to set
+	 * @param host
+	 *            the host to set
 	 */
 	public void setHost(String host) {
 		this.host = host;
 	}
-
 
 	/**
 	 * @return the port
@@ -513,14 +499,13 @@ public class XMPPClientImpl {
 		return port;
 	}
 
-
 	/**
-	 * @param port the port to set
+	 * @param port
+	 *            the port to set
 	 */
 	public void setPort(Integer port) {
 		this.port = port;
 	}
-
 
 	/**
 	 * @return the jid
@@ -529,14 +514,13 @@ public class XMPPClientImpl {
 		return jid;
 	}
 
-
 	/**
-	 * @param jid the jid to set
+	 * @param jid
+	 *            the jid to set
 	 */
 	public void setJid(String jid) {
 		this.jid = jid;
 	}
-
 
 	/**
 	 * @return the maxRetryConnectionCount
@@ -545,14 +529,13 @@ public class XMPPClientImpl {
 		return maxRetryConnectionCount;
 	}
 
-
 	/**
-	 * @param maxRetryConnectionCount the maxRetryConnectionCount to set
+	 * @param maxRetryConnectionCount
+	 *            the maxRetryConnectionCount to set
 	 */
 	public void setMaxRetryConnectionCount(int maxRetryConnectionCount) {
 		this.maxRetryConnectionCount = maxRetryConnectionCount;
 	}
-
 
 	/**
 	 * @return the retryCount
@@ -561,14 +544,13 @@ public class XMPPClientImpl {
 		return retryCount;
 	}
 
-
 	/**
-	 * @param retryCount the retryCount to set
+	 * @param retryCount
+	 *            the retryCount to set
 	 */
 	public void setRetryCount(int retryCount) {
 		this.retryCount = retryCount;
 	}
-
 
 	/**
 	 * @return the maxPingTimeoutCount
@@ -577,14 +559,13 @@ public class XMPPClientImpl {
 		return maxPingTimeoutCount;
 	}
 
-
 	/**
-	 * @param maxPingTimeoutCount the maxPingTimeoutCount to set
+	 * @param maxPingTimeoutCount
+	 *            the maxPingTimeoutCount to set
 	 */
 	public void setMaxPingTimeoutCount(int maxPingTimeoutCount) {
 		this.maxPingTimeoutCount = maxPingTimeoutCount;
 	}
-
 
 	/**
 	 * @return the pingTimeoutCount
@@ -593,14 +574,13 @@ public class XMPPClientImpl {
 		return pingTimeoutCount;
 	}
 
-
 	/**
-	 * @param pingTimeoutCount the pingTimeoutCount to set
+	 * @param pingTimeoutCount
+	 *            the pingTimeoutCount to set
 	 */
 	public void setPingTimeoutCount(int pingTimeoutCount) {
 		this.pingTimeoutCount = pingTimeoutCount;
 	}
-
 
 	/**
 	 * @return the packetReplyTimeout
@@ -609,14 +589,13 @@ public class XMPPClientImpl {
 		return packetReplyTimeout;
 	}
 
-
 	/**
-	 * @param packetReplyTimeout the packetReplyTimeout to set
+	 * @param packetReplyTimeout
+	 *            the packetReplyTimeout to set
 	 */
 	public void setPacketReplyTimeout(int packetReplyTimeout) {
 		this.packetReplyTimeout = packetReplyTimeout;
 	}
-
 
 	/**
 	 * @return the pingTimeout
@@ -625,14 +604,13 @@ public class XMPPClientImpl {
 		return pingTimeout;
 	}
 
-
 	/**
-	 * @param pingTimeout the pingTimeout to set
+	 * @param pingTimeout
+	 *            the pingTimeout to set
 	 */
 	public void setPingTimeout(int pingTimeout) {
 		this.pingTimeout = pingTimeout;
 	}
-
 
 	/**
 	 * @return the notificationSubscribers
@@ -641,15 +619,13 @@ public class XMPPClientImpl {
 		return notificationSubscribers;
 	}
 
-
 	/**
-	 * @param notificationSubscribers the notificationSubscribers to set
+	 * @param notificationSubscribers
+	 *            the notificationSubscribers to set
 	 */
-	public void setNotificationSubscribers(
-			List<INotificationSubscriber> notificationSubscribers) {
+	public void setNotificationSubscribers(List<INotificationSubscriber> notificationSubscribers) {
 		this.notificationSubscribers = notificationSubscribers;
 	}
-
 
 	/**
 	 * @return the taskStatusUpdateSubscribers
@@ -658,15 +634,13 @@ public class XMPPClientImpl {
 		return taskStatusUpdateSubscribers;
 	}
 
-
 	/**
-	 * @param taskStatusUpdateSubscribers the taskStatusUpdateSubscribers to set
+	 * @param taskStatusUpdateSubscribers
+	 *            the taskStatusUpdateSubscribers to set
 	 */
-	public void setTaskStatusUpdateSubscribers(
-			List<ITaskStatusUpdateSubscriber> taskStatusUpdateSubscribers) {
+	public void setTaskStatusUpdateSubscribers(List<ITaskStatusUpdateSubscriber> taskStatusUpdateSubscribers) {
 		this.taskStatusUpdateSubscribers = taskStatusUpdateSubscribers;
 	}
-
 
 	/**
 	 * @return the presenceSubscribers
@@ -675,14 +649,13 @@ public class XMPPClientImpl {
 		return presenceSubscribers;
 	}
 
-
 	/**
-	 * @param presenceSubscribers the presenceSubscribers to set
+	 * @param presenceSubscribers
+	 *            the presenceSubscribers to set
 	 */
 	public void setPresenceSubscribers(List<IPresenceSubscriber> presenceSubscribers) {
 		this.presenceSubscribers = presenceSubscribers;
 	}
-
 
 	/**
 	 * @return the onlineUsers
@@ -691,14 +664,13 @@ public class XMPPClientImpl {
 		return onlineUsers;
 	}
 
-
 	/**
-	 * @param onlineUsers the onlineUsers to set
+	 * @param onlineUsers
+	 *            the onlineUsers to set
 	 */
 	public void setOnlineUsers(List<String> onlineUsers) {
 		this.onlineUsers = onlineUsers;
 	}
-
 
 	/**
 	 * @return the config
@@ -707,14 +679,13 @@ public class XMPPClientImpl {
 		return config;
 	}
 
-
 	/**
-	 * @param config the config to set
+	 * @param config
+	 *            the config to set
 	 */
 	public void setConfig(XMPPTCPConnectionConfiguration config) {
 		this.config = config;
 	}
-
 
 	/**
 	 * @return the connection
@@ -723,14 +694,13 @@ public class XMPPClientImpl {
 		return connection;
 	}
 
-
 	/**
-	 * @param connection the connection to set
+	 * @param connection
+	 *            the connection to set
 	 */
 	public void setConnection(XMPPTCPConnection connection) {
 		this.connection = connection;
 	}
-
 
 	/**
 	 * @return the roster
@@ -739,14 +709,13 @@ public class XMPPClientImpl {
 		return roster;
 	}
 
-
 	/**
-	 * @param roster the roster to set
+	 * @param roster
+	 *            the roster to set
 	 */
 	public void setRoster(Roster roster) {
 		this.roster = roster;
 	}
-
 
 	/**
 	 * @return the configurationService
@@ -755,14 +724,13 @@ public class XMPPClientImpl {
 		return configurationService;
 	}
 
-
 	/**
-	 * @param configurationService the configurationService to set
+	 * @param configurationService
+	 *            the configurationService to set
 	 */
 	public void setConfigurationService(IConfigurationService configurationService) {
 		this.configurationService = configurationService;
 	}
-
 
 	/**
 	 * @return the ldapService
@@ -771,16 +739,16 @@ public class XMPPClientImpl {
 		return ldapService;
 	}
 
-
 	/**
-	 * @param ldapService the ldapService to set
+	 * @param ldapService
+	 *            the ldapService to set
 	 */
 	public void setLdapService(ILDAPService ldapService) {
 		this.ldapService = ldapService;
 	}
-	
-	//********************************** inner classes ******************************************//
-	
+
+	// ********************************** inner classes
+	// ******************************************//
 
 	class XMPPConnectionListener implements ConnectionListener {
 
@@ -791,7 +759,7 @@ public class XMPPClientImpl {
 
 		@Override
 		public void connectionClosedOnError(Exception arg0) {
-			log.error("XMPP connection closed an error",arg0.getMessage());
+			log.error("XMPP connection closed an error", arg0.getMessage());
 		}
 
 		@Override
@@ -811,21 +779,20 @@ public class XMPPClientImpl {
 		}
 
 		@Override
-		public void connected(XMPPConnection connection) { 
-			log.info("User: "+connection.getUser()+" connected to XMPP Server ("
-		+connection.getHost()+") via port:"+connection.getPort());												
+		public void connected(XMPPConnection connection) {
+			log.info("User: " + connection.getUser() + " connected to XMPP Server (" + connection.getHost()
+					+ ") via port:" + connection.getPort());
 		}
 
 		@Override
 		public void authenticated(XMPPConnection connection, boolean resumed) {
 			log.info("Connection the XMPPConnection which successfully authenticated.");
-			if(resumed)
+			if (resumed)
 				log.info("A previous XMPP session's stream was resumed");
 
 		}
 	}
-	
-	
+
 	class XMPPPingFailedListener implements PingFailedListener {
 		@Override
 		public void pingFailed() {
@@ -838,38 +805,38 @@ public class XMPPClientImpl {
 				log.error("Too many consecutive pings failed! This doesn't necessarily mean that"
 						+ " the connection is lost.");
 				pingTimeoutCount = 0;
-				
+
 			}
 		}
 	}
-	
+
 	class ChatManagerListenerImpl implements ChatManagerListener {
 
 		@Override
 		public void chatCreated(Chat chat, boolean createdLocally) {
-			
-			if(createdLocally)
+
+			if (createdLocally)
 				log.info("The chat was created by the local user.");
-			
+
 			chat.addMessageListener(new ChatMessageListener() {
 				@Override
 				public void processMessage(Chat chat, Message message) {
-					
-					if(message.getType().equals(Message.Type.error)){
+
+					if (message.getType().equals(Message.Type.error)) {
 						log.error("Message type is error");
 						return;
 					}
-					
+
 					String messageBody = message.getBody();
-					if(null != messageBody && !messageBody.isEmpty()){
-						
-						//TODO message explanation...
+					if (null != messageBody && !messageBody.isEmpty()) {
+
+						// TODO message explanation...
 					}
 				}
 			});
 		}
 	}
-	
+
 	class ItemEventCoordinator implements ItemEventListener {
 		@Override
 		public void handlePublishedItems(ItemPublishEvent items) {
@@ -877,7 +844,7 @@ public class XMPPClientImpl {
 			log.info(items.getSubscriptions().toString());
 		}
 	}
-	
+
 	class RosterListenerImpl implements RosterListener {
 
 		@Override
@@ -924,30 +891,28 @@ public class XMPPClientImpl {
 					roster.getPresence(jid).toString());
 		}
 	}
-	
+
 	class AllPacketListener implements StanzaListener, StanzaFilter {
 
-		
 		@Override
 		public void processPacket(Stanza packet) throws NotConnectedException {
-			
-			
+
 			try {
 				log.debug("packet received: {}", packet.toXML());
-				
+
 			} catch (Exception e) {
 				log.warn("", e);
 			}
 		}
-		
+
 		@Override
 		public boolean accept(Stanza stanza) {
 
 			return true;
 		}
 	}
-	
-	class NotificationListener implements StanzaListener,StanzaFilter {
+
+	class NotificationListener implements StanzaListener, StanzaFilter {
 
 		@Override
 		public void processPacket(Stanza packet) throws NotConnectedException {
@@ -991,18 +956,16 @@ public class XMPPClientImpl {
 
 			if (stanza instanceof Message) {
 				Message msg = (Message) stanza;
-				if (Message.Type.normal.equals(msg.getType())&& msg.getBody()
-						.contains("\"type\": \"NOTIFICATION\"")) 
-				{
+				if (Message.Type.normal.equals(msg.getType()) && msg.getBody().contains("\"type\": \"NOTIFICATION\"")) {
 					return true;
 				}
 			}
 			return false;
 		}
 	}
-	
-	class IQPacketListener implements StanzaListener,StanzaFilter {
-		
+
+	class IQPacketListener implements StanzaListener, StanzaFilter {
+
 		@Override
 		public void processPacket(Stanza packet) throws NotConnectedException {
 			try {
@@ -1021,9 +984,9 @@ public class XMPPClientImpl {
 			return true;
 		}
 	}
-	
-	class TaskStatusUpdateListener implements StanzaListener,StanzaFilter {
-		
+
+	class TaskStatusUpdateListener implements StanzaListener, StanzaFilter {
+
 		@Override
 		public void processPacket(Stanza packet) throws NotConnectedException {
 
@@ -1052,17 +1015,16 @@ public class XMPPClientImpl {
 				log.error("", e);
 			}
 		}
-		
+
 		@Override
 		public boolean accept(Stanza stanza) {
 			if (stanza instanceof Message) {
 				Message msg = (Message) stanza;
-				if (Message.Type.normal.equals(msg.getType())
-						&& msg.getBody().contains("\"type\": \"TASK_"))
+				if (Message.Type.normal.equals(msg.getType()) && msg.getBody().contains("\"type\": \"TASK_"))
 					return true;
 			}
 			return false;
 		}
 	}
-	
+
 }

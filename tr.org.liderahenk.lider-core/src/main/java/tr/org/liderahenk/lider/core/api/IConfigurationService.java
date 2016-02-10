@@ -5,6 +5,7 @@ package tr.org.liderahenk.lider.core.api;
  * Provides configuration service for all Lider server components
  *
  * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  * 
  */
 public interface IConfigurationService {
@@ -52,27 +53,9 @@ public interface IConfigurationService {
 
 	/**
 	 * 
-	 * @return xmpp bind username
-	 */
-	String getXmppJid();
-
-	/**
-	 * 
 	 * @return xmpp server port
 	 */
 	Integer getXmppPort();
-
-	/**
-	 * 
-	 * @return xmpp server host
-	 */
-	String getXmppServer();
-
-	/**
-	 * 
-	 * @return xmpp domain
-	 */
-	String getXmppDomain();
 
 	/**
 	 * 
@@ -160,12 +143,6 @@ public interface IConfigurationService {
 	 * @return default timeout (in milliseconds) for xmpp ping requests
 	 */
 	Integer getXmppPingTimeout();
-
-	/**
-	 * 
-	 * @return xmpp server public IP for use in remote agent connections
-	 */
-	String getXmppServerPublicIP();
 
 	/**
 	 * 
