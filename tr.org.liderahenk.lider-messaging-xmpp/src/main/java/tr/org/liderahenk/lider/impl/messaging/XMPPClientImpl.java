@@ -116,7 +116,7 @@ public class XMPPClientImpl {
 
 
 	public void destroy(){
-		
+		this.disconnect();
 	}
 	
 	
@@ -299,6 +299,7 @@ public class XMPPClientImpl {
 				.setHost(host)
 				.setPort(port)
 				.setSecurityMode(SecurityMode.disabled) //TODO SSL Conf.
+//				.setDebuggerEnabled(true)
 //				.setCustomSSLContext(context)
 				.build();
 		log.debug("XMPP TCP Configuration created.");
@@ -306,20 +307,22 @@ public class XMPPClientImpl {
 
 	private void setParameters() {
 		
-		setUsername(configurationService.getXmppUserName());
+		setUsername(configurationService.getXmppUserName());							//TODO parameters will be fixed
 		setPassword(configurationService.getXmppPassword());
-		setServiceName(configurationService.getXmppServiceName());
+		setServiceName("im.mys.pardus.org.tr");
 		setHost(configurationService.getXmppHost());
 		setPort(configurationService.getXmppPort());
-		setJid(configurationService.getXmppJid());
+		setJid("lider_sunucu@im.mys.pardus.org.tr");
 		setMaxRetryConnectionCount(configurationService.getXmppMaxRetryConnectionCount()); //5
 		setMaxPingTimeoutCount(configurationService.getXmppPingTimeout());
 		setPacketReplyTimeout(configurationService.getXmppPacketReplayTimeout()); 			//1000
 		setPingTimeout(configurationService.getXmppPingTimeout());
+	
 		
 		log.debug("Parameters are read.");
 		
 	}
+
 	
 	public boolean isRecipientOnline(String jid) {
 		return roster.getPresence(jid + "@" + host).isAvailable();
