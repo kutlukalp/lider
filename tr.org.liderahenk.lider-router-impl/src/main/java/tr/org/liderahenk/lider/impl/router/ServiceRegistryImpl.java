@@ -1,4 +1,4 @@
-package tr.org.liderahenk.lider.impl.rest;
+package tr.org.liderahenk.lider.impl.router;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +22,10 @@ public class ServiceRegistryImpl implements IServiceRegistry {
 	 * follows:<br/>
 	 * {PLUGIN_NAME}:{PLUGIN_VERSION}:{COMMAND_ID}
 	 */
+	
+	
+	private List<ICommand> registeredCommmands;
+	
 	private HashMap<String, ICommand> commands;
 
 	public void setRegisteredCommmands(List<ICommand> availableCommmands) {

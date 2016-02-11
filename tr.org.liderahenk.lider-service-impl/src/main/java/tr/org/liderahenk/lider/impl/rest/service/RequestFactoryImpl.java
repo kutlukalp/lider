@@ -1,4 +1,4 @@
-package tr.org.liderahenk.lider.impl.rest;
+package tr.org.liderahenk.lider.impl.rest.service;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;

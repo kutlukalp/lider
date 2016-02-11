@@ -36,7 +36,12 @@
 					<instructions>
 						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
 						<Bundle-Version>1.0.0</Bundle-Version>
+						<Export-Package>
+						tr.org.liderahenk.lider.impl.rest.service,
+						tr.org.liderahenk.lider.impl.service
+						</Export-Package>
 					</instructions>
+					
 				</configuration>
 			</plugin>
 		</plugins>

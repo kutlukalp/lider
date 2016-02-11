@@ -22,5 +22,9 @@
 		<property name="prefix" value="/WEB-INF/views/" />
 		<property name="suffix" value=".jsp" />
 	</bean>
+	
+	<osgi:reference id="restRequestProcessor"
+	                  interface="tr.org.liderahenk.lider.core.api.rest.IRestRequestProcessor"/>
+	
 
 </beans>

@@ -1,4 +1,4 @@
-package tr.org.liderahenk.lider.impl.rest;
+package tr.org.liderahenk.lider.impl.router;
 
 import java.util.ArrayList;
 import java.util.List;

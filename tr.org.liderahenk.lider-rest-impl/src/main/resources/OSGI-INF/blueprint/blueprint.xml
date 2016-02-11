@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
-	<service ref="restRequestFactory"
-		interface="tr.org.liderahenk.lider.core.api.rest.IRequestFactory" />
-	<service ref="restResponseFactory"
-		interface="tr.org.liderahenk.lider.core.api.rest.IResponseFactory" />
+	
 
 	<service ref="restRequestProcessor" interface="tr.org.liderahenk.lider.core.api.rest.IRestRequestProcessor" />
 
-	<bean id="restRequestFactory" class="tr.org.liderahenk.lider.impl.rest.RequestFactoryImpl" />
-	<bean id="restResponseFactory" class="tr.org.liderahenk.lider.impl.rest.ResponseFactoryImpl" />
+	
 
 
 	<bean id="restRequestProcessor" class="tr.org.liderahenk.lider.impl.rest.RestRequestProcessorImpl">
@@ -23,5 +19,7 @@
 	<reference id="configurationService" interface="tr.org.liderahenk.lider.core.api.IConfigurationService" />
 	<reference id="serviceRouter" interface="tr.org.liderahenk.lider.core.api.router.IServiceRouter" />
 	<reference id="authServiceRef" interface="tr.org.liderahenk.lider.core.api.authorization.IAuthService"/>
+	<reference id="restRequestFactory" interface="tr.org.liderahenk.lider.core.api.rest.IRequestFactory"/>
+	<reference id="restResponseFactory" interface="tr.org.liderahenk.lider.core.api.rest.IResponseFactory"/>
 
 </blueprint>
