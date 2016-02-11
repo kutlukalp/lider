@@ -65,6 +65,30 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 	private String servers;
 	private String privateKey;
 	private Integer syslogRecordMaxQueryDay;
+	
+	@Override
+	public String toString() {
+		return "ConfigurationServiceImpl [dbServer=" + dbServer + ", dbDatabase=" + dbDatabase + ", dbPort=" + dbPort
+				+ ", dbUsername=" + dbUsername + ", dbPassword=" + dbPassword + ", ldapServer=" + ldapServer
+				+ ", ldapPort=" + ldapPort + ", ldapUser=" + ldapUser + ", ldapPassword=" + ldapPassword
+				+ ", ldapRootDn=" + ldapRootDn + ", ldapUseSsl=" + ldapUseSsl + ", agentLdapBaseDn=" + agentLdapBaseDn
+				+ ", agentLdapIdAttribute=" + agentLdapIdAttribute + ", agentLdapJidAttribute=" + agentLdapJidAttribute
+				+ ", authLdapUserSearchBase=" + authLdapUserSearchBase + ", authLdapUserFilter=" + authLdapUserFilter
+				+ ", authLdapUserAttribute=" + authLdapUserAttribute + ", authLdapUserObjectClasses="
+				+ authLdapUserObjectClasses + ", xmppUserName=" + xmppUserName + ", xmppPassword=" + xmppPassword
+				+ ", xmppHost=" + xmppHost + ", xmppPort=" + xmppPort + ", xmppServiceName=" + xmppServiceName
+				+ ", xmppPingTimeout=" + xmppPingTimeout + ", xmppMaxRetryConnectionCount="
+				+ xmppMaxRetryConnectionCount + ", xmppPacketReplayTimeout=" + xmppPacketReplayTimeout
+				+ ", mailAddress=" + mailAddress + ", mailPassword=" + mailPassword + ", mailHost=" + mailHost
+				+ ", mailSmtpPort=" + mailSmtpPort + ", mailSmtpAuth=" + mailSmtpAuth + ", mailSmtpStartTlsEnable="
+				+ mailSmtpStartTlsEnable + ", mailSmtpSslEnable=" + mailSmtpSslEnable + ", mailSmtpConnTimeout="
+				+ mailSmtpConnTimeout + ", mailSmtpTimeout=" + mailSmtpTimeout + ", mailSmtpWriteTimeout="
+				+ mailSmtpWriteTimeout + ", userMailAttribute=" + userMailAttribute + ", taskManagerTaskTimeout="
+				+ taskManagerTaskTimeout + ", taskManagerMulticastEnabled=" + taskManagerMulticastEnabled
+				+ ", taskManagerLogXmppMessagesEnabled=" + taskManagerLogXmppMessagesEnabled + ", authorizationEnabled="
+				+ authorizationEnabled + ", servers=" + servers + ", privateKey=" + privateKey
+				+ ", syslogRecordMaxQueryDay=" + syslogRecordMaxQueryDay + "]";
+	}
 
 	@Override
 	public String getLdapServer() {
