@@ -130,7 +130,7 @@ public class XMPPClientImpl {
 	private void createXmppTcpConfiguration() {
 		config = XMPPTCPConnectionConfiguration.builder().setServiceName(serviceName).setHost(host).setPort(port)
 				.setSecurityMode(SecurityMode.disabled) // TODO SSL Conf.
-				.setDebuggerEnabled(true).build();
+				.setDebuggerEnabled(logger.isDebugEnabled()).build();
 		logger.debug("XMPP configuration finished: {}", config.toString());
 	}
 
