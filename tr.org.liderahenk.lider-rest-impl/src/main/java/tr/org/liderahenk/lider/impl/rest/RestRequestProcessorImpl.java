@@ -65,19 +65,16 @@ public class RestRequestProcessorImpl implements IRestRequestProcessor {
 	public void setAuthService(IAuthService authService) {
 		this.authService = authService;
 	}
+	
+	public void setLdapService(ILDAPService ldapService) {
+		this.ldapService = ldapService;
+	}
 
 	@Override
 	public IRestResponse processRequest(String requestBody) {
 
 		IRestRequest request = null;
-		Subject currentUser = null;
 		List<LdapEntry> targetEntries = null;
-
-		try {
-			currentUser = SecurityUtils.getSubject();
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-		}
 
 		try {
 			request = requestFactory.createRequest(requestBody);
@@ -93,6 +90,12 @@ public class RestRequestProcessorImpl implements IRestRequestProcessor {
 			targetEntries = findTargetEntries(request.getDnList(), request.getDnType());
 
 			if (config.getAuthorizationEnabled()) {
+				Subject currentUser = null;
+				try {
+					currentUser = SecurityUtils.getSubject();
+				} catch (Exception e) {
+					logger.error(e.getMessage(), e);
+				}
 				if (currentUser.getPrincipal() != null) {
 					targetEntries = authService.getPermittedEntries(currentUser.getPrincipal().toString(),
 							targetEntries, targetOperation);
