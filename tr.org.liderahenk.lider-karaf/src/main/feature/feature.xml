@@ -24,7 +24,7 @@
    
     <feature name="lider" description="${project.name}" version="${project.version}">
         <details>LiderAhenk client management system</details>
-        <feature>lider-support2</feature>
+        <feature>lider-support</feature>
        	<feature>lider-apps</feature>
     </feature>
     
@@ -40,7 +40,7 @@
         <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-cache-impl/${project.version}</bundle>
         <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-ldap-impl/${project.version}</bundle>
         <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-log-impl/${project.version}</bundle>
-        <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-authorization-impl/${project.version}</bundle>
+         <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-authorization-impl/${project.version}</bundle>
         <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-messaging-xmpp/${project.version}</bundle>
         <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-query-impl/${project.version}</bundle>
         <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-rest-impl/${project.version}</bundle>
@@ -65,102 +65,20 @@
         <feature>eventadmin</feature>
         
         <feature>lider-apacheds</feature>
-        
-        <bundle start-level="45">mvn:org.apache.mina/mina-core/2.0.10</bundle>
-        <!-- <bundle start-level="45">mvn:javax.servlet/com.springsource.javax.servlet.jsp.jstl/1.2.0.v20110728</bundle> -->
-        <bundle start-level="45">mvn:mysql/mysql-connector-java/${mysql.version}</bundle>
-        <bundle start-level="45">wrap:mvn:c3p0/c3p0/0.9.1.1</bundle>
-        <bundle start-level="45">mvn:commons-io/commons-io/${commons.io.version}</bundle>
-        <bundle start-level="45">mvn:commons-collections/commons-collections/${commons.collections.version}</bundle>
-        <bundle start-level="45">mvn:commons-dbcp/commons-dbcp/${commons.dbcp.version}</bundle>
-        <bundle start-level="45">mvn:commons-lang/commons-lang/${commons.lang.version}</bundle>
-        <bundle start-level="45">mvn:org.apache.commons/commons-compress/1.7</bundle>
-        <bundle start-level="45" >mvn:org.codehaus.jackson/jackson-core-asl/${jackson.version}</bundle>
-        <bundle start-level="45">mvn:org.codehaus.jackson/jackson-mapper-asl/${jackson.version}</bundle>
-        <bundle start-level="45">mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jsr311-api-1.1.1/${apache.ws.version}</bundle>
-        <bundle start-level="45">mvn:com.sun.jersey/jersey-client/${jersey.client.version}</bundle>
-        <bundle start-level="45">mvn:commons-fileupload/commons-fileupload/${file.upload.version}</bundle>
-        <bundle start-level="45">mvn:com.sun.jersey/jersey-core/${jersey.client.version}</bundle>
-        <bundle start-level="45">mvn:com.sun.jersey/jersey-client/${jersey.client.version}</bundle>
-       <!--  <bundle start-level="45">wrap:mvn:org.igniterealtime.smack/smack-core/${smack.version}</bundle> -->
-        <!--<bundle start-level="45">wrap:mvn:org.igniterealtime.smack/smack/${smack.version}</bundle> -->
-        <bundle start-level="45">mvn:net.sf.ehcache/ehcache/2.8.0</bundle>
-        <bundle start-level="45">mvn:org.apache.shiro/shiro-core/1.2.2</bundle>
-        <bundle start-level="45">mvn:org.apache.shiro/shiro-web/1.2.2</bundle>
-        <bundle start-level="45">mvn:org.apache.shiro/shiro-spring/1.2.2</bundle>
-        <bundle start-level="45">mvn:org.apache.shiro/shiro-ehcache/1.2.2</bundle>
-        <bundle start-level="45">mvn:commons-beanutils/commons-beanutils/1.8.3</bundle>
-        
-        <bundle start-level="45">mvn:org.igniterealtime.smack/smack-core/4.1.5</bundle>
-        <bundle start-level="45">mvn:org.igniterealtime.smack/smack-extensions/4.1.5</bundle>
-        <bundle start-level="45">mvn:org.igniterealtime.smack/smack-im/4.1.5</bundle>
-        <bundle start-level="45">mvn:org.igniterealtime.smack/smack-tcp/4.1.5</bundle>
-        <bundle start-level="45">mvn:org.igniterealtime.smack/smack-sasl-javax/4.1.5</bundle>
-        <bundle start-level="45">mvn:org.igniterealtime.smack/smack-java7/4.1.5</bundle>
-        <bundle start-level="45">mvn:org.igniterealtime.smack/smack-resolver-javax/4.1.5</bundle>
-        
-        <bundle start-level="45">mvn:com.hazelcast/hazelcast-all/3.1.7</bundle>
-        <bundle start-level="45">mvn:org.jxmpp/jxmpp-core/0.4.2</bundle>
-        <bundle start-level="45">mvn:org.jxmpp/jxmpp-util-cache/0.4.2</bundle>
-        <bundle start-level="45">mvn:org.tukaani/xz/1.4</bundle>
-    </feature>
-    
-    <feature name="lider-apacheds"  version="${project.version}">
-		<bundle start-level="45">wrap:mvn:antlr/antlr/${antlr.version}</bundle>
-        <bundle start-level="45">mvn:org.apache.directory.api/api-ldap-client-api/${apache.directory.api.version}</bundle>
-        <bundle start-level="45">mvn:org.apache.directory.api/api-ldap-codec-core/${apache.directory.api.version}</bundle>
-        <bundle start-level="45">mvn:org.apache.directory.api/api-asn1-api/${apache.directory.api.version}</bundle>
-        <bundle start-level="45">mvn:org.apache.directory.api/api-asn1-ber/${apache.directory.api.version}</bundle>
-        <bundle start-level="45">mvn:org.apache.directory.api/api-util/${apache.directory.api.version}</bundle>
-        <bundle start-level="45">mvn:org.apache.directory.api/api-i18n/${apache.directory.api.version}</bundle>
-        <bundle start-level="45">mvn:org.apache.directory.api/api-ldap-model/${apache.directory.api.version}</bundle>
-        <bundle start-level="45">mvn:org.apache.directory.api/api-ldap-extras-aci/${apache.directory.api.version}</bundle>
-        <bundle start-level="45">mvn:org.apache.directory.api/api-ldap-schema-data/${apache.directory.api.version}</bundle>
-        <bundle start-level="45">mvn:org.apache.directory.api/api-ldap-net-mina/${apache.directory.api.version}</bundle>
-        <bundle start-level="45">mvn:commons-codec/commons-codec/1.8</bundle>
-        <bundle start-level="45">mvn:commons-pool/commons-pool/${commons.pool.version}</bundle>
-    </feature>
-    
-    <feature name="lider-support2"  version="${project.version}">
-    
-    	<feature>jpa</feature>
-        <feature>transaction</feature>
-        <feature>jndi</feature>
-        <feature>war</feature>
-        <feature>hibernate</feature>
-        <feature>webconsole</feature>
-        <feature>spring-web</feature>
-        <feature>spring</feature>
-        <feature>spring-dm</feature>
-        <feature>spring-dm-web</feature>
-        <feature>config</feature>
-        <feature>wrapper</feature>
-        <feature>eventadmin</feature>
-    
-        <bundle start-level="50">mvn:org.codehaus.jackson/jackson-core-asl/1.9.13</bundle>
+       
+       	<bundle start-level="50">mvn:org.codehaus.jackson/jackson-core-asl/1.9.13</bundle>
         <bundle start-level="50">mvn:org.codehaus.jackson/jackson-mapper-asl/1.9.13</bundle>
-        <bundle start-level="50">mvn:org.apache.directory.api/api-ldap-client-api/1.0.0-M20</bundle>
-        <bundle start-level="50">mvn:org.apache.directory.api/api-ldap-codec-core/1.0.0-M20</bundle>
-        <bundle start-level="50">mvn:org.apache.directory.api/api-asn1-api/1.0.0-M20</bundle>
-        <bundle start-level="50">mvn:org.apache.directory.api/api-asn1-ber/1.0.0-M20</bundle>
         <bundle start-level="50">mvn:commons-lang/commons-lang/2.6</bundle>
         <bundle start-level="50">mvn:commons-collections/commons-collections/3.2.1</bundle>
         <bundle start-level="50">mvn:commons-pool/commons-pool/1.6</bundle>
         <bundle start-level="50">mvn:org.apache.mina/mina-core/2.0.7</bundle>
-        <bundle start-level="50">mvn:org.apache.directory.api/api-ldap-schema-data/1.0.0-M20</bundle>
-        <bundle start-level="50">mvn:org.apache.directory.api/api-i18n/1.0.0-M20</bundle>
-        <bundle start-level="50">mvn:org.apache.directory.api/api-ldap-model/1.0.0-M20</bundle>
         <bundle start-level="50">mvn:mysql/mysql-connector-java/5.1.31</bundle>
-        <bundle start-level="50">mvn:org.hibernate.javax.persistence/hibernate-jpa-2.1-api/1.0.0.Final</bundle>
         <bundle start-level="50">mvn:commons-beanutils/commons-beanutils/1.8.3</bundle>
         <bundle start-level="50">wrap:mvn:commons-logging/commons-logging/1.1.1</bundle>
         <bundle start-level="50">wrap:mvn:c3p0/c3p0/0.9.1.1</bundle>
         <bundle start-level="50">mvn:commons-dbcp/commons-dbcp/1.4</bundle>
         <bundle start-level="50">mvn:net.sf.ehcache/ehcache/2.8.0</bundle>
-        <bundle start-level="50">mvn:org.apache.directory.api/api-ldap-extras-aci/1.0.0-M20</bundle>
-        <bundle start-level="50">mvn:org.apache.directory.api/api-util/1.0.0-M20</bundle>
         <bundle start-level="50">wrap:mvn:antlr/antlr/2.7.7</bundle>
-        <bundle start-level="50">mvn:org.apache.directory.api/api-ldap-net-mina/1.0.0-M20</bundle>
         <bundle start-level="50">mvn:commons-codec/commons-codec/1.10</bundle>
         <bundle start-level="50">mvn:org.igniterealtime.smack/smack-core/4.1.5</bundle>
         <bundle start-level="50">mvn:org.jxmpp/jxmpp-core/0.4.2</bundle>
@@ -180,8 +98,19 @@
         <bundle start-level="50">mvn:log4j/log4j/1.2.17</bundle>
         <bundle start-level="50">mvn:org.slf4j/slf4j-log4j12/1.6.1</bundle>
         <bundle start-level="50">mvn:org.slf4j/slf4j-api/1.6.1</bundle>
-        <bundle start-level="50">mvn:org.apache.aries.blueprint/org.apache.aries.blueprint/1.1.0</bundle>
-    
+       
     </feature>
-  
+    
+    <feature name="lider-apacheds"  version="${project.version}">
+		<bundle start-level="50">mvn:org.apache.directory.api/api-ldap-client-api/1.0.0-M20</bundle>
+        <bundle start-level="50">mvn:org.apache.directory.api/api-ldap-codec-core/1.0.0-M20</bundle>
+        <bundle start-level="50">mvn:org.apache.directory.api/api-asn1-api/1.0.0-M20</bundle>
+        <bundle start-level="50">mvn:org.apache.directory.api/api-asn1-ber/1.0.0-M20</bundle>
+        <bundle start-level="50">mvn:org.apache.directory.api/api-ldap-schema-data/1.0.0-M20</bundle>
+        <bundle start-level="50">mvn:org.apache.directory.api/api-i18n/1.0.0-M20</bundle>
+        <bundle start-level="50">mvn:org.apache.directory.api/api-ldap-model/1.0.0-M20</bundle>
+        <bundle start-level="50">mvn:org.apache.directory.api/api-ldap-extras-aci/1.0.0-M20</bundle>
+        <bundle start-level="50">mvn:org.apache.directory.api/api-util/1.0.0-M20</bundle>
+        <bundle start-level="50">mvn:org.apache.directory.api/api-ldap-net-mina/1.0.0-M20</bundle>
+    </feature>
 </features>
