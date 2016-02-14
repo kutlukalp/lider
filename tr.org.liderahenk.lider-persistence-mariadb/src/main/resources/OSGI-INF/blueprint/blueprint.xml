@@ -11,7 +11,9 @@
 			http://aries.apache.org/xmlns/jpa/v1.0.0 http://aries.apache.org/xmlns/jpa/v2.0.0 
 			http://aries.apache.org/xmlns/transactions/v1.0.0 http://aries.apache.org/xmlns/transactions/v1.2.0 ">
 
+
 	<jpa:enable />
+	
 	<bean id="pluginDbService"
 		class="tr.org.liderahenk.lider.persistence.mariadb.plugin.impl.PluginDbServiceImpl">
 		<tx:transaction method="*" value="Required" />
@@ -30,13 +32,10 @@
 	
 	<bean id="criteriaBuilder" class="tr.org.liderahenk.lider.persistence.task.model.impl.TaskCriteriaBuilder"/>
 
-	<service ref="pluginDbService"
-		interface="tr.org.liderahenk.lider.core.api.plugin.IPluginDbService" />
+	<service ref="pluginDbService" interface="tr.org.liderahenk.lider.core.api.plugin.IPluginDbService" />
 
-	<service ref="operationLogDao"
-		interface="tr.org.liderahenk.lider.core.api.log.dao.OperationLogDao" />
+	<service ref="operationLogDao" interface="tr.org.liderahenk.lider.core.api.log.dao.OperationLogDao" />
 		
-	<service ref="taskDao"
-		interface="tr.org.liderahenk.lider.core.api.taskmanager.dao.ITaskDao" />
+	<service ref="taskDao" interface="tr.org.liderahenk.lider.core.api.taskmanager.dao.ITaskDao" />
 
 </blueprint>

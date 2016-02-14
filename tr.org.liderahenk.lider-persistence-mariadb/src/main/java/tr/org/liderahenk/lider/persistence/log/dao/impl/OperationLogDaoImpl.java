@@ -38,7 +38,7 @@ import tr.org.liderahenk.lider.persistence.model.impl.OperationLogImpl;
 
 public class OperationLogDaoImpl implements OperationLogDao {
 
-	@PersistenceContext(unitName="liderdb")
+	@PersistenceContext(unitName="lider")
 	EntityManager em;
 
 	public void setEntityManager(EntityManager em) {

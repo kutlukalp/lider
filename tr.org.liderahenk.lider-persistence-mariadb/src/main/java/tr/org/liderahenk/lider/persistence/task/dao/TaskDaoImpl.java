@@ -31,7 +31,7 @@ public class TaskDaoImpl implements ITaskDao {
 	private static Logger log = LoggerFactory
 			.getLogger(TaskDaoImpl.class);
 
-	@PersistenceContext(unitName="liderdb")
+	@PersistenceContext(unitName="lider")
 	private EntityManager em;
 	
 	private TaskCriteriaBuilder taskCriteriaBuilder;

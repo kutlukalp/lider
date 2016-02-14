@@ -65,6 +65,8 @@
 						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
 						<Meta-Persistence>META-INF/persistence.xml</Meta-Persistence>
 						<Bundle-Version>1.0.0</Bundle-Version>
+						<Bundle-ManifestVersion>2</Bundle-ManifestVersion>
+						<Manifest-Version>1</Manifest-Version>
 						<Import-Package>
 							org.apache.felix.service.command;version="[0.6,1)",
 							org.apache.felix.gogo.commands;version="[0.6,1)",

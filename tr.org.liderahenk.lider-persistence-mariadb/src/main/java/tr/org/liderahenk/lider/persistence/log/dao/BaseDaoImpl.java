@@ -27,7 +27,7 @@ import tr.org.liderahenk.lider.persistence.model.impl.TaskEntityImpl;
 
 public class BaseDaoImpl<T> implements BaseDao<T> {
 	
-	@PersistenceContext(unitName="liderdb")
+	@PersistenceContext(unitName="lider")
 	EntityManager em;
 	
 	public void setEntityManager(EntityManager em) {
