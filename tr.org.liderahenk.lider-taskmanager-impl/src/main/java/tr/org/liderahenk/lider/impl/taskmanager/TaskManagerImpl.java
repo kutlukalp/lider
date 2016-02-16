@@ -87,24 +87,30 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusUpdateSubscribe
 					TaskImpl task = new TaskImpl(); // TODO
 					String jid = entry.get(config.getAgentLdapJidAttribute());
 					task.setTargetJID(jid);
-
-					IMessage message = messageFactory.create(task);
-
-					if (!messagingService.isRecipientOnline(message.getRecipient())) {
-						logger.warn("{} is OFFLINE, marking task comm state accordingly", message.getRecipient());
-						task.setCommState(TaskCommState.AGENT_OFFLINE);
-					} else {
-						task.setCommState(TaskCommState.AGENT_ONLINE);
+					
+					boolean isAhenk = ldapService.isAhenk(entry);
+					IMessage message = null;
+					if (isAhenk) {
+						
+						message = messageFactory.create(task);
+						
+						if (!messagingService.isRecipientOnline(message.getRecipient())) {
+							logger.warn("{} is OFFLINE, marking task comm state accordingly", message.getRecipient());
+							task.setCommState(TaskCommState.AGENT_OFFLINE);
+						} else {
+							task.setCommState(TaskCommState.AGENT_ONLINE);
+						}
+						
+						task.setTargetJID(message.getRecipient());
+						task.setParent(false);
 					}
 
-					task.setTargetJID(message.getRecipient());
-					task.setParent(false);
-
 					taskService.insert(task);
-
 					taskIds.add(task.getId());
 
-					messagingService.sendMessage(message);
+					if (isAhenk) {
+						messagingService.sendMessage(message);
+					}
 				}
 				// Multiple tasks! Create a parent task to group them.
 				else {
@@ -127,9 +133,11 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusUpdateSubscribe
 						// (When a user logs in an agent-installed machine,
 						// agent will automatically query user's saved tasks and
 						// execute them.
-						if (ldapService.isAhenk(entry)) {
+						boolean isAhenk = ldapService.isAhenk(entry);
+						IMessage message = null;
+						if (isAhenk) {
 
-							IMessage message = messageFactory.create(subTask);
+							message = messageFactory.create(subTask);
 							logger.info("Sending task to --> " + message.getRecipient());
 
 							if (!messagingService.isRecipientOnline(message.getRecipient())) {
@@ -141,13 +149,14 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusUpdateSubscribe
 							}
 
 							subTask.setTargetJID(message.getRecipient()); // TODO
-																			// ???
-
-							messagingService.sendMessage(message);
 						}
 
 						taskService.insert(subTask);
 						taskIds.add(subTask.getId());
+						
+						if (isAhenk) {
+							messagingService.sendMessage(message);
+						}
 					}
 				}
 
