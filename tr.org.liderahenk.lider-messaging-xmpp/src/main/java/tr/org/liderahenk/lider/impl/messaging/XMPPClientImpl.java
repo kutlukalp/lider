@@ -11,10 +11,12 @@ import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.XMPPException.XMPPErrorException;
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.chat.ChatManager;
 import org.jivesoftware.smack.chat.ChatManagerListener;
@@ -31,10 +33,14 @@ import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterListener;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
+import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.ping.PingFailedListener;
 import org.jivesoftware.smackx.ping.PingManager;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptManager.AutoReceiptMode;
+import org.jivesoftware.smackx.xdata.Form;
+import org.jivesoftware.smackx.xdata.packet.DataForm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,8 +71,8 @@ public class XMPPClientImpl {
 	private String host; // Host name / Server name
 	private Integer port; // Default 5222
 	private int maxRetryConnectionCount;
-	private int retryCount = 0;
 	private int maxPingTimeoutCount;
+	private int retryCount = 0;
 	private int pingTimeoutCount = 0;
 	private int packetReplyTimeout; // milliseconds
 	private int pingTimeout; // milliseconds
@@ -92,6 +98,7 @@ public class XMPPClientImpl {
 
 	private XMPPTCPConnection connection;
 	private XMPPTCPConnectionConfiguration config;
+	private MultiUserChatManager mucManager;
 
 	private IConfigurationService configurationService;
 	private ILDAPService ldapService;
@@ -184,6 +191,7 @@ public class XMPPClientImpl {
 	 */
 	private void setServerSettings() {
 		PingManager.getInstanceFor(connection).setPingInterval(pingTimeout);
+		mucManager = MultiUserChatManager.getInstanceFor(connection);
 		// Specifies when incoming message delivery receipt requests
 		// should be automatically acknowledged with a receipt.
 		DeliveryReceiptManager.getInstanceFor(connection).setAutoReceiptMode(AutoReceiptMode.always);
@@ -302,6 +310,60 @@ public class XMPPClientImpl {
 		}
 		return isOnline;
 	}
+	
+
+	/**
+	 * Send invites to clients for joining multi user chat room
+	 * 
+	 * @param muc
+	 * @param userList
+	 * @param inviteMessage
+	 */
+	private void sendRoomInvite(MultiUserChat muc, ArrayList<String> userList, String inviteMessage) {
+		
+		if(muc !=null && muc.getRoom() != null && !muc.getRoom().isEmpty()){
+			
+			if(userList!=null && !userList.isEmpty()){
+				for (String user : userList) {
+					try {
+						muc.invite(user, inviteMessage);
+					} catch (NotConnectedException e) {
+						e.printStackTrace();
+					}
+				}
+				logger.info(userList.size()+" clients were invited to room("+muc.getRoom()+")");
+			}
+		}
+		else{
+			logger.info("There is no available room for invitation");
+		}
+	}
+
+	/**
+	 * Create new multi user chat
+	 * jid ex: room1@conference.localhost
+	 * 
+	 * @param roomJid
+	 * @param nickName
+	 * @return
+	 */
+	private MultiUserChat createRoom(String roomJid, String nickName) {
+		
+		MultiUserChat muc = mucManager.getMultiUserChat(roomJid);
+		try {
+			muc.create(nickName);
+			muc.sendConfigurationForm(new Form(DataForm.Type.submit));
+		} catch (NoResponseException e) {
+			e.printStackTrace();
+		} catch (XMPPErrorException e) {
+			e.printStackTrace();
+		} catch (SmackException e) {
+			e.printStackTrace();
+		}
+		
+		return muc;
+	}
+	
 
 	class XMPPConnectionListener implements ConnectionListener {
 
