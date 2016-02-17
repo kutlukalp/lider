@@ -311,7 +311,7 @@ public class XMPPClientImpl {
 		return isOnline;
 	}
 	
-
+	
 	/**
 	 * Send invites to clients for joining multi user chat room
 	 * 
@@ -364,6 +364,26 @@ public class XMPPClientImpl {
 		return muc;
 	}
 	
+	/**
+	 * Send message to room
+	 * 
+	 * @param muc
+	 * @param message
+	 */
+	private void sendMessageToRoom(MultiUserChat muc,String message){
+
+		try {
+			if( muc != null && muc.getMembers() != null && message != null && !message.isEmpty()){
+				muc.sendMessage(message);
+			}
+		} catch (NotConnectedException e) {
+			e.printStackTrace();
+		} catch (NoResponseException e) {
+			e.printStackTrace();
+		} catch (XMPPErrorException e) {
+			e.printStackTrace();
+		}
+	}
 
 	class XMPPConnectionListener implements ConnectionListener {
 
