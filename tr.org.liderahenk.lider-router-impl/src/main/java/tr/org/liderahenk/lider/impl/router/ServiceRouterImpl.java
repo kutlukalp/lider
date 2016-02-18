@@ -79,9 +79,16 @@ public class ServiceRouterImpl implements IServiceRouter {
 		}
 
 		// Execute command, if a task is needed, delegate request to the task
-		// manager.
-		// Finally, return result response.
-		ICommandResult commandResult = command.execute(commandContext);
+		// manager. Finally, return result response.
+		ICommandResult commandResult = null;
+		try {
+			commandResult = command.execute(commandContext);
+		} catch (Exception e1) {
+			logger.error(e1.getMessage(), e1);
+			List<String> messages = new ArrayList<String>();
+			messages.add("Could not execute task: " + e1.getMessage());
+			return responseFactory.createResponse(request, RestResponseStatus.ERROR, messages);
+		}
 		if (CommandResultStatus.OK == commandResult.getStatus()) {
 			if (!command.needsTask()) {
 				logger.debug("{} does not require task, returning response.", command);

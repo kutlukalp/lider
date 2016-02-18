@@ -34,8 +34,9 @@ public interface ICommand {
 	 * its necessary job.
 	 * 
 	 * @return command result {@link ICommandResult}
+	 * @throws Exception 
 	 */
-	ICommandResult execute(ICommandContext context);
+	ICommandResult execute(ICommandContext context) throws Exception;
 
 	/**
 	 * Any custom plugin command should implement this method and return a
