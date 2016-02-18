@@ -65,7 +65,7 @@ public class RestRequestProcessorImpl implements IRestRequestProcessor {
 	public void setAuthService(IAuthService authService) {
 		this.authService = authService;
 	}
-	
+
 	public void setLdapService(ILDAPService ldapService) {
 		this.ldapService = ldapService;
 	}
@@ -104,6 +104,9 @@ public class RestRequestProcessorImpl implements IRestRequestProcessor {
 								Arrays.asList(new String[] { "NOT_AUTHORIZED" }));
 					}
 				} else {
+					// TODO can a subject exist without a principal?
+					// if it does, shouldn't we return ERROR response instead of
+					// delegating the request to the service router?
 					logger.warn("Unauthenticated user access, bypassing plugin authorization.");
 				}
 			}
