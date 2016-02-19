@@ -23,12 +23,11 @@
 <features name="${project.artifactId}-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.3.0">
    
     <feature name="lider" description="${project.name}" version="${project.version}">
-        <details>LiderAhenk client management system</details>
+        <details>Lider Ahenk Client Management System</details>
         <feature>lider-support</feature>
        	<feature>lider-apps</feature>
     </feature>
-    
-    
+
     <feature name="lider-apps" description="${project.name}" version="${project.version}">
         <details>LiderAhenk client management system test feature for deploying without dependencies (for auto dependency resolve)</details>
         <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-core/${project.version}</bundle>
@@ -40,7 +39,7 @@
         <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-cache-impl/${project.version}</bundle>
         <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-ldap-impl/${project.version}</bundle>
         <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-log-impl/${project.version}</bundle>
-         <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-authorization-impl/${project.version}</bundle>
+        <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-authorization-impl/${project.version}</bundle>
         <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-messaging-xmpp/${project.version}</bundle>
         <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-query-impl/${project.version}</bundle>
         <bundle>mvn:tr.org.liderahenk/tr.org.liderahenk.lider-rest-impl/${project.version}</bundle>
@@ -63,9 +62,7 @@
         <feature>config</feature>
         <feature>wrapper</feature>
         <feature>eventadmin</feature>
-        
         <feature>lider-apacheds</feature>
-       
        	<bundle start-level="50">mvn:org.codehaus.jackson/jackson-core-asl/1.9.13</bundle>
         <bundle start-level="50">mvn:org.codehaus.jackson/jackson-mapper-asl/1.9.13</bundle>
         <bundle start-level="50">mvn:commons-lang/commons-lang/2.6</bundle>
@@ -91,6 +88,9 @@
         <bundle start-level="50">mvn:org.igniterealtime.smack/smack-java7/4.1.5</bundle>
         <bundle start-level="50">mvn:org.igniterealtime.smack/smack-resolver-javax/4.1.5</bundle>
         <bundle start-level="50">mvn:org.apache.shiro/shiro-core/1.2.4</bundle>
+		<bundle start-level="45">mvn:org.apache.shiro/shiro-web/1.2.4</bundle>
+        <bundle start-level="45">mvn:org.apache.shiro/shiro-spring/1.2.4</bundle>
+		<bundle start-level="45">mvn:org.apache.shiro/shiro-ehcache/1.2.4</bundle>
         <bundle start-level="50">mvn:commons-io/commons-io/2.4</bundle>
         <bundle start-level="50">mvn:org.apache.commons/commons-compress/1.7</bundle>
         <bundle start-level="50">mvn:org.tukaani/xz/1.4</bundle>
@@ -98,9 +98,8 @@
         <bundle start-level="50">mvn:log4j/log4j/1.2.17</bundle>
         <bundle start-level="50">mvn:org.slf4j/slf4j-log4j12/1.6.1</bundle>
         <bundle start-level="50">mvn:org.slf4j/slf4j-api/1.6.1</bundle>
-       
     </feature>
-    
+
     <feature name="lider-apacheds"  version="${project.version}">
 		<bundle start-level="50">mvn:org.apache.directory.api/api-ldap-client-api/1.0.0-M20</bundle>
         <bundle start-level="50">mvn:org.apache.directory.api/api-ldap-codec-core/1.0.0-M20</bundle>
@@ -113,5 +112,5 @@
         <bundle start-level="50">mvn:org.apache.directory.api/api-util/1.0.0-M20</bundle>
         <bundle start-level="50">mvn:org.apache.directory.api/api-ldap-net-mina/1.0.0-M20</bundle>
     </feature>
-    
+
 </features>
