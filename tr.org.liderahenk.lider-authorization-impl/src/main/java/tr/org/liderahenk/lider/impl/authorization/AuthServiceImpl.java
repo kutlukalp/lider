@@ -33,14 +33,6 @@ public class AuthServiceImpl implements IAuthService {
 
 	private IConfigurationService configurationService;
 
-	public void setLdapService(ILDAPService ldapService) {
-		this.ldapService = ldapService;
-	}
-
-	public void setConfigurationService(IConfigurationService configurationService) {
-		this.configurationService = configurationService;
-	}
-
 	@Override
 	public List<LdapEntry> getPermittedEntries(String userDn, List<LdapEntry> targetEntries, String targetOperation) {
 
@@ -109,6 +101,14 @@ public class AuthServiceImpl implements IAuthService {
 		logger.warn("Authorization failed. Please check request parameters.");
 
 		return permittedEntries;
+	}
+
+	public void setLdapService(ILDAPService ldapService) {
+		this.ldapService = ldapService;
+	}
+
+	public void setConfigurationService(IConfigurationService configurationService) {
+		this.configurationService = configurationService;
 	}
 
 }

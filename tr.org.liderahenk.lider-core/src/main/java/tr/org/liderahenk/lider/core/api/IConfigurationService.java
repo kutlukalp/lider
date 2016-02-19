@@ -128,14 +128,29 @@ public interface IConfigurationService {
 	 */
 	Boolean getTaskManagerLogXmppMessagesEnabled();
 
+	/**
+	 * @return XMPP host IP
+	 */
 	String getXmppHost();
 
+	/**
+	 * @return XMPP service name / domain
+	 */
 	String getXmppServiceName();
 
+	/**
+	 * @return XMPP username
+	 */
 	String getXmppUserName();
 
+	/**
+	 * @return packet replay timeout in ms
+	 */
 	int getXmppPacketReplayTimeout();
 
+	/**
+	 * @return max retry connection count
+	 */
 	int getXmppMaxRetryConnectionCount();
 
 	/**
