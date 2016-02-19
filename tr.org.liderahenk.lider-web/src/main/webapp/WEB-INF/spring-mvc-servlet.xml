@@ -53,8 +53,7 @@
 			<value>
 				/lider/agent/register = myAuthcAuth
 				/lider/agent/validate/credentials = myAuthcAuth
-				/lider/rest/** =
-				myAuthcAuth
+				/lider/rest/** = myAuthcAuth
 				/** = myAuthcAuth
 			</value>
 		</property>
@@ -70,6 +69,6 @@
 		interface="tr.org.liderahenk.lider.core.api.IConfigurationService" />
 
 	<osgi:reference id="registrationService"
-		interface="tr.org.pardus.mys.auth.api.IRegistrationService" />
+		interface="tr.org.liderahenk.lider.core.api.authorization.IRegistrationService" />
 
 </beans>
