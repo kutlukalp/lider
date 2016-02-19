@@ -68,10 +68,4 @@
 	<osgi:reference id="configurationService"
 		interface="tr.org.liderahenk.lider.core.api.IConfigurationService" />
 
-	<osgi:reference id="ldapService"
-		interface="tr.org.liderahenk.lider.core.api.ldap.ILDAPService" />
-
-	<osgi:reference id="configurationAdmin"
-		interface="org.osgi.service.cm.ConfigurationAdmin" />
-
 </beans>
