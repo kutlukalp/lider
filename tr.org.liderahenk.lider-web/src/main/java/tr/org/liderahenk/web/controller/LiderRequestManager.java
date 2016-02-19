@@ -20,7 +20,7 @@ import tr.org.liderahenk.lider.core.api.rest.IRestResponse;
 /**
  * Main controller for all REST requests made by Lider Console.
  * 
- * @author Emre Akkaya <emre.akkaya@agem.com.tr>
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
 @Controller

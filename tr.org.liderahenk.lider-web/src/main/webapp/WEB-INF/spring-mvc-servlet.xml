@@ -51,9 +51,9 @@
 		</property>
 		<property name="filterChainDefinitions">
 			<value>
-				/rest/agent/register = myAuthcAuth
-				/rest/agent/validate/credentials = myAuthcAuth
-				/rest.web/rest/** = myAuthcAuth
+				/lider/agent/register = myAuthcAuth
+				/lider/agent/validate/credentials = myAuthcAuth
+				/lider/rest/** = myAuthcAuth
 				/** = myAuthcAuth
 			</value>
 		</property>
