@@ -6,79 +6,115 @@ import java.util.Map;
 
 //import javax.persistence.EntityManager;
 
-
 import tr.org.liderahenk.lider.core.api.dao.PropertyOrder;
 
 /**
  * Provides database (ORM) access for server side plugins
  * 
  * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
 public interface IPluginDbService {
-	
+
 	/**
+	 * Save entity.
 	 * 
 	 * @param entity
 	 */
 	void save(Object entity);
 
 	/**
+	 * Update entity.
 	 * 
 	 * @param entity
 	 */
 	void update(Object entity);
-	
-	/**
-	 * 
-	 * @param entity
-	 * @return object saved/updated
-	 */
-	Object saveOrUpdate(Object entity);
-	
-	/**
-	 * 
-	 * @param id
-	 * @param entityClass
-	 */
-	void delete(Object id, Class entityClass);
-	
-	/**
-	 * 
-	 * @param id
-	 * @param entityClass
-	 * @return list of objects 
-	 */
-	<T> T find(Object id, Class<T> entityClass);
 
 	/**
+	 * Save or update given entity.
+	 * 
+	 * @param entity
+	 * @return entity object saved/updated
+	 */
+	Object saveOrUpdate(Object entity);
+
+	/**
+	 * Delete entity by given ID.
 	 * 
 	 * @param entityClass
-	 * @return list of objects 
+	 * @param id
+	 */
+	void delete(Class entityClass, Object id);
+
+	/**
+	 * Delete matching entities by given property name-value pair.
+	 * 
+	 * @param entityClass
+	 * @param propertyName
+	 * @param propertyValue
+	 */
+	void deleteByProperty(Class entityClass, String propertyName, Object propertyValue);
+
+	/**
+	 * Find entity by given ID.
+	 * 
+	 * @param entityClass
+	 * @param id
+	 * @return list of entity objects
+	 */
+	<T> T find(Class<T> entityClass, Object id);
+
+	/**
+	 * Find all entities.
+	 * 
+	 * @param entityClass
+	 * @return list of entity objects
 	 */
 	<T> List<T> findAll(Class<T> entityClass);
 
 	/**
+	 * Find entities by given property name-value pair.
 	 * 
-	 * @param agentId
 	 * @param entityClass
-	 * @return list of objects 
+	 * @param propertyName
+	 * @param propertyValue
+	 * @param maxResults
+	 * @return list of entity objects
 	 */
-	<T> List<T> findByAgentUid(String agentId, Class<T> entityClass);
-	
+	<T> List<T> findByProperty(Class<T> entityClass, String propertyName, Object propertyValue, Integer maxResults);
+
 	/**
+	 * Find entities by given properties.
 	 * 
-	 * @return entity manager
+	 * @param entityClass
+	 * @param propertiesMap
+	 * @param orders
+	 * @param maxResults
+	 * @return
 	 */
-//	EntityManager getEntityManager();
-	
-	
-	<T> List<T> findByProperties(Class<T> obj, Map<String, Object> propertiesMap, List<PropertyOrder> orders, Integer maxResults);
+	<T> List<T> findByProperties(Class<T> entityClass, Map<String, Object> propertiesMap, List<PropertyOrder> orders,
+			Integer maxResults);
 
-	<T> List<T> findByPropertiesAndOperators(Class<T> obj, Map<String, ArrayList> propertiesMap, List<PropertyOrder> orders, Integer offset,Integer maxResults);
+	/**
+	 * Find entities by given properties.
+	 * 
+	 * @param obj
+	 * @param propertiesMap
+	 * @param orders
+	 * @param offset
+	 * @param maxResults
+	 * @return
+	 */
+	<T> List<T> findByPropertiesAndOperators(Class<T> obj, Map<String, ArrayList> propertiesMap,
+			List<PropertyOrder> orders, Integer offset, Integer maxResults);
 
-	<T> List<T> findByProperty(Class<T> obj, String propertyName, Object value, int maxResults);
-	
-	void deleteByProperty(String property,Object value, Class entityClass);
+	/**
+	 * Find table name for a given entity class.
+	 * 
+	 * @param entityClass
+	 * @return
+	 */
+	<T> String getTableName(Class<T> entityClass);
 
 }
