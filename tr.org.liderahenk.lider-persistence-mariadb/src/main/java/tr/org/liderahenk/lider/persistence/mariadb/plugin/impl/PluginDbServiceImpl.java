@@ -35,6 +35,10 @@ import tr.org.liderahenk.lider.core.api.plugin.IPluginDbService;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class PluginDbServiceImpl implements IPluginDbService {
 
+	// TODO deleteByProperties
+	// TODO provide overload methods for delete & find (use order, offset,
+	// maxResults)
+
 	@PersistenceContext(unitName = "lider")
 	EntityManager em;
 
