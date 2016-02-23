@@ -4,10 +4,10 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>tr.org.liderahenk</groupId>
-	<artifactId>tr.org.liderahenk.lider</artifactId>
+	<artifactId>lider-parent</artifactId>
 	<packaging>pom</packaging>
 	<version>1.0.0-SNAPSHOT</version>
-	<name>LiderAhenk Client Management System</name>
+	<name>Lider Ahenk Parent POM</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -74,22 +74,22 @@
 	</licenses>
 
 	<modules>
-		<module>tr.org.liderahenk.lider-core</module>
-		<module>tr.org.liderahenk.lider-persistence-mariadb</module>
-		<module>tr.org.liderahenk.lider-messaging-xmpp</module>
-		<module>tr.org.liderahenk.lider-web</module>
-		<module>tr.org.liderahenk.lider-karaf</module>
-		<module>tr.org.liderahenk.lider-rest-impl</module>
-		<module>tr.org.liderahenk.lider-log-impl</module>
-		<module>tr.org.liderahenk.lider-router-impl</module>
-		<module>tr.org.liderahenk.lider-ldap-impl</module>
-		<module>tr.org.liderahenk.lider-taskmanager-impl</module>
-		<module>tr.org.liderahenk.lider-datasource-mariadb</module>
-		<module>tr.org.liderahenk.lider-query-impl</module>
-		<module>tr.org.liderahenk.lider-authorization-impl</module>
-		<module>tr.org.liderahenk.lider-config</module>
-		<module>tr.org.liderahenk.lider-cache-impl</module>
-		<module>tr.org.liderahenk.lider-service-impl</module>
+		<module>lider-core</module>
+		<module>lider-persistence-mariadb</module>
+		<module>lider-messaging-xmpp</module>
+		<module>lider-web</module>
+		<module>lider-karaf</module>
+		<module>lider-rest-impl</module>
+		<module>lider-log-impl</module>
+		<module>lider-router-impl</module>
+		<module>lider-ldap-impl</module>
+		<module>lider-taskmanager-impl</module>
+		<module>lider-datasource-mariadb</module>
+		<module>lider-query-impl</module>
+		<module>lider-authorization-impl</module>
+		<module>lider-config</module>
+		<module>lider-cache-impl</module>
+		<module>lider-service-impl</module>
 	</modules>
 
 	<build>
@@ -194,22 +194,22 @@
 		<dependencies>
 			<dependency>
 				<groupId>tr.org.liderahenk</groupId>
-				<artifactId>tr.org.liderahenk.lider-core</artifactId>
+				<artifactId>lider-core</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>tr.org.liderahenk.lider-rest-impl</artifactId>
+				<artifactId>lider-rest-impl</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>tr.org.liderahenk.lider-service-impl</artifactId>
+				<artifactId>lider-service-impl</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>tr.org.liderahenk.lider-query-impl</artifactId>
+				<artifactId>lider-query-impl</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<!-- Hibernate Dependecies -->
