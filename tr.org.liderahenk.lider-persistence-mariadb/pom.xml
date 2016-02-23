@@ -67,6 +67,8 @@
 						<Bundle-Version>1.0.0</Bundle-Version>
 						<Bundle-ManifestVersion>2</Bundle-ManifestVersion>
 						<Manifest-Version>1</Manifest-Version>
+						<_removeheaders>Import-Service,Export-Service</_removeheaders>
+						<!-- Needed for runtime enhancement when using hibernate -->
 						<Import-Package>
 							org.apache.felix.service.command;version="[0.6,1)",
 							org.apache.felix.gogo.commands;version="[0.6,1)",
