@@ -6,5 +6,5 @@ target/**
 .project
 .settings/
 .settings/**
-src/main/history/
-src/main/history/**
+history/
+history/**
