@@ -30,6 +30,9 @@
 			<entry key="event.topics" value="tr/org/pardus/mys/taskmanager/task/update" />
 		</service-properties>
 	</service>
+	
+	<service ref="taskObserver" interface="tr.org.liderahenk.lider.core.api.plugin.ICommand"/>
+	
 	<bean id="lyaNotifyTaskStatusUpdateHandler"
 		class="tr.org.liderahenk.lider.impl.taskmanager.LyaNotifyTaskStatusUpdateEventHandler">
 		<property name="messagingService" ref="messagingService" />
@@ -70,7 +73,17 @@
 		<property name="config" ref="configurationService" />
 		<property name="messagingService" ref="messagingService" />
 	</bean>
-
+	
+	<bean id="taskObserver" class="tr.org.liderahenk.lider.impl.command.taskobserver.TaskObserverListCommand">
+		<property name="resultFactory" ref="resultFactory" />
+		<property name="pluginDbService" ref="pluginDbService" />
+		<property name="taskManagerDao" ref="taskManagerDao" />
+	</bean>
+	
+	<reference id="pluginDbService"
+		interface="tr.org.liderahenk.lider.core.api.plugin.IPluginDbService" />
+	<reference id="resultFactory"
+		interface="tr.org.liderahenk.lider.core.api.plugin.ICommandResultFactory" />
 	<reference id="ldapService"
 		interface="tr.org.liderahenk.lider.core.api.ldap.ILDAPService" />
 	<reference id="messagingService"

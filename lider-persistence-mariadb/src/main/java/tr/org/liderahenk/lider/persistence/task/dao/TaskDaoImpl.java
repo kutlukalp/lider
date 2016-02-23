@@ -102,9 +102,9 @@ public class TaskDaoImpl implements ITaskDao {
 			int offset, int maxResults) throws TaskDaoException {
 		try {
 			Query query = createQuery(taskCriteriaList, offset, maxResults );
-			
 			return query.getResultList();
 		} catch (Exception e) {
+			log.error(e.getMessage(),e);
 			throw new TaskDaoException("", e);
 		}
 
@@ -193,18 +193,19 @@ public class TaskDaoImpl implements ITaskDao {
 		 */
 		
 		Object taskStateValue = null;
-		for (IQueryCriteria criteria : taskCriteriaList) {
-			
-			if (criteria.getField().indexOf(".") <0 && TaskEntityImpl.class.getDeclaredField(criteria.getField()).getType().equals(TaskState.class)) {
-				taskStateValue = ((IQueryCriteria) criteria).getValues()[0];
+		if(taskCriteriaList != null && taskCriteriaList.length > 0){
+			for (IQueryCriteria criteria : taskCriteriaList) {
+				if (criteria.getField().indexOf(".") <0 && TaskEntityImpl.class.getDeclaredField(criteria.getField()).getType().equals(TaskState.class)) {
+					taskStateValue = ((IQueryCriteria) criteria).getValues()[0];
+				}
+				predicates.add(taskCriteriaBuilder.buildExpression(cbuilder, task,
+						(IQueryCriteria) criteria));
 			}
-			predicates.add(taskCriteriaBuilder.buildExpression(cbuilder, task,
-					(IQueryCriteria) criteria));
 		}
 
 		cquery.where(predicates.toArray(new Predicate[] {}));
 		cquery.select(task);
-
+ 
 		if (null != task.get("creationDate")) {
 			cquery.orderBy(cbuilder.desc(task.get("creationDate")));	
 		}
