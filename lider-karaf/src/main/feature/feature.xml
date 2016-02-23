@@ -25,31 +25,31 @@
    
     <feature name="lider" description="${project.name}" version="${project.version}">
         <details>Lider Ahenk Client Management System</details>
-        <feature>lider-support</feature>
-       	<feature>lider-apps</feature>
+        <feature>lider-dependent-bundles</feature>
+       	<feature>lider-core-bundles</feature>
     </feature>
 
-    <feature name="lider-apps" description="${project.name}" version="${project.version}">
+    <feature name="lider-core-bundles" description="${project.name}" version="${project.version}">
         <details>LiderAhenk client management system test feature for deploying without dependencies (for auto dependency resolve)</details>
-        <bundle>mvn:tr.org.liderahenk/lider-core/${project.version}</bundle>
-        <bundle>mvn:tr.org.liderahenk/lider-datasource-mariadb/${project.version}</bundle>
-        <bundle>mvn:tr.org.liderahenk/lider-persistence-mariadb/${project.version}</bundle>
-        <bundle>mvn:tr.org.liderahenk/lider-web/${project.version}/war</bundle>
-        <bundle>mvn:tr.org.liderahenk/lider-config/${project.version}</bundle>
-        <configfile finalname="/etc/tr.org.liderahenk.cfg">mvn:tr.org.liderahenk/lider-config/${project.version}/cfg</configfile>
-        <bundle>mvn:tr.org.liderahenk/lider-cache-impl/${project.version}</bundle>
-        <bundle>mvn:tr.org.liderahenk/lider-ldap-impl/${project.version}</bundle>
-        <bundle>mvn:tr.org.liderahenk/lider-log-impl/${project.version}</bundle>
-        <bundle>mvn:tr.org.liderahenk/lider-authorization-impl/${project.version}</bundle>
-        <bundle>mvn:tr.org.liderahenk/lider-messaging-xmpp/${project.version}</bundle>
-        <bundle>mvn:tr.org.liderahenk/lider-query-impl/${project.version}</bundle>
-        <bundle>mvn:tr.org.liderahenk/lider-rest-impl/${project.version}</bundle>
-        <bundle>mvn:tr.org.liderahenk/lider-router-impl/${project.version}</bundle>
-        <bundle>mvn:tr.org.liderahenk/lider-service-impl/${project.version}</bundle>
-        <bundle>mvn:tr.org.liderahenk/lider-taskmanager-impl/${project.version}</bundle>
+        <bundle>mvn:${groupId}/lider-core/${project.version}</bundle>
+        <bundle>mvn:${groupId}/lider-datasource-mariadb/${project.version}</bundle>
+        <bundle>mvn:${groupId}/lider-persistence-mariadb/${project.version}</bundle>
+        <bundle>mvn:${groupId}/lider-web/${project.version}/war</bundle>
+        <bundle>mvn:${groupId}/lider-config/${project.version}</bundle>
+        <configfile finalname="/etc/tr.org.liderahenk.cfg">mvn:${groupId}/lider-config/${project.version}/cfg</configfile>
+        <bundle>mvn:${groupId}/lider-cache-impl/${project.version}</bundle>
+        <bundle>mvn:${groupId}/lider-ldap-impl/${project.version}</bundle>
+        <bundle>mvn:${groupId}/lider-log-impl/${project.version}</bundle>
+        <bundle>mvn:${groupId}/lider-authorization-impl/${project.version}</bundle>
+        <bundle>mvn:${groupId}/lider-messaging-xmpp/${project.version}</bundle>
+        <bundle>mvn:${groupId}/lider-query-impl/${project.version}</bundle>
+        <bundle>mvn:${groupId}/lider-rest-impl/${project.version}</bundle>
+        <bundle>mvn:${groupId}/lider-router-impl/${project.version}</bundle>
+        <bundle>mvn:${groupId}/lider-service-impl/${project.version}</bundle>
+        <bundle>mvn:${groupId}/lider-taskmanager-impl/${project.version}</bundle>
     </feature>
     
-    <feature name="lider-support" description="${project.name}" version="${project.version}">
+    <feature name="lider-dependent-bundles" description="${project.name}" version="${project.version}">
     	<feature>jpa</feature>
         <feature>transaction</feature>
         <feature>jndi</feature>
@@ -63,55 +63,55 @@
         <feature>config</feature>
         <feature>wrapper</feature>
         <feature>eventadmin</feature>
-        <feature>lider-apacheds</feature>
-       	<bundle start-level="50">mvn:org.codehaus.jackson/jackson-core-asl/1.9.13</bundle>
-        <bundle start-level="50">mvn:org.codehaus.jackson/jackson-mapper-asl/1.9.13</bundle>
-        <bundle start-level="50">mvn:commons-lang/commons-lang/2.6</bundle>
-        <bundle start-level="50">mvn:commons-collections/commons-collections/3.2.1</bundle>
-        <bundle start-level="50">mvn:commons-pool/commons-pool/1.6</bundle>
-        <bundle start-level="50">mvn:org.apache.mina/mina-core/2.0.7</bundle>
-        <bundle start-level="50">mvn:mysql/mysql-connector-java/5.1.31</bundle>
-        <bundle start-level="50">mvn:commons-beanutils/commons-beanutils/1.8.3</bundle>
-        <bundle start-level="50">wrap:mvn:commons-logging/commons-logging/1.1.1</bundle>
-        <bundle start-level="50">wrap:mvn:c3p0/c3p0/0.9.1.1</bundle>
-        <bundle start-level="50">mvn:commons-dbcp/commons-dbcp/1.4</bundle>
-        <bundle start-level="50">mvn:net.sf.ehcache/ehcache/2.8.0</bundle>
-        <bundle start-level="50">wrap:mvn:antlr/antlr/2.7.7</bundle>
-        <bundle start-level="50">mvn:commons-codec/commons-codec/1.10</bundle>
-        <bundle start-level="50">mvn:org.igniterealtime.smack/smack-core/4.1.5</bundle>
-        <bundle start-level="50">mvn:org.jxmpp/jxmpp-core/0.4.2</bundle>
-        <bundle start-level="50">mvn:org.jxmpp/jxmpp-util-cache/0.4.2</bundle>
-        <bundle start-level="50">wrap:mvn:xpp3/xpp3/1.1.4c</bundle>
-        <bundle start-level="50">mvn:org.igniterealtime.smack/smack-extensions/4.1.5</bundle>
-        <bundle start-level="50">mvn:org.igniterealtime.smack/smack-im/4.1.5</bundle>
-        <bundle start-level="50">mvn:org.igniterealtime.smack/smack-tcp/4.1.5</bundle>
-        <bundle start-level="50">mvn:org.igniterealtime.smack/smack-sasl-javax/4.1.5</bundle>
-        <bundle start-level="50">mvn:org.igniterealtime.smack/smack-java7/4.1.5</bundle>
-        <bundle start-level="50">mvn:org.igniterealtime.smack/smack-resolver-javax/4.1.5</bundle>
-        <bundle start-level="50">mvn:org.apache.shiro/shiro-core/1.2.4</bundle>
-		<bundle start-level="45">mvn:org.apache.shiro/shiro-web/1.2.4</bundle>
-        <bundle start-level="45">mvn:org.apache.shiro/shiro-spring/1.2.4</bundle>
-		<bundle start-level="45">mvn:org.apache.shiro/shiro-ehcache/1.2.4</bundle>
-        <bundle start-level="50">mvn:commons-io/commons-io/2.4</bundle>
-        <bundle start-level="50">mvn:org.apache.commons/commons-compress/1.7</bundle>
-        <bundle start-level="50">mvn:org.tukaani/xz/1.4</bundle>
-        <bundle start-level="50">mvn:com.hazelcast/hazelcast-all/3.1.7</bundle>
-        <bundle start-level="50">mvn:log4j/log4j/1.2.17</bundle>
-        <bundle start-level="50">mvn:org.slf4j/slf4j-log4j12/1.6.1</bundle>
-        <bundle start-level="50">mvn:org.slf4j/slf4j-api/1.6.1</bundle>
+        <feature>lider-deps-ldap</feature>
+       	<bundle>mvn:org.codehaus.jackson/jackson-core-asl/1.9.13</bundle>
+        <bundle>mvn:org.codehaus.jackson/jackson-mapper-asl/1.9.13</bundle>
+        <bundle>mvn:commons-lang/commons-lang/2.6</bundle>
+        <bundle>mvn:commons-collections/commons-collections/3.2.1</bundle>
+        <bundle>mvn:commons-pool/commons-pool/1.6</bundle>
+        <bundle>mvn:org.apache.mina/mina-core/2.0.7</bundle>
+        <bundle>mvn:mysql/mysql-connector-java/5.1.31</bundle>
+        <bundle>mvn:commons-beanutils/commons-beanutils/1.8.3</bundle>
+        <bundle>wrap:mvn:commons-logging/commons-logging/1.1.1</bundle>
+        <bundle>wrap:mvn:c3p0/c3p0/0.9.1.1</bundle>
+        <bundle>mvn:commons-dbcp/commons-dbcp/1.4</bundle>
+        <bundle>mvn:net.sf.ehcache/ehcache/2.8.0</bundle>
+        <bundle>wrap:mvn:antlr/antlr/2.7.7</bundle>
+        <bundle>mvn:commons-codec/commons-codec/1.10</bundle>
+        <bundle>mvn:org.igniterealtime.smack/smack-core/4.1.5</bundle>
+        <bundle>mvn:org.jxmpp/jxmpp-core/0.4.2</bundle>
+        <bundle>mvn:org.jxmpp/jxmpp-util-cache/0.4.2</bundle>
+        <bundle>wrap:mvn:xpp3/xpp3/1.1.4c</bundle>
+        <bundle>mvn:org.igniterealtime.smack/smack-extensions/4.1.5</bundle>
+        <bundle>mvn:org.igniterealtime.smack/smack-im/4.1.5</bundle>
+        <bundle>mvn:org.igniterealtime.smack/smack-tcp/4.1.5</bundle>
+        <bundle>mvn:org.igniterealtime.smack/smack-sasl-javax/4.1.5</bundle>
+        <bundle>mvn:org.igniterealtime.smack/smack-java7/4.1.5</bundle>
+        <bundle>mvn:org.igniterealtime.smack/smack-resolver-javax/4.1.5</bundle>
+        <bundle>mvn:org.apache.shiro/shiro-core/1.2.4</bundle>
+		<bundle>mvn:org.apache.shiro/shiro-web/1.2.4</bundle>
+        <bundle>mvn:org.apache.shiro/shiro-spring/1.2.4</bundle>
+		<bundle>mvn:org.apache.shiro/shiro-ehcache/1.2.4</bundle>
+        <bundle>mvn:commons-io/commons-io/2.4</bundle>
+        <bundle>mvn:org.apache.commons/commons-compress/1.7</bundle>
+        <bundle>mvn:org.tukaani/xz/1.4</bundle>
+        <bundle>mvn:com.hazelcast/hazelcast-all/3.1.7</bundle>
+        <bundle>mvn:log4j/log4j/1.2.17</bundle>
+        <bundle>mvn:org.slf4j/slf4j-log4j12/1.6.1</bundle>
+        <bundle>mvn:org.slf4j/slf4j-api/1.6.1</bundle>
     </feature>
 
-    <feature name="lider-apacheds"  version="${project.version}">
-		<bundle start-level="50">mvn:org.apache.directory.api/api-ldap-client-api/1.0.0-M20</bundle>
-        <bundle start-level="50">mvn:org.apache.directory.api/api-ldap-codec-core/1.0.0-M20</bundle>
-        <bundle start-level="50">mvn:org.apache.directory.api/api-asn1-api/1.0.0-M20</bundle>
-        <bundle start-level="50">mvn:org.apache.directory.api/api-asn1-ber/1.0.0-M20</bundle>
-        <bundle start-level="50">mvn:org.apache.directory.api/api-ldap-schema-data/1.0.0-M20</bundle>
-        <bundle start-level="50">mvn:org.apache.directory.api/api-i18n/1.0.0-M20</bundle>
-        <bundle start-level="50">mvn:org.apache.directory.api/api-ldap-model/1.0.0-M20</bundle>
-        <bundle start-level="50">mvn:org.apache.directory.api/api-ldap-extras-aci/1.0.0-M20</bundle>
-        <bundle start-level="50">mvn:org.apache.directory.api/api-util/1.0.0-M20</bundle>
-        <bundle start-level="50">mvn:org.apache.directory.api/api-ldap-net-mina/1.0.0-M20</bundle>
+    <feature name="lider-deps-ldap" version="${project.version}">
+		<bundle>mvn:org.apache.directory.api/api-ldap-client-api/1.0.0-M20</bundle>
+        <bundle>mvn:org.apache.directory.api/api-ldap-codec-core/1.0.0-M20</bundle>
+        <bundle>mvn:org.apache.directory.api/api-asn1-api/1.0.0-M20</bundle>
+        <bundle>mvn:org.apache.directory.api/api-asn1-ber/1.0.0-M20</bundle>
+        <bundle>mvn:org.apache.directory.api/api-ldap-schema-data/1.0.0-M20</bundle>
+        <bundle>mvn:org.apache.directory.api/api-i18n/1.0.0-M20</bundle>
+        <bundle>mvn:org.apache.directory.api/api-ldap-model/1.0.0-M20</bundle>
+        <bundle>mvn:org.apache.directory.api/api-ldap-extras-aci/1.0.0-M20</bundle>
+        <bundle>mvn:org.apache.directory.api/api-util/1.0.0-M20</bundle>
+        <bundle>mvn:org.apache.directory.api/api-ldap-net-mina/1.0.0-M20</bundle>
     </feature>
 
 </features>

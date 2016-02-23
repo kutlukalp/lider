@@ -199,11 +199,6 @@
 			</dependency>
 			<dependency>
 				<groupId>${project.groupId}</groupId>
-				<artifactId>lider-rest-impl</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
 				<artifactId>lider-service-impl</artifactId>
 				<version>${project.version}</version>
 			</dependency>
