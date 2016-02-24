@@ -8,7 +8,7 @@
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>lider-karaf</artifactId>
+	<artifactId>lider-features</artifactId>
 	<name>Lider Ahenk Karaf Features</name>
 	<url>http://www.liderahenk.org.tr</url>
 	<packaging>feature</packaging>
