@@ -97,9 +97,17 @@ public class RestRequestProcessorImpl implements IRestRequestProcessor {
 					logger.error(e.getMessage(), e);
 				}
 				if (currentUser.getPrincipal() != null) {
-					targetEntries = authService.getPermittedEntries(currentUser.getPrincipal().toString(),
-							targetEntries, targetOperation);
-					if (targetEntries == null || targetEntries.isEmpty()) {
+					if (targetEntries != null) {
+						// Find only 'permitted' entries:
+						targetEntries = authService.getPermittedEntries(currentUser.getPrincipal().toString(),
+								targetEntries, targetOperation);
+						if (targetEntries == null || targetEntries.isEmpty()) {
+							return responseFactory.createResponse(request, RestResponseStatus.ERROR,
+									Arrays.asList(new String[] { "NOT_AUTHORIZED" }));
+						}
+					}
+					else if (ldapService.getUser(currentUser.getPrincipal().toString()) == null) {
+						// Request might not contain any target entries, When that's the case, check only if user exists!
 						return responseFactory.createResponse(request, RestResponseStatus.ERROR,
 								Arrays.asList(new String[] { "NOT_AUTHORIZED" }));
 					}
@@ -133,11 +141,11 @@ public class RestRequestProcessorImpl implements IRestRequestProcessor {
 	// TODO Read attributes from properties file:
 	private List<LdapEntry> findTargetEntries(List<String> dnList, RestDNType dnType) {
 		List<LdapEntry> entries = null;
-		String[] attributes = new String[] { "liderPrivilege" }; // ??
-		String attributeName = "objectClass";
-		String attributeValue = dnType == RestDNType.AHENK ? "pardusDevice" // ??
-				: (dnType == RestDNType.USER ? "pardusAccount" : "*"); // ??
 		if (dnList != null && !dnList.isEmpty() && dnType != null) {
+			String[] attributes = new String[] { "liderPrivilege" }; // ??
+			String attributeName = "objectClass";
+			String attributeValue = dnType == RestDNType.AHENK ? "pardusDevice" // ??
+					: (dnType == RestDNType.USER ? "pardusAccount" : "*"); // ??
 			entries = new ArrayList<LdapEntry>();
 			// For each DN, find its target child entries according to DN type:
 			for (String dn : dnList) {
