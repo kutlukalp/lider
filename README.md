@@ -20,7 +20,22 @@ lider is the business layer of Lider Ahenk project running on Karaf container. I
 
 ## Project Directory Layout
 
-TODO
+    lider/
+      lider-core/                     --> Provides core functionalities and API for other plug-ins
+      lider-authorization-impl/       --> Shiro-based authorization implementation
+      lider-cache-impl/               --> Provides cache mechanism
+      lider-config/                   --> Contains configuration manager and default config files.
+      lider-datasource-mariadb/       --> MariaDB datasource definition for Karaf
+      lider-karaf/                    --> Contains Karaf features definition file
+      lider-ldap-impl/                --> Provides LDAP client and search functionalities
+      lider-log-impl/                 --> Provides system-wide logging mechanism
+      lider-messaging-xmpp/           --> XMMP client implementation
+      lider-persistence-mariadb/      --> MariaDB persistence layer
+      lider-rest-impl/                --> Processes incoming requests for auth and LDAP operations
+      lider-router-impl/              --> Responsible for bridging incoming requests to related plugin
+      lider-service-impl/             --> Provides factory methods and command context for plugins
+      lider-taskmanager-impl/         --> Task manager implementation manages agent tasks
+      lider-web/                      --> Provides REST web services
 
 ## Exporting Lider
 
@@ -32,6 +47,12 @@ TODO
 2. Clone lider project by running `git clone https://github.com/Pardus-Kurumsal/lider.git`.
 3. Change directory to lider/ and run `mvn clean install -DskipTests`.
 4. Finally, import the project into Eclipse as 'Existing Maven Projects'.
+
+## How to Import Project Into Karaf
+
+1. Run `mvn clean install` in the project directory.
+2. Add project repository via `feature:repo-add  mvn:tr.org.liderahenk/lider-features/1.0.0-SNAPSHOT/xml/features`
+3. Install project via `feature:install lider-features`
 
 ## Static Analyzers
 
