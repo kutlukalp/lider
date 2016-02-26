@@ -20,6 +20,11 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.core</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>lider-core</artifactId>
 		</dependency>
@@ -35,6 +40,7 @@
 				<configuration>
 					<instructions>
 						<_removeheaders>Import-Service,Export-Service</_removeheaders>
+						<Import-Package>org.osgi.framework, *</Import-Package>
 						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
 						<Bundle-Version>1.0.0</Bundle-Version>
 					</instructions>

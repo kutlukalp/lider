@@ -3,6 +3,9 @@ package tr.org.liderahenk.lider.impl.router;
 import java.util.HashMap;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import tr.org.liderahenk.lider.core.api.plugin.ICommand;
 import tr.org.liderahenk.lider.core.api.router.IServiceRegistry;
 
@@ -16,19 +19,20 @@ import tr.org.liderahenk.lider.core.api.router.IServiceRegistry;
  *
  */
 public class ServiceRegistryImpl implements IServiceRegistry {
+	
+	private Logger logger = LoggerFactory.getLogger(ServiceRegistryImpl.class);
 
 	/**
 	 * A map to store all available commands. Key format of the key is as
 	 * follows:<br/>
 	 * {PLUGIN_NAME}:{PLUGIN_VERSION}:{COMMAND_ID}
 	 */
-	
-	
+	@SuppressWarnings("unused")
 	private List<ICommand> registeredCommmands;
-	
 	private HashMap<String, ICommand> commands;
 
 	public void setRegisteredCommmands(List<ICommand> availableCommmands) {
+		logger.debug("Registered commands: {}", availableCommmands.toString());
 		if (availableCommmands != null) {
 			commands = new HashMap<String, ICommand>();
 			for (ICommand command : availableCommmands) {
