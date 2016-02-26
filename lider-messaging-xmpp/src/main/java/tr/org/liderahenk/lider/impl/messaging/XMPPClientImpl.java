@@ -86,7 +86,7 @@ public class XMPPClientImpl {
 	private AllPacketListener packetListener = new AllPacketListener();
 	private NotificationListener notificationListener = new NotificationListener();
 	private IQPacketListener iqListener = new IQPacketListener();
-	private TaskStatusUpdateListener taskStatusListener = new TaskStatusUpdateListener();
+	private TaskStatusUpdateListener taskStatusUpdateListener = new TaskStatusUpdateListener();
 
 	/**
 	 * Packet subscribers
@@ -208,7 +208,7 @@ public class XMPPClientImpl {
 		ChatManager.getInstanceFor(connection).addChatListener(chatManagerListener);
 		connection.addAsyncStanzaListener(packetListener, packetListener);
 		connection.addAsyncStanzaListener(notificationListener, notificationListener);
-		connection.addAsyncStanzaListener(taskStatusListener, taskStatusListener);
+		connection.addAsyncStanzaListener(taskStatusUpdateListener, taskStatusUpdateListener);
 		connection.addAsyncStanzaListener(iqListener, iqListener);
 		Roster.getInstanceFor(connection).addRosterListener(rosterListener);
 		logger.debug("Successfully added listeners for connection: {}", connection.toString());
@@ -259,7 +259,7 @@ public class XMPPClientImpl {
 			Roster.getInstanceFor(connection).removeRosterListener(rosterListener);
 			connection.removeAsyncStanzaListener(packetListener);
 			connection.removeAsyncStanzaListener(notificationListener);
-			connection.removeAsyncStanzaListener(taskStatusListener);
+			connection.removeAsyncStanzaListener(taskStatusUpdateListener);
 			connection.removeAsyncStanzaListener(iqListener);
 			logger.debug("Listeners are removed.");
 			PingManager.getInstanceFor(connection).setPingInterval(-1);
@@ -310,8 +310,7 @@ public class XMPPClientImpl {
 		}
 		return isOnline;
 	}
-	
-	
+
 	/**
 	 * Send invites to clients for joining multi user chat room
 	 * 
@@ -320,10 +319,10 @@ public class XMPPClientImpl {
 	 * @param inviteMessage
 	 */
 	private void sendRoomInvite(MultiUserChat muc, ArrayList<String> userList, String inviteMessage) {
-		
-		if(muc !=null && muc.getRoom() != null && !muc.getRoom().isEmpty()){
-			
-			if(userList!=null && !userList.isEmpty()){
+
+		if (muc != null && muc.getRoom() != null && !muc.getRoom().isEmpty()) {
+
+			if (userList != null && !userList.isEmpty()) {
 				for (String user : userList) {
 					try {
 						muc.invite(user, inviteMessage);
@@ -331,24 +330,22 @@ public class XMPPClientImpl {
 						e.printStackTrace();
 					}
 				}
-				logger.info(userList.size()+" clients were invited to room("+muc.getRoom()+")");
+				logger.info(userList.size() + " clients were invited to room(" + muc.getRoom() + ")");
 			}
-		}
-		else{
+		} else {
 			logger.info("There is no available room for invitation");
 		}
 	}
 
 	/**
-	 * Create new multi user chat
-	 * jid ex: room1@conference.localhost
+	 * Create new multi user chat jid ex: room1@conference.localhost
 	 * 
 	 * @param roomJid
 	 * @param nickName
 	 * @return
 	 */
 	private MultiUserChat createRoom(String roomJid, String nickName) {
-		
+
 		MultiUserChat muc = mucManager.getMultiUserChat(roomJid);
 		try {
 			muc.create(nickName);
@@ -360,20 +357,20 @@ public class XMPPClientImpl {
 		} catch (SmackException e) {
 			e.printStackTrace();
 		}
-		
+
 		return muc;
 	}
-	
+
 	/**
 	 * Send message to room
 	 * 
 	 * @param muc
 	 * @param message
 	 */
-	private void sendMessageToRoom(MultiUserChat muc,String message){
+	private void sendMessageToRoom(MultiUserChat muc, String message) {
 
 		try {
-			if( muc != null && muc.getMembers() != null && message != null && !message.isEmpty()){
+			if (muc != null && muc.getMembers() != null && message != null && !message.isEmpty()) {
 				muc.sendMessage(message);
 			}
 		} catch (NotConnectedException e) {
@@ -385,6 +382,10 @@ public class XMPPClientImpl {
 		}
 	}
 
+	/**
+	 * Listens to connection status changes.
+	 *
+	 */
 	class XMPPConnectionListener implements ConnectionListener {
 
 		@Override
@@ -393,13 +394,13 @@ public class XMPPClientImpl {
 		}
 
 		@Override
-		public void connectionClosedOnError(Exception arg0) {
-			logger.error("XMPP connection closed an error", arg0.getMessage());
+		public void connectionClosedOnError(Exception e) {
+			logger.error("XMPP connection closed with an error", e.getMessage());
 		}
 
 		@Override
 		public void reconnectingIn(int seconds) {
-			logger.info("Reconnecting in " + seconds + " seconds.");
+			logger.info("Reconnecting in {} seconds.", seconds);
 		}
 
 		@Override
@@ -415,16 +416,16 @@ public class XMPPClientImpl {
 
 		@Override
 		public void connected(XMPPConnection connection) {
-			logger.info("User: " + connection.getUser() + " connected to XMPP Server (" + connection.getHost()
-					+ ") via port:" + connection.getPort());
+			logger.info("User: {} connected to XMPP Server {} via port {}",
+					new Object[] { connection.getUser(), connection.getHost(), connection.getPort() });
 		}
 
 		@Override
 		public void authenticated(XMPPConnection connection, boolean resumed) {
-			logger.info("Connection the XMPPConnection which successfully authenticated.");
-			if (resumed)
+			logger.info("Connection successfully authenticated.");
+			if (resumed) {
 				logger.info("A previous XMPP session's stream was resumed");
-
+			}
 		}
 	}
 
@@ -432,7 +433,7 @@ public class XMPPClientImpl {
 		@Override
 		public void pingFailed() {
 			pingTimeoutCount++;
-			logger.warn("ping failed: {}", pingTimeoutCount);
+			logger.warn("XMPP ping failed: {}", pingTimeoutCount);
 			if (pingTimeoutCount > maxPingTimeoutCount) {
 				logger.error(
 						"Too many consecutive pings failed! This doesn't necessarily mean that the connection is lost.");
@@ -450,34 +451,43 @@ public class XMPPClientImpl {
 			chat.addMessageListener(new ChatMessageListener() {
 				@Override
 				public void processMessage(Chat chat, Message message) {
-					if (message.getType().equals(Message.Type.error)) {
-						logger.error("Message type is error");
+					// All messages from agents are type normal
+					if (!Message.Type.normal.equals(message.getType())) {
+						logger.debug("Not a chat message type, will not notify subscribers:  {}", message.getBody());
 						return;
 					}
-					String messageBody = message.getBody();
-					if (null != messageBody && !messageBody.isEmpty()) {
-						// TODO message explanation...
+
+					String from = message.getFrom();
+					String body = message.getBody();
+					logger.debug("from: {}", from);
+					logger.debug("message body : {}", message.getBody());
+
+					if (null != body && !body.isEmpty()) {
+						// TODO looks like we do not need this listener at the
+						// moment, plugins should listen to messages via
+						// notification or task update listeners.
 					}
 				}
 			});
 		}
 	}
 
+	/**
+	 * Listens to roster presence changes.
+	 *
+	 */
 	class RosterListenerImpl implements RosterListener {
 
 		@Override
 		public void entriesAdded(Collection<String> addresses) {
-			// TODO
 		}
 
 		@Override
 		public void entriesUpdated(Collection<String> addresses) {
-			// TODO
 		}
 
 		@Override
 		public void entriesDeleted(Collection<String> addresses) {
-			// TODO
 		}
 
 		@Override
@@ -514,6 +524,10 @@ public class XMPPClientImpl {
 		}
 	}
 
+	/**
+	 * Listens to all packets for debug purposes.
+	 * 
+	 */
 	class AllPacketListener implements StanzaListener, StanzaFilter {
 		@Override
 		public void processPacket(Stanza packet) throws NotConnectedException {
@@ -530,6 +544,11 @@ public class XMPPClientImpl {
 		}
 	}
 
+	/**
+	 * Notification is used to notify subscribed listeners as well as Lider
+	 * Console users.
+	 *
+	 */
 	class NotificationListener implements StanzaListener, StanzaFilter {
 
 		@Override
@@ -572,14 +591,11 @@ public class XMPPClientImpl {
 			}
 		}
 
-		/**
-		 * all messages from agents are type normal
-		 */
 		@Override
 		public boolean accept(Stanza stanza) {
-
 			if (stanza instanceof Message) {
 				Message msg = (Message) stanza;
+				// All messages from agents are type normal
 				if (Message.Type.normal.equals(msg.getType()) && msg.getBody().contains("\"type\": \"NOTIFICATION\"")) {
 					return true;
 				}
@@ -588,6 +604,10 @@ public class XMPPClientImpl {
 		}
 	}
 
+	/**
+	 * Listens to all IQ packets for debug purposes.
+	 *
+	 */
 	class IQPacketListener implements StanzaListener, StanzaFilter {
 
 		@Override
@@ -626,7 +646,8 @@ public class XMPPClientImpl {
 					try {
 						TaskStatusUpdateMessageImpl taskStatusUpdateMessage = mapper.readValue(msg.getBody(),
 								TaskStatusUpdateMessageImpl.class);
-
+						// TODO improvement: trigger only related subscriber(s)
+						// by matching its plugin properties?
 						for (ITaskStatusUpdateSubscriber subscriber : taskStatusUpdateSubscribers) {
 							try {
 								subscriber.messageReceived(taskStatusUpdateMessage);
@@ -648,6 +669,7 @@ public class XMPPClientImpl {
 		public boolean accept(Stanza stanza) {
 			if (stanza instanceof Message) {
 				Message msg = (Message) stanza;
+				// All messages from agents are type normal
 				if (Message.Type.normal.equals(msg.getType()) && msg.getBody().contains("\"type\": \"TASK_")) {
 					return true;
 				}
