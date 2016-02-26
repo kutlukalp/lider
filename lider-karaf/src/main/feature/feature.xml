@@ -50,11 +50,12 @@
     </feature>
     
     <feature name="lider-dependent-bundles" description="${project.name}" version="${project.version}">
-    	<feature>jpa</feature>
+    	<feature>lider-deps-persistence</feature>
+    	<!-- <feature>jpa</feature>
         <feature>transaction</feature>
-        <feature>jndi</feature>
+        <feature>jndi</feature> -->
         <feature>war</feature>
-        <feature>hibernate</feature>
+       <!--  <feature>hibernate</feature> -->
         <feature>webconsole</feature>
         <feature>spring-web</feature>
         <feature>spring</feature>
@@ -113,5 +114,73 @@
         <bundle start-level="50">mvn:org.apache.directory.api/api-util/1.0.0-M20</bundle>
         <bundle start-level="50">mvn:org.apache.directory.api/api-ldap-net-mina/1.0.0-M20</bundle>
     </feature>
+    
+    
+       <feature name="lider-deps-persistence" version="${project.version}">
+     
+     	<!-- JPA Dependecy -->
+     	<feature>lider-jpa</feature>
+     	<feature>lider-transaction</feature>
+     	<feature>jndi</feature>
+     	<feature>lider-openjpa</feature>
+     	
+     </feature>
+     
+     
+    <feature name="lider-openjpa" description="Apache OpenJPA 2.3.x persistence engine support" version="2.3.0">
+        <details>Enable Apache OpenJPA as persistence engine.</details>
+        <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-annotation_1.0_spec/1.1.1</bundle>
+        <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-jpa_2.0_spec/1.1</bundle>
+        <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/1.2</bundle>
+        <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-el_1.0_spec/1.0.1</bundle>
+        <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/1.1.1</bundle>
+        <bundle dependency="true">mvn:commons-lang/commons-lang/2.6</bundle>
+        <bundle dependency="true">mvn:commons-collections/commons-collections/3.2.1</bundle>
+        <bundle dependency="true">mvn:commons-pool/commons-pool/1.6</bundle>
+        <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-dbcp/1.4_3</bundle>
+        <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ant/1.7.0_6</bundle>
+        <bundle dependency="true">mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.serp/1.14.1_1</bundle>
+        <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-jms_1.1_spec/1.1.1</bundle>
+        <bundle dependency="true">mvn:org.apache.xbean/xbean-asm4-shaded/3.16</bundle>
+        <bundle start-level="29">mvn:org.apache.openjpa/openjpa/2.3.0</bundle>
+        <feature>lider-jpa</feature>
+    </feature>
+    
+    <feature name="lider-transaction" description="OSGi Transaction Manager" version="1.1.0">
+        <details>JTA implementation provided by Apache Aries Transaction 1.1.0</details>
+        <config name="org.apache.aries.transaction">
+            aries.transaction.recoverable = true
+            aries.transaction.timeout = 600
+            aries.transaction.howl.logFileDir = ${karaf.data}/txlog
+            aries.transaction.howl.maxLogFiles = 2
+            aries.transaction.howl.maxBlocksPerFile = 512
+            aries.transaction.howl.bufferSizeKBytes = 4
+        </config>
+        <bundle dependency="true" start-level="30">mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/1.1.1</bundle>
+        <bundle start-level="30">mvn:org.apache.aries.transaction/org.apache.aries.transaction.blueprint/1.0.1</bundle>
+        <bundle start-level="30">mvn:org.apache.aries.transaction/org.apache.aries.transaction.manager/1.1.0</bundle>
+    </feature>
+    
+    <feature name="lider-jpa" description="OSGi Persistence Container" version="${aries.jpa.version}">
+        <details>JPA implementation provided by Apache Aries JPA ${aries.jpa.version}. NB: this feature doesn't provide the JPA engine, you have to install one by yourself (OpenJPA for instance)</details>
+        <bundle dependency="true" start-level="30">mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/1.1.1</bundle>
+        <bundle dependency="true" start-level="30">mvn:org.apache.geronimo.specs/geronimo-jpa_2.0_spec/1.1</bundle>
+        <bundle start-level="30">mvn:org.apache.aries.jpa/org.apache.aries.jpa.api/1.0.2</bundle>
+        <bundle start-level="30">mvn:org.apache.aries.jpa/org.apache.aries.jpa.blueprint.aries/1.0.4</bundle>
+        <bundle start-level="30">mvn:org.apache.aries.jpa/org.apache.aries.jpa.container/1.0.2</bundle>
+        <bundle start-level="30">mvn:org.apache.aries.jpa/org.apache.aries.jpa.container.context/1.0.4</bundle>
+    </feature>
+    
+    <!-- <feature name="lider-jndi" description="OSGi Service Registry JNDI access" version="${aries.jndi.version}" resolver="(obr)">
+        <details>JNDI support provided by Apache Aries JNDI ${aries.jndi.version}</details>
+        <bundle start-level="30">mvn:org.apache.xbean/xbean-naming/${xbean.version}</bundle>
+        <bundle start-level="30">mvn:org.apache.karaf.jndi/org.apache.karaf.jndi.core/${project.version}</bundle>
+        <bundle start-level="30">mvn:org.apache.aries.jndi/org.apache.aries.jndi.api/${aries.jndi.api.version}</bundle>
+        <bundle start-level="30">mvn:org.apache.aries.jndi/org.apache.aries.jndi.core/${aries.jndi.version}</bundle>
+        <bundle start-level="30">mvn:org.apache.aries.jndi/org.apache.aries.jndi.rmi/${aries.jndi.version}</bundle>
+        <bundle start-level="30">mvn:org.apache.aries.jndi/org.apache.aries.jndi.url/${aries.jndi.version}</bundle>
+        <bundle start-level="30">mvn:org.apache.aries.jndi/org.apache.aries.jndi.legacy.support/${aries.jndi.version}</bundle>
+        <bundle>mvn:org.apache.karaf.jndi/org.apache.karaf.jndi.command/4.0.4</bundle>
+    </feature> -->
 
 </features>

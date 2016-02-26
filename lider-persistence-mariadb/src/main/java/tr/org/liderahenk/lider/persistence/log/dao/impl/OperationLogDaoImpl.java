@@ -16,7 +16,6 @@ import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
@@ -38,11 +37,11 @@ import tr.org.liderahenk.lider.persistence.model.impl.OperationLogImpl;
 
 public class OperationLogDaoImpl implements OperationLogDao {
 
-	@PersistenceContext(unitName="lider")
-	EntityManager em;
+//	@PersistenceContext(unitName="lider")
+	EntityManager entityManager;
 
-	public void setEntityManager(EntityManager em) {
-		this.em = em;
+	public void setEntityManager(EntityManager entityManager) {
+		this.entityManager = entityManager;
 	}
 
 	private final static Logger logger = Logger.getLogger(OperationLogDaoImpl.class.getName());
@@ -68,7 +67,7 @@ public class OperationLogDaoImpl implements OperationLogDao {
 			log.setActive(true);
 
 			if (log.getId() == null) {
-				this.em.persist(log);
+				this.entityManager.persist(log);
 				returnLog = log;
 			} else {
 				returnLog = update(log);
@@ -84,14 +83,14 @@ public class OperationLogDaoImpl implements OperationLogDao {
 	@Override
 	public IOperationLog update(IOperationLog log) {
 		/* Only for updating checksum. */
-		return this.em.merge(log);
+		return this.entityManager.merge(log);
 	}
 
 	@Override
 	public List<OperationLogImpl> getLogsByUserId(String userId, int maxResults) {
 		String query = "SELECT l FROM OperationLogImpl l " + "WHERE l.userId = :userId ";
 
-		Query q = em.createQuery(query);
+		Query q = entityManager.createQuery(query);
 		q.setParameter("userId", userId);
 
 		q.setMaxResults(maxResults);
@@ -105,7 +104,7 @@ public class OperationLogDaoImpl implements OperationLogDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<OperationLogImpl> getLogsByCrudType(CrudType crudType, int maxResults) {
-		return (List<OperationLogImpl>) em
+		return (List<OperationLogImpl>) entityManager
 				.createQuery("select model from OperationLogImpl model where model.crudType = :crudType")
 				.setParameter("crudType", crudType).setMaxResults(maxResults).getResultList();
 	}
@@ -113,7 +112,7 @@ public class OperationLogDaoImpl implements OperationLogDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<OperationLogImpl> getLogsByClientCN(String clientCN, int maxResults) {
-		List<OperationLogImpl> list = (List<OperationLogImpl>) em
+		List<OperationLogImpl> list = (List<OperationLogImpl>) entityManager
 				.createQuery("select model from OperationLogImpl model where model.clientCN = :clientCN")
 				.setParameter("clientCN", clientCN).setMaxResults(maxResults).getResultList();
 
@@ -123,7 +122,7 @@ public class OperationLogDaoImpl implements OperationLogDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<OperationLogImpl> getLogsByResultCode(String resultCode, int maxResults) {
-		return (List<OperationLogImpl>) em
+		return (List<OperationLogImpl>) entityManager
 				.createQuery("select model from OperationLogImpl model where model.resultCode = :resultCode")
 				.setParameter("resultCode", resultCode).setMaxResults(maxResults).getResultList();
 	}
@@ -132,7 +131,7 @@ public class OperationLogDaoImpl implements OperationLogDao {
 	public List<OperationLogImpl> getLogsByPluginId(String pluginId, int maxResults) {
 		String query = "SELECT l FROM OperationLogImpl l " + "WHERE l.pluginId = :pluginId";
 
-		Query q = em.createQuery(query);
+		Query q = entityManager.createQuery(query);
 		q.setParameter("pluginId", pluginId);
 
 		q.setMaxResults(maxResults);
@@ -148,7 +147,7 @@ public class OperationLogDaoImpl implements OperationLogDao {
 
 		String query = "SELECT l FROM OperationLogImpl l " + "WHERE l.taskId = :taskId";
 
-		Query q = em.createQuery(query);
+		Query q = entityManager.createQuery(query);
 		q.setParameter("taskId", taskId);
 
 		q.setMaxResults(maxResults);
@@ -164,7 +163,7 @@ public class OperationLogDaoImpl implements OperationLogDao {
 		String query = "SELECT l FROM OperationLogImpl l " + "WHERE l.date between :startDate and :finishDate";
 		// + " ORDER BY createdAt DESC";
 
-		Query q = em.createQuery(query);
+		Query q = entityManager.createQuery(query);
 
 		q.setParameter("startDate", startDate, TemporalType.DATE);
 		q.setParameter("finishDate", finishDate, TemporalType.DATE);
@@ -179,7 +178,7 @@ public class OperationLogDaoImpl implements OperationLogDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<OperationLogImpl> getLogsByText(String freeText, int maxResults) {
-		return (List<OperationLogImpl>) em
+		return (List<OperationLogImpl>) entityManager
 				.createQuery("select model from OperationLogImpl model where model.logText like :freeText")
 				.setParameter("freeText", "%" + freeText + "%").setMaxResults(maxResults).getResultList();
 	}
@@ -236,7 +235,7 @@ public class OperationLogDaoImpl implements OperationLogDao {
 	@SuppressWarnings({ "unchecked" })
 	@Override
 	public List<? extends IOperationLog> getAllLogs(Integer maxResults) {
-		Query query = em.createQuery("select model from OperationLogImpl model order by model.date desc ");
+		Query query = entityManager.createQuery("select model from OperationLogImpl model order by model.date desc ");
 
 		if (null != maxResults)
 			query.setMaxResults(maxResults);
@@ -247,7 +246,7 @@ public class OperationLogDaoImpl implements OperationLogDao {
 	@Override
 	public List<? extends IOperationLog> getLogsBy(Map<String, Object> params, Integer maxResults) {
 		BaseDaoImpl<OperationLogImpl> baseEntity = new BaseDaoImpl<OperationLogImpl>();
-		baseEntity.setEntityManager(em);
+		baseEntity.setEntityManager(entityManager);
 		return baseEntity.findByProperties(OperationLogImpl.class, params, null, maxResults);
 	}
 
@@ -316,7 +315,7 @@ public class OperationLogDaoImpl implements OperationLogDao {
 	}
 
 	private Query createQuery(IQueryCriteria[] logCriterias, int offset, int maxResults) throws Exception {
-		CriteriaBuilder cb = em.getCriteriaBuilder();
+		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 		CriteriaQuery<OperationLogImpl> cq = cb.createQuery(OperationLogImpl.class);
 		Root<OperationLogImpl> log = cq.from(OperationLogImpl.class);
 
@@ -333,7 +332,7 @@ public class OperationLogDaoImpl implements OperationLogDao {
 			cq.orderBy(cb.desc(log.get("creationDate")));
 		}
 
-		TypedQuery<OperationLogImpl> q = em.createQuery(cq);
+		TypedQuery<OperationLogImpl> q = entityManager.createQuery(cq);
 
 		if (offset >= 0) {
 			q.setFirstResult(offset);
@@ -400,7 +399,7 @@ public class OperationLogDaoImpl implements OperationLogDao {
 			String query = "SELECT l FROM OperationLogImpl l "
 					+ "WHERE l.creationDate between :startDate and :finishDate";
 
-			Query q = em.createQuery(query);
+			Query q = entityManager.createQuery(query);
 
 			q.setParameter("startDate", new Date(startDate), TemporalType.DATE);
 			q.setParameter("finishDate", new Date(endDate), TemporalType.DATE);
@@ -411,7 +410,7 @@ public class OperationLogDaoImpl implements OperationLogDao {
 		} else {
 			String query = "SELECT l FROM OperationLogImpl l " + "WHERE l.creationDate >= :startDate ";
 
-			Query q = em.createQuery(query);
+			Query q = entityManager.createQuery(query);
 
 			q.setParameter("startDate", new Date(startDate), TemporalType.DATE);
 

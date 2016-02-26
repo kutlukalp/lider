@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.Table;
 import javax.persistence.TypedQuery;
@@ -39,51 +38,51 @@ public class PluginDbServiceImpl implements IPluginDbService {
 	// TODO provide overload methods for delete & find (use order, offset,
 	// maxResults)
 
-	@PersistenceContext(unitName = "lider")
-	EntityManager em;
+//	@PersistenceContext(unitName = "lider")
+	private EntityManager entityManager;
 
-	public void setEntityManager(EntityManager em) {
-		this.em = em;
+	public void setEntityManager(EntityManager entityManager) {
+		this.entityManager = entityManager;
 	}
 
 	@Override
 	public void save(Object entity) {
-		em.persist(entity);
+		entityManager.persist(entity);
 	}
 
 	@Override
 	public void update(Object entity) {
-		em.merge(entity);
+		entityManager.merge(entity);
 	}
 
 	@Override
 	public Object saveOrUpdate(Object entity) {
-		return em.merge(entity);
+		return entityManager.merge(entity);
 	}
 
 	@Override
 	public void delete(Class entityClass, Object id) {
-		Object entity = em.find(entityClass, id);
-		em.remove(entity);
+		Object entity = entityManager.find(entityClass, id);
+		entityManager.remove(entity);
 	}
 
 	@Override
 	public void deleteByProperty(Class entityClass, String propertyName, Object propertyValue) {
 		String tableName = getTableName(entityClass);
-		Query qDelete = em.createQuery("delete from " + tableName + " t where t." + propertyName + " = ?1");
+		Query qDelete = entityManager.createQuery("delete from " + tableName + " t where t." + propertyName + " = ?1");
 		qDelete.setParameter(1, propertyValue);
 		qDelete.executeUpdate();
 	}
 
 	@Override
 	public <T> T find(Class<T> entityClass, Object id) {
-		return em.find(entityClass, id);
+		return entityManager.find(entityClass, id);
 	}
 
 	@Override
 	public <T> List<T> findAll(Class<T> entityClass) {
 		String tableName = getTableName(entityClass);
-		return em.createQuery("select t from " + tableName + " t", entityClass).getResultList();
+		return entityManager.createQuery("select t from " + tableName + " t", entityClass).getResultList();
 	}
 
 	@Override
@@ -92,7 +91,7 @@ public class PluginDbServiceImpl implements IPluginDbService {
 
 		String tableName = getTableName(entityClass);
 
-		TypedQuery<T> query = em
+		TypedQuery<T> query = entityManager
 				.createQuery("select t from " + tableName + " t where t." + propertyName + "= :propertyValue",
 						entityClass)
 				.setParameter("propertyValue", propertyValue);
@@ -108,7 +107,7 @@ public class PluginDbServiceImpl implements IPluginDbService {
 	public <T> List<T> findByProperties(Class<T> entityClass, Map<String, Object> propertiesMap,
 			List<PropertyOrder> orders, Integer maxResults) {
 
-		CriteriaBuilder builder = em.getCriteriaBuilder();
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<T> criteria = builder.createQuery(entityClass);
 		Root<T> from = criteria.from(entityClass);
 		criteria.select(from);
@@ -135,7 +134,7 @@ public class PluginDbServiceImpl implements IPluginDbService {
 			criteria.orderBy(orderList);
 		}
 
-		TypedQuery<T> query = em.createQuery(criteria);
+		TypedQuery<T> query = entityManager.createQuery(criteria);
 		if (maxResults != null) {
 			query = query.setMaxResults(maxResults);
 		}
@@ -147,7 +146,7 @@ public class PluginDbServiceImpl implements IPluginDbService {
 	public <T> List<T> findByPropertiesAndOperators(Class<T> entityClass, Map<String, ArrayList> propertiesMap,
 			List<PropertyOrder> orders, Integer offset, Integer maxResults) {
 
-		CriteriaBuilder builder = em.getCriteriaBuilder();
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<T> criteria = builder.createQuery(entityClass);
 		Root<T> from = criteria.from(entityClass);
 		criteria.select(from);
@@ -200,7 +199,7 @@ public class PluginDbServiceImpl implements IPluginDbService {
 			criteria.orderBy(orderList);
 		}
 
-		TypedQuery<T> query = em.createQuery(criteria);
+		TypedQuery<T> query = entityManager.createQuery(criteria);
 		if (maxResults != null) {
 			query = query.setFirstResult(offset).setMaxResults(maxResults);
 		}
@@ -220,7 +219,7 @@ public class PluginDbServiceImpl implements IPluginDbService {
 		 * Check if the specified class is present in the metamodel. Throws
 		 * IllegalArgumentException if not.
 		 */
-		Metamodel meta = em.getMetamodel();
+		Metamodel meta = entityManager.getMetamodel();
 		EntityType<T> entityType = meta.entity(entityClass);
 
 		// Check whether @Table annotation is present on the class.

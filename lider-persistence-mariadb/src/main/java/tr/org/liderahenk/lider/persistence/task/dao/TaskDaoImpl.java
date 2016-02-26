@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -31,8 +30,8 @@ public class TaskDaoImpl implements ITaskDao {
 	private static Logger log = LoggerFactory
 			.getLogger(TaskDaoImpl.class);
 
-	@PersistenceContext(unitName="lider")
-	private EntityManager em;
+//	@PersistenceContext(unitName="lider")
+	private EntityManager entityManager;
 	
 	private TaskCriteriaBuilder taskCriteriaBuilder;
 	
@@ -40,8 +39,8 @@ public class TaskDaoImpl implements ITaskDao {
 		this.taskCriteriaBuilder = criteriaBuilder;
 	}
 	
-	public void setEntityManager(EntityManager em) {
-		this.em = em;
+	public void setEntityManager(EntityManager entityManager) {
+		this.entityManager = entityManager;
 	}
 
 	public void init() {
@@ -57,7 +56,7 @@ public class TaskDaoImpl implements ITaskDao {
 		
 		try {
 			TaskEntityImpl actualTask = new TaskEntityImpl(task);
-			em.persist(actualTask);
+			entityManager.persist(actualTask);
 			return actualTask;
 		} catch (Exception e) {
 			log.error("",e);
@@ -71,7 +70,7 @@ public class TaskDaoImpl implements ITaskDao {
 		
 		try {
 			TaskEntityImpl actualTask = new TaskEntityImpl(task);
-			em.merge(actualTask);
+			entityManager.merge(actualTask);
 		} catch (Exception e) {
 			log.error("error executing createOrUpdate task: ", e);
 		}
@@ -79,13 +78,13 @@ public class TaskDaoImpl implements ITaskDao {
 
 	@Override
 	public void delete(String taskId) {
-		em.remove(get(taskId));
+		entityManager.remove(get(taskId));
 	}
 
 	@Override
 	public List<TaskEntityImpl> findActive() {
 		String queryString = "SELECT t.id FROM TaskEntityImpl t where t.active = 1";
-		Query query = em.createQuery(queryString);
+		Query query = entityManager.createQuery(queryString);
 
 		return query.getResultList();
 	}
@@ -93,7 +92,7 @@ public class TaskDaoImpl implements ITaskDao {
 	@Override
 	public List<TaskEntityImpl> findAll() {
 		String queryString = "SELECT t FROM TaskEntityImpl t";
-		Query query = em.createQuery(queryString);
+		Query query = entityManager.createQuery(queryString);
 		return query.getResultList();
 	}
 
@@ -124,7 +123,7 @@ public class TaskDaoImpl implements ITaskDao {
 
 	@Override
 	public ITask get(String id) {
-		return em.find(TaskEntityImpl.class, id);
+		return entityManager.find(TaskEntityImpl.class, id);
 	}
 
 	@Override
@@ -137,7 +136,7 @@ public class TaskDaoImpl implements ITaskDao {
 						.next();
 				ITask value = entry.getValue();
 
-				em.merge(new TaskEntityImpl(value));
+				entityManager.merge(new TaskEntityImpl(value));
 
 			}
 		} catch (Exception e) {
@@ -150,7 +149,7 @@ public class TaskDaoImpl implements ITaskDao {
 		log.debug("loding hot tasks");
 		String queryString = "SELECT t.id FROM TaskEntityImpl t ";
 		log.debug("running query => {}", queryString);
-		Query query = em.createQuery(queryString);
+		Query query = entityManager.createQuery(queryString);
 		List<String> result = query.getResultList();
 		log.debug("query returned {}", result.size());
 		return result;
@@ -159,7 +158,7 @@ public class TaskDaoImpl implements ITaskDao {
 	@Override
 	public List<? extends ITask> loadHotTasks() {
 		
-		CriteriaBuilder cbuilder = em.getCriteriaBuilder();
+		CriteriaBuilder cbuilder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<TaskEntityImpl> cquery = cbuilder.createQuery(TaskEntityImpl.class);
 		Root<TaskEntityImpl> task = cquery.from(TaskEntityImpl.class);
 		boolean myCondition = true;
@@ -173,13 +172,13 @@ public class TaskDaoImpl implements ITaskDao {
 			cquery.orderBy(cbuilder.desc(task.get("creationDate")));	
 		}
 		
-		TypedQuery<TaskEntityImpl> query = em.createQuery(cquery);
+		TypedQuery<TaskEntityImpl> query = entityManager.createQuery(cquery);
 		return query.getResultList();
 	}
 	
 	private Query createQuery(IQueryCriteria[] taskCriteriaList, int offset,
 			int maxResults) throws Exception {
-		CriteriaBuilder cbuilder = em.getCriteriaBuilder();
+		CriteriaBuilder cbuilder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<TaskEntityImpl> cquery = cbuilder.createQuery(TaskEntityImpl.class);
 		Root<TaskEntityImpl> task = cquery.from(TaskEntityImpl.class);
 
@@ -210,7 +209,7 @@ public class TaskDaoImpl implements ITaskDao {
 			cquery.orderBy(cbuilder.desc(task.get("creationDate")));	
 		}
 		
-		TypedQuery<TaskEntityImpl> query = em.createQuery(cquery);
+		TypedQuery<TaskEntityImpl> query = entityManager.createQuery(cquery);
 		
 		if (null != taskStateValue) {
 			query.setParameter("taskStateParam", Enum.valueOf(TaskState.class, taskStateValue.toString()));
@@ -235,7 +234,7 @@ public class TaskDaoImpl implements ITaskDao {
 		//CriteriaQuery<TaskEntityImpl> cq = cb.createQuery(TaskEntityImpl.class);
 		
 		//Root<TaskEntityImpl> task = cq.from(TaskEntityImpl.class);
-		CriteriaBuilder cbuilder = em.getCriteriaBuilder();
+		CriteriaBuilder cbuilder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<Long> cquery = cbuilder.createQuery(Long.class);
 		Root<TaskEntityImpl> task = cquery.from(TaskEntityImpl.class);
 		
@@ -249,7 +248,7 @@ public class TaskDaoImpl implements ITaskDao {
 		}
 		
 		cquery.where(predicates.toArray(new Predicate[] {}));
-		return em.createQuery(cquery);
+		return entityManager.createQuery(cquery);
 		
 	}
 }

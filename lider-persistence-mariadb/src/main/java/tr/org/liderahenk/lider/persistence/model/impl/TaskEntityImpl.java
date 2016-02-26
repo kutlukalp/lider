@@ -37,6 +37,8 @@ public class TaskEntityImpl implements ITask {
 	@Id
 	@Column(name = "ID")
 	private String id;
+	
+	private String hafiz;
 
 	@Column(name = "ACTIVE")
 	private boolean active = true;
@@ -247,6 +249,14 @@ public class TaskEntityImpl implements ITask {
 	@Transient
 	public String toJSON() {
 		return null;
+	}
+
+	public String getHafiz() {
+		return hafiz;
+	}
+
+	public void setHafiz(String hafiz) {
+		this.hafiz = hafiz;
 	}
 
 }
