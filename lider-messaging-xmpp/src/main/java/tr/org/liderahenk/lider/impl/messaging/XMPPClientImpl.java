@@ -45,10 +45,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.IConfigurationService;
-import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
-import tr.org.liderahenk.lider.core.api.messaging.INotificationSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.IPresenceSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.ITaskStatusUpdateSubscriber;
+import tr.org.liderahenk.lider.impl.registration.RegistrationListener;
 
 /**
  * This class works as an XMPP client which listens to incoming packets and
@@ -84,14 +83,13 @@ public class XMPPClientImpl {
 	private XMPPPingFailedListener pingFailedListener = new XMPPPingFailedListener();
 	private RosterListenerImpl rosterListener = new RosterListenerImpl();
 	private AllPacketListener packetListener = new AllPacketListener();
-	private NotificationListener notificationListener = new NotificationListener();
+	private RegistrationListener registrationListener = new RegistrationListener();
 	private IQPacketListener iqListener = new IQPacketListener();
 	private TaskStatusUpdateListener taskStatusUpdateListener = new TaskStatusUpdateListener();
 
 	/**
 	 * Packet subscribers
 	 */
-	private List<INotificationSubscriber> notificationSubscribers;
 	private List<ITaskStatusUpdateSubscriber> taskStatusUpdateSubscribers;
 	private List<IPresenceSubscriber> presenceSubscribers;
 	private List<String> onlineUsers = new ArrayList<String>();
@@ -101,7 +99,6 @@ public class XMPPClientImpl {
 	private MultiUserChatManager mucManager;
 
 	private IConfigurationService configurationService;
-	private ILDAPService ldapService;
 
 	public void init() {
 		logger.info("XMPP service initialization is started");
@@ -119,7 +116,7 @@ public class XMPPClientImpl {
 	 * Sets XMPP client parameters.
 	 */
 	private void setParameters() {
-		this.username = configurationService.getXmppUserName();
+		this.username = configurationService.getXmppUsername();
 		this.password = configurationService.getXmppPassword();
 		this.serviceName = configurationService.getXmppServiceName();
 		this.host = configurationService.getXmppHost();
@@ -207,7 +204,7 @@ public class XMPPClientImpl {
 		PingManager.getInstanceFor(connection).registerPingFailedListener(pingFailedListener);
 		ChatManager.getInstanceFor(connection).addChatListener(chatManagerListener);
 		connection.addAsyncStanzaListener(packetListener, packetListener);
-		connection.addAsyncStanzaListener(notificationListener, notificationListener);
+		connection.addAsyncStanzaListener(registrationListener, registrationListener);
 		connection.addAsyncStanzaListener(taskStatusUpdateListener, taskStatusUpdateListener);
 		connection.addAsyncStanzaListener(iqListener, iqListener);
 		Roster.getInstanceFor(connection).addRosterListener(rosterListener);
@@ -258,7 +255,6 @@ public class XMPPClientImpl {
 			ChatManager.getInstanceFor(connection).removeChatListener(chatManagerListener);
 			Roster.getInstanceFor(connection).removeRosterListener(rosterListener);
 			connection.removeAsyncStanzaListener(packetListener);
-			connection.removeAsyncStanzaListener(notificationListener);
 			connection.removeAsyncStanzaListener(taskStatusUpdateListener);
 			connection.removeAsyncStanzaListener(iqListener);
 			logger.debug("Listeners are removed.");
@@ -318,7 +314,7 @@ public class XMPPClientImpl {
 	 * @param userList
 	 * @param inviteMessage
 	 */
-	private void sendRoomInvite(MultiUserChat muc, ArrayList<String> userList, String inviteMessage) {
+	public void sendRoomInvite(MultiUserChat muc, ArrayList<String> userList, String inviteMessage) {
 
 		if (muc != null && muc.getRoom() != null && !muc.getRoom().isEmpty()) {
 
@@ -344,7 +340,7 @@ public class XMPPClientImpl {
 	 * @param nickName
 	 * @return
 	 */
-	private MultiUserChat createRoom(String roomJid, String nickName) {
+	public MultiUserChat createRoom(String roomJid, String nickName) {
 
 		MultiUserChat muc = mucManager.getMultiUserChat(roomJid);
 		try {
@@ -367,7 +363,7 @@ public class XMPPClientImpl {
 	 * @param muc
 	 * @param message
 	 */
-	private void sendMessageToRoom(MultiUserChat muc, String message) {
+	public void sendMessageToRoom(MultiUserChat muc, String message) {
 
 		try {
 			if (muc != null && muc.getMembers() != null && message != null && !message.isEmpty()) {
@@ -545,66 +541,6 @@ public class XMPPClientImpl {
 	}
 
 	/**
-	 * Notification is used to notify subscribed listeners as well as Lider
-	 * Console users.
-	 *
-	 */
-	class NotificationListener implements StanzaListener, StanzaFilter {
-
-		@Override
-		public void processPacket(Stanza packet) throws NotConnectedException {
-
-			try {
-				if (packet instanceof Message) {
-
-					Message msg = (Message) packet;
-					logger.info("Notification message received from => {}, body => {}", msg.getFrom(), msg.getBody());
-
-					ObjectMapper mapper = new ObjectMapper();
-					try {
-
-						NotificationMessageImpl notificationMessage = mapper.readValue(msg.getBody(),
-								NotificationMessageImpl.class);
-						notificationMessage.setFrom(msg.getFrom());
-
-						for (INotificationSubscriber subscriber : notificationSubscribers) {
-							try {
-								subscriber.messageReceived(notificationMessage);
-							} catch (Exception e) {
-								logger.error("Subscriber could not handle message: ", e);
-							}
-							logger.debug("Notified subscriber => {}", subscriber);
-						}
-						// forward notification message to all Lider Console
-						// users
-						for (String jid : ldapService.getLyaUserJids()) {
-							sendMessage(mapper.writeValueAsString(notificationMessage), jid);
-						}
-					} catch (Exception e) {
-						logger.error(e.getMessage(), e);
-					}
-
-				}
-
-			} catch (Exception e) {
-				logger.error(e.getMessage(), e);
-			}
-		}
-
-		@Override
-		public boolean accept(Stanza stanza) {
-			if (stanza instanceof Message) {
-				Message msg = (Message) stanza;
-				// All messages from agents are type normal
-				if (Message.Type.normal.equals(msg.getType()) && msg.getBody().contains("\"type\": \"NOTIFICATION\"")) {
-					return true;
-				}
-			}
-			return false;
-		}
-	}
-
-	/**
 	 * Listens to all IQ packets for debug purposes.
 	 *
 	 */
@@ -681,14 +617,6 @@ public class XMPPClientImpl {
 
 	/**
 	 * 
-	 * @param ldapService
-	 */
-	public void setLdapService(ILDAPService ldapService) {
-		this.ldapService = ldapService;
-	}
-
-	/**
-	 * 
 	 * @param configurationService
 	 */
 	public void setConfigurationService(IConfigurationService configurationService) {
@@ -709,14 +637,6 @@ public class XMPPClientImpl {
 	 */
 	public void setTaskStatusUpdateSubscribers(List<ITaskStatusUpdateSubscriber> taskStatusUpdateSubscribers) {
 		this.taskStatusUpdateSubscribers = taskStatusUpdateSubscribers;
-	}
-
-	/**
-	 * 
-	 * @param notificationSubscribers
-	 */
-	public void setNotificationSubscribers(List<INotificationSubscriber> notificationSubscribers) {
-		this.notificationSubscribers = notificationSubscribers;
 	}
 
 	/**
