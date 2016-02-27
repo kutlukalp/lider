@@ -20,9 +20,7 @@
 	<bean id="xmppClient" class="tr.org.liderahenk.lider.impl.messaging.XMPPClientImpl"
 		init-method="init" destroy-method="destroy">
 		<property name="presenceSubscribers" ref="presenceSubscribersRef" />
-		<property name="notificationSubscribers" ref="notificationSubscribersRef" />
 		<property name="taskStatusUpdateSubscribers" ref="taskStatusUpdateSubscribersRef" />
-		<property name="ldapService" ref="ldapService" />
 		<property name="configurationService" ref="configurationService" />
 	</bean>
 
@@ -30,17 +28,12 @@
 		class="tr.org.liderahenk.lider.impl.messaging.MessageFactoryImpl">
 	</bean>
 
-	<reference-list id="notificationSubscribersRef"
-		interface="tr.org.liderahenk.lider.core.api.messaging.INotificationSubscriber"
-		availability="optional" />
 	<reference-list id="presenceSubscribersRef"
 		interface="tr.org.liderahenk.lider.core.api.messaging.IPresenceSubscriber"
 		availability="optional" />
 	<reference-list id="taskStatusUpdateSubscribersRef"
 		interface="tr.org.liderahenk.lider.core.api.messaging.ITaskStatusUpdateSubscriber"
 		availability="optional" />
-	<reference id="ldapService"
-		interface="tr.org.liderahenk.lider.core.api.ldap.ILDAPService" />
 	<reference id="configurationService"
 		interface="tr.org.liderahenk.lider.core.api.IConfigurationService" />
 

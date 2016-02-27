@@ -51,8 +51,6 @@
 		</property>
 		<property name="filterChainDefinitions">
 			<value>
-				/lider/agent/register = myAuthcAuth
-				/lider/agent/validate/credentials = myAuthcAuth
 				/lider/rest/** = myAuthcAuth
 				/** = myAuthcAuth
 			</value>
@@ -67,8 +65,5 @@
 
 	<osgi:reference id="configurationService"
 		interface="tr.org.liderahenk.lider.core.api.IConfigurationService" />
-
-	<osgi:reference id="registrationService"
-		interface="tr.org.liderahenk.lider.core.api.authorization.IRegistrationService" />
 
 </beans>
