@@ -13,58 +13,41 @@
 
 	<bean id="configurationService" class="tr.org.liderahenk.config.ConfigurationServiceImpl">
 		<property name="dbServer" value="${db.server}" />
-		<property name="dbDatabase" value="${db.database}" />
 		<property name="dbPort" value="${db.port}" />
+		<property name="dbDatabase" value="${db.database}" />
 		<property name="dbUsername" value="${db.username}" />
 		<property name="dbPassword" value="${db.password}" />
 
 		<property name="ldapServer" value="${ldap.server}" />
-		<property name="ldapPassword" value="${ldap.password}" />
-		<property name="ldapUser" value="${ldap.user}" />
 		<property name="ldapPort" value="${ldap.port}" />
+		<property name="ldapUsername" value="${ldap.username}" />
+		<property name="ldapPassword" value="${ldap.password}" />
 		<property name="ldapRootDn" value="${ldap.root.dn}" />
 		<property name="ldapUseSsl" value="${ldap.use.ssl}" />
 
-		<property name="xmppUserName" value="${xmpp.username}" />
-		<property name="xmppPassword" value="${xmpp.password}" />
 		<property name="xmppHost" value="${xmpp.host}" />
 		<property name="xmppPort" value="${xmpp.port}" />
+		<property name="xmppUsername" value="${xmpp.username}" />
+		<property name="xmppPassword" value="${xmpp.password}" />
 		<property name="xmppServiceName" value="${xmpp.service.name}" />
 		<property name="xmppMaxRetryConnectionCount" value="${xmpp.max.retry.connection.count}" />
 		<property name="xmppPacketReplayTimeout" value="${xmpp.packet.replay.timeout}" />
 		<property name="xmppPingTimeout" value="${xmpp.ping.timeout}" />
+		<property name="xmppUseSsl" value="${xmpp.use.ssl}" />
 
 		<property name="agentLdapBaseDn" value="${agent.ldap.base.dn}" />
 		<property name="agentLdapIdAttribute" value="${agent.ldap.id.attribute}" />
 		<property name="agentLdapJidAttribute" value="${agent.ldap.jid.attribute}" />
+		<property name="agentLdapObjectClasses" value="${agent.ldap.object.classes}" />
 
 		<property name="authLdapUserSearchBase" value="${auth.ldap.user.search.base}" />
-		<property name="authLdapUserFilter" value="${auth.ldap.user.filter}" />
+		<property name="authLdapUserObjectClasses" value="${auth.ldap.user.object.classes}" />
 		<property name="authLdapUserAttribute" value="${auth.ldap.user.attribute}" />
 		<property name="authorizationEnabled" value="${auth.authorization.enabled}" />
-		<property name="authLdapUserObjectClasses" value="${auth.ldap.user.objectclasses}" />
-		<property name="servers" value="${servers}" />
-		<property name="privateKey" value="${privateKey}" />
 
 		<property name="taskManagerTaskTimeout" value="${taskmanager.task.timeout}" />
 		<property name="taskManagerMulticastEnabled" value="${taskmanager.multicast.enabled}" />
 		<property name="taskManagerLogXmppMessagesEnabled" value="${taskmanager.log.xmpp.messages.enabled}" />
-
-		<property name="syslogRecordMaxQueryDay" value="${syslog.record.max.query.day}" />
-
-		<property name="mailAddress" value="${mail.address}" />
-		<property name="mailPassword" value="${mail.password}" />
-		<property name="mailHost" value="${mail.host}" />
-		<property name="mailSmtpPort" value="${mail.smtp.port}" />
-		<property name="mailSmtpAuth" value="${mail.smtp.auth}" />
-
-		<property name="mailSmtpStartTlsEnable" value="${mail.smtp.starttls.enable}" />
-		<property name="mailSmtpSslEnable" value="${mail.smtp.ssl.enable}" />
-		<property name="mailSmtpConnTimeout" value="${mail.smtp.connectiontimeout}" />
-		<property name="mailSmtpTimeout" value="${mail.smtp.timeout}" />
-		<property name="mailSmtpWriteTimeout" value="${mail.smtp.writetimeout}" />
-
-		<property name="userMailAttribute" value="${ldap.user.mail.attribute}" />
 	</bean>
 
 	<service ref="configurationService"

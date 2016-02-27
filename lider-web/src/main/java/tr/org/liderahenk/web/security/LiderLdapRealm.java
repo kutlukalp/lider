@@ -53,7 +53,7 @@ public class LiderLdapRealm extends AbstractLdapRealm {
 			this.url = "ldap://" + config.getLdapServer() + ":" + config.getLdapPort();
 		}
 
-		this.systemUsername = config.getLdapUser();
+		this.systemUsername = config.getLdapUsername();
 		this.systemPassword = config.getLdapPassword();
 
 		this.objectClasses = config.getAuthLdapUserObjectClasses();

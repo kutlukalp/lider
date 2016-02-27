@@ -106,7 +106,7 @@ public class LDAPServiceImpl implements ILDAPService {
 		logger.info("Initializing LDAP service");
 		logger.info("ldap.server => {}", configurationService.getLdapServer());
 		logger.info("ldap.port => {}", configurationService.getLdapPort());
-		logger.info("ldap.user => {}", configurationService.getLdapUser());
+		logger.info("ldap.user => {}", configurationService.getLdapUsername());
 		logger.info("ldap.password => {}", configurationService.getLdapPassword());
 		logger.info("ldap.root.dn => {}", configurationService.getLdapRootDn());
 
@@ -117,7 +117,7 @@ public class LDAPServiceImpl implements ILDAPService {
 		LdapConnectionConfig lconfig = new LdapConnectionConfig();
 		lconfig.setLdapHost(configurationService.getLdapServer());
 		lconfig.setLdapPort(Integer.parseInt(configurationService.getLdapPort()));
-		lconfig.setName(configurationService.getLdapUser());
+		lconfig.setName(configurationService.getLdapUsername());
 		lconfig.setCredentials(configurationService.getLdapPassword());
 		// lconfig.setUseTls(true);
 		lconfig.setUseSsl(configurationService.getLdapUseSsl());
