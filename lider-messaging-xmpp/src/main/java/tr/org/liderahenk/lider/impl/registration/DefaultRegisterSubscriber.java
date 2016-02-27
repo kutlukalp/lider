@@ -11,7 +11,6 @@ import tr.org.liderahenk.lider.core.api.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.auth.IRegistrationInfo;
 import tr.org.liderahenk.lider.core.api.auth.RegistrationStatus;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
-import tr.org.liderahenk.lider.core.api.ldap.LdapException;
 import tr.org.liderahenk.lider.core.api.messaging.IRegisterMessage;
 import tr.org.liderahenk.lider.core.api.messaging.IRegisterSubscriber;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
@@ -26,8 +25,7 @@ public class DefaultRegisterSubscriber implements IRegisterSubscriber {
 	@Override
 	public IRegistrationInfo messageReceived(IRegisterMessage message) throws Exception {
 
-		String jid = message.getFrom();
-		String uid = jid.split("@")[0];
+		String uid = message.getFrom().split("@")[0];
 
 		// Check if agent already exists!
 		final List<LdapEntry> entry = ldapService.search(config.getAgentLdapJidAttribute(), uid,
@@ -41,7 +39,7 @@ public class DefaultRegisterSubscriber implements IRegisterSubscriber {
 					entry.get(0).getDistinguishedName());
 			return new RegistrationInfoImpl(RegistrationStatus.ALREADY_EXISTS,
 					entry.get(0).getDistinguishedName()
-					+ " already exists! Updated its password with the one you submitted and returning existing entry attributes.",
+							+ " already exists! Updated its password with the one you submitted and returning existing entry attributes.",
 					entry.get(0).getDistinguishedName());
 		} else {
 			// Create new agent DN
@@ -51,26 +49,28 @@ public class DefaultRegisterSubscriber implements IRegisterSubscriber {
 			attributes.put(config.getAgentLdapJidAttribute(), new String[] { uid });
 			attributes.put("userPassword", new String[] { message.getPassword() });
 
-			try {
-				ldapService.addEntry(entryDN, attributes);
-				LdapEntry newEntry = ldapService.getEntry(entryDN,
-						new String[] { idMatcher.getAgentJidAttribute(), "userPassword" });
-				// logger.debug("Agent DN {} created successfully!", entryDN);
-				// return new
-				// RegistrationInfoImpl(RegistrationStatus.REGISTERED,
-				// newEntry.getAttributes().get(idMatcher.getAgentJidAttribute()),
-				// entryDN,
-				// idMatcher.getXmppServer(), idMatcher.getXmppDomain(), entryDN
-				// + " created successfully!");
-
-			} catch (final LdapException e) {
-				// return new
-				// RegistrationInfoImpl(RegistrationStatus.REGISTRATION_ERROR,
-				// null, null, null, null,
-				// e.getMessage());
-			}
+			String entryDN = createEntryDN(message);
+			ldapService.addEntry(entryDN, attributes);
+			logger.debug("Agent DN {} created successfully!", entryDN);
+			
+			// Insert agent info into the database
+			// TODO
+			
+			return new RegistrationInfoImpl(RegistrationStatus.REGISTERED, entryDN + " created successfully!", entryDN);
 		}
 
+	}
+
+	private String createEntryDN(IRegisterMessage message) {
+		StringBuilder entryDN = new StringBuilder();
+		// Generate agent ID attribute
+		entryDN.append(config.getAgentLdapIdAttribute());
+		entryDN.append("=");
+		entryDN.append(message.getFrom().split("@")[0]);
+		// Append base DN
+		entryDN.append(",");
+		entryDN.append(config.getAgentLdapBaseDn() == null ? config.getAgentLdapBaseDn() : config.getAgentLdapBaseDn());
+		return entryDN.toString();
 	}
 
 }
