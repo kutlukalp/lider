@@ -33,7 +33,12 @@ public class DefaultRegisterSubscriber implements IRegisterSubscriber {
 
 		// Agent DN already exists
 		if (entry != null && !entry.isEmpty()) {
+			// Update agent entry
 			ldapService.updateEntry(entry.get(0).getDistinguishedName(), "userPassword", message.getPassword());
+			
+			// Update agent info in the database
+			// TODO
+			
 			logger.debug(
 					"Agent DN {} already exists! Updated its password with the one you submitted and returning existing entry attributes.",
 					entry.get(0).getDistinguishedName());
@@ -42,7 +47,7 @@ public class DefaultRegisterSubscriber implements IRegisterSubscriber {
 							+ " already exists! Updated its password with the one you submitted and returning existing entry attributes.",
 					entry.get(0).getDistinguishedName());
 		} else {
-			// Create new agent DN
+			// Create new agent entry
 			Map<String, String[]> attributes = new HashMap<String, String[]>();
 			attributes.put("objectClass", config.getAgentLdapObjectClasses().split(","));
 			attributes.put(config.getAgentLdapIdAttribute(), new String[] { uid });

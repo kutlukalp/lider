@@ -21,6 +21,7 @@
 		init-method="init" destroy-method="destroy">
 		<property name="presenceSubscribers" ref="presenceSubscribersRef" />
 		<property name="taskStatusUpdateSubscribers" ref="taskStatusUpdateSubscribersRef" />
+		<property name="registerSubscriber" ref="registerSubscriberRef" />
 		<property name="configurationService" ref="configurationService" />
 	</bean>
 
@@ -33,6 +34,9 @@
 		availability="optional" />
 	<reference-list id="taskStatusUpdateSubscribersRef"
 		interface="tr.org.liderahenk.lider.core.api.messaging.ITaskStatusUpdateSubscriber"
+		availability="optional" />
+	<reference-list id="registerSubscriberRef"
+		interface="tr.org.liderahenk.lider.core.api.messaging.IRegisterSubscriber"
 		availability="optional" />
 	<reference id="configurationService"
 		interface="tr.org.liderahenk.lider.core.api.IConfigurationService" />

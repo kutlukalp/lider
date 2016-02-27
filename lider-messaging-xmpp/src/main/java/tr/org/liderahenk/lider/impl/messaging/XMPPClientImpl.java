@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
 import org.jivesoftware.smack.ConnectionListener;
@@ -45,9 +47,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.IConfigurationService;
+import tr.org.liderahenk.lider.core.api.auth.IRegistrationInfo;
+import tr.org.liderahenk.lider.core.api.auth.RegistrationStatus;
 import tr.org.liderahenk.lider.core.api.messaging.IPresenceSubscriber;
+import tr.org.liderahenk.lider.core.api.messaging.IRegisterSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.ITaskStatusUpdateSubscriber;
-import tr.org.liderahenk.lider.impl.registration.RegistrationListener;
+import tr.org.liderahenk.lider.impl.registration.DefaultRegisterSubscriber;
+import tr.org.liderahenk.lider.impl.registration.RegisterMessageImpl;
+import tr.org.liderahenk.lider.impl.registration.RegistrationInfoImpl;
 
 /**
  * This class works as an XMPP client which listens to incoming packets and
@@ -83,17 +90,18 @@ public class XMPPClientImpl {
 	private XMPPPingFailedListener pingFailedListener = new XMPPPingFailedListener();
 	private RosterListenerImpl rosterListener = new RosterListenerImpl();
 	private AllPacketListener packetListener = new AllPacketListener();
-	private RegistrationListener registrationListener = new RegistrationListener();
 	private IQPacketListener iqListener = new IQPacketListener();
 	private TaskStatusUpdateListener taskStatusUpdateListener = new TaskStatusUpdateListener();
+	private RegistrationListener registrationListener = new RegistrationListener();
 
 	/**
 	 * Packet subscribers
 	 */
 	private List<ITaskStatusUpdateSubscriber> taskStatusUpdateSubscribers;
 	private List<IPresenceSubscriber> presenceSubscribers;
+	private IRegisterSubscriber registerSubscriber;
+	
 	private List<String> onlineUsers = new ArrayList<String>();
-
 	private XMPPTCPConnection connection;
 	private XMPPTCPConnectionConfiguration config;
 	private MultiUserChatManager mucManager;
@@ -616,6 +624,82 @@ public class XMPPClientImpl {
 	}
 
 	/**
+	 * RegistrationListener is responsible for listening to agent register
+	 * messages. It triggers {@link IRegisterSubscriber} instance upon incoming
+	 * register messages. If there is no subscriber, it falls back to the
+	 * default subscriber to handle registration.
+	 * 
+	 * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+	 * @see tr.org.liderahenk.lider.impl.registration.DefaultRegisterSubscriber
+	 *
+	 */
+	class RegistrationListener implements StanzaListener, StanzaFilter {
+
+		@Override
+		public boolean accept(Stanza stanza) {
+			if (stanza instanceof Message) {
+				Message msg = (Message) stanza;
+				// All messages from agents are type normal
+				if (Message.Type.normal.equals(msg.getType()) && msg.getBody().contains("\"type\": \"REGISTER\"")) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		@Override
+		public void processPacket(Stanza packet) throws NotConnectedException {
+
+			IRegistrationInfo registrationInfo = null;
+			Message msg = null;
+
+			try {
+				if (packet instanceof Message) {
+
+					msg = (Message) packet;
+					logger.info("Register message received from => {}, body => {}", msg.getFrom(), msg.getBody());
+
+					// Construct message
+					RegisterMessageImpl message = new ObjectMapper().readValue(msg.getBody(),
+							RegisterMessageImpl.class);
+					message.setFrom(msg.getFrom());
+
+					// Fall back to default register subscriber.
+					if (registerSubscriber == null) {
+						logger.info("Triggering default register subscriber.");
+						IRegisterSubscriber subscriber = new DefaultRegisterSubscriber();
+						registrationInfo = subscriber.messageReceived(message);
+						logger.debug("Notified subscriber => {}", subscriber);
+					} else {
+						try {
+							registrationInfo = registerSubscriber.messageReceived(message);
+						} catch (Exception e) {
+							logger.error("Subscriber could not handle message: ", e);
+						}
+						logger.debug("Notified subscriber => {}", registerSubscriber);
+					}
+				}
+			} catch (Exception e) {
+				logger.error(e.getMessage(), e);
+				registrationInfo = new RegistrationInfoImpl(RegistrationStatus.REGISTRATION_ERROR,
+						"Unexpected error occurred while registring Ahenk, see Lider logs for more info.", null);
+			}
+
+			// Send registration info back to agent
+			try {
+				sendMessage(new ObjectMapper().writeValueAsString(registrationInfo), msg.getFrom());
+			} catch (JsonGenerationException e) {
+				logger.error(e.getMessage(), e);
+			} catch (JsonMappingException e) {
+				logger.error(e.getMessage(), e);
+			} catch (IOException e) {
+				logger.error(e.getMessage(), e);
+			}
+		}
+
+	}
+
+	/**
 	 * 
 	 * @param configurationService
 	 */
@@ -637,6 +721,14 @@ public class XMPPClientImpl {
 	 */
 	public void setTaskStatusUpdateSubscribers(List<ITaskStatusUpdateSubscriber> taskStatusUpdateSubscribers) {
 		this.taskStatusUpdateSubscribers = taskStatusUpdateSubscribers;
+	}
+
+	/**
+	 * 
+	 * @param registerSubscriber
+	 */
+	public void setRegisterSubscriber(IRegisterSubscriber registerSubscriber) {
+		this.registerSubscriber = registerSubscriber;
 	}
 
 	/**
