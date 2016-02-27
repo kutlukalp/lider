@@ -54,6 +54,25 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 	private Long taskManagerTaskTimeout;
 	private Boolean taskManagerMulticastEnabled;
 	private Boolean taskManagerLogXmppMessagesEnabled;
+	
+	@Override
+	public String toString() {
+		return "ConfigurationServiceImpl [dbServer=" + dbServer + ", dbPort=" + dbPort + ", dbDatabase=" + dbDatabase
+				+ ", dbUsername=" + dbUsername + ", dbPassword=" + dbPassword + ", ldapServer=" + ldapServer
+				+ ", ldapPort=" + ldapPort + ", ldapUsername=" + ldapUsername + ", ldapPassword=" + ldapPassword
+				+ ", ldapRootDn=" + ldapRootDn + ", ldapUseSsl=" + ldapUseSsl + ", xmppHost=" + xmppHost + ", xmppPort="
+				+ xmppPort + ", xmppUsername=" + xmppUsername + ", xmppPassword=" + xmppPassword + ", xmppServiceName="
+				+ xmppServiceName + ", xmppMaxRetryConnectionCount=" + xmppMaxRetryConnectionCount
+				+ ", xmppPacketReplayTimeout=" + xmppPacketReplayTimeout + ", xmppPingTimeout=" + xmppPingTimeout
+				+ ", xmppUseSsl=" + xmppUseSsl + ", agentLdapBaseDn=" + agentLdapBaseDn + ", agentLdapIdAttribute="
+				+ agentLdapIdAttribute + ", agentLdapJidAttribute=" + agentLdapJidAttribute
+				+ ", agentLdapObjectClasses=" + agentLdapObjectClasses + ", authLdapUserSearchBase="
+				+ authLdapUserSearchBase + ", authLdapUserObjectClasses=" + authLdapUserObjectClasses
+				+ ", authLdapUserAttribute=" + authLdapUserAttribute + ", authorizationEnabled=" + authorizationEnabled
+				+ ", taskManagerTaskTimeout=" + taskManagerTaskTimeout + ", taskManagerMulticastEnabled="
+				+ taskManagerMulticastEnabled + ", taskManagerLogXmppMessagesEnabled="
+				+ taskManagerLogXmppMessagesEnabled + "]";
+	}
 
 	public String getDbServer() {
 		return dbServer;
