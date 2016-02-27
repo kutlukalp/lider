@@ -8,24 +8,11 @@
          ">
 	<service ref="authService"
 		interface="tr.org.liderahenk.lider.core.api.authorization.IAuthService" />
-	<service ref="registrationService"
-		interface="tr.org.liderahenk.lider.core.api.authorization.IRegistrationService" />
 
 	<bean id="authService"
 		class="tr.org.liderahenk.lider.impl.authorization.AuthServiceImpl">
 		<property name="ldapService" ref="ldapService" />
 		<property name="configurationService" ref="configurationService" />
-	</bean>
-
-	<bean id="registrationService"
-		class="tr.org.liderahenk.lider.impl.authorization.RegistrationServiceImpl">
-		<property name="ldapService" ref="ldapService" />
-		<property name="idMatcher" ref="clientIdMatcher" />
-	</bean>
-
-	<bean id="clientIdMatcher"
-		class="tr.org.liderahenk.lider.impl.authorization.ClientIdMatcherImpl">
-		<property name="config" ref="configurationService" />
 	</bean>
 
 	<reference id="ldapService"
