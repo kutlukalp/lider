@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -100,11 +101,14 @@ public class XMPPClientImpl {
 	private List<ITaskStatusUpdateSubscriber> taskStatusUpdateSubscribers;
 	private List<IPresenceSubscriber> presenceSubscribers;
 	private IRegisterSubscriber registerSubscriber;
-	
+
 	private List<String> onlineUsers = new ArrayList<String>();
 	private XMPPTCPConnection connection;
 	private XMPPTCPConnectionConfiguration config;
 	private MultiUserChatManager mucManager;
+
+	private Pattern registerPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"REGISTER\\\".*");
+	private Pattern taskPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"TASK.*");
 
 	private IConfigurationService configurationService;
 
@@ -614,7 +618,7 @@ public class XMPPClientImpl {
 			if (stanza instanceof Message) {
 				Message msg = (Message) stanza;
 				// All messages from agents are type normal
-				if (Message.Type.normal.equals(msg.getType()) && msg.getBody().contains("\"type\": \"TASK_")) {
+				if (Message.Type.normal.equals(msg.getType()) && taskPattern.matcher(msg.getBody()).matches()) {
 					return true;
 				}
 			}
@@ -640,7 +644,8 @@ public class XMPPClientImpl {
 			if (stanza instanceof Message) {
 				Message msg = (Message) stanza;
 				// All messages from agents are type normal
-				if (Message.Type.normal.equals(msg.getType()) && msg.getBody().contains("\"type\": \"REGISTER\"")) {
+				// Message body must contain this string => "type": "REGISTER"
+				if (Message.Type.normal.equals(msg.getType()) && registerPattern.matcher(msg.getBody()).matches()) {
 					return true;
 				}
 			}
@@ -664,17 +669,25 @@ public class XMPPClientImpl {
 							RegisterMessageImpl.class);
 					message.setFrom(msg.getFrom());
 
-					// Fall back to default register subscriber.
+					// Fall back to default register subscriber if registerSubscriber is null.
 					if (registerSubscriber == null) {
-						logger.info("Triggering default register subscriber.");
-						IRegisterSubscriber subscriber = new DefaultRegisterSubscriber();
-						registrationInfo = subscriber.messageReceived(message);
-						logger.debug("Notified subscriber => {}", subscriber);
+						registrationInfo = triggerDefaultSubscriber(message);
 					} else {
 						try {
 							registrationInfo = registerSubscriber.messageReceived(message);
 						} catch (Exception e) {
-							logger.error("Subscriber could not handle message: ", e);
+							// Unfortunately we cannot directly catch this
+							// exception since it is not accessible.
+							if (e.getClass().getName().contains("ServiceUnavailableException")) {
+								// Though registerSubscriber is not null, there
+								// is no subscriber (it is an
+								// OSGI proxy object, so we can not simply null
+								// check). Therefore we fall back to default
+								// subscriber.
+								registrationInfo = triggerDefaultSubscriber(message);
+							} else {
+								logger.error("Subscriber could not handle message: ", e);
+							}
 						}
 						logger.debug("Notified subscriber => {}", registerSubscriber);
 					}
@@ -682,7 +695,7 @@ public class XMPPClientImpl {
 			} catch (Exception e) {
 				logger.error(e.getMessage(), e);
 				registrationInfo = new RegistrationInfoImpl(RegistrationStatus.REGISTRATION_ERROR,
-						"Unexpected error occurred while registring Ahenk, see Lider logs for more info.", null);
+						"Unexpected error occurred while registring agent, see Lider logs for more info.", null);
 			}
 
 			// Send registration info back to agent
@@ -695,6 +708,14 @@ public class XMPPClientImpl {
 			} catch (IOException e) {
 				logger.error(e.getMessage(), e);
 			}
+		}
+
+		private IRegistrationInfo triggerDefaultSubscriber(RegisterMessageImpl message) throws Exception {
+			logger.info("Triggering default register subscriber.");
+			IRegisterSubscriber subscriber = new DefaultRegisterSubscriber();
+			IRegistrationInfo registrationInfo = subscriber.messageReceived(message);
+			logger.debug("Notified subscriber => {}", subscriber);
+			return registrationInfo;
 		}
 
 	}

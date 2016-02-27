@@ -63,11 +63,10 @@
 		<aries.blueprint.version>1.1.0</aries.blueprint.version>
 		<commons.codec.version>1.10</commons.codec.version>
 		<commons.lang.version>2.6</commons.lang.version>
-		
-		
-		<!--JPA  -->
-		
-			<ariesEbaMavenPluginVersion>1.0.0</ariesEbaMavenPluginVersion>
+
+
+		<!--JPA -->
+		<ariesEbaMavenPluginVersion>1.0.0</ariesEbaMavenPluginVersion>
 		<!-- Aries Application Versions -->
 		<ariesApplicationApiVersion>1.0.0</ariesApplicationApiVersion>
 		<ariesApplicationVersion>1.0.0</ariesApplicationVersion>
@@ -131,8 +130,8 @@
 		<ariesUtilVersion>1.0.0</ariesUtilVersion>
 		<!-- Aries Web Versions -->
 		<ariesWebVersion>1.0.0</ariesWebVersion>
-		
-		
+
+
 		<openjpaVersion>2.3.0</openjpaVersion>
 		<geronimoJpaSpecVersion>1.1</geronimoJpaSpecVersion>
 		<geronimoJtaSpecVersion>1.1.1</geronimoJtaSpecVersion>
@@ -144,8 +143,8 @@
 		<serpVersion>1.13.1</serpVersion>
 		<servicemixBundlesSerpVersion>1.13.1_2</servicemixBundlesSerpVersion>
 		<servicemixBundlesCglibVersion>2.1_3_4</servicemixBundlesCglibVersion>
-		
-		
+
+
 	</properties>
 
 	<licenses>
@@ -233,7 +232,6 @@
 							<excludeFilterFile>${main.basedir}/findbugs/findbugs-exclude.xml</excludeFilterFile>
 						</configuration>
 					</plugin>
-
 				</plugins>
 			</build>
 		</profile>
@@ -473,7 +471,7 @@
 				<version>${osgi.core.version}</version>
 				<scope>provided</scope>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>org.apache.geronimo.specs</groupId>
 				<artifactId>geronimo-jsp_2.1_spec</artifactId>
@@ -494,12 +492,12 @@
 				<artifactId>geronimo-jpa_2.0_spec</artifactId>
 				<version>${geronimoJpaSpecVersion}</version>
 			</dependency>
-				<dependency>
+			<dependency>
 				<groupId>asm</groupId>
 				<artifactId>asm-all</artifactId>
 				<version>${asmVersion}</version>
 			</dependency>
-				<dependency>
+			<dependency>
 				<groupId>org.apache.openjpa</groupId>
 				<artifactId>openjpa</artifactId>
 				<version>${openjpaVersion}</version>
@@ -514,12 +512,12 @@
 				<artifactId>serp</artifactId>
 				<version>${serpVersion}</version>
 			</dependency>
-				<dependency>
+			<dependency>
 				<groupId>org.apache.servicemix.bundles</groupId>
 				<artifactId>org.apache.servicemix.bundles.serp</artifactId>
 				<version>${servicemixBundlesSerpVersion}</version>
 			</dependency>
-				<!-- jpa -->
+			<!-- jpa -->
 			<dependency>
 				<groupId>org.apache.aries.jpa</groupId>
 				<artifactId>org.apache.aries.jpa.api</artifactId>
@@ -540,7 +538,7 @@
 				<artifactId>org.apache.aries.jpa.container.context</artifactId>
 				<version>${ariesJpaContainerContextVersion}</version>
 			</dependency>
-				<!-- blueprint -->
+			<!-- blueprint -->
 			<dependency>
 				<groupId>org.apache.aries.blueprint</groupId>
 				<artifactId>org.apache.aries.blueprint.annotation.api</artifactId>

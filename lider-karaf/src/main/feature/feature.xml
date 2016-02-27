@@ -4,7 +4,7 @@
 	HOW TO INSTALL LIDER CORE BUNDLES INTO KARAF:
 	
 	feature:repo-add  mvn:tr.org.liderahenk/lider-features/1.0.0-SNAPSHOT/xml/features
-	feature:install lider-features
+	feature:install lider
 
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with
