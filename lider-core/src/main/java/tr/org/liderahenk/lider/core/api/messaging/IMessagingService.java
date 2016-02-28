@@ -10,27 +10,30 @@ import java.util.List;
  */
 public interface IMessagingService {
 
-	void init();
-
 	/**
 	 * 
-	 * @param jid of message sender
-	 * @param message text message
+	 * @param jid
+	 *            of message sender
+	 * @param message
+	 *            text message
 	 * @throws Exception
 	 */
 	void messageReceived(String jid, String message) throws Exception;
 
 	/**
 	 * 
-	 * @param to recipient of message
-	 * @param message to be sent
+	 * @param to
+	 *            recipient of message
+	 * @param message
+	 *            to be sent
 	 * @throws Exception
 	 */
 	void sendMessage(String to, String message) throws Exception;
 
 	/**
 	 * 
-	 * @param message {@link IMessage} to be sent
+	 * @param message
+	 *            {@link IMessage} to be sent
 	 * @throws Exception
 	 */
 	void sendMessage(IMessage message) throws Exception;
@@ -43,14 +46,9 @@ public interface IMessagingService {
 	boolean isRecipientOnline(String jid);
 
 	/**
-	 * @deprecated no use 
-	 * @param message {@link IMessage} to be sent
-	 * @param resource specific xmpp resource of recipient
-	 * @throws Exception
+	 * 
+	 * @return
 	 */
-	void sendMessage(IMessage message, String resource) throws Exception;
-	
-	
-	List<String> getOnlineUsers(); 
+	List<String> getOnlineUsers();
 
 }

@@ -18,6 +18,10 @@ lider is the business layer of Lider Ahenk project running on Karaf container. I
 - Get [Maven 3](http://maven.apache.org/install.html) (Specifically, at least **version 3.1.1** is needed to use static code analyzers and maven-tycho plugin!).
 - Maven [home](https://maven.apache.org/) (download, docs)
 
+### Karaf 4
+
+- Download and extract [Karaf 4](https://karaf.apache.org/index/community/download.html)
+
 ## Project Directory Layout
 
     lider/
@@ -37,22 +41,22 @@ lider is the business layer of Lider Ahenk project running on Karaf container. I
       lider-taskmanager-impl/         --> Task manager implementation manages agent tasks
       lider-web/                      --> Provides REST web services
 
-## Exporting Lider
-
-TODO
-
 ## How to Setup Development Environment
 
 1. Install [Eclipse](https://eclipse.org/downloads/) version >=4.4 (Luna or Mars).
-2. Clone lider project by running `git clone https://github.com/Pardus-Kurumsal/lider.git`.
-3. Change directory to lider/ and run `mvn clean install -DskipTests`.
+2. Clone Lider project by running `git clone https://github.com/Pardus-Kurumsal/lider.git`.
+3. Navigate to project directory and run `mvn clean install -DskipTests`.
 4. Finally, import the project into Eclipse as 'Existing Maven Projects'.
 
-## How to Import Project Into Karaf
+## How to Import Lider Into Karaf
 
-1. Run `mvn clean install` in the project directory.
-2. Add project repository via `feature:repo-add  mvn:tr.org.liderahenk/lider-features/1.0.0-SNAPSHOT/xml/features`
-3. Install project via `feature:install lider-features`
+1. Navigate to project directory and run `mvn clean install`.
+2. Start Karaf and add project repository via `feature:repo-add  mvn:tr.org.liderahenk/lider-features/1.0.0-SNAPSHOT/xml/features`.
+3. Again, in Karaf shell, install project via `feature:install lider`.
+
+## How to Export Lider as Custom Karaf Distribution?
+
+TODO
 
 ## Static Analyzers
 

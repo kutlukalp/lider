@@ -100,7 +100,7 @@ public class XMPPClientImpl {
 	 */
 	private List<ITaskStatusUpdateSubscriber> taskStatusUpdateSubscribers;
 	private List<IPresenceSubscriber> presenceSubscribers;
-	private IRegisterSubscriber registerSubscriber;
+	private List<IRegisterSubscriber> registerSubscribers;
 
 	private List<String> onlineUsers = new ArrayList<String>();
 	private XMPPTCPConnection connection;
@@ -669,25 +669,25 @@ public class XMPPClientImpl {
 							RegisterMessageImpl.class);
 					message.setFrom(msg.getFrom());
 
-					// Fall back to default register subscriber if registerSubscriber is null.
-					if (registerSubscriber == null) {
+					// Fall back to default register subscriber if reference
+					// list is empty.
+					if (registerSubscribers == null || registerSubscribers.isEmpty()) {
 						registrationInfo = triggerDefaultSubscriber(message);
+					} else if (registerSubscribers.get(0) instanceof DefaultRegisterSubscriber) {
+						registrationInfo = registerSubscribers.get(0).messageReceived(message);
 					} else {
+						// Find subscriber other than the default one.
+						IRegisterSubscriber registerSubscriber = null;
+						for (IRegisterSubscriber temp : registerSubscribers) {
+							if (!(temp instanceof DefaultRegisterSubscriber)) {
+								registerSubscriber = temp;
+								break;
+							}
+						}
 						try {
 							registrationInfo = registerSubscriber.messageReceived(message);
 						} catch (Exception e) {
-							// Unfortunately we cannot directly catch this
-							// exception since it is not accessible.
-							if (e.getClass().getName().contains("ServiceUnavailableException")) {
-								// Though registerSubscriber is not null, there
-								// is no subscriber (it is an
-								// OSGI proxy object, so we can not simply null
-								// check). Therefore we fall back to default
-								// subscriber.
-								registrationInfo = triggerDefaultSubscriber(message);
-							} else {
-								logger.error("Subscriber could not handle message: ", e);
-							}
+							logger.error("Subscriber could not handle message: ", e);
 						}
 						logger.debug("Notified subscriber => {}", registerSubscriber);
 					}
@@ -746,10 +746,10 @@ public class XMPPClientImpl {
 
 	/**
 	 * 
-	 * @param registerSubscriber
+	 * @param registerSubscribers
 	 */
-	public void setRegisterSubscriber(IRegisterSubscriber registerSubscriber) {
-		this.registerSubscriber = registerSubscriber;
+	public void setRegisterSubscribers(List<IRegisterSubscriber> registerSubscribers) {
+		this.registerSubscribers = registerSubscribers;
 	}
 
 	/**

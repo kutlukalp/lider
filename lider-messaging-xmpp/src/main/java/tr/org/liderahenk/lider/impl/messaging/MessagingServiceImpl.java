@@ -16,7 +16,7 @@ import tr.org.liderahenk.lider.core.api.messaging.IMessagingService;
  */
 public class MessagingServiceImpl implements IMessagingService {
 	
-	private static Logger log = LoggerFactory.getLogger(MessagingServiceImpl.class);
+	private static Logger logger = LoggerFactory.getLogger(MessagingServiceImpl.class);
 	
 	private XMPPClientImpl xmppClient;
 	
@@ -35,12 +35,6 @@ public class MessagingServiceImpl implements IMessagingService {
 		xmppClient.sendMessage(message.getMessage(), message.getRecipient());
 	}
 	
-	@Override
-	public void sendMessage(IMessage message, String resource) throws Exception{  // TODO  vvv send IQ mu send Message mı? 
-		xmppClient.sendMessage(message.getMessage(), message.getRecipient()); 
-//		xmppClient.sendIQ(message.getMessage(), message.getRecipient(), resource);
-	}
-	
 	/**
 	 * reference set by blueprint impl. see blueprint.xml for details
 	 */
@@ -48,26 +42,6 @@ public class MessagingServiceImpl implements IMessagingService {
 		this.xmppClient = xmppClient;
 	}
 	
-	
-	
-	
-	public void init()
-	{
-		log.info("Initializing messaging service...");
-		
-		//xmppClient.init();
-//		
-//		PacketFilter messageFilter = new PacketTypeFilter(Message.class);
-//		xmppClient.getConnection().addPacketListener( new MessagePacketListener(), messageFilter);
-		log.info("Initialized messaging service...");
-	}
-	
-	public void destroy(){
-		log.info("shutting down messaging service...");
-	//	xmppClient.destroy();
-		log.info("shutdown complete");
-	}
-
 	@Override
 	public void messageReceived(String jid, String message) throws Exception {
 		// TODO emre ?
