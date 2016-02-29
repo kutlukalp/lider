@@ -35,6 +35,7 @@
 		class="tr.org.liderahenk.lider.impl.registration.DefaultRegisterSubscriber">
 		<property name="ldapService" ref="ldapService" />
 		<property name="configurationService" ref="configurationService" />
+		<property name="agentDao" ref="agentDaoRef" />
 	</bean>
 
 	<reference-list id="presenceSubscribersRef"
@@ -50,5 +51,7 @@
 		interface="tr.org.liderahenk.lider.core.api.IConfigurationService" />
 	<reference id="ldapService"
 		interface="tr.org.liderahenk.lider.core.api.ldap.ILDAPService" />
+	<reference id="agentDaoRef"
+		interface="tr.org.liderahenk.lider.core.api.agent.dao.IAgentDao" />
 
 </blueprint>
