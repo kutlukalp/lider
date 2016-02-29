@@ -27,18 +27,16 @@ import tr.org.liderahenk.lider.persistence.task.model.impl.TaskCriteriaBuilder;
 
 public class TaskDaoImpl implements ITaskDao {
 
-	private static Logger log = LoggerFactory
-			.getLogger(TaskDaoImpl.class);
+	private static Logger log = LoggerFactory.getLogger(TaskDaoImpl.class);
 
-//	@PersistenceContext(unitName="lider")
 	private EntityManager entityManager;
-	
+
 	private TaskCriteriaBuilder taskCriteriaBuilder;
-	
+
 	public void setTaskCriteriaBuilder(TaskCriteriaBuilder criteriaBuilder) {
 		this.taskCriteriaBuilder = criteriaBuilder;
 	}
-	
+
 	public void setEntityManager(EntityManager entityManager) {
 		this.entityManager = entityManager;
 	}
@@ -53,21 +51,21 @@ public class TaskDaoImpl implements ITaskDao {
 
 	@Override
 	public TaskEntityImpl create(ITask task) {
-		
+
 		try {
 			TaskEntityImpl actualTask = new TaskEntityImpl(task);
 			entityManager.persist(actualTask);
 			return actualTask;
 		} catch (Exception e) {
-			log.error("",e);
+			log.error("", e);
 			// FIXME WTH one wants to swallow that exception??
 			return null;
 		}
 	}
-	
+
 	@Override
 	public void createOrUpdate(ITask task) {
-		
+
 		try {
 			TaskEntityImpl actualTask = new TaskEntityImpl(task);
 			entityManager.merge(actualTask);
@@ -97,29 +95,28 @@ public class TaskDaoImpl implements ITaskDao {
 	}
 
 	@Override
-	public List<TaskEntityImpl> find(IQueryCriteria[] taskCriteriaList,
-			int offset, int maxResults) throws TaskDaoException {
+	public List<TaskEntityImpl> find(IQueryCriteria[] taskCriteriaList, int offset, int maxResults)
+			throws TaskDaoException {
 		try {
-			Query query = createQuery(taskCriteriaList, offset, maxResults );
+			Query query = createQuery(taskCriteriaList, offset, maxResults);
 			return query.getResultList();
 		} catch (Exception e) {
-			log.error(e.getMessage(),e);
+			log.error(e.getMessage(), e);
 			throw new TaskDaoException("", e);
 		}
 
 	}
-	
+
 	@Override
 	public Long count(IQueryCriteria[] taskCriteriaList) throws TaskDaoException {
 		try {
-			TypedQuery<Long> query = createCountQuery(taskCriteriaList );
-			
+			TypedQuery<Long> query = createCountQuery(taskCriteriaList);
+
 			return query.getSingleResult();
 		} catch (Exception e) {
 			throw new TaskDaoException("", e);
 		}
 	}
-	
 
 	@Override
 	public ITask get(String id) {
@@ -132,8 +129,7 @@ public class TaskDaoImpl implements ITaskDao {
 		try {
 			for (Iterator<?> iterator = map.entrySet().iterator(); iterator.hasNext();) {
 
-				Entry<String, ? extends ITask> entry = (Entry<String, ? extends ITask>) iterator
-						.next();
+				Entry<String, ? extends ITask> entry = (Entry<String, ? extends ITask>) iterator.next();
 				ITask value = entry.getValue();
 
 				entityManager.merge(new TaskEntityImpl(value));
@@ -143,7 +139,7 @@ public class TaskDaoImpl implements ITaskDao {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	@Override
 	public List<String> findHotTaskKeys() {
 		log.debug("loding hot tasks");
@@ -157,98 +153,98 @@ public class TaskDaoImpl implements ITaskDao {
 
 	@Override
 	public List<? extends ITask> loadHotTasks() {
-		
+
 		CriteriaBuilder cbuilder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<TaskEntityImpl> cquery = cbuilder.createQuery(TaskEntityImpl.class);
 		Root<TaskEntityImpl> task = cquery.from(TaskEntityImpl.class);
 		boolean myCondition = true;
 		Predicate predicate = cbuilder.equal(task.get("active"), myCondition);
-		//String query = "SELECT t FROM Task t where t.active = true";
-		//Query q = em.createQuery(query);
+		// String query = "SELECT t FROM Task t where t.active = true";
+		// Query q = em.createQuery(query);
 		cquery.where(predicate);
 		cquery.select(task);
 
 		if (null != task.get("creationDate")) {
-			cquery.orderBy(cbuilder.desc(task.get("creationDate")));	
+			cquery.orderBy(cbuilder.desc(task.get("creationDate")));
 		}
-		
+
 		TypedQuery<TaskEntityImpl> query = entityManager.createQuery(cquery);
 		return query.getResultList();
 	}
-	
-	private Query createQuery(IQueryCriteria[] taskCriteriaList, int offset,
-			int maxResults) throws Exception {
+
+	private Query createQuery(IQueryCriteria[] taskCriteriaList, int offset, int maxResults) throws Exception {
 		CriteriaBuilder cbuilder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<TaskEntityImpl> cquery = cbuilder.createQuery(TaskEntityImpl.class);
 		Root<TaskEntityImpl> task = cquery.from(TaskEntityImpl.class);
 
 		List<Predicate> predicates = new ArrayList<Predicate>();
 
-		/* (sbozu)
+		/*
+		 * (sbozu)
 		 * 
-		 Enum type must be passed as parameter to query variable. See below link.
-		 http://stackoverflow.com/questions/11840831/hibernate-hql-casting-java-lang-string-cannot-be-cast-to-java-lang-enum
+		 * Enum type must be passed as parameter to query variable. See below
+		 * link.
+		 * http://stackoverflow.com/questions/11840831/hibernate-hql-casting-
+		 * java-lang-string-cannot-be-cast-to-java-lang-enum
 		 *
 		 */
-		
+
 		Object taskStateValue = null;
-		if(taskCriteriaList != null && taskCriteriaList.length > 0){
+		if (taskCriteriaList != null && taskCriteriaList.length > 0) {
 			for (IQueryCriteria criteria : taskCriteriaList) {
-				if (criteria.getField().indexOf(".") <0 && TaskEntityImpl.class.getDeclaredField(criteria.getField()).getType().equals(TaskState.class)) {
+				if (criteria.getField().indexOf(".") < 0 && TaskEntityImpl.class.getDeclaredField(criteria.getField())
+						.getType().equals(TaskState.class)) {
 					taskStateValue = ((IQueryCriteria) criteria).getValues()[0];
 				}
-				predicates.add(taskCriteriaBuilder.buildExpression(cbuilder, task,
-						(IQueryCriteria) criteria));
+				predicates.add(taskCriteriaBuilder.buildExpression(cbuilder, task, (IQueryCriteria) criteria));
 			}
 		}
 
 		cquery.where(predicates.toArray(new Predicate[] {}));
 		cquery.select(task);
- 
+
 		if (null != task.get("creationDate")) {
-			cquery.orderBy(cbuilder.desc(task.get("creationDate")));	
+			cquery.orderBy(cbuilder.desc(task.get("creationDate")));
 		}
-		
+
 		TypedQuery<TaskEntityImpl> query = entityManager.createQuery(cquery);
-		
+
 		if (null != taskStateValue) {
 			query.setParameter("taskStateParam", Enum.valueOf(TaskState.class, taskStateValue.toString()));
 		}
-		
-		if(offset >= 0){
+
+		if (offset >= 0) {
 			query.setFirstResult(offset);
-		}
-		else{
+		} else {
 			query.setFirstResult(0);
 		}
-		if(  maxResults > 0){
-		
+		if (maxResults > 0) {
+
 			query.setMaxResults(maxResults);
 		}
 		return query;
 	}
-	
-	
+
 	private TypedQuery<Long> createCountQuery(IQueryCriteria[] taskCriteriaList) throws Exception {
-		//CriteriaBuilder cb = em.getCriteriaBuilder();
-		//CriteriaQuery<TaskEntityImpl> cq = cb.createQuery(TaskEntityImpl.class);
-		
-		//Root<TaskEntityImpl> task = cq.from(TaskEntityImpl.class);
+		// CriteriaBuilder cb = em.getCriteriaBuilder();
+		// CriteriaQuery<TaskEntityImpl> cq =
+		// cb.createQuery(TaskEntityImpl.class);
+
+		// Root<TaskEntityImpl> task = cq.from(TaskEntityImpl.class);
 		CriteriaBuilder cbuilder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<Long> cquery = cbuilder.createQuery(Long.class);
 		Root<TaskEntityImpl> task = cquery.from(TaskEntityImpl.class);
-		
+
 		cquery.select(cbuilder.count(task));
-		
+
 		List<Predicate> predicates = new ArrayList<Predicate>();
 
 		for (Object criteria : taskCriteriaList) {
-			predicates.add(taskCriteriaBuilder.buildExpression(cbuilder, task,
-					(IQueryCriteria) criteria));
+			predicates.add(taskCriteriaBuilder.buildExpression(cbuilder, task, (IQueryCriteria) criteria));
 		}
-		
+
 		cquery.where(predicates.toArray(new Predicate[] {}));
 		return entityManager.createQuery(cquery);
-		
+
 	}
 }

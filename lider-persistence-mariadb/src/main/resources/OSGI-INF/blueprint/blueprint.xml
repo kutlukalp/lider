@@ -1,36 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xmlns:tx="http://aries.apache.org/xmlns/transactions/v1.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://aries.apache.org/xmlns/transactions/v1.0.0"
 	xmlns:jpa="http://aries.apache.org/xmlns/jpa/v1.0.0"
 	xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd"
 	default-activation="eager">
-	
+
+	<service ref="pluginDbService"
+		interface="tr.org.liderahenk.lider.core.api.plugin.IPluginDbService" />
 	<bean id="pluginDbService"
 		class="tr.org.liderahenk.lider.persistence.mariadb.plugin.impl.PluginDbServiceImpl">
 		<tx:transaction method="*" value="Required" />
 		<jpa:context property="entityManager" unitname="lider" />
 	</bean>
 
+	<service ref="agentDao"
+		interface="tr.org.liderahenk.lider.core.api.agent.dao.IAgentDao" />
+	<bean id="agentDao" init-method="init" destroy-method="destroy"
+		class="tr.org.liderahenk.lider.persistence.agent.dao.AgentDaoImpl">
+		<tx:transaction method="*" value="Required" />
+		<jpa:context property="entityManager" unitname="lider" />
+	</bean>
+
+	<service ref="operationLogDao"
+		interface="tr.org.liderahenk.lider.core.api.log.dao.OperationLogDao" />
 	<bean id="operationLogDao"
 		class="tr.org.liderahenk.lider.persistence.log.dao.impl.OperationLogDaoImpl">
 		<tx:transaction method="*" value="Required" />
 		<jpa:context property="entityManager" unitname="lider" />
 	</bean>
-	
+
+	<service ref="taskDao"
+		interface="tr.org.liderahenk.lider.core.api.taskmanager.dao.ITaskDao" />
 	<bean id="taskDao"
 		class="tr.org.liderahenk.lider.persistence.task.dao.TaskDaoImpl">
 		<tx:transaction method="*" value="Required" />
 		<jpa:context property="entityManager" unitname="lider" />
 		<property name="taskCriteriaBuilder" ref="criteriaBuilder"></property>
 	</bean>
-	
-	<bean id="criteriaBuilder" class="tr.org.liderahenk.lider.persistence.task.model.impl.TaskCriteriaBuilder"/>
 
-	<service ref="pluginDbService" interface="tr.org.liderahenk.lider.core.api.plugin.IPluginDbService" />
-
-	<service ref="operationLogDao" interface="tr.org.liderahenk.lider.core.api.log.dao.OperationLogDao" />
-		
-	<service ref="taskDao" interface="tr.org.liderahenk.lider.core.api.taskmanager.dao.ITaskDao" />
+	<bean id="criteriaBuilder"
+		class="tr.org.liderahenk.lider.persistence.task.model.impl.TaskCriteriaBuilder" />
 
 </blueprint>
