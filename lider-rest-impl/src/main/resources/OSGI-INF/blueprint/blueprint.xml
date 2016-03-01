@@ -1,22 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+	xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+                 http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+                 http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://svn.apache.org/repos/asf/aries/trunk/blueprint/blueprint-cm/src/main/resources/org/apache/aries/blueprint/compendium/cm/blueprint-cm-1.1.0.xsd
+         ">
 
-	<service ref="restRequestProcessor" interface="tr.org.liderahenk.lider.core.api.rest.IRestRequestProcessor" />
-
-	<bean id="restRequestProcessor" class="tr.org.liderahenk.lider.impl.rest.RestRequestProcessorImpl">
+	<service ref="restRequestProcessor"
+		interface="tr.org.liderahenk.lider.core.api.rest.IRestRequestProcessor" />
+	<bean id="restRequestProcessor"
+		class="tr.org.liderahenk.lider.impl.rest.RestRequestProcessorImpl">
 		<property name="serviceRouter" ref="serviceRouter" />
 		<property name="requestFactory" ref="restRequestFactory" />
 		<property name="responseFactory" ref="restResponseFactory" />
-		<property name="authService" ref="authServiceRef"/>
-		<property name="config" ref="configurationService"/>
-		<property name="ldapService" ref="ldapService"/>
+		<property name="authService" ref="authServiceRef" />
+		<property name="config" ref="configurationService" />
+		<property name="ldapService" ref="ldapService" />
 	</bean>
 
-	<reference id="configurationService" interface="tr.org.liderahenk.lider.core.api.IConfigurationService" />
-	<reference id="serviceRouter" interface="tr.org.liderahenk.lider.core.api.router.IServiceRouter" />
-	<reference id="authServiceRef" interface="tr.org.liderahenk.lider.core.api.authorization.IAuthService"/>
-	<reference id="restRequestFactory" interface="tr.org.liderahenk.lider.core.api.rest.IRequestFactory"/>
-	<reference id="restResponseFactory" interface="tr.org.liderahenk.lider.core.api.rest.IResponseFactory"/>
-	<reference id="ldapService" interface="tr.org.liderahenk.lider.core.api.ldap.ILDAPService"/>
+	<service ref="GetSystemConfigCommand" interface="tr.org.liderahenk.lider.core.api.plugin.ICommand" />
+	<bean id="GetSystemConfigCommand"
+		class="tr.org.liderahenk.lider.rest.commands.GetSystemConfigCommand">
+		<property name="configurationService" ref="configurationService" />
+		<property name="resultFactory" ref="resultFactory" />
+	</bean>
+
+	<reference id="configurationService"
+		interface="tr.org.liderahenk.lider.core.api.IConfigurationService" />
+	<reference id="serviceRouter"
+		interface="tr.org.liderahenk.lider.core.api.router.IServiceRouter" />
+	<reference id="authServiceRef"
+		interface="tr.org.liderahenk.lider.core.api.authorization.IAuthService" />
+	<reference id="restRequestFactory"
+		interface="tr.org.liderahenk.lider.core.api.rest.IRequestFactory" />
+	<reference id="restResponseFactory"
+		interface="tr.org.liderahenk.lider.core.api.rest.IResponseFactory" />
+	<reference id="ldapService"
+		interface="tr.org.liderahenk.lider.core.api.ldap.ILDAPService" />
+	<reference id="resultFactory"
+		interface="tr.org.liderahenk.lider.core.api.plugin.ICommandResultFactory" />
 
 </blueprint>
