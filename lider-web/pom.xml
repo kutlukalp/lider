@@ -94,8 +94,8 @@
 						<manifestLocation>target/bnd</manifestLocation>
 						<instructions>
 							<_removeheaders>Import-Service,Export-Service</_removeheaders>
-							<Bundle-Name>${project.artifactId}</Bundle-Name>
 							<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+							<Bundle-Version>${project.version}</Bundle-Version>
 							<Webapp-Context>/</Webapp-Context>
 							<Web-ContextPath>/</Web-ContextPath>
 							<Export-Package>!*</Export-Package>

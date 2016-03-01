@@ -31,19 +31,6 @@
 			<groupId>org.apache.directory.api</groupId>
 			<artifactId>api-ldap-schema-data</artifactId>
 		</dependency>
-		<!-- DO NOT REMOVE! These three dependencies are required at runtime: -->
-		<dependency>
-			<groupId>org.apache.directory.api</groupId>
-			<artifactId>api-ldap-extras-aci</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.directory.api</groupId>
-			<artifactId>api-ldap-net-mina</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-		</dependency>
 	</dependencies>
 
 	<build>
@@ -57,7 +44,7 @@
 					<instructions>
 						<_removeheaders>Import-Service,Export-Service</_removeheaders>
 						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-						<Bundle-Version>1.0.0</Bundle-Version>
+						<Bundle-Version>${project.version}</Bundle-Version>
 					</instructions>
 				</configuration>
 			</plugin>

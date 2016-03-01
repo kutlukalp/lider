@@ -64,7 +64,7 @@
 					<instructions>
 						<_removeheaders>Import-Service,Export-Service</_removeheaders>
 						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-						<Bundle-Version>1.0.0</Bundle-Version>
+						<Bundle-Version>${project.version}</Bundle-Version>
 					</instructions>
 				</configuration>
 			</plugin>
