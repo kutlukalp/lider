@@ -28,8 +28,9 @@ public interface IPluginDbService {
 	 * Update entity.
 	 * 
 	 * @param entity
+	 * @return 
 	 */
-	void update(Object entity);
+	Object update(Object entity);
 
 	/**
 	 * Save or update given entity.

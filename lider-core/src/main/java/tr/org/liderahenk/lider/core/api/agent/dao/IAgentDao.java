@@ -18,7 +18,7 @@ public interface IAgentDao {
 	 * @param agent
 	 * @return
 	 */
-	IAgent save(IAgent agent);
+	void save(IAgent agent);
 
 	/**
 	 * 

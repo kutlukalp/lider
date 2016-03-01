@@ -37,7 +37,7 @@ import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
  * 
  * <p>
  * After successful registration, agent DN will be returned to the sender agent.
- * Otherwise error enum and error message will be returned.
+ * Otherwise error code and error message will be returned.
  * </p>
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
@@ -74,7 +74,7 @@ public class DefaultRegisterSubscriber implements IRegisterSubscriber {
 			ldapService.updateEntry(entry.get(0).getDistinguishedName(), "userPassword", message.getPassword());
 
 			// Update agent database record.
-			List<? extends IAgent> agentList = agentDao.findByProperty("JID", uid, 1);
+			List<? extends IAgent> agentList = agentDao.findByProperty("jid", uid, 1);
 			agentDao.update(createAgent(message, agentList.get(0), uid));
 
 			logger.debug(
@@ -91,6 +91,7 @@ public class DefaultRegisterSubscriber implements IRegisterSubscriber {
 			attributes.put("objectClass", configurationService.getAgentLdapObjectClasses().split(","));
 			attributes.put(configurationService.getAgentLdapIdAttribute(), new String[] { uid });
 			attributes.put(configurationService.getAgentLdapJidAttribute(), new String[] { uid });
+			attributes.put("owner", new String[] { "ou=Uncategorized,dc=mys,dc=pardus,dc=org" }); // FIXME remove this line, after correcting LDAP schema!
 			attributes.put("userPassword", new String[] { message.getPassword() });
 
 			String entryDN = createEntryDN(message);

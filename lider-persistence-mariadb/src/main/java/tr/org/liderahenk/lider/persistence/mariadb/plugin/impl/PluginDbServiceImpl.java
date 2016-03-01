@@ -20,6 +20,9 @@ import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import tr.org.liderahenk.lider.core.api.dao.PropertyOrder;
 import tr.org.liderahenk.lider.core.api.enums.OrderType;
 import tr.org.liderahenk.lider.core.api.plugin.IPluginDbService;
@@ -38,69 +41,73 @@ public class PluginDbServiceImpl implements IPluginDbService {
 	// TODO provide overload methods for delete & find (use order, offset,
 	// maxResults)
 
-//	@PersistenceContext(unitName = "lider")
-	private EntityManager entityManager;
+	private static Logger logger = LoggerFactory.getLogger(PluginDbServiceImpl.class);
 
-	public void setEntityManager(EntityManager entityManager) {
-		this.entityManager = entityManager;
-	}
+	private EntityManager entityManager;
 
 	@Override
 	public void save(Object entity) {
 		entityManager.persist(entity);
+		logger.debug("Object persisted: {}", entity.toString());
 	}
 
 	@Override
-	public void update(Object entity) {
-		entityManager.merge(entity);
+	public Object update(Object entity) {
+		Object obj = entityManager.merge(entity);
+		logger.debug("Object merged: {}", obj.toString());
+		return obj;
 	}
 
 	@Override
 	public Object saveOrUpdate(Object entity) {
-		return entityManager.merge(entity);
+		Object obj = entityManager.merge(entity);
+		logger.debug("Object merged: {}", obj.toString());
+		return obj;
 	}
 
 	@Override
 	public void delete(Class entityClass, Object id) {
 		Object entity = entityManager.find(entityClass, id);
 		entityManager.remove(entity);
+		logger.debug("Object removed with ID: {}", id.toString());
 	}
 
 	@Override
 	public void deleteByProperty(Class entityClass, String propertyName, Object propertyValue) {
-		String tableName = getTableName(entityClass);
-		Query qDelete = entityManager.createQuery("delete from " + tableName + " t where t." + propertyName + " = ?1");
+		Query qDelete = entityManager
+				.createQuery("delete from " + entityClass.getSimpleName() + " t where t." + propertyName + " = ?1");
 		qDelete.setParameter(1, propertyValue);
 		qDelete.executeUpdate();
+		logger.debug("Object removed with condition: {}={}", new Object[] { propertyName, propertyValue });
 	}
 
 	@Override
 	public <T> T find(Class<T> entityClass, Object id) {
-		return entityManager.find(entityClass, id);
+		T t = entityManager.find(entityClass, id);
+		logger.debug("Object found: {}", t.toString());
+		return t;
 	}
 
 	@Override
 	public <T> List<T> findAll(Class<T> entityClass) {
-		String tableName = getTableName(entityClass);
-		return entityManager.createQuery("select t from " + tableName + " t", entityClass).getResultList();
+		List<T> list = entityManager.createQuery("select t from " + entityClass.getSimpleName() + " t", entityClass)
+				.getResultList();
+		logger.debug("Objects found: {}", list);
+		return list;
 	}
 
 	@Override
 	public <T> List<T> findByProperty(Class<T> entityClass, String propertyName, Object propertyValue,
 			Integer maxResults) {
-
-		String tableName = getTableName(entityClass);
-
-		TypedQuery<T> query = entityManager
-				.createQuery("select t from " + tableName + " t where t." + propertyName + "= :propertyValue",
-						entityClass)
-				.setParameter("propertyValue", propertyValue);
-
+		TypedQuery<T> query = entityManager.createQuery(
+				"select t from " + entityClass.getSimpleName() + " t where t." + propertyName + "= :propertyValue",
+				entityClass).setParameter("propertyValue", propertyValue);
 		if (maxResults != null && maxResults.intValue() > 0) {
 			query = query.setMaxResults(maxResults);
 		}
-
-		return query.getResultList();
+		List<T> list = query.getResultList();
+		logger.debug("Objects found: {}", list);
+		return list;
 	}
 
 	@Override
@@ -139,7 +146,9 @@ public class PluginDbServiceImpl implements IPluginDbService {
 			query = query.setMaxResults(maxResults);
 		}
 
-		return query.getResultList();
+		List<T> list = query.getResultList();
+		logger.debug("Objects found: {}", list);
+		return list;
 	}
 
 	@Override
@@ -204,7 +213,9 @@ public class PluginDbServiceImpl implements IPluginDbService {
 			query = query.setFirstResult(offset).setMaxResults(maxResults);
 		}
 
-		return query.getResultList();
+		List<T> list = query.getResultList();
+		logger.debug("Objects found: {}", list);
+		return list;
 	}
 
 	/**
@@ -226,7 +237,12 @@ public class PluginDbServiceImpl implements IPluginDbService {
 		Table t = entityClass.getAnnotation(Table.class);
 
 		String tableName = (t == null) ? entityType.getName().toUpperCase() : t.name();
+		logger.debug("Table name found: {}", tableName);
 		return tableName;
+	}
+
+	public void setEntityManager(EntityManager entityManager) {
+		this.entityManager = entityManager;
 	}
 
 }
