@@ -87,13 +87,14 @@ public class XMPPClientImpl {
 	/**
 	 * Connection & packet listeners/filters
 	 */
-	private ChatManagerListenerImpl chatManagerListener = new ChatManagerListenerImpl();
-	private XMPPPingFailedListener pingFailedListener = new XMPPPingFailedListener();
-	private RosterListenerImpl rosterListener = new RosterListenerImpl();
-	private AllPacketListener packetListener = new AllPacketListener();
-	private IQPacketListener iqListener = new IQPacketListener();
-	private TaskStatusUpdateListener taskStatusUpdateListener = new TaskStatusUpdateListener();
-	private RegistrationListener registrationListener = new RegistrationListener();
+	private XMPPConnectionListener connectionListener;
+	private ChatManagerListenerImpl chatManagerListener;
+	private XMPPPingFailedListener pingFailedListener;
+	private RosterListenerImpl rosterListener;
+	private AllPacketListener packetListener;
+	private IQPacketListener iqListener;
+	private TaskStatusUpdateListener taskStatusUpdateListener;
+	private RegistrationListener registrationListener;
 
 	/**
 	 * Packet subscribers
@@ -212,7 +213,15 @@ public class XMPPClientImpl {
 	 * Hook packet and connection listeners
 	 */
 	private void addListeners() {
-		connection.addConnectionListener(new XMPPConnectionListener());
+		connectionListener = new XMPPConnectionListener();
+		chatManagerListener = new ChatManagerListenerImpl();
+		pingFailedListener = new XMPPPingFailedListener();
+		rosterListener = new RosterListenerImpl();
+		packetListener = new AllPacketListener();
+		iqListener = new IQPacketListener();
+		taskStatusUpdateListener = new TaskStatusUpdateListener();
+		registrationListener = new RegistrationListener();
+		connection.addConnectionListener(connectionListener);
 		PingManager.getInstanceFor(connection).registerPingFailedListener(pingFailedListener);
 		ChatManager.getInstanceFor(connection).addChatListener(chatManagerListener);
 		connection.addAsyncStanzaListener(packetListener, packetListener);
@@ -263,12 +272,13 @@ public class XMPPClientImpl {
 	 */
 	public void disconnect() {
 		if (null != connection && connection.isConnected()) {
-			// Remote listeners
+			// Remove listeners
 			ChatManager.getInstanceFor(connection).removeChatListener(chatManagerListener);
 			Roster.getInstanceFor(connection).removeRosterListener(rosterListener);
 			connection.removeAsyncStanzaListener(packetListener);
 			connection.removeAsyncStanzaListener(taskStatusUpdateListener);
 			connection.removeAsyncStanzaListener(iqListener);
+			connection.removeConnectionListener(connectionListener);
 			logger.debug("Listeners are removed.");
 			PingManager.getInstanceFor(connection).setPingInterval(-1);
 			logger.debug("Disabled ping manager");
