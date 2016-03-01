@@ -6,21 +6,16 @@
 	version="2.0">
 
 	<persistence-unit name="lider">
-	    <provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
-		<!-- <jta-data-source>
-            osgi:service/javax.sql.XADataSource/(osgi.jndi.service.name=jdbc/xamysdb)      
-        </jta-data-source> -->
-        <jta-data-source>
+		<provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
+		<jta-data-source>
             osgi:service/javax.sql.DataSource/(osgi.jndi.service.name=jdbc/lider)      
         </jta-data-source>
-       
 		<properties>
 			<property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)" />
-			 <!-- <property name="openjpa.jdbc.DBDictionary" value="derby"/> -->
-			 <property name="openjpa.jdbc.SchemaFactory" value="native(ForeignKeys=true)" /> 
-			 <property name="openjpa.BrokerImpl" value="non-finalizing" />
-<!-- 			 <property name="openjpa.Log" value="File=/var/log/openjpa.log, DefaultLevel=WARN, Runtime=ERROR, Tool=ERROR, SQL=TRACE"/> -->
-<!-- 			 <property name="openjpa.ConnectionFactoryProperties" value="PrintParameters=true" /> -->
+			<property name="openjpa.jdbc.SchemaFactory" value="native(ForeignKeys=true)" />
+			<property name="openjpa.BrokerImpl" value="non-finalizing" />
+			<property name="openjpa.Log"
+				value="DefaultLevel=WARN, Runtime=INFO, Tool=INFO, SQL=TRACE" />
 		</properties>
 	</persistence-unit>
 </persistence>
