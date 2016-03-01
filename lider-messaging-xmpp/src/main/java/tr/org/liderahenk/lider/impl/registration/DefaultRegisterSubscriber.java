@@ -91,8 +91,11 @@ public class DefaultRegisterSubscriber implements IRegisterSubscriber {
 			attributes.put("objectClass", configurationService.getAgentLdapObjectClasses().split(","));
 			attributes.put(configurationService.getAgentLdapIdAttribute(), new String[] { uid });
 			attributes.put(configurationService.getAgentLdapJidAttribute(), new String[] { uid });
-			attributes.put("owner", new String[] { "ou=Uncategorized,dc=mys,dc=pardus,dc=org" }); // FIXME remove this line, after correcting LDAP schema!
 			attributes.put("userPassword", new String[] { message.getPassword() });
+
+			// FIXME remove this line, after correcting LDAP schema!
+			attributes.put("owner", new String[] { "ou=Uncategorized,dc=mys,dc=pardus,dc=org" });
+			//
 
 			String entryDN = createEntryDN(message);
 			ldapService.addEntry(entryDN, attributes);
@@ -118,6 +121,8 @@ public class DefaultRegisterSubscriber implements IRegisterSubscriber {
 			final IAgent agent = new IAgent() {
 
 				private static final long serialVersionUID = 577470808998737417L;
+
+				List<IAgentProperty> properties = null;
 
 				@Override
 				public Long getId() {
@@ -161,11 +166,13 @@ public class DefaultRegisterSubscriber implements IRegisterSubscriber {
 
 				@Override
 				public List<? extends IAgentProperty> getProperties() {
-					return null;
+					return this.properties;
 				}
 
+				@SuppressWarnings("unchecked")
 				@Override
 				public void setProperties(List<? extends IAgentProperty> properties) {
+					this.properties = (List<IAgentProperty>) properties;
 				}
 
 			};
@@ -193,10 +200,7 @@ public class DefaultRegisterSubscriber implements IRegisterSubscriber {
 
 				private static final long serialVersionUID = -7378280501667962519L;
 
-				@Override
-				public List<? extends IAgentProperty> getProperties() {
-					return null;
-				}
+				List<IAgentProperty> properties = null;
 
 				@Override
 				public String getPassword() {
@@ -239,7 +243,14 @@ public class DefaultRegisterSubscriber implements IRegisterSubscriber {
 				}
 
 				@Override
+				public List<? extends IAgentProperty> getProperties() {
+					return properties;
+				}
+
+				@SuppressWarnings("unchecked")
+				@Override
 				public void setProperties(List<? extends IAgentProperty> properties) {
+					this.properties = (List<IAgentProperty>) properties;
 				}
 			};
 
@@ -248,7 +259,6 @@ public class DefaultRegisterSubscriber implements IRegisterSubscriber {
 			agent.setProperties(properties);
 
 			return agent;
-
 		}
 
 		return null;
@@ -299,6 +309,7 @@ public class DefaultRegisterSubscriber implements IRegisterSubscriber {
 				}
 			}
 		}
+
 		return propList;
 	}
 

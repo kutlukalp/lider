@@ -1,5 +1,6 @@
 package tr.org.liderahenk.lider.persistence.agent;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class AgentImpl implements IAgent {
 
 	@Id
 	@GeneratedValue
-	@Column(name = "AGENT_ID")
+	@Column(name = "AGENT_ID", unique = true, nullable = false)
 	private Long id;
 
 	@Column(name = "JID", nullable = false, unique = true)
@@ -58,14 +59,14 @@ public class AgentImpl implements IAgent {
 	private Date creationDate;
 
 	@OneToMany(mappedBy = "agent", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-	private List<AgentPropertyImpl> properties;
+	private List<AgentPropertyImpl> properties = new ArrayList<AgentPropertyImpl>();
 
 	public AgentImpl() {
 		super();
 	}
 
 	public AgentImpl(Long id, String jid, String dn, String password, String hostname, String ipAddresses,
-			String macAddresses, Date creationDate) {
+			String macAddresses, Date creationDate, List<AgentPropertyImpl> properties) {
 		super();
 		this.id = id;
 		this.jid = jid;
@@ -75,9 +76,9 @@ public class AgentImpl implements IAgent {
 		this.ipAddresses = ipAddresses;
 		this.macAddresses = macAddresses;
 		this.creationDate = creationDate;
+		this.properties = properties;
 	}
 
-	@SuppressWarnings("unchecked")
 	public AgentImpl(IAgent agent) {
 		this.id = agent.getId();
 		this.jid = agent.getJid();
@@ -87,7 +88,15 @@ public class AgentImpl implements IAgent {
 		this.ipAddresses = agent.getIpAddresses();
 		this.macAddresses = agent.getMacAddresses();
 		this.creationDate = agent.getCreationDate();
-		this.properties = (List<AgentPropertyImpl>) agent.getProperties();
+
+		List<? extends IAgentProperty> tempList = agent.getProperties();
+		if (tempList != null) {
+			for (IAgentProperty prop : tempList) {
+				AgentPropertyImpl propImpl = new AgentPropertyImpl(prop);
+				propImpl.setAgent(this);
+				properties.add(propImpl);
+			}
+		}
 	}
 
 	@Override
@@ -179,5 +188,5 @@ public class AgentImpl implements IAgent {
 				+ hostname + ", ipAddresses=" + ipAddresses + ", macAddresses=" + macAddresses + ", creationDate="
 				+ creationDate + ", properties=" + properties + "]";
 	}
-	
+
 }

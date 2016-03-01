@@ -28,11 +28,11 @@ public class AgentPropertyImpl implements IAgentProperty {
 
 	@Id
 	@GeneratedValue
-	@Column(name = "AGENT_DETAIL_ID")
+	@Column(name = "AGENT_PROPERTY_ID", unique = true, nullable = false)
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "AGENT_ID")
+	@JoinColumn(name = "AGENT_ID", nullable = false)
 	private AgentImpl agent;
 
 	@Column(name = "PROPERTY_NAME", nullable = false)
@@ -50,6 +50,14 @@ public class AgentPropertyImpl implements IAgentProperty {
 		this.id = id;
 		this.propertyName = propertyName;
 		this.propertyValue = propertyValue;
+	}
+	
+	public AgentPropertyImpl(IAgentProperty property) {
+		super();
+		this.id = property.getId();
+		this.propertyName = property.getPropertyName();
+		this.propertyValue = property.getPropertyValue();
+		// DO NOT forget to set 'agent'!
 	}
 
 	@Override
@@ -90,7 +98,7 @@ public class AgentPropertyImpl implements IAgentProperty {
 
 	@Override
 	public String toString() {
-		return "AgentPropertyImpl [id=" + id + ", agent=" + agent + ", propertyName=" + propertyName
+		return "AgentPropertyImpl [id=" + id + ", propertyName=" + propertyName
 				+ ", propertyValue=" + propertyValue + "]";
 	}
 
