@@ -1,18 +1,19 @@
 package tr.org.liderahenk.lider.impl.rest.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
 import tr.org.liderahenk.lider.core.api.plugin.ICommandResult;
 import tr.org.liderahenk.lider.core.api.rest.IRestResponse;
-import tr.org.liderahenk.lider.core.api.rest.IRestResponseBody;
 import tr.org.liderahenk.lider.core.api.rest.RestResponseStatus;
 
 /**
  * Default implementation for {@link IRestResponse}
  * 
  * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
 public class RestResponseImpl implements IRestResponse {
@@ -22,8 +23,10 @@ public class RestResponseImpl implements IRestResponse {
 	private RestResponseStatus status;
 	private String pluginName;
 	private String pluginVersion;
+	private String commandId;
 	private List<String> messages;
-	private RestResponseBodyImpl responseBody;
+	private Map<String, Object> resultMap;
+	private String[] tasks;
 
 	public RestResponseImpl() {
 	}
@@ -35,10 +38,12 @@ public class RestResponseImpl implements IRestResponse {
 
 	public RestResponseImpl(ICommandResult commandResult, String[] tasks) {
 
-		this.messages = commandResult.getMessages();
 		this.pluginName = commandResult.getCommand().getPluginName();
 		this.pluginVersion = commandResult.getCommand().getPluginVersion();
-		this.responseBody = new RestResponseBodyImpl(pluginName, pluginVersion, commandResult.getResultMap(), tasks);
+		this.commandId = commandResult.getCommand().getCommandId();
+		this.messages = commandResult.getMessages();
+		this.resultMap = commandResult.getResultMap();
+		this.tasks = tasks;
 
 		switch (commandResult.getStatus()) {
 		case OK:
@@ -58,8 +63,35 @@ public class RestResponseImpl implements IRestResponse {
 		return status;
 	}
 
+	public void setStatus(RestResponseStatus status) {
+		this.status = status;
+	}
+
+	@Override
 	public String getPluginName() {
 		return pluginName;
+	}
+
+	public void setPluginName(String pluginName) {
+		this.pluginName = pluginName;
+	}
+
+	@Override
+	public String getPluginVersion() {
+		return pluginVersion;
+	}
+
+	public void setPluginVersion(String pluginVersion) {
+		this.pluginVersion = pluginVersion;
+	}
+
+	@Override
+	public String getCommandId() {
+		return commandId;
+	}
+
+	public void setCommandId(String commandId) {
+		this.commandId = commandId;
 	}
 
 	@Override
@@ -67,9 +99,26 @@ public class RestResponseImpl implements IRestResponse {
 		return messages;
 	}
 
+	public void setMessages(List<String> messages) {
+		this.messages = messages;
+	}
+
 	@Override
-	public String getPluginVersion() {
-		return pluginVersion;
+	public Map<String, Object> getResultMap() {
+		return resultMap;
+	}
+
+	public void setResultMap(Map<String, Object> resultMap) {
+		this.resultMap = resultMap;
+	}
+
+	@Override
+	public String[] getTasks() {
+		return tasks;
+	}
+
+	public void setTasks(String[] tasks) {
+		this.tasks = tasks;
 	}
 
 	@Override
@@ -80,13 +129,7 @@ public class RestResponseImpl implements IRestResponse {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		// FIXME
-		return "unable to serialize response to JSON!";
-	}
-
-	@Override
-	public IRestResponseBody getResponseBody() {
-		return responseBody;
+		return null;
 	}
 
 }

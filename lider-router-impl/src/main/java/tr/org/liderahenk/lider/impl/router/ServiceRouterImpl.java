@@ -84,6 +84,7 @@ public class ServiceRouterImpl implements IServiceRouter {
 		try {
 			logger.debug("Executing command: {} for received request: {}", new Object[] { command, request });
 			commandResult = command.execute(commandContext);
+			logger.debug("Command executed successfully. Result: {}", commandResult);
 		} catch (Throwable e1) { // use throwable instead of exception to catch
 									// OutOfMemoryError as well.
 			logger.error(e1.getMessage(), e1);
