@@ -619,7 +619,17 @@ public class LDAPServiceImpl implements ILDAPService {
 		return this.search(configurationService.getLdapRootDn(), attributeName, attributeValue, attributes);
 	}
 
-	public List<LdapEntry> search(List<LdapSearchFilterAttribute> filterAttributes, String... attributes)
+	/**
+	 * Main search method for LDAP entries.
+	 * 
+	 * @param baseDn search base DN
+	 * @param filterAttributes filtering attributes used to construct query condition
+	 * @param attributes returning attributes
+	 * @return list of LDAP entries
+	 * @throws LdapException
+	 */
+	@Override
+	public List<LdapEntry> search(String baseDn, List<LdapSearchFilterAttribute> filterAttributes, String... attributes)
 			throws LdapException {
 		List<LdapEntry> result = new ArrayList<LdapEntry>();
 		Map<String, String> attrs = null;
@@ -642,7 +652,7 @@ public class LDAPServiceImpl implements ILDAPService {
 			}
 			searchFilterStr = searchFilterStr + ")";
 			req.setTimeLimit(0);
-			req.setBase(new Dn(configurationService.getLdapRootDn()));
+			req.setBase(new Dn(baseDn));
 			req.setFilter(searchFilterStr);
 			SearchCursor searchCursor = connection.search(req);
 			while (searchCursor.next()) {
@@ -666,8 +676,14 @@ public class LDAPServiceImpl implements ILDAPService {
 			releaseConnection(connection);
 
 		}
+		
 		return result;
+	}
 
+	@Override
+	public List<LdapEntry> search(List<LdapSearchFilterAttribute> filterAttributes, String... attributes)
+			throws LdapException {
+		return search(configurationService.getLdapRootDn(), filterAttributes, attributes);
 	}
 
 	@Override

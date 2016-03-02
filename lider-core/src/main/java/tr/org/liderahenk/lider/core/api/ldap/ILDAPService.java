@@ -117,4 +117,7 @@ public interface ILDAPService {
 	List<LdapEntry> search(String baseDn, String attributeName, String attributeValue, String[] attributes)
 			throws LdapException;
 
+	List<LdapEntry> search(String baseDn, List<LdapSearchFilterAttribute> filterAttributes, String[] attributes)
+			throws LdapException;
+
 }
