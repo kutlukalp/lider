@@ -3,6 +3,7 @@ package tr.org.liderahenk.lider.impl.rest.service;
 import java.util.List;
 import java.util.Map;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import tr.org.liderahenk.lider.core.api.plugin.ICommandResult;
@@ -10,22 +11,54 @@ import tr.org.liderahenk.lider.core.api.rest.IRestResponse;
 import tr.org.liderahenk.lider.core.api.rest.RestResponseStatus;
 
 /**
- * Default implementation for {@link IRestResponse}
+ * Default implementation for {@link IRestResponse}. Response object which is
+ * used to deliver executed command result back to Lider Console.
  * 
  * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class RestResponseImpl implements IRestResponse {
 
 	private static final long serialVersionUID = -5095818044483623056L;
 
+	/**
+	 * Contains result status. This is the only status code that can be used for
+	 * handling responses.
+	 */
 	private RestResponseStatus status;
+
+	/**
+	 * Name of the plugin which REST request/response belongs to
+	 */
 	private String pluginName;
+
+	/**
+	 * Plugin version number is used to distinguish plugins with multiple
+	 * bundles running on Lider Server
+	 */
 	private String pluginVersion;
+
+	/**
+	 * ID of the executed command of the plugin.
+	 */
 	private String commandId;
+
+	/**
+	 * Response messages can be used along with status to notify result.
+	 */
 	private List<String> messages;
+
+	/**
+	 * Contains result parameters which can be used by the plugin (e.g.
+	 * displaying results)
+	 */
 	private Map<String, Object> resultMap;
+
+	/**
+	 * array of task ID
+	 */
 	private String[] tasks;
 
 	public RestResponseImpl() {
@@ -73,7 +106,8 @@ public class RestResponseImpl implements IRestResponse {
 	}
 
 	public void setPluginName(String pluginName) {
-		this.pluginName = pluginName;
+		// Ensure there is no whitespace characters in the string
+		this.pluginName = pluginName != null ? pluginName.replace("\\s+", "") : null;
 	}
 
 	@Override
@@ -82,7 +116,8 @@ public class RestResponseImpl implements IRestResponse {
 	}
 
 	public void setPluginVersion(String pluginVersion) {
-		this.pluginVersion = pluginVersion;
+		// Ensure there is no whitespace characters in the string
+		this.pluginVersion = pluginVersion != null ? pluginVersion.replace("\\s+", "") : null;
 	}
 
 	@Override
@@ -91,7 +126,8 @@ public class RestResponseImpl implements IRestResponse {
 	}
 
 	public void setCommandId(String commandId) {
-		this.commandId = commandId;
+		// Ensure there is no whitespace characters in the string
+		this.commandId = commandId != null ? commandId.replace("\\s+", "") : null;
 	}
 
 	@Override

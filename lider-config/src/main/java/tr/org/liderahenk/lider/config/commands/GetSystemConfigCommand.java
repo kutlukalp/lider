@@ -33,11 +33,11 @@ public class GetSystemConfigCommand extends BaseCommand {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		// XMPP configuration
 		resultMap.put("xmppHost", configurationService.getXmppHost());
-		resultMap.put("xmppPort", configurationService.getXmppPort());
+		resultMap.put("xmppPort", configurationService.getXmppPort() + "");
 		resultMap.put("xmppServiceName", configurationService.getXmppServiceName());
-		resultMap.put("xmppMaxRetryConnectionCount", configurationService.getXmppMaxRetryConnectionCount());
-		resultMap.put("xmppPacketReplayTimeout", configurationService.getXmppPacketReplayTimeout());
-		resultMap.put("xmppPingTimeout", configurationService.getXmppPingTimeout());
+		resultMap.put("xmppMaxRetryConnectionCount", configurationService.getXmppMaxRetryConnectionCount() + "");
+		resultMap.put("xmppPacketReplayTimeout", configurationService.getXmppPacketReplayTimeout() + "");
+		resultMap.put("xmppPingTimeout", configurationService.getXmppPingTimeout() + "");
 		resultMap.put("xmppUseSsl", configurationService.getXmppUseSsl());
 		resultMap.put("xmppUsername", "TODO"); // TODO
 		resultMap.put("xmppPassword", "TODO"); // TODO

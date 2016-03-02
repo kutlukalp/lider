@@ -18,10 +18,15 @@ import tr.org.liderahenk.lider.core.api.rest.IRestRequestProcessor;
 import tr.org.liderahenk.lider.core.api.rest.IRestResponse;
 
 /**
- * Main controller for all REST requests made by Lider Console.
+ * Main controller for all REST requests posted by Lider Console. This class
+ * works as an entry point of Lider server. Received requests will be processed
+ * by {@link RestRequestProcessorImpl}, {@link ServiceRouterImpl},
+ * {@link TaskManagerImpl} respectively.
  * 
  * @author <a href="mailto:basaran.ismaill@gmail.com">ismail BASARAN</a>
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ * @see tr.org.liderahenk.lider.impl.rest.service.RestRequestImpl
+ * @see tr.org.liderahenk.lider.impl.rest.service.RestResponseImpl
  *
  */
 @Controller
@@ -42,7 +47,7 @@ public class LiderRequestManager {
 
 		IRestResponse restResponse = processor.processRequest(requestBodyDecoded);
 
-		logger.info("Completed processing request, returning result.");
+		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
 
 		return restResponse;
 	}
