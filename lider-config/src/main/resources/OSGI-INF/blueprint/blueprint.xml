@@ -11,7 +11,9 @@
 		update-strategy="reload">
 	</cm:property-placeholder>
 
-	<bean id="configurationService" class="tr.org.liderahenk.config.ConfigurationServiceImpl">
+	<service ref="configurationService"
+		interface="tr.org.liderahenk.lider.core.api.IConfigurationService" />
+	<bean id="configurationService" class="tr.org.liderahenk.lider.config.ConfigurationServiceImpl">
 		<property name="dbServer" value="${db.server}" />
 		<property name="dbPort" value="${db.port}" />
 		<property name="dbDatabase" value="${db.database}" />
@@ -51,7 +53,14 @@
 		<property name="taskManagerLogXmppMessagesEnabled" value="${taskmanager.log.xmpp.messages.enabled}" />
 	</bean>
 
-	<service ref="configurationService"
-		interface="tr.org.liderahenk.lider.core.api.IConfigurationService" />
+	<service ref="getSystemConfigCommand" interface="tr.org.liderahenk.lider.core.api.plugin.ICommand" />
+	<bean id="getSystemConfigCommand"
+		class="tr.org.liderahenk.lider.config.commands.GetSystemConfigCommand">
+		<property name="configurationService" ref="configurationService" />
+		<property name="resultFactory" ref="resultFactory" />
+	</bean>
+
+	<reference id="resultFactory"
+		interface="tr.org.liderahenk.lider.core.api.plugin.ICommandResultFactory" />
 
 </blueprint>

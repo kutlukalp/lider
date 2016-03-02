@@ -19,13 +19,6 @@
 		<property name="ldapService" ref="ldapService" />
 	</bean>
 
-	<service ref="getSystemConfigCommand" interface="tr.org.liderahenk.lider.core.api.plugin.ICommand" />
-	<bean id="getSystemConfigCommand"
-		class="tr.org.liderahenk.lider.rest.commands.GetSystemConfigCommand">
-		<property name="configurationService" ref="configurationService" />
-		<property name="resultFactory" ref="resultFactory" />
-	</bean>
-
 	<reference id="configurationService"
 		interface="tr.org.liderahenk.lider.core.api.IConfigurationService" />
 	<reference id="serviceRouter"
@@ -38,7 +31,5 @@
 		interface="tr.org.liderahenk.lider.core.api.rest.IResponseFactory" />
 	<reference id="ldapService"
 		interface="tr.org.liderahenk.lider.core.api.ldap.ILDAPService" />
-	<reference id="resultFactory"
-		interface="tr.org.liderahenk.lider.core.api.plugin.ICommandResultFactory" />
 
 </blueprint>

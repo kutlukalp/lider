@@ -1,4 +1,4 @@
-package tr.org.liderahenk.lider.rest.commands;
+package tr.org.liderahenk.lider.config.commands;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,7 +65,7 @@ public class GetSystemConfigCommand extends BaseCommand {
 
 	@Override
 	public String getCommandId() {
-		return "GETSYSTEMCONFIG";
+		return "GET-SYSTEM-CONFIG";
 	}
 
 	@Override

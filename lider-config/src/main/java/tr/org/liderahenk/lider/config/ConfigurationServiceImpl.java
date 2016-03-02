@@ -1,4 +1,4 @@
-package tr.org.liderahenk.config;
+package tr.org.liderahenk.lider.config;
 
 import tr.org.liderahenk.lider.core.api.IConfigurationService;
 
