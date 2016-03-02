@@ -45,16 +45,17 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 	private String agentLdapObjectClasses;
 
 	// User configuration
-	private String authLdapUserSearchBase;
-	private String authLdapUserObjectClasses;
-	private String authLdapUserAttribute;
-	private Boolean authorizationEnabled;
+	private String userLdapBaseDn;
+	private String userLdapUidAttribute;
+	private String userLdapPrivilegeAttribute;
+	private String userLdapObjectClasses;
+	private Boolean userAuthorizationEnabled;
 
 	// Task manager configuration
 	private Long taskManagerTaskTimeout;
 	private Boolean taskManagerMulticastEnabled;
 	private Boolean taskManagerLogXmppMessagesEnabled;
-	
+
 	@Override
 	public String toString() {
 		return "ConfigurationServiceImpl [dbServer=" + dbServer + ", dbPort=" + dbPort + ", dbDatabase=" + dbDatabase
@@ -66,12 +67,12 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 				+ ", xmppPacketReplayTimeout=" + xmppPacketReplayTimeout + ", xmppPingTimeout=" + xmppPingTimeout
 				+ ", xmppUseSsl=" + xmppUseSsl + ", agentLdapBaseDn=" + agentLdapBaseDn + ", agentLdapIdAttribute="
 				+ agentLdapIdAttribute + ", agentLdapJidAttribute=" + agentLdapJidAttribute
-				+ ", agentLdapObjectClasses=" + agentLdapObjectClasses + ", authLdapUserSearchBase="
-				+ authLdapUserSearchBase + ", authLdapUserObjectClasses=" + authLdapUserObjectClasses
-				+ ", authLdapUserAttribute=" + authLdapUserAttribute + ", authorizationEnabled=" + authorizationEnabled
-				+ ", taskManagerTaskTimeout=" + taskManagerTaskTimeout + ", taskManagerMulticastEnabled="
-				+ taskManagerMulticastEnabled + ", taskManagerLogXmppMessagesEnabled="
-				+ taskManagerLogXmppMessagesEnabled + "]";
+				+ ", agentLdapObjectClasses=" + agentLdapObjectClasses + ", userLdapBaseDn=" + userLdapBaseDn
+				+ ", userLdapUidAttribute=" + userLdapUidAttribute + ", userLdapPrivilegeAttribute="
+				+ userLdapPrivilegeAttribute + ", userLdapObjectClasses=" + userLdapObjectClasses
+				+ ", userAuthorizationEnabled=" + userAuthorizationEnabled + ", taskManagerTaskTimeout="
+				+ taskManagerTaskTimeout + ", taskManagerMulticastEnabled=" + taskManagerMulticastEnabled
+				+ ", taskManagerLogXmppMessagesEnabled=" + taskManagerLogXmppMessagesEnabled + "]";
 	}
 
 	public String getDbServer() {
@@ -266,36 +267,44 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.agentLdapObjectClasses = agentLdapObjectClasses;
 	}
 
-	public String getAuthLdapUserSearchBase() {
-		return authLdapUserSearchBase;
+	public String getUserLdapBaseDn() {
+		return userLdapBaseDn;
 	}
 
-	public void setAuthLdapUserSearchBase(String authLdapUserSearchBase) {
-		this.authLdapUserSearchBase = authLdapUserSearchBase;
+	public void setUserLdapBaseDn(String userLdapBaseDn) {
+		this.userLdapBaseDn = userLdapBaseDn;
 	}
 
-	public String getAuthLdapUserObjectClasses() {
-		return authLdapUserObjectClasses;
+	public String getUserLdapUidAttribute() {
+		return userLdapUidAttribute;
 	}
 
-	public void setAuthLdapUserObjectClasses(String authLdapUserObjectClasses) {
-		this.authLdapUserObjectClasses = authLdapUserObjectClasses;
+	public void setUserLdapUidAttribute(String userLdapUidAttribute) {
+		this.userLdapUidAttribute = userLdapUidAttribute;
 	}
 
-	public String getAuthLdapUserAttribute() {
-		return authLdapUserAttribute;
+	public String getUserLdapPrivilegeAttribute() {
+		return userLdapPrivilegeAttribute;
 	}
 
-	public void setAuthLdapUserAttribute(String authLdapUserAttribute) {
-		this.authLdapUserAttribute = authLdapUserAttribute;
+	public void setUserLdapPrivilegeAttribute(String userLdapPrivilegeAttribute) {
+		this.userLdapPrivilegeAttribute = userLdapPrivilegeAttribute;
 	}
 
-	public Boolean getAuthorizationEnabled() {
-		return authorizationEnabled;
+	public String getUserLdapObjectClasses() {
+		return userLdapObjectClasses;
 	}
 
-	public void setAuthorizationEnabled(Boolean authorizationEnabled) {
-		this.authorizationEnabled = authorizationEnabled;
+	public void setUserLdapObjectClasses(String userLdapObjectClasses) {
+		this.userLdapObjectClasses = userLdapObjectClasses;
+	}
+
+	public Boolean getUserAuthorizationEnabled() {
+		return userAuthorizationEnabled;
+	}
+
+	public void setUserAuthorizationEnabled(Boolean userAuthorizationEnabled) {
+		this.userAuthorizationEnabled = userAuthorizationEnabled;
 	}
 
 	public Long getTaskManagerTaskTimeout() {

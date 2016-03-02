@@ -40,10 +40,11 @@
 		<property name="agentLdapJidAttribute" value="${agent.ldap.jid.attribute}" />
 		<property name="agentLdapObjectClasses" value="${agent.ldap.object.classes}" />
 
-		<property name="authLdapUserSearchBase" value="${auth.ldap.user.search.base}" />
-		<property name="authLdapUserObjectClasses" value="${auth.ldap.user.object.classes}" />
-		<property name="authLdapUserAttribute" value="${auth.ldap.user.attribute}" />
-		<property name="authorizationEnabled" value="${auth.authorization.enabled}" />
+		<property name="userLdapBaseDn" value="${user.ldap.base.dn}" />
+		<property name="userLdapUidAttribute" value="${user.ldap.uid.attribute}" />
+		<property name="userLdapPrivilegeAttribute" value="${user.ldap.privilege.attribute}" />
+		<property name="userLdapObjectClasses" value="${user.ldap.object.classes}" />
+		<property name="userAuthorizationEnabled" value="${user.authorization.enabled}" />
 
 		<property name="taskManagerTaskTimeout" value="${taskmanager.task.timeout}" />
 		<property name="taskManagerMulticastEnabled" value="${taskmanager.multicast.enabled}" />

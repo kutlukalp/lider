@@ -172,29 +172,35 @@ public interface IConfigurationService {
 
 	/**
 	 * 
-	 * @return ldap user search base dn for authentication
+	 * @return LDAP user search base dn for authentication
 	 */
-	String getAuthLdapUserSearchBase();
+	String getUserLdapBaseDn();
 
 	/**
 	 * 
-	 * @return comma separated ldap user object classes to be used in search
+	 * @return LDAP user attribute for authentication
+	 */
+	String getUserLdapUidAttribute();
+
+	/**
+	 * 
+	 * @return LDAP user privilege attribute.
+	 */
+	String getUserLdapPrivilegeAttribute();
+
+	/**
+	 * 
+	 * @return comma separated LDAP user object classes to be used in search
 	 *         filter for authentication
 	 * 
 	 */
-	String getAuthLdapUserObjectClasses();
+	String getUserLdapObjectClasses();
 
 	/**
 	 * 
-	 * @return ldap user attribute for authentication
+	 * @return true if LDAP authorization enabled, false otherwise
 	 */
-	String getAuthLdapUserAttribute();
-
-	/**
-	 * 
-	 * @return true if ldap authorization enabled, false otherwise
-	 */
-	Boolean getAuthorizationEnabled();
+	Boolean getUserAuthorizationEnabled();
 
 	//
 	// Task manager configuration
