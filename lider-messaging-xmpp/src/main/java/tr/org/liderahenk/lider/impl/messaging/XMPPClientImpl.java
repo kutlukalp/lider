@@ -108,8 +108,8 @@ public class XMPPClientImpl {
 	private XMPPTCPConnectionConfiguration config;
 	private MultiUserChatManager mucManager;
 
-	private Pattern registerPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"REGISTER\\\".*");
-	private Pattern taskPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"TASK.*");
+	private Pattern registerPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"REGISTER\\\".*", Pattern.CASE_INSENSITIVE);
+	private Pattern taskPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"TASK.*", Pattern.CASE_INSENSITIVE);
 
 	private IConfigurationService configurationService;
 
