@@ -82,6 +82,7 @@ public class ServiceRouterImpl implements IServiceRouter {
 		// manager. Finally, return result response.
 		ICommandResult commandResult = null;
 		try {
+			logger.debug("Executing command: {} for received request: {}", new Object[] { command, request });
 			commandResult = command.execute(commandContext);
 		} catch (Throwable e1) { // use throwable instead of exception to catch
 									// OutOfMemoryError as well.
@@ -90,6 +91,7 @@ public class ServiceRouterImpl implements IServiceRouter {
 			messages.add("Could not execute task: " + e1.getMessage());
 			return responseFactory.createResponse(request, RestResponseStatus.ERROR, messages);
 		}
+
 		if (CommandResultStatus.OK == commandResult.getStatus()) {
 			if (!command.needsTask()) {
 				logger.debug("{} does not require task, returning response.", command);

@@ -13,6 +13,8 @@ import tr.org.liderahenk.lider.core.api.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.authorization.IAuthService;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
 import tr.org.liderahenk.lider.core.api.ldap.LdapException;
+import tr.org.liderahenk.lider.core.api.ldap.LdapSearchFilterAttribute;
+import tr.org.liderahenk.lider.core.api.ldap.LdapSearchFilterEnum;
 import tr.org.liderahenk.lider.core.api.rest.IRequestFactory;
 import tr.org.liderahenk.lider.core.api.rest.IResponseFactory;
 import tr.org.liderahenk.lider.core.api.rest.IRestRequest;
@@ -82,14 +84,16 @@ public class RestRequestProcessorImpl implements IRestRequestProcessor {
 			// This is the default format for operation definitions. (such as
 			// BROWSER/SAVE, USB/ENABLE etc.)
 			String targetOperation = request.getPluginName() + "/" + request.getCommandId();
+			logger.debug("Target operation: {}", targetOperation);
 
 			// DN list may contain any combination of Ahenk, User and Group DNs,
-			// and DN type indicates what kind of DNs in this list are subject
+			// and DN type indicates what kind of entries in this list are
+			// subject
 			// to command execution. Therefore we need to find these LDAP
 			// entries first before authorization and command execution phases.
 			targetEntries = findTargetEntries(request.getDnList(), request.getDnType());
 
-			if (config.getAuthorizationEnabled()) {
+			if (config.getUserAuthorizationEnabled()) {
 				Subject currentUser = null;
 				try {
 					currentUser = SecurityUtils.getSubject();
@@ -102,12 +106,14 @@ public class RestRequestProcessorImpl implements IRestRequestProcessor {
 						targetEntries = authService.getPermittedEntries(currentUser.getPrincipal().toString(),
 								targetEntries, targetOperation);
 						if (targetEntries == null || targetEntries.isEmpty()) {
+							logger.error("User not authorized: {}", currentUser.getPrincipal().toString());
 							return responseFactory.createResponse(request, RestResponseStatus.ERROR,
 									Arrays.asList(new String[] { "NOT_AUTHORIZED" }));
 						}
-					}
-					else if (ldapService.getUser(currentUser.getPrincipal().toString()) == null) {
-						// Request might not contain any target entries, When that's the case, check only if user exists!
+					} else if (ldapService.getUser(currentUser.getPrincipal().toString()) == null) {
+						// Request might not contain any target entries, When
+						// that's the case, check only if user exists!
+						logger.error("User not authorized: {}", currentUser.getPrincipal().toString());
 						return responseFactory.createResponse(request, RestResponseStatus.ERROR,
 								Arrays.asList(new String[] { "NOT_AUTHORIZED" }));
 					}
@@ -125,32 +131,53 @@ public class RestRequestProcessorImpl implements IRestRequestProcessor {
 		}
 
 		try {
+			logger.info("Request processed & authorized successfully. Delegating it to service router.");
 			return serviceRouter.delegateRequest(request, targetEntries);
 		} catch (InvalidRequestException e) {
-			// TODO resposne messages!!
-			// adding some error messages to the response, and a
-			// ResponseRequestStatus.
+			logger.error(e.getMessage(), e);
 			return responseFactory.createResponse(request, RestResponseStatus.ERROR,
 					Arrays.asList(new String[] { "No matching command found to process request!" }));
 		} catch (TaskSubmissionFailedException e) {
+			logger.error(e.getMessage(), e);
 			return responseFactory.createResponse(request, RestResponseStatus.ERROR, Arrays.asList(
 					new String[] { "Cannot submit task for request!", e.getMessage(), e.getCause().getMessage() }));
 		}
 	}
 
-	// TODO Read attributes from properties file:
+	/**
+	 * Find target entries which subject to command execution from provided DN
+	 * list.
+	 * 
+	 * @param dnList
+	 * @param dnType
+	 * @return
+	 */
 	private List<LdapEntry> findTargetEntries(List<String> dnList, RestDNType dnType) {
 		List<LdapEntry> entries = null;
 		if (dnList != null && !dnList.isEmpty() && dnType != null) {
-			String[] attributes = new String[] { "liderPrivilege" }; // ??
-			String attributeName = "objectClass";
-			String attributeValue = dnType == RestDNType.AHENK ? "pardusDevice" // ??
-					: (dnType == RestDNType.USER ? "pardusAccount" : "*"); // ??
+
+			// Determine returning attributes
+			String[] returningAttributes = new String[] { config.getUserLdapPrivilegeAttribute() };
+
+			// Construct filtering attributes
+			String objectClasses = dnType == RestDNType.AHENK ? config.getAgentLdapObjectClasses()
+					: (dnType == RestDNType.USER ? config.getUserLdapObjectClasses() : "*");
+			List<LdapSearchFilterAttribute> filterAttributes = new ArrayList<LdapSearchFilterAttribute>();
+			// There may be multiple object classes
+			String[] objectClsArr = objectClasses.split(",");
+			for (String objectClass : objectClsArr) {
+				LdapSearchFilterAttribute fAttr = new LdapSearchFilterAttribute("objectClass", objectClass,
+						LdapSearchFilterEnum.EQ);
+				filterAttributes.add(fAttr);
+			}
+
 			entries = new ArrayList<LdapEntry>();
-			// For each DN, find its target child entries according to DN type:
+
+			// For each DN, find its target (child) entries according to desired
+			// DN type:
 			for (String dn : dnList) {
 				try {
-					List<LdapEntry> result = ldapService.search(dn, attributeName, attributeValue, attributes);
+					List<LdapEntry> result = ldapService.search(dn, filterAttributes, returningAttributes);
 					if (result != null && !result.isEmpty()) {
 						entries.addAll(result);
 					}
@@ -159,6 +186,7 @@ public class RestRequestProcessorImpl implements IRestRequestProcessor {
 				}
 			}
 		}
+
 		return entries;
 	}
 

@@ -34,10 +34,11 @@ public class LiderRequestManager {
 
 	@RequestMapping(value = "/lider/rest", method = { RequestMethod.POST })
 	@ResponseBody
-	public IRestResponse processRequest(@RequestBody String requestBody, HttpServletRequest request) throws UnsupportedEncodingException {
+	public IRestResponse processRequest(@RequestBody String requestBody, HttpServletRequest request)
+			throws UnsupportedEncodingException {
 
 		String requestBodyDecoded = URLDecoder.decode(requestBody, "UTF-8");
-		logger.debug("Request received. Body: {}", requestBodyDecoded);
+		logger.info("Request received. Body: {}", requestBodyDecoded);
 
 		IRestResponse restResponse = processor.processRequest(requestBodyDecoded);
 
