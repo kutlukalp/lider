@@ -44,7 +44,7 @@ public class LiderLdapRealm extends AbstractLdapRealm {
 
 		logger.debug("Initializing LDAP realm.");
 
-		this.searchBase = config.getAuthLdapUserSearchBase();
+		this.searchBase = config.getUserLdapBaseDn();
 		this.useSSL = config.getLdapUseSsl();
 
 		if (useSSL) {
@@ -56,8 +56,8 @@ public class LiderLdapRealm extends AbstractLdapRealm {
 		this.systemUsername = config.getLdapUsername();
 		this.systemPassword = config.getLdapPassword();
 
-		this.objectClasses = config.getAuthLdapUserObjectClasses();
-		this.userIdAttribute = config.getAuthLdapUserAttribute();
+		this.objectClasses = config.getUserLdapObjectClasses();
+		this.userIdAttribute = config.getUserLdapUidAttribute();
 
 		logger.debug("searchBase => {}, url => {}, systemUsername => {}, systemPassword => {}",
 				new Object[] { searchBase, url, systemUsername, systemPassword });
@@ -96,7 +96,7 @@ public class LiderLdapRealm extends AbstractLdapRealm {
 
 			String filter = mergeFiltersAND(objClsFilter, userIdFilter);
 
-			NamingEnumeration<?> namingEnumeration = sysCtx.search(config.getAuthLdapUserSearchBase(), filter,
+			NamingEnumeration<?> namingEnumeration = sysCtx.search(config.getUserLdapBaseDn(), filter,
 					getSimpleSearchControls());
 
 			while (namingEnumeration.hasMore()) {

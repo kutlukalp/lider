@@ -19,8 +19,8 @@
 		<property name="ldapService" ref="ldapService" />
 	</bean>
 
-	<service ref="GetSystemConfigCommand" interface="tr.org.liderahenk.lider.core.api.plugin.ICommand" />
-	<bean id="GetSystemConfigCommand"
+	<service ref="getSystemConfigCommand" interface="tr.org.liderahenk.lider.core.api.plugin.ICommand" />
+	<bean id="getSystemConfigCommand"
 		class="tr.org.liderahenk.lider.rest.commands.GetSystemConfigCommand">
 		<property name="configurationService" ref="configurationService" />
 		<property name="resultFactory" ref="resultFactory" />

@@ -111,7 +111,7 @@ public class LDAPServiceImpl implements ILDAPService {
 		logger.info("ldap.root.dn => {}", configurationService.getLdapRootDn());
 
 		rootDn = configurationService.getLdapRootDn();
-		authLdapUserSearchBase = configurationService.getAuthLdapUserSearchBase();
+		authLdapUserSearchBase = configurationService.getUserLdapBaseDn();
 		ldapUserJidAttribute = configurationService.getAgentLdapJidAttribute();
 
 		LdapConnectionConfig lconfig = new LdapConnectionConfig();

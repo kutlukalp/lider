@@ -30,7 +30,7 @@ public class GetSystemConfigCommand extends BaseCommand {
 	@Override
 	public ICommandResult execute(ICommandContext context) throws Exception {
 
-		logger.debug("Executing command.");
+		logger.error("Executing command.");
 
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		// XMPP configuration
@@ -51,9 +51,9 @@ public class GetSystemConfigCommand extends BaseCommand {
 		resultMap.put("ldapRootDn", configurationService.getLdapRootDn());
 		resultMap.put("ldapUseSsl", configurationService.getLdapUseSsl());
 
-		logger.debug("System config: {}", resultMap);
+		logger.error("System config: {}", resultMap);
 		
-		logger.info("Command executed successfully.");
+		logger.error("Command executed successfully.");
 
 		return resultFactory.create(CommandResultStatus.OK, new ArrayList<String>(), this, resultMap);
 	}

@@ -19,7 +19,7 @@ import tr.org.liderahenk.lider.core.api.router.IServiceRegistry;
  *
  */
 public class ServiceRegistryImpl implements IServiceRegistry {
-	
+
 	private Logger logger = LoggerFactory.getLogger(ServiceRegistryImpl.class);
 
 	/**
@@ -65,7 +65,11 @@ public class ServiceRegistryImpl implements IServiceRegistry {
 	 * @return
 	 */
 	public ICommand lookupCommand(String key) {
-		return commands.get(key);
+		ICommand command = commands.get(key);
+		if (command == null) {
+			logger.error("ICommand could not be found. Key: {}", key);
+		}
+		return command;
 	}
 
 }
