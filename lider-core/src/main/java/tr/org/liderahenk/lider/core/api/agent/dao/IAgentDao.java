@@ -36,6 +36,13 @@ public interface IAgentDao {
 
 	/**
 	 * 
+	 * @param agent
+	 * @return
+	 */
+	IAgent markAsDeleted(IAgent agent);
+
+	/**
+	 * 
 	 * @param agentId
 	 */
 	void delete(Long agentId);

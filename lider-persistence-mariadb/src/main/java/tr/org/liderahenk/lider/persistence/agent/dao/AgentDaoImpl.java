@@ -61,6 +61,15 @@ public class AgentDaoImpl implements IAgentDao {
 	}
 
 	@Override
+	public AgentImpl markAsDeleted(IAgent agent) {
+		AgentImpl agentImpl = new AgentImpl(agent);
+		agentImpl.setDeleted(true);
+		agentImpl = entityManager.merge(agentImpl);
+		logger.debug("IAgent object marked as deleted: {}", agentImpl.toString());
+		return agentImpl;
+	}
+
+	@Override
 	public void delete(Long agentId) {
 		Object entity = entityManager.find(AgentImpl.class, agentId);
 		entityManager.remove(entity);
