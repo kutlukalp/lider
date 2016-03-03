@@ -69,7 +69,7 @@ public class DefaultRegistrationSubscriber implements IRegistrationSubscriber {
 	public IRegistrationInfo messageReceived(IRegistrationMessage message) throws Exception {
 
 		String uid = message.getFrom().split("@")[0];
-
+		
 		//
 		// Register agent
 		//

@@ -688,7 +688,6 @@ public class XMPPClientImpl {
 					// Construct message
 					RegistrationMessageImpl message = new ObjectMapper().readValue(msg.getBody(),
 							RegistrationMessageImpl.class);
-					message.setFrom(msg.getFrom());
 
 					// Fall back to default register subscriber if reference
 					// list is empty.
@@ -785,7 +784,11 @@ public class XMPPClientImpl {
 					// Construct message
 					UserSessionMessageImpl message = new ObjectMapper().readValue(msg.getBody(),
 							UserSessionMessageImpl.class);
-					message.setFrom(msg.getFrom());
+
+					// TODO commented this line, for test purposes. we should
+					// set 'from' property to ensure
+					// sender jid
+					// message.setFrom(msg.getFrom());
 
 					// Fall back to default subscriber if reference list is
 					// empty.
@@ -860,10 +863,10 @@ public class XMPPClientImpl {
 
 	/**
 	 * 
-	 * @param registerSubscribers
+	 * @param registrationSubscribers
 	 */
-	public void setRegisterSubscribers(List<IRegistrationSubscriber> registerSubscribers) {
-		this.registrationSubscribers = registerSubscribers;
+	public void setRegistrationSubscribers(List<IRegistrationSubscriber> registrationSubscribers) {
+		this.registrationSubscribers = registrationSubscribers;
 	}
 
 	/**
