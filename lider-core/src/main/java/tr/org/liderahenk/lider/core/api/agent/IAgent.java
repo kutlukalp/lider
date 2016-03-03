@@ -17,6 +17,12 @@ public interface IAgent extends Serializable {
 	 * @return
 	 */
 	Long getId();
+	
+	/**
+	 * 
+	 * @return
+	 */
+	Boolean getDeleted();
 
 	/**
 	 * 
@@ -67,10 +73,21 @@ public interface IAgent extends Serializable {
 	List<? extends IAgentProperty> getProperties();
 
 	/**
-	 * Used to bind agent record ant its properties.
 	 * 
-	 * @param properties
+	 * @param property
 	 */
-	void setProperties(List<? extends IAgentProperty> properties);
+	void addProperty(IAgentProperty property);
+
+	/**
+	 * 
+	 * @return
+	 */
+	List<? extends IUserSession> getSessions();
+
+	/**
+	 * 
+	 * @param userSession
+	 */
+	void addUserSession(IUserSession userSession);
 
 }

@@ -42,7 +42,6 @@ public class AgentPropertyImpl implements IAgentProperty {
 	private String propertyValue;
 
 	public AgentPropertyImpl() {
-		super();
 	}
 
 	public AgentPropertyImpl(Long id, String propertyName, String propertyValue) {
@@ -51,13 +50,14 @@ public class AgentPropertyImpl implements IAgentProperty {
 		this.propertyName = propertyName;
 		this.propertyValue = propertyValue;
 	}
-	
+
 	public AgentPropertyImpl(IAgentProperty property) {
 		super();
 		this.id = property.getId();
 		this.propertyName = property.getPropertyName();
 		this.propertyValue = property.getPropertyValue();
-		// DO NOT forget to set 'agent'!
+		// Do NOT set 'agent' here! Use IAgent.addProperty() to add
+		// IAgentProperty to parent.
 	}
 
 	@Override
@@ -98,8 +98,8 @@ public class AgentPropertyImpl implements IAgentProperty {
 
 	@Override
 	public String toString() {
-		return "AgentPropertyImpl [id=" + id + ", propertyName=" + propertyName
-				+ ", propertyValue=" + propertyValue + "]";
+		return "AgentPropertyImpl [id=" + id + ", propertyName=" + propertyName + ", propertyValue=" + propertyValue
+				+ "]";
 	}
 
 }

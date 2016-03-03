@@ -17,12 +17,13 @@ import javax.persistence.TemporalType;
 
 import tr.org.liderahenk.lider.core.api.agent.IAgent;
 import tr.org.liderahenk.lider.core.api.agent.IAgentProperty;
+import tr.org.liderahenk.lider.core.api.agent.IUserSession;
 
 /**
  * Entity class for agent.
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Kağan Akkaya</a>
- * @see tr.org.liderahenk.lider.core.api.agent.IAgentProperty
+ * @see tr.org.liderahenk.lider.core.api.agent.IAgent
  *
  */
 @Entity
@@ -38,6 +39,9 @@ public class AgentImpl implements IAgent {
 
 	@Column(name = "JID", nullable = false, unique = true)
 	private String jid; // XMPP JID = LDAP UID
+
+	@Column(name = "IS_DELETED")
+	private Boolean deleted;
 
 	@Column(name = "DN", nullable = false, unique = true)
 	private String dn;
@@ -61,15 +65,19 @@ public class AgentImpl implements IAgent {
 	@OneToMany(mappedBy = "agent", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	private List<AgentPropertyImpl> properties = new ArrayList<AgentPropertyImpl>();
 
+	@OneToMany(mappedBy = "agent", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = false)
+	private List<UserSessionImpl> sessions = new ArrayList<UserSessionImpl>();
+
 	public AgentImpl() {
-		super();
 	}
 
-	public AgentImpl(Long id, String jid, String dn, String password, String hostname, String ipAddresses,
-			String macAddresses, Date creationDate, List<AgentPropertyImpl> properties) {
+	public AgentImpl(Long id, String jid, Boolean deleted, String dn, String password, String hostname,
+			String ipAddresses, String macAddresses, Date creationDate, List<AgentPropertyImpl> properties,
+			List<UserSessionImpl> sessions) {
 		super();
 		this.id = id;
 		this.jid = jid;
+		this.deleted = deleted;
 		this.dn = dn;
 		this.password = password;
 		this.hostname = hostname;
@@ -77,10 +85,12 @@ public class AgentImpl implements IAgent {
 		this.macAddresses = macAddresses;
 		this.creationDate = creationDate;
 		this.properties = properties;
+		this.sessions = sessions;
 	}
 
 	public AgentImpl(IAgent agent) {
 		this.id = agent.getId();
+		this.deleted = agent.getDeleted();
 		this.jid = agent.getJid();
 		this.dn = agent.getDn();
 		this.password = agent.getPassword();
@@ -89,14 +99,24 @@ public class AgentImpl implements IAgent {
 		this.macAddresses = agent.getMacAddresses();
 		this.creationDate = agent.getCreationDate();
 
-		List<? extends IAgentProperty> tempList = agent.getProperties();
-		if (tempList != null) {
-			for (IAgentProperty prop : tempList) {
-				AgentPropertyImpl propImpl = new AgentPropertyImpl(prop);
-				propImpl.setAgent(this);
-				properties.add(propImpl);
+		// Convert IAgentProperty to AgentPropertyImpl
+		List<? extends IAgentProperty> tmpProperties = agent.getProperties();
+		if (tmpProperties != null) {
+			for (IAgentProperty tmpProperty : tmpProperties) {
+				AgentPropertyImpl property = new AgentPropertyImpl(tmpProperty);
+				addProperty(property);
 			}
 		}
+
+		// Convert IUserSession to UserSessionImpl
+		List<? extends IUserSession> tmpUserSessions = agent.getSessions();
+		if (tmpUserSessions != null) {
+			for (IUserSession tmpUserSession : tmpUserSessions) {
+				UserSessionImpl userSession = new UserSessionImpl(tmpUserSession);
+				addUserSession(userSession);
+			}
+		}
+
 	}
 
 	@Override
@@ -115,6 +135,15 @@ public class AgentImpl implements IAgent {
 
 	public void setJid(String jid) {
 		this.jid = jid;
+	}
+
+	@Override
+	public Boolean getDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(Boolean deleted) {
+		this.deleted = deleted;
 	}
 
 	@Override
@@ -176,17 +205,44 @@ public class AgentImpl implements IAgent {
 		return properties;
 	}
 
-	@SuppressWarnings("unchecked")
+	public void setProperties(List<AgentPropertyImpl> properties) {
+		this.properties = properties;
+	}
+
 	@Override
-	public void setProperties(List<? extends IAgentProperty> properties) {
-		this.properties = (List<AgentPropertyImpl>) properties;
+	public void addProperty(IAgentProperty property) {
+		if (properties == null) {
+			properties = new ArrayList<AgentPropertyImpl>();
+		}
+		AgentPropertyImpl propertyImpl = new AgentPropertyImpl(property);
+		propertyImpl.setAgent(this);
+		properties.add(propertyImpl);
+	}
+
+	@Override
+	public List<UserSessionImpl> getSessions() {
+		return sessions;
+	}
+
+	public void setSessions(List<UserSessionImpl> sessions) {
+		this.sessions = sessions;
+	}
+
+	@Override
+	public void addUserSession(IUserSession userSession) {
+		if (sessions == null) {
+			sessions = new ArrayList<UserSessionImpl>();
+		}
+		UserSessionImpl userSessionImpl = new UserSessionImpl(userSession);
+		userSessionImpl.setAgent(this);
+		sessions.add(userSessionImpl);
 	}
 
 	@Override
 	public String toString() {
-		return "AgentImpl [id=" + id + ", jid=" + jid + ", dn=" + dn + ", password=" + password + ", hostname="
-				+ hostname + ", ipAddresses=" + ipAddresses + ", macAddresses=" + macAddresses + ", creationDate="
-				+ creationDate + ", properties=" + properties + "]";
+		return "AgentImpl [id=" + id + ", jid=" + jid + ", deleted=" + deleted + ", dn=" + dn + ", password=" + password
+				+ ", hostname=" + hostname + ", ipAddresses=" + ipAddresses + ", macAddresses=" + macAddresses
+				+ ", creationDate=" + creationDate + ", properties=" + properties + ", sessions=" + sessions + "]";
 	}
 
 }
