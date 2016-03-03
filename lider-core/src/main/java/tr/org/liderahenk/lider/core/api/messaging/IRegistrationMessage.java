@@ -1,14 +1,15 @@
 package tr.org.liderahenk.lider.core.api.messaging;
 
 /**
- * IRegisterMessage is used to register a new agent to the system.
+ * IRegistrationMessage is used to register (or unregister) an agent in the
+ * system.
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
-public interface IRegisterMessage extends IAgentMessage {
+public interface IRegistrationMessage extends IAgentMessage {
 	/**
-	 * @return Ahenk password.
+	 * @return Agent password.
 	 */
 	String getPassword();
 

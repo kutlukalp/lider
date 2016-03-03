@@ -9,32 +9,39 @@
 
 	<service ref="messagingServiceImpl"
 		interface="tr.org.liderahenk.lider.core.api.messaging.IMessagingService" />
-	<service ref="messageFactory"
-		interface="tr.org.liderahenk.lider.core.api.messaging.IMessageFactory" />
-	<service ref="defaultRegisterSubscriber"
-		interface="tr.org.liderahenk.lider.core.api.messaging.IRegisterSubscriber" />
-
 	<bean id="messagingServiceImpl"
 		class="tr.org.liderahenk.lider.impl.messaging.MessagingServiceImpl">
 		<property name="xmppClient" ref="xmppClient" />
+	</bean>
+
+	<service ref="messageFactory"
+		interface="tr.org.liderahenk.lider.core.api.messaging.IMessageFactory" />
+	<bean id="messageFactory"
+		class="tr.org.liderahenk.lider.impl.messaging.MessageFactoryImpl">
 	</bean>
 
 	<bean id="xmppClient" class="tr.org.liderahenk.lider.impl.messaging.XMPPClientImpl"
 		init-method="init" destroy-method="destroy">
 		<property name="presenceSubscribers" ref="presenceSubscribersRef" />
 		<property name="taskStatusUpdateSubscribers" ref="taskStatusUpdateSubscribersRef" />
-		<property name="registerSubscribers" ref="registerSubscribersRef" />
+		<property name="registrationSubscribers" ref="registrationSubscribersRef" />
+		<property name="userSessionSubscribers" ref="userSessionSubscribersRef" />
 		<property name="configurationService" ref="configurationService" />
 	</bean>
 
-	<bean id="messageFactory"
-		class="tr.org.liderahenk.lider.impl.messaging.MessageFactoryImpl">
-	</bean>
-
-	<bean id="defaultRegisterSubscriber"
-		class="tr.org.liderahenk.lider.impl.registration.DefaultRegisterSubscriber">
+	<service ref="defaultRegistrationSubscriber"
+		interface="tr.org.liderahenk.lider.core.api.messaging.IRegistrationSubscriber" />
+	<bean id="defaultRegistrationSubscriber"
+		class="tr.org.liderahenk.lider.impl.registration.DefaultRegistrationSubscriber">
 		<property name="ldapService" ref="ldapService" />
 		<property name="configurationService" ref="configurationService" />
+		<property name="agentDao" ref="agentDaoRef" />
+	</bean>
+
+	<service ref="defaultUserSessionSubscriber"
+		interface="tr.org.liderahenk.lider.core.api.messaging.IUserSessionSubscriber" />
+	<bean id="defaultUserSessionSubscriber"
+		class="tr.org.liderahenk.lider.impl.userSession.DefaultUserSessionSubscriber">
 		<property name="agentDao" ref="agentDaoRef" />
 	</bean>
 
@@ -44,8 +51,11 @@
 	<reference-list id="taskStatusUpdateSubscribersRef"
 		interface="tr.org.liderahenk.lider.core.api.messaging.ITaskStatusUpdateSubscriber"
 		availability="optional" />
-	<reference-list id="registerSubscribersRef"
-		interface="tr.org.liderahenk.lider.core.api.messaging.IRegisterSubscriber"
+	<reference-list id="registrationSubscribersRef"
+		interface="tr.org.liderahenk.lider.core.api.messaging.IRegistrationSubscriber"
+		availability="optional" />
+	<reference-list id="userSessionSubscribersRef"
+		interface="tr.org.liderahenk.lider.core.api.messaging.IUserSessionSubscriber"
 		availability="optional" />
 	<reference id="configurationService"
 		interface="tr.org.liderahenk.lider.core.api.IConfigurationService" />

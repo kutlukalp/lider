@@ -3,17 +3,16 @@ package tr.org.liderahenk.lider.impl.registration;
 import java.util.Date;
 import java.util.Map;
 
-import tr.org.liderahenk.lider.core.api.messaging.IRegisterMessage;
+import tr.org.liderahenk.lider.core.api.messaging.IRegistrationMessage;
 import tr.org.liderahenk.lider.core.api.messaging.MessageType;
 
 /**
- * Default implementation for {@link IRegisterMessage}.
+ * Default implementation for {@link IRegistrationMessage}.
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
- * @see tr.org.liderahenk.lider.impl.registration.RegistrationListener
  *
  */
-public class RegisterMessageImpl implements IRegisterMessage {
+public class RegistrationMessageImpl implements IRegistrationMessage {
 
 	private MessageType type;
 	private String from;

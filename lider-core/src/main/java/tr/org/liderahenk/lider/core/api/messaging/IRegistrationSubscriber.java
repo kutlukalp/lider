@@ -8,19 +8,20 @@ import tr.org.liderahenk.lider.core.api.auth.IRegistrationInfo;
  * messaging system.
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
- * @see tr.org.liderahenk.lider.impl.registration.DefaultRegisterSubscriber
+ * @see tr.org.liderahenk.lider.impl.registration.DefaultRegistrationSubscriber
  *
  */
-public interface IRegisterSubscriber {
+public interface IRegistrationSubscriber {
 
 	/**
-	 * Handle agent registration according to underlying system.
+	 * Handle agent registration (and unregistration) according to underlying
+	 * system.
 	 * 
 	 * @param message
 	 * @return
 	 * @throws Exception
 	 * 
 	 */
-	IRegistrationInfo messageReceived(IRegisterMessage message) throws Exception;
+	IRegistrationInfo messageReceived(IRegistrationMessage message) throws Exception;
 
 }
