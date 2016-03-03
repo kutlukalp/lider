@@ -704,14 +704,8 @@ public class XMPPClientImpl {
 						}
 						// Found another subscriber, notify it.
 						if (registerSubscriber != null) {
-							try {
-								registrationInfo = registerSubscriber.messageReceived(message);
-								logger.debug("Notified subscriber => {}", registerSubscriber);
-							} catch (Exception e) {
-								logger.error("Subscriber could not handle message: ", e);
-								// Fall back to default if any error occurs
-								registrationInfo = triggerDefaultSubscriber(message);
-							}
+							registrationInfo = registerSubscriber.messageReceived(message);
+							logger.debug("Notified subscriber => {}", registerSubscriber);
 						} else {
 							// We cannot find another subscriber, trigger the
 							// default.
@@ -805,14 +799,8 @@ public class XMPPClientImpl {
 						}
 						// Found another subscriber, notify it.
 						if (userSessionSubscriber != null) {
-							try {
-								userSessionSubscriber.messageReceived(message);
-								logger.debug("Notified subscriber => {}", userSessionSubscriber);
-							} catch (Exception e) {
-								logger.error("Subscriber could not handle message: ", e);
-								// Fall back to default if any error occurs
-								triggerDefaultSubscriber(message);
-							}
+							userSessionSubscriber.messageReceived(message);
+							logger.debug("Notified subscriber => {}", userSessionSubscriber);
 						} else {
 							// We cannot find another subscriber, trigger the
 							// default.

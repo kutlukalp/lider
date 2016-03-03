@@ -69,7 +69,7 @@ public class DefaultRegistrationSubscriber implements IRegistrationSubscriber {
 	public IRegistrationInfo messageReceived(IRegistrationMessage message) throws Exception {
 
 		String uid = message.getFrom().split("@")[0];
-		
+
 		//
 		// Register agent
 		//
@@ -143,8 +143,26 @@ public class DefaultRegistrationSubscriber implements IRegistrationSubscriber {
 			}
 
 		}
+		//
 		// Unregister agent
+		//
 		else {
+
+			// Check if agent LDAP entry already exists
+			final List<LdapEntry> entry = ldapService.search(configurationService.getAgentLdapJidAttribute(), uid,
+					configurationService.getAgentLdapJidAttribute());
+
+			// Delete agent LDAP entry
+			if (entry != null && !entry.isEmpty()) {
+				ldapService.deleteEntry(entry.get(0).getDistinguishedName());
+			}
+
+			// Find related agent database record.
+			List<? extends IAgent> agentList = agentDao.findByProperty("jid", uid, 1);
+			IAgent agent = agentList.get(0);
+
+			// Mark the record as deleted.
+			agentDao.markAsDeleted(agent);
 
 			return null;
 		}
