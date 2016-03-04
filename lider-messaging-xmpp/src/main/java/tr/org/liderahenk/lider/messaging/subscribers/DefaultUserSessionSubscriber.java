@@ -1,4 +1,4 @@
-package tr.org.liderahenk.lider.impl.userSession;
+package tr.org.liderahenk.lider.messaging.subscribers;
 
 import java.util.Date;
 import java.util.List;
@@ -10,8 +10,8 @@ import tr.org.liderahenk.lider.core.api.agent.IAgent;
 import tr.org.liderahenk.lider.core.api.agent.IUserSession;
 import tr.org.liderahenk.lider.core.api.agent.SessionEvent;
 import tr.org.liderahenk.lider.core.api.agent.dao.IAgentDao;
-import tr.org.liderahenk.lider.core.api.messaging.IUserSessionMessage;
-import tr.org.liderahenk.lider.core.api.messaging.IUserSessionSubscriber;
+import tr.org.liderahenk.lider.core.api.messaging.messages.IUserSessionMessage;
+import tr.org.liderahenk.lider.core.api.messaging.subscribers.IUserSessionSubscriber;
 
 /**
  * <p>
@@ -36,7 +36,7 @@ public class DefaultUserSessionSubscriber implements IUserSessionSubscriber {
 		String uid = message.getFrom().split("@")[0];
 
 		// Find related agent record
-		List<? extends IAgent> agentList = agentDao.findByProperty("jid", uid, 1);
+		List<? extends IAgent> agentList = agentDao.findByProperty(IAgent.class, "jid", uid, 1);
 		IAgent agent = agentList.get(0);
 
 		// Add new user session info

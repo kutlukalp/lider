@@ -1,4 +1,4 @@
-package tr.org.liderahenk.lider.impl.registration;
+package tr.org.liderahenk.lider.messaging.subscribers;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,13 +16,14 @@ import tr.org.liderahenk.lider.core.api.agent.IAgent;
 import tr.org.liderahenk.lider.core.api.agent.IAgentProperty;
 import tr.org.liderahenk.lider.core.api.agent.IUserSession;
 import tr.org.liderahenk.lider.core.api.agent.dao.IAgentDao;
-import tr.org.liderahenk.lider.core.api.auth.IRegistrationInfo;
-import tr.org.liderahenk.lider.core.api.auth.RegistrationStatus;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
-import tr.org.liderahenk.lider.core.api.messaging.IRegistrationMessage;
-import tr.org.liderahenk.lider.core.api.messaging.IRegistrationSubscriber;
-import tr.org.liderahenk.lider.core.api.messaging.MessageType;
+import tr.org.liderahenk.lider.core.api.messaging.enums.AgentMessageType;
+import tr.org.liderahenk.lider.core.api.messaging.enums.RegistrationMessageStatus;
+import tr.org.liderahenk.lider.core.api.messaging.messages.IRegistrationMessage;
+import tr.org.liderahenk.lider.core.api.messaging.responses.IRegistrationMessageResponse;
+import tr.org.liderahenk.lider.core.api.messaging.subscribers.IRegistrationSubscriber;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
+import tr.org.liderahenk.lider.messaging.responses.RegistrationMessageResponseImpl;
 
 /**
  * <p>
@@ -66,14 +67,14 @@ public class DefaultRegistrationSubscriber implements IRegistrationSubscriber {
 	 * entry and new agent database record.
 	 */
 	@Override
-	public IRegistrationInfo messageReceived(IRegistrationMessage message) throws Exception {
+	public IRegistrationMessageResponse messageReceived(IRegistrationMessage message) throws Exception {
 
 		String uid = message.getFrom().split("@")[0];
 
 		//
 		// Register agent
 		//
-		if (MessageType.REGISTER == message.getType()) {
+		if (AgentMessageType.REGISTER == message.getType()) {
 
 			// Check if agent LDAP entry already exists
 			final List<LdapEntry> entry = ldapService.search(configurationService.getAgentLdapJidAttribute(), uid,
@@ -85,7 +86,7 @@ public class DefaultRegistrationSubscriber implements IRegistrationSubscriber {
 				ldapService.updateEntry(entry.get(0).getDistinguishedName(), "userPassword", message.getPassword());
 
 				// Find related agent database record.
-				List<? extends IAgent> agentList = agentDao.findByProperty("jid", uid, 1);
+				List<? extends IAgent> agentList = agentDao.findByProperty(IAgent.class, "jid", uid, 1);
 				IAgent agent = agentList.get(0);
 
 				// Add new properties
@@ -102,7 +103,7 @@ public class DefaultRegistrationSubscriber implements IRegistrationSubscriber {
 				logger.info(
 						"Agent DN {} already exists! Updated its password and database properties with the values submitted.",
 						entry.get(0).getDistinguishedName());
-				return new RegistrationInfoImpl(RegistrationStatus.ALREADY_EXISTS,
+				return new RegistrationMessageResponseImpl(RegistrationMessageStatus.ALREADY_EXISTS,
 						entry.get(0).getDistinguishedName()
 								+ " already exists! Updated its password and database properties with the values submitted.",
 						entry.get(0).getDistinguishedName());
@@ -138,7 +139,7 @@ public class DefaultRegistrationSubscriber implements IRegistrationSubscriber {
 				agentDao.save(agent);
 
 				logger.info("{} and its related database record created successfully!", entryDN);
-				return new RegistrationInfoImpl(RegistrationStatus.REGISTERED,
+				return new RegistrationMessageResponseImpl(RegistrationMessageStatus.REGISTERED,
 						entryDN + " and its related database record created successfully!", entryDN);
 			}
 
@@ -158,7 +159,7 @@ public class DefaultRegistrationSubscriber implements IRegistrationSubscriber {
 			}
 
 			// Find related agent database record.
-			List<? extends IAgent> agentList = agentDao.findByProperty("jid", uid, 1);
+			List<? extends IAgent> agentList = agentDao.findByProperty(IAgent.class, "jid", uid, 1);
 			IAgent agent = agentList.get(0);
 
 			// Mark the record as deleted.

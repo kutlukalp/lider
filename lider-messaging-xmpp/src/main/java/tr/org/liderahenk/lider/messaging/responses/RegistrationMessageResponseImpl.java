@@ -1,9 +1,11 @@
-package tr.org.liderahenk.lider.impl.registration;
+package tr.org.liderahenk.lider.messaging.responses;
 
 import java.io.Serializable;
 
-import tr.org.liderahenk.lider.core.api.auth.IRegistrationInfo;
-import tr.org.liderahenk.lider.core.api.auth.RegistrationStatus;
+import org.osgi.service.blueprint.reflect.RegistrationListener;
+
+import tr.org.liderahenk.lider.core.api.messaging.enums.RegistrationMessageStatus;
+import tr.org.liderahenk.lider.core.api.messaging.responses.IRegistrationMessageResponse;
 
 /**
  * Registration information returned from {@link RegistrationListener}.
@@ -11,32 +13,32 @@ import tr.org.liderahenk.lider.core.api.auth.RegistrationStatus;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
-public class RegistrationInfoImpl implements IRegistrationInfo, Serializable {
+public class RegistrationMessageResponseImpl implements IRegistrationMessageResponse, Serializable {
 
 	private static final long serialVersionUID = 7047749308792675311L;
 
-	private RegistrationStatus status;
+	private RegistrationMessageStatus status;
 
 	private String message;
 
 	String agentDn;
 
-	public RegistrationInfoImpl() {
+	public RegistrationMessageResponseImpl() {
 		super();
 	}
 
-	public RegistrationInfoImpl(RegistrationStatus status, String message, String agentDn) {
+	public RegistrationMessageResponseImpl(RegistrationMessageStatus status, String message, String agentDn) {
 		super();
 		this.status = status;
 		this.message = message;
 		this.agentDn = agentDn;
 	}
 
-	public RegistrationStatus getStatus() {
+	public RegistrationMessageStatus getStatus() {
 		return status;
 	}
 
-	public void setStatus(RegistrationStatus status) {
+	public void setStatus(RegistrationMessageStatus status) {
 		this.status = status;
 	}
 

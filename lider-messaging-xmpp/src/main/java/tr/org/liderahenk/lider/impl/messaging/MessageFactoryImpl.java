@@ -1,7 +1,7 @@
 package tr.org.liderahenk.lider.impl.messaging;
 
-import tr.org.liderahenk.lider.core.api.messaging.IMessage;
 import tr.org.liderahenk.lider.core.api.messaging.IMessageFactory;
+import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
 import tr.org.liderahenk.lider.core.api.taskmanager.ITask;
 
 /**
@@ -15,7 +15,7 @@ import tr.org.liderahenk.lider.core.api.taskmanager.ITask;
 public class MessageFactoryImpl implements IMessageFactory {
 
 	@Override
-	public IMessage create(ITask task) {
+	public ILiderMessage create(ITask task) {
 		String recipient = task.getTargetJID();
 		String message = null;
 		try {

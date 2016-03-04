@@ -1,19 +1,19 @@
-package tr.org.liderahenk.lider.impl.messaging;
+package tr.org.liderahenk.lider.messaging.messages;
 
 import java.util.Date;
 import java.util.Map;
 
-import tr.org.liderahenk.lider.core.api.messaging.ITaskStatusUpdateMessage;
+import tr.org.liderahenk.lider.core.api.messaging.messages.ITaskStatusMessage;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskState;
 
 /**
- * Default implementation for {@link ITaskStatusUpdateMessage}
+ * Default implementation for {@link ITaskStatusMessage}
  * 
  * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
-public class TaskStatusUpdateMessageImpl implements ITaskStatusUpdateMessage {
+public class TaskStatusMessageImpl implements ITaskStatusMessage {
 
 	private TaskState type;
 	private String task;

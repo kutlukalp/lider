@@ -1,10 +1,10 @@
-package tr.org.liderahenk.lider.impl.userSession;
+package tr.org.liderahenk.lider.messaging.messages;
 
 import java.util.Date;
 import java.util.Map;
 
-import tr.org.liderahenk.lider.core.api.messaging.IUserSessionMessage;
-import tr.org.liderahenk.lider.core.api.messaging.MessageType;
+import tr.org.liderahenk.lider.core.api.messaging.enums.AgentMessageType;
+import tr.org.liderahenk.lider.core.api.messaging.messages.IUserSessionMessage;
 
 /**
  * Default implementation for {@link IUserSessionMessage}
@@ -14,18 +14,18 @@ import tr.org.liderahenk.lider.core.api.messaging.MessageType;
  */
 public class UserSessionMessageImpl implements IUserSessionMessage {
 
-	private MessageType type;
+	private AgentMessageType type;
 	private String from;
 	private String username;
 	private Map<String, Object> data;
 	private Date timestamp;
 
 	@Override
-	public MessageType getType() {
+	public AgentMessageType getType() {
 		return type;
 	}
 
-	public void setType(MessageType type) {
+	public void setType(AgentMessageType type) {
 		this.type = type;
 	}
 

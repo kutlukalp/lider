@@ -1,7 +1,9 @@
 
 package tr.org.liderahenk.lider.impl.messaging;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -36,6 +38,9 @@ import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.roster.RosterListener;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
+import org.jivesoftware.smackx.bytestreams.socks5.Socks5BytestreamManager;
+import org.jivesoftware.smackx.bytestreams.socks5.Socks5BytestreamSession;
+import org.jivesoftware.smackx.iqregister.AccountManager;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.ping.PingFailedListener;
@@ -48,17 +53,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.IConfigurationService;
-import tr.org.liderahenk.lider.core.api.auth.IRegistrationInfo;
-import tr.org.liderahenk.lider.core.api.auth.RegistrationStatus;
-import tr.org.liderahenk.lider.core.api.messaging.IPresenceSubscriber;
-import tr.org.liderahenk.lider.core.api.messaging.IRegistrationSubscriber;
-import tr.org.liderahenk.lider.core.api.messaging.ITaskStatusUpdateSubscriber;
-import tr.org.liderahenk.lider.core.api.messaging.IUserSessionSubscriber;
-import tr.org.liderahenk.lider.impl.registration.DefaultRegistrationSubscriber;
-import tr.org.liderahenk.lider.impl.registration.RegistrationInfoImpl;
-import tr.org.liderahenk.lider.impl.registration.RegistrationMessageImpl;
-import tr.org.liderahenk.lider.impl.userSession.DefaultUserSessionSubscriber;
-import tr.org.liderahenk.lider.impl.userSession.UserSessionMessageImpl;
+import tr.org.liderahenk.lider.core.api.messaging.enums.RegistrationMessageStatus;
+import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
+import tr.org.liderahenk.lider.core.api.messaging.responses.IRegistrationMessageResponse;
+import tr.org.liderahenk.lider.core.api.messaging.subscribers.IPresenceSubscriber;
+import tr.org.liderahenk.lider.core.api.messaging.subscribers.IRegistrationSubscriber;
+import tr.org.liderahenk.lider.core.api.messaging.subscribers.ITaskStatusSubscriber;
+import tr.org.liderahenk.lider.core.api.messaging.subscribers.IUserSessionSubscriber;
+import tr.org.liderahenk.lider.messaging.messages.RegistrationMessageImpl;
+import tr.org.liderahenk.lider.messaging.messages.TaskStatusMessageImpl;
+import tr.org.liderahenk.lider.messaging.messages.UserSessionMessageImpl;
+import tr.org.liderahenk.lider.messaging.responses.RegistrationMessageResponseImpl;
+import tr.org.liderahenk.lider.messaging.subscribers.DefaultRegistrationSubscriber;
+import tr.org.liderahenk.lider.messaging.subscribers.DefaultUserSessionSubscriber;
 
 /**
  * This class works as an XMPP client which listens to incoming packets and
@@ -103,7 +110,7 @@ public class XMPPClientImpl {
 	/**
 	 * Packet subscribers
 	 */
-	private List<ITaskStatusUpdateSubscriber> taskStatusUpdateSubscribers;
+	private List<ITaskStatusSubscriber> taskStatusUpdateSubscribers;
 	private List<IPresenceSubscriber> presenceSubscribers;
 	private List<IRegistrationSubscriber> registrationSubscribers;
 	private List<IUserSessionSubscriber> userSessionSubscribers;
@@ -298,24 +305,35 @@ public class XMPPClientImpl {
 	}
 
 	/**
-	 * Sends provided message to provided JID.
+	 * Send provided message to provided JID.
 	 * 
 	 * @param message
 	 * @param jid
+	 * @throws NotConnectedException
 	 */
-	public void sendMessage(String message, String jid) {
-		String jidFinal = jid;
-		if (jid.indexOf("@") < 0) {
-			jidFinal = jid + "@" + serviceName;
-		}
+	public void sendMessage(String message, String jid) throws NotConnectedException {
+		String jidFinal = getFullJid(jid);
 		logger.debug("Sending message: {} to user: {}", new Object[] { message, jidFinal });
 		Chat chat = ChatManager.getInstanceFor(connection).createChat(jidFinal, null);
-		try {
-			chat.sendMessage(message);
-			logger.debug("Successfully sent message to user: {}", jidFinal);
-		} catch (NotConnectedException e) {
-			e.printStackTrace();
-		}
+		chat.sendMessage(message);
+		logger.debug("Successfully sent message to user: {}", jidFinal);
+	}
+
+	/**
+	 * Convenience method for ILiderMessage instances.
+	 * 
+	 * @param obj
+	 *            message to be sent
+	 * @throws NotConnectedException
+	 * @throws IOException
+	 * @throws JsonMappingException
+	 * @throws JsonGenerationException
+	 */
+	public void sendMessage(ILiderMessage message)
+			throws NotConnectedException, JsonGenerationException, JsonMappingException, IOException {
+		String msgStr = new ObjectMapper().writeValueAsString(message);
+		String jid = message.getRecipient();
+		sendMessage(msgStr, getFullJid(jid));
 	}
 
 	/**
@@ -327,10 +345,7 @@ public class XMPPClientImpl {
 	public boolean isRecipientOnline(String jid) {
 		boolean isOnline = false;
 		if (jid != null && !jid.isEmpty()) {
-			String jidFinal = jid;
-			if (jid.indexOf("@") < 0) {
-				jidFinal = jid + "@" + serviceName;
-			}
+			String jidFinal = getFullJid(jid);
 			Presence presence = Roster.getInstanceFor(connection).getPresence(jidFinal);
 			if (presence != null) {
 				isOnline = presence.isAvailable();
@@ -373,7 +388,6 @@ public class XMPPClientImpl {
 	 * @return
 	 */
 	public MultiUserChat createRoom(String roomJid, String nickName) {
-
 		MultiUserChat muc = mucManager.getMultiUserChat(roomJid);
 		try {
 			muc.create(nickName);
@@ -396,7 +410,6 @@ public class XMPPClientImpl {
 	 * @param message
 	 */
 	public void sendMessageToRoom(MultiUserChat muc, String message) {
-
 		try {
 			if (muc != null && muc.getMembers() != null && message != null && !message.isEmpty()) {
 				muc.sendMessage(message);
@@ -408,6 +421,87 @@ public class XMPPClientImpl {
 		} catch (XMPPErrorException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Create new user with the provided password.
+	 * 
+	 * @param username
+	 * @param password
+	 * @return true if user created successfully, false otherwise
+	 * @throws NotConnectedException
+	 * @throws XMPPErrorException
+	 * @throws NoResponseException
+	 */
+	public void createAccount(String username, String password)
+			throws NoResponseException, XMPPErrorException, NotConnectedException {
+		AccountManager accountManager = AccountManager.getInstance(connection);
+		if (accountManager.supportsAccountCreation()) {
+			accountManager.createAccount(username, password);
+		}
+	}
+
+	/**
+	 * Send file to provided JID via a SOCKS5 Bytestream session (XEP-0065).
+	 * 
+	 * @param file
+	 * @param jid
+	 * @throws SmackException
+	 * @throws InterruptedException
+	 * @throws IOException
+	 * @throws XMPPException
+	 */
+	public void sendFile(byte[] file, String jid)
+			throws XMPPException, IOException, InterruptedException, SmackException {
+		String jidFinal = getFullJid(jid);
+		Socks5BytestreamManager bytestreamManager = Socks5BytestreamManager.getBytestreamManager(connection);
+		OutputStream outputStream = null;
+		try {
+			Socks5BytestreamSession session = bytestreamManager.establishSession(jidFinal);
+			outputStream = session.getOutputStream();
+			outputStream.write(file);
+			outputStream.flush();
+		} finally {
+			if (outputStream != null) {
+				try {
+					outputStream.close();
+				} catch (IOException e) {
+					logger.error(e.getMessage(), e);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Get full JID in format:<br/>
+	 * "jid@$serviceName"
+	 * 
+	 * @param jid
+	 * @return JID full name (jid + service name)
+	 */
+	public String getFullJid(String jid) {
+		String jidFinal = jid;
+		if (jid.indexOf("@") < 0) {
+			jidFinal = jid + "@" + serviceName;
+		}
+		return jidFinal;
+	}
+
+	/**
+	 * Get file path from ${xmpp.file.path}/${jid}/${filename}
+	 * 
+	 * @param jid
+	 * @param filename
+	 * @return full file path built from jid and filename.
+	 * @see tr.org.liderahenk.lider.core.api.IConfigurationService#getXmppFilePath()
+	 */
+	public String getFileReceivePath(String jid, String filename) {
+		String path = configurationService.getXmppFilePath();
+		if (!path.endsWith(File.separator)) {
+			path += File.separator;
+		}
+		path += jid + File.separator + filename;
+		return path;
 	}
 
 	/**
@@ -612,11 +706,11 @@ public class XMPPClientImpl {
 
 					ObjectMapper mapper = new ObjectMapper();
 					try {
-						TaskStatusUpdateMessageImpl taskStatusUpdateMessage = mapper.readValue(msg.getBody(),
-								TaskStatusUpdateMessageImpl.class);
+						TaskStatusMessageImpl taskStatusUpdateMessage = mapper.readValue(msg.getBody(),
+								TaskStatusMessageImpl.class);
 						// TODO improvement: trigger only related subscriber(s)
 						// by matching its plugin properties?
-						for (ITaskStatusUpdateSubscriber subscriber : taskStatusUpdateSubscribers) {
+						for (ITaskStatusSubscriber subscriber : taskStatusUpdateSubscribers) {
 							try {
 								subscriber.messageReceived(taskStatusUpdateMessage);
 							} catch (Exception e) {
@@ -676,7 +770,7 @@ public class XMPPClientImpl {
 		@Override
 		public void processPacket(Stanza packet) throws NotConnectedException {
 
-			IRegistrationInfo registrationInfo = null;
+			IRegistrationMessageResponse registrationInfo = null;
 			Message msg = null;
 
 			try {
@@ -715,7 +809,7 @@ public class XMPPClientImpl {
 				}
 			} catch (Exception e) {
 				logger.error(e.getMessage(), e);
-				registrationInfo = new RegistrationInfoImpl(RegistrationStatus.REGISTRATION_ERROR,
+				registrationInfo = new RegistrationMessageResponseImpl(RegistrationMessageStatus.REGISTRATION_ERROR,
 						"Unexpected error occurred while registring agent, see Lider logs for more info.", null);
 			}
 
@@ -731,10 +825,11 @@ public class XMPPClientImpl {
 			}
 		}
 
-		private IRegistrationInfo triggerDefaultSubscriber(RegistrationMessageImpl message) throws Exception {
+		private IRegistrationMessageResponse triggerDefaultSubscriber(RegistrationMessageImpl message)
+				throws Exception {
 			logger.info("Triggering default register subscriber.");
 			IRegistrationSubscriber subscriber = new DefaultRegistrationSubscriber();
-			IRegistrationInfo registrationInfo = subscriber.messageReceived(message);
+			IRegistrationMessageResponse registrationInfo = subscriber.messageReceived(message);
 			logger.debug("Notified subscriber => {}", subscriber);
 			return registrationInfo;
 		}
@@ -845,7 +940,7 @@ public class XMPPClientImpl {
 	 * 
 	 * @param taskStatusUpdateSubscribers
 	 */
-	public void setTaskStatusUpdateSubscribers(List<ITaskStatusUpdateSubscriber> taskStatusUpdateSubscribers) {
+	public void setTaskStatusUpdateSubscribers(List<ITaskStatusSubscriber> taskStatusUpdateSubscribers) {
 		this.taskStatusUpdateSubscribers = taskStatusUpdateSubscribers;
 	}
 
@@ -871,6 +966,14 @@ public class XMPPClientImpl {
 	 */
 	public List<String> getOnlineUsers() {
 		return onlineUsers;
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public XMPPTCPConnection getConnection() {
+		return connection;
 	}
 
 	@Override
