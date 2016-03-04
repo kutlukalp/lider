@@ -137,6 +137,13 @@ public interface IConfigurationService {
 	 */
 	Boolean getXmppUseSsl();
 
+	/**
+	 * 
+	 * @return File directory path that is used to store received files
+	 *         temporarily.
+	 */
+	String getXmppFilePath();
+
 	//
 	// Agent configuration
 	//

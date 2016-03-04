@@ -37,6 +37,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 	private int xmppPacketReplayTimeout;
 	private Integer xmppPingTimeout;
 	private Boolean xmppUseSsl;
+	private String xmppFilePath;
 
 	// Agent configuration
 	private String agentLdapBaseDn;
@@ -75,6 +76,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 				+ ", taskManagerLogXmppMessagesEnabled=" + taskManagerLogXmppMessagesEnabled + "]";
 	}
 
+	@Override
 	public String getDbServer() {
 		return dbServer;
 	}
@@ -83,6 +85,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.dbServer = dbServer;
 	}
 
+	@Override
 	public Integer getDbPort() {
 		return dbPort;
 	}
@@ -91,6 +94,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.dbPort = dbPort;
 	}
 
+	@Override
 	public String getDbDatabase() {
 		return dbDatabase;
 	}
@@ -99,6 +103,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.dbDatabase = dbDatabase;
 	}
 
+	@Override
 	public String getDbUsername() {
 		return dbUsername;
 	}
@@ -107,6 +112,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.dbUsername = dbUsername;
 	}
 
+	@Override
 	public String getDbPassword() {
 		return dbPassword;
 	}
@@ -115,6 +121,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.dbPassword = dbPassword;
 	}
 
+	@Override
 	public String getLdapServer() {
 		return ldapServer;
 	}
@@ -123,6 +130,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.ldapServer = ldapServer;
 	}
 
+	@Override
 	public String getLdapPort() {
 		return ldapPort;
 	}
@@ -131,6 +139,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.ldapPort = ldapPort;
 	}
 
+	@Override
 	public String getLdapUsername() {
 		return ldapUsername;
 	}
@@ -139,6 +148,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.ldapUsername = ldapUsername;
 	}
 
+	@Override
 	public String getLdapPassword() {
 		return ldapPassword;
 	}
@@ -147,6 +157,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.ldapPassword = ldapPassword;
 	}
 
+	@Override
 	public String getLdapRootDn() {
 		return ldapRootDn;
 	}
@@ -155,6 +166,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.ldapRootDn = ldapRootDn;
 	}
 
+	@Override
 	public Boolean getLdapUseSsl() {
 		return ldapUseSsl;
 	}
@@ -163,6 +175,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.ldapUseSsl = ldapUseSsl;
 	}
 
+	@Override
 	public String getXmppHost() {
 		return xmppHost;
 	}
@@ -171,6 +184,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.xmppHost = xmppHost;
 	}
 
+	@Override
 	public Integer getXmppPort() {
 		return xmppPort;
 	}
@@ -179,6 +193,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.xmppPort = xmppPort;
 	}
 
+	@Override
 	public String getXmppUsername() {
 		return xmppUsername;
 	}
@@ -187,6 +202,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.xmppUsername = xmppUsername;
 	}
 
+	@Override
 	public String getXmppPassword() {
 		return xmppPassword;
 	}
@@ -195,6 +211,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.xmppPassword = xmppPassword;
 	}
 
+	@Override
 	public String getXmppServiceName() {
 		return xmppServiceName;
 	}
@@ -203,6 +220,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.xmppServiceName = xmppServiceName;
 	}
 
+	@Override
 	public int getXmppMaxRetryConnectionCount() {
 		return xmppMaxRetryConnectionCount;
 	}
@@ -211,6 +229,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.xmppMaxRetryConnectionCount = xmppMaxRetryConnectionCount;
 	}
 
+	@Override
 	public int getXmppPacketReplayTimeout() {
 		return xmppPacketReplayTimeout;
 	}
@@ -219,6 +238,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.xmppPacketReplayTimeout = xmppPacketReplayTimeout;
 	}
 
+	@Override
 	public Integer getXmppPingTimeout() {
 		return xmppPingTimeout;
 	}
@@ -227,6 +247,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.xmppPingTimeout = xmppPingTimeout;
 	}
 
+	@Override
 	public Boolean getXmppUseSsl() {
 		return xmppUseSsl;
 	}
@@ -235,6 +256,16 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.xmppUseSsl = xmppUseSsl;
 	}
 
+	@Override
+	public String getXmppFilePath() {
+		return xmppFilePath;
+	}
+
+	public void setXmppFilePath(String xmppFilePath) {
+		this.xmppFilePath = xmppFilePath;
+	}
+
+	@Override
 	public String getAgentLdapBaseDn() {
 		return agentLdapBaseDn;
 	}
@@ -243,6 +274,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.agentLdapBaseDn = agentLdapBaseDn;
 	}
 
+	@Override
 	public String getAgentLdapIdAttribute() {
 		return agentLdapIdAttribute;
 	}
@@ -251,6 +283,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.agentLdapIdAttribute = agentLdapIdAttribute;
 	}
 
+	@Override
 	public String getAgentLdapJidAttribute() {
 		return agentLdapJidAttribute;
 	}
@@ -259,6 +292,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.agentLdapJidAttribute = agentLdapJidAttribute;
 	}
 
+	@Override
 	public String getAgentLdapObjectClasses() {
 		return agentLdapObjectClasses;
 	}
@@ -267,6 +301,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.agentLdapObjectClasses = agentLdapObjectClasses;
 	}
 
+	@Override
 	public String getUserLdapBaseDn() {
 		return userLdapBaseDn;
 	}
@@ -275,6 +310,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.userLdapBaseDn = userLdapBaseDn;
 	}
 
+	@Override
 	public String getUserLdapUidAttribute() {
 		return userLdapUidAttribute;
 	}
@@ -283,6 +319,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.userLdapUidAttribute = userLdapUidAttribute;
 	}
 
+	@Override
 	public String getUserLdapPrivilegeAttribute() {
 		return userLdapPrivilegeAttribute;
 	}
@@ -291,6 +328,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.userLdapPrivilegeAttribute = userLdapPrivilegeAttribute;
 	}
 
+	@Override
 	public String getUserLdapObjectClasses() {
 		return userLdapObjectClasses;
 	}
@@ -299,6 +337,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.userLdapObjectClasses = userLdapObjectClasses;
 	}
 
+	@Override
 	public Boolean getUserAuthorizationEnabled() {
 		return userAuthorizationEnabled;
 	}
@@ -307,6 +346,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.userAuthorizationEnabled = userAuthorizationEnabled;
 	}
 
+	@Override
 	public Long getTaskManagerTaskTimeout() {
 		return taskManagerTaskTimeout;
 	}
@@ -315,6 +355,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.taskManagerTaskTimeout = taskManagerTaskTimeout;
 	}
 
+	@Override
 	public Boolean getTaskManagerMulticastEnabled() {
 		return taskManagerMulticastEnabled;
 	}
@@ -323,6 +364,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.taskManagerMulticastEnabled = taskManagerMulticastEnabled;
 	}
 
+	@Override
 	public Boolean getTaskManagerLogXmppMessagesEnabled() {
 		return taskManagerLogXmppMessagesEnabled;
 	}
