@@ -7,11 +7,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.IConfigurationService;
-import tr.org.liderahenk.lider.core.api.IUser;
-import tr.org.liderahenk.lider.core.api.auth.IUserPrivilege;
 import tr.org.liderahenk.lider.core.api.authorization.IAuthService;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
 import tr.org.liderahenk.lider.core.api.ldap.LdapException;
+import tr.org.liderahenk.lider.core.model.ldap.IUser;
+import tr.org.liderahenk.lider.core.model.ldap.IUserPrivilege;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
 /**

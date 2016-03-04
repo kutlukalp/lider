@@ -43,13 +43,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.IConfigurationService;
-import tr.org.liderahenk.lider.core.api.IUser;
-import tr.org.liderahenk.lider.core.api.auth.IUserPrivilege;
 import tr.org.liderahenk.lider.core.api.caching.ICacheService;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
 import tr.org.liderahenk.lider.core.api.ldap.LdapException;
 import tr.org.liderahenk.lider.core.api.ldap.LdapSearchFilterAttribute;
 import tr.org.liderahenk.lider.core.api.plugin.ILdapExtension;
+import tr.org.liderahenk.lider.core.model.ldap.IUser;
+import tr.org.liderahenk.lider.core.model.ldap.IUserPrivilege;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
 /**

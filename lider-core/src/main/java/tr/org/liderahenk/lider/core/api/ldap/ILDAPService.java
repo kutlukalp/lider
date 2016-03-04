@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.apache.directory.api.ldap.model.entry.Entry;
 
-import tr.org.liderahenk.lider.core.api.IUser;
+import tr.org.liderahenk.lider.core.model.ldap.IUser;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
 /**

@@ -1,6 +1,6 @@
 package tr.org.liderahenk.lider.impl.ldap;
 
-import tr.org.liderahenk.lider.core.api.auth.IUserPrivilege;
+import tr.org.liderahenk.lider.core.model.ldap.IUserPrivilege;
 
 /**
  * Default implementation of {@link IUserPrivilege}

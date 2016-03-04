@@ -2,8 +2,8 @@ package tr.org.liderahenk.lider.impl.ldap;
 import java.util.ArrayList;
 import java.util.List;
 
-import tr.org.liderahenk.lider.core.api.IUser;
-import tr.org.liderahenk.lider.core.api.auth.IUserPrivilege;
+import tr.org.liderahenk.lider.core.model.ldap.IUser;
+import tr.org.liderahenk.lider.core.model.ldap.IUserPrivilege;
 
 /**
  * Default implementation for {@link IUser}
