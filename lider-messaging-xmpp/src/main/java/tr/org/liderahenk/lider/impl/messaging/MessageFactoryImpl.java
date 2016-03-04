@@ -1,8 +1,15 @@
 package tr.org.liderahenk.lider.impl.messaging;
 
+import java.util.Date;
+
 import tr.org.liderahenk.lider.core.api.messaging.IMessageFactory;
-import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
+import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteScriptMessage;
+import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteTaskMessage;
+import tr.org.liderahenk.lider.core.api.messaging.messages.IRequestFileMessage;
 import tr.org.liderahenk.lider.core.api.taskmanager.ITask;
+import tr.org.liderahenk.lider.messaging.messages.ExecuteScriptMessageImpl;
+import tr.org.liderahenk.lider.messaging.messages.ExecuteTaskMessageImpl;
+import tr.org.liderahenk.lider.messaging.messages.RequestFileMessageImpl;
 
 /**
  * Default implementation for {@link IMessageFactory}. Responsible for creating
@@ -15,15 +22,25 @@ import tr.org.liderahenk.lider.core.api.taskmanager.ITask;
 public class MessageFactoryImpl implements IMessageFactory {
 
 	@Override
-	public ILiderMessage create(ITask task) {
+	public IExecuteTaskMessage createExecuteTaskMessage(ITask task) {
 		String recipient = task.getTargetJID();
-		String message = null;
+		String taskJson = null;
 		try {
-			message = task.toJSON();
+			taskJson = task.toJSON();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return new MessageImpl(recipient, message);
+		return new ExecuteTaskMessageImpl(taskJson, recipient, new Date());
+	}
+
+	@Override
+	public IExecuteScriptMessage createExecuteScriptMessage(String filePath, String recipient) {
+		return new ExecuteScriptMessageImpl(filePath, recipient, new Date());
+	}
+
+	@Override
+	public IRequestFileMessage createRequestFileMessage(String filePath, String recipient) {
+		return new RequestFileMessageImpl(filePath, recipient, new Date());
 	}
 
 }

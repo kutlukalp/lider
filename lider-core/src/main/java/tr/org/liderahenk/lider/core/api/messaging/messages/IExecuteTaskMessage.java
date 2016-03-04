@@ -8,4 +8,10 @@ package tr.org.liderahenk.lider.core.api.messaging.messages;
  */
 public interface IExecuteTaskMessage extends ILiderMessage {
 
+	/**
+	 * 
+	 * @return JSON string representation of task
+	 */
+	String getTask();
+
 }
