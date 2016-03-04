@@ -213,12 +213,12 @@ public class TaskServiceImpl implements ITaskService, IPresenceSubscriber {
 			if (!subTasks.isEmpty()) {
 				// retry subtasks, not parent
 				for (TaskImpl subTask : subTasks) {
-					ILiderMessage message = messageFactory.create(subTask);
+					ILiderMessage message = messageFactory.createExecuteTaskMessage(subTask);
 					messagingService.sendMessage(message);
 					// update( subTask.getId(), TaskCommState.AGENT_RETRY );
 				}
 			} else {
-				ILiderMessage message = messageFactory.create(task);
+				ILiderMessage message = messageFactory.createExecuteTaskMessage(task);
 				messagingService.sendMessage(message);
 				// update( task.getId(), TaskCommState.AGENT_RETRY );
 			}

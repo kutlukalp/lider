@@ -92,7 +92,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 					ILiderMessage message = null;
 					if (isAhenk) {
 						
-						message = messageFactory.create(task);
+						message = messageFactory.createExecuteTaskMessage(task);
 						
 						if (!messagingService.isRecipientOnline(message.getRecipient())) {
 							logger.warn("{} is OFFLINE, marking task comm state accordingly", message.getRecipient());
@@ -137,7 +137,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 						ILiderMessage message = null;
 						if (isAhenk) {
 
-							message = messageFactory.create(subTask);
+							message = messageFactory.createExecuteTaskMessage(subTask);
 							logger.info("Sending task to --> " + message.getRecipient());
 
 							if (!messagingService.isRecipientOnline(message.getRecipient())) {
