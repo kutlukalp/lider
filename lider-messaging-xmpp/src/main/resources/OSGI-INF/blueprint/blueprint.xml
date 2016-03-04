@@ -30,32 +30,32 @@
 	</bean>
 
 	<service ref="defaultRegistrationSubscriber"
-		interface="tr.org.liderahenk.lider.core.api.messaging.IRegistrationSubscriber" />
+		interface="tr.org.liderahenk.lider.core.api.messaging.subscribers.IRegistrationSubscriber" />
 	<bean id="defaultRegistrationSubscriber"
-		class="tr.org.liderahenk.lider.impl.registration.DefaultRegistrationSubscriber">
+		class="tr.org.liderahenk.lider.messaging.subscribers.DefaultRegistrationSubscriber">
 		<property name="ldapService" ref="ldapService" />
 		<property name="configurationService" ref="configurationService" />
 		<property name="agentDao" ref="agentDaoRef" />
 	</bean>
 
 	<service ref="defaultUserSessionSubscriber"
-		interface="tr.org.liderahenk.lider.core.api.messaging.IUserSessionSubscriber" />
+		interface="tr.org.liderahenk.lider.core.api.messaging.subscribers.IUserSessionSubscriber" />
 	<bean id="defaultUserSessionSubscriber"
-		class="tr.org.liderahenk.lider.impl.userSession.DefaultUserSessionSubscriber">
+		class="tr.org.liderahenk.lider.messaging.subscribers.DefaultUserSessionSubscriber">
 		<property name="agentDao" ref="agentDaoRef" />
 	</bean>
 
 	<reference-list id="presenceSubscribersRef"
-		interface="tr.org.liderahenk.lider.core.api.messaging.IPresenceSubscriber"
+		interface="tr.org.liderahenk.lider.core.api.messaging.subscribers.IPresenceSubscriber"
 		availability="optional" />
 	<reference-list id="taskStatusUpdateSubscribersRef"
-		interface="tr.org.liderahenk.lider.core.api.messaging.ITaskStatusUpdateSubscriber"
+		interface="tr.org.liderahenk.lider.core.api.messaging.subscribers.ITaskStatusSubscriber"
 		availability="optional" />
 	<reference-list id="registrationSubscribersRef"
-		interface="tr.org.liderahenk.lider.core.api.messaging.IRegistrationSubscriber"
+		interface="tr.org.liderahenk.lider.core.api.messaging.subscribers.IRegistrationSubscriber"
 		availability="optional" />
 	<reference-list id="userSessionSubscribersRef"
-		interface="tr.org.liderahenk.lider.core.api.messaging.IUserSessionSubscriber"
+		interface="tr.org.liderahenk.lider.core.api.messaging.subscribers.IUserSessionSubscriber"
 		availability="optional" />
 	<reference id="configurationService"
 		interface="tr.org.liderahenk.lider.core.api.IConfigurationService" />

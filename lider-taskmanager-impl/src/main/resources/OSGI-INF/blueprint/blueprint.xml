@@ -10,10 +10,10 @@
 	<service ref="taskManager">
 		<interfaces>
 			<value>tr.org.liderahenk.lider.core.api.taskmanager.ITaskManager</value>
-			<value>tr.org.liderahenk.lider.core.api.messaging.ITaskStatusUpdateSubscriber</value>
+			<value>tr.org.liderahenk.lider.core.api.messaging.subscribers.ITaskStatusSubscriber</value>
 		</interfaces>
 	</service>
-
+	
 	<service ref="taskFactory"
 		interface="tr.org.liderahenk.lider.core.api.taskmanager.ITaskFactory" />
 
