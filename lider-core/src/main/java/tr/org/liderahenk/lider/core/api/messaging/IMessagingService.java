@@ -1,6 +1,9 @@
 package tr.org.liderahenk.lider.core.api.messaging;
 
+import java.io.File;
 import java.util.List;
+
+import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
 
 /**
  * Provides messaging services
@@ -12,31 +15,21 @@ public interface IMessagingService {
 
 	/**
 	 * 
-	 * @param jid
-	 *            of message sender
-	 * @param message
-	 *            text message
-	 * @throws Exception
-	 */
-	void messageReceived(String jid, String message) throws Exception;
-
-	/**
-	 * 
 	 * @param to
 	 *            recipient of message
 	 * @param message
 	 *            to be sent
 	 * @throws Exception
 	 */
-	void sendMessage(String to, String message) throws Exception;
+	void sendMessage(String message, String to) throws Exception;
 
 	/**
 	 * 
 	 * @param message
-	 *            {@link IMessage} to be sent
+	 *            {@link ILiderMessage} to be sent
 	 * @throws Exception
 	 */
-	void sendMessage(IMessage message) throws Exception;
+	void sendMessage(ILiderMessage message) throws Exception;
 
 	/**
 	 * 
@@ -50,5 +43,13 @@ public interface IMessagingService {
 	 * @return
 	 */
 	List<String> getOnlineUsers();
+
+	void sendFile(byte[] file, String jid) throws Exception;
+
+	void sendFile(File file, String jid) throws Exception;
+
+	void createAccount(String username, String password) throws Exception;
+
+	void requestFile(String filePath, String jid) throws Exception;
 
 }

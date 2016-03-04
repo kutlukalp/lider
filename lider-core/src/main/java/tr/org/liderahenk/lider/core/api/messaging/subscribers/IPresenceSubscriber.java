@@ -1,4 +1,4 @@
-package tr.org.liderahenk.lider.core.api.messaging;
+package tr.org.liderahenk.lider.core.api.messaging.subscribers;
 
 /**
  * 

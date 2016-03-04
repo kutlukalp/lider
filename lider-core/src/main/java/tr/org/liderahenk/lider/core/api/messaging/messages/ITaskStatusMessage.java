@@ -1,4 +1,4 @@
-package tr.org.liderahenk.lider.core.api.messaging;
+package tr.org.liderahenk.lider.core.api.messaging.messages;
 
 import java.util.Date;
 import java.util.Map;
@@ -12,7 +12,7 @@ import tr.org.liderahenk.lider.core.api.taskmanager.TaskState;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  * 
  */
-public interface ITaskStatusUpdateMessage {
+public interface ITaskStatusMessage {
 	/**
 	 * 
 	 * @return

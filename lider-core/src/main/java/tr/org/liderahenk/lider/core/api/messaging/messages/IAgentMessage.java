@@ -1,12 +1,16 @@
-package tr.org.liderahenk.lider.core.api.messaging;
+package tr.org.liderahenk.lider.core.api.messaging.messages;
 
 import java.util.Date;
 import java.util.Map;
 
+import tr.org.liderahenk.lider.core.api.messaging.enums.AgentMessageType;
+
 /**
+ * Interface for messages sent <b>from agents to Lider</b>.
  * 
  * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
- * Interface for agent messages
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ * 
  */
 public interface IAgentMessage {
 
@@ -14,7 +18,7 @@ public interface IAgentMessage {
 	 * 
 	 * @return message type
 	 */
-	MessageType getType();
+	AgentMessageType getType();
 
 	/**
 	 * 

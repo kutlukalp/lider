@@ -1,6 +1,7 @@
-package tr.org.liderahenk.lider.core.api.messaging;
+package tr.org.liderahenk.lider.core.api.messaging.subscribers;
 
-import tr.org.liderahenk.lider.core.api.auth.IRegistrationInfo;
+import tr.org.liderahenk.lider.core.api.messaging.messages.IRegistrationMessage;
+import tr.org.liderahenk.lider.core.api.messaging.responses.IRegistrationMessageResponse;
 
 /**
  * Agent registration interface, any bundle - exposing an implementation of this
@@ -22,6 +23,6 @@ public interface IRegistrationSubscriber {
 	 * @throws Exception
 	 * 
 	 */
-	IRegistrationInfo messageReceived(IRegistrationMessage message) throws Exception;
+	IRegistrationMessageResponse messageReceived(IRegistrationMessage message) throws Exception;
 
 }

@@ -1,4 +1,6 @@
-package tr.org.liderahenk.lider.core.api.messaging;
+package tr.org.liderahenk.lider.core.api.messaging.subscribers;
+
+import tr.org.liderahenk.lider.core.api.messaging.messages.ITaskStatusMessage;
 
 /**
  * Message Consumer interface, any bundle - exposing an implementation of this
@@ -8,12 +10,12 @@ package tr.org.liderahenk.lider.core.api.messaging;
  * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
  * 
  */
-public interface ITaskStatusUpdateSubscriber {
+public interface ITaskStatusSubscriber {
 
 	/**
 	 * 
 	 * @param message
 	 */
-	void messageReceived(ITaskStatusUpdateMessage message);
+	void messageReceived(ITaskStatusMessage message);
 
 }

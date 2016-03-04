@@ -1,7 +1,7 @@
-package tr.org.liderahenk.lider.core.api.messaging;
+package tr.org.liderahenk.lider.core.api.messaging.enums;
 
 /**
- * Message types used between agents and Lider XMPP client.<br/>
+ * Types used when sending messages <b>from agents to Lider</b>.<br/>
  * <br/>
  * 
  * <b>TASK_STATUS</b>: Contains task-related messages.<br/>
@@ -20,6 +20,6 @@ package tr.org.liderahenk.lider.core.api.messaging;
  * @see tr.org.liderahenk.lider.impl.messaging.XMPPClientImpl
  * 
  */
-public enum MessageType {
+public enum AgentMessageType {
 	TASK_STATUS, REGISTER, UNREGISTER, GET_POLICIES, LOGIN, LOGOUT
 }

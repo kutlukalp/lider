@@ -1,4 +1,4 @@
-package tr.org.liderahenk.lider.core.api.messaging;
+package tr.org.liderahenk.lider.core.api.messaging.messages;
 
 /**
  * IRegistrationMessage is used to register (or unregister) an agent in the

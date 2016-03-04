@@ -1,4 +1,4 @@
-package tr.org.liderahenk.lider.core.api.messaging;
+package tr.org.liderahenk.lider.core.api.messaging.messages;
 
 /**
  * IUserSessionMessage is used to notify the system for user login & logout
