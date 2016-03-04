@@ -1,8 +1,11 @@
 package tr.org.liderahenk.lider.core.api.agent.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import tr.org.liderahenk.lider.core.api.agent.IAgent;
+import tr.org.liderahenk.lider.core.api.dao.BaseDao;
+import tr.org.liderahenk.lider.core.api.dao.PropertyOrder;
 
 /**
  * Provides agent database operations.
@@ -11,20 +14,21 @@ import tr.org.liderahenk.lider.core.api.agent.IAgent;
  * @see tr.org.liderahenk.lider.persistence.agent.dao.AgentDaoImpl
  *
  */
-public interface IAgentDao {
+public interface IAgentDao extends BaseDao<IAgent> {
 
 	/**
 	 * 
 	 * @param agent
 	 * @return
 	 */
-	void save(IAgent agent);
+	IAgent save(IAgent agent);
 
 	/**
 	 * 
 	 * @param agent
 	 * @return
 	 */
+	@Override
 	IAgent update(IAgent agent);
 
 	/**
@@ -58,15 +62,20 @@ public interface IAgentDao {
 	 * 
 	 * @return
 	 */
-	List<? extends IAgent> findAll();
+	List<? extends IAgent> findAll(Class<? extends IAgent> obj, int maxResults);
 
 	/**
 	 * 
-	 * @param propertyName
-	 * @param propertyValue
-	 * @param maxResults
 	 * @return
 	 */
-	List<? extends IAgent> findByProperty(String propertyName, Object propertyValue, Integer maxResults);
+	List<? extends IAgent> findByProperty(Class<? extends IAgent> obj, String propertyName, Object propertyValue,
+			int maxResults);
+
+	/**
+	 * 
+	 * @return
+	 */
+	List<? extends IAgent> findByProperties(Class<? extends IAgent> obj, Map<String, Object> propertiesMap,
+			List<PropertyOrder> orders, Integer maxResults);
 
 }

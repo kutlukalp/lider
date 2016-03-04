@@ -1,6 +1,7 @@
 package tr.org.liderahenk.lider.persistence.agent.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.agent.IAgent;
 import tr.org.liderahenk.lider.core.api.agent.dao.IAgentDao;
+import tr.org.liderahenk.lider.core.api.dao.PropertyOrder;
 import tr.org.liderahenk.lider.persistence.agent.AgentImpl;
 
 /**
@@ -21,9 +23,6 @@ import tr.org.liderahenk.lider.persistence.agent.AgentImpl;
  *
  */
 public class AgentDaoImpl implements IAgentDao {
-
-	// TODO provide more operations (like deleteByProperty,
-	// findByPropertiesAndOperators etc.)
 
 	private static Logger logger = LoggerFactory.getLogger(AgentDaoImpl.class);
 
@@ -38,10 +37,11 @@ public class AgentDaoImpl implements IAgentDao {
 	}
 
 	@Override
-	public void save(IAgent agent) {
+	public IAgent save(IAgent agent) {
 		AgentImpl agentImpl = new AgentImpl(agent);
 		entityManager.persist(agentImpl);
 		logger.debug("IAgent object persisted: {}", agentImpl.toString());
+		return agentImpl;
 	}
 
 	@Override
@@ -75,6 +75,12 @@ public class AgentDaoImpl implements IAgentDao {
 		entityManager.remove(entity);
 		logger.debug("IAgent object removed with ID: {}", agentId);
 	}
+	
+	@Override
+	public long countAll() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 
 	@Override
 	public AgentImpl find(Long agentId) {
@@ -84,7 +90,7 @@ public class AgentDaoImpl implements IAgentDao {
 	}
 
 	@Override
-	public List<AgentImpl> findAll() {
+	public List<? extends IAgent> findAll(Class<? extends IAgent> obj, int maxResults) {
 		List<AgentImpl> agentList = entityManager
 				.createQuery("select t from " + AgentImpl.class.getSimpleName() + " t", AgentImpl.class)
 				.getResultList();
@@ -93,16 +99,24 @@ public class AgentDaoImpl implements IAgentDao {
 	}
 
 	@Override
-	public List<AgentImpl> findByProperty(String propertyName, Object propertyValue, Integer maxResults) {
+	public List<? extends IAgent> findByProperty(Class<? extends IAgent> obj, String propertyName, Object propertyValue,
+			int maxResults) {
 		TypedQuery<AgentImpl> query = entityManager.createQuery(
 				"select t from " + AgentImpl.class.getSimpleName() + " t where t." + propertyName + "= :propertyValue",
 				AgentImpl.class).setParameter("propertyValue", propertyValue);
-		if (maxResults != null && maxResults.intValue() > 0) {
+		if (maxResults > 0) {
 			query = query.setMaxResults(maxResults);
 		}
 		List<AgentImpl> agentList = query.getResultList();
 		logger.debug("IAgent objects found: {}", agentList);
 		return agentList;
+	}
+	
+	@Override
+	public List<? extends IAgent> findByProperties(Class<? extends IAgent> obj, Map<String, Object> propertiesMap,
+			List<PropertyOrder> orders, Integer maxResults) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	public void setEntityManager(EntityManager entityManager) {
