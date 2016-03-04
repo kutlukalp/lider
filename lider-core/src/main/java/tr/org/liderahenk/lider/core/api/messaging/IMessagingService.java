@@ -6,12 +6,20 @@ import java.util.List;
 import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
 
 /**
- * Provides messaging services
+ * Provides messaging services throughout system.
  * 
  * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
 public interface IMessagingService {
+
+	/**
+	 * 
+	 * @param jid
+	 * @return true if jid is online, false otherwise
+	 */
+	boolean isRecipientOnline(String jid);
 
 	/**
 	 * 
@@ -21,7 +29,7 @@ public interface IMessagingService {
 	 *            to be sent
 	 * @throws Exception
 	 */
-	void sendMessage(String message, String to) throws Exception;
+	void sendMessage(String message, String jid) throws Exception;
 
 	/**
 	 * 
@@ -33,23 +41,40 @@ public interface IMessagingService {
 
 	/**
 	 * 
+	 * @param file
 	 * @param jid
-	 * @return true if jid is online, false otherwise
+	 * @throws Exception
 	 */
-	boolean isRecipientOnline(String jid);
+	void sendFile(byte[] file, String jid) throws Exception;
+
+	/**
+	 * 
+	 * @param file
+	 * @param jid
+	 * @throws Exception
+	 */
+	void sendFile(File file, String jid) throws Exception;
+
+	/**
+	 * 
+	 * @param username
+	 * @param password
+	 * @throws Exception
+	 */
+	void createAccount(String username, String password) throws Exception;
+
+	/**
+	 * 
+	 * @param filePath
+	 * @param jid
+	 * @throws Exception
+	 */
+	void requestFile(String filePath, String jid) throws Exception;
 
 	/**
 	 * 
 	 * @return
 	 */
 	List<String> getOnlineUsers();
-
-	void sendFile(byte[] file, String jid) throws Exception;
-
-	void sendFile(File file, String jid) throws Exception;
-
-	void createAccount(String username, String password) throws Exception;
-
-	void requestFile(String filePath, String jid) throws Exception;
 
 }

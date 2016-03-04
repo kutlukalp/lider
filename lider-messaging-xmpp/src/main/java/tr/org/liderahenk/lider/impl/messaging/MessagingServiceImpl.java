@@ -41,8 +41,8 @@ public class MessagingServiceImpl implements IMessagingService {
 	}
 
 	@Override
-	public void sendMessage(String message, String to) throws Exception {
-		xmppClient.sendMessage(message, to);
+	public void sendMessage(String message, String jid) throws Exception {
+		xmppClient.sendMessage(message, jid);
 	}
 
 	@Override
