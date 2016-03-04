@@ -10,11 +10,11 @@ import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
-import tr.org.liderahenk.lider.core.api.messaging.IMessage;
 import tr.org.liderahenk.lider.core.api.messaging.IMessageFactory;
 import tr.org.liderahenk.lider.core.api.messaging.IMessagingService;
-import tr.org.liderahenk.lider.core.api.messaging.ITaskStatusUpdateMessage;
-import tr.org.liderahenk.lider.core.api.messaging.ITaskStatusUpdateSubscriber;
+import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
+import tr.org.liderahenk.lider.core.api.messaging.messages.ITaskStatusMessage;
+import tr.org.liderahenk.lider.core.api.messaging.subscribers.ITaskStatusSubscriber;
 import tr.org.liderahenk.lider.core.api.rest.IRestRequest;
 import tr.org.liderahenk.lider.core.api.taskmanager.ITaskManager;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskCommState;
@@ -31,7 +31,7 @@ import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
-public class TaskManagerImpl implements ITaskManager, ITaskStatusUpdateSubscriber {
+public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 
 	private static Logger logger = LoggerFactory.getLogger(TaskManagerImpl.class);
 
@@ -89,7 +89,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusUpdateSubscribe
 					task.setTargetJID(jid);
 					
 					boolean isAhenk = ldapService.isAhenk(entry);
-					IMessage message = null;
+					ILiderMessage message = null;
 					if (isAhenk) {
 						
 						message = messageFactory.create(task);
@@ -134,7 +134,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusUpdateSubscribe
 						// agent will automatically query user's saved tasks and
 						// execute them.
 						boolean isAhenk = ldapService.isAhenk(entry);
-						IMessage message = null;
+						ILiderMessage message = null;
 						if (isAhenk) {
 
 							message = messageFactory.create(subTask);
@@ -231,7 +231,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusUpdateSubscribe
 	}
 
 	@Override
-	public void messageReceived(ITaskStatusUpdateMessage message) {
+	public void messageReceived(ITaskStatusMessage message) {
 		// TODO Auto-generated method stub
 
 	}

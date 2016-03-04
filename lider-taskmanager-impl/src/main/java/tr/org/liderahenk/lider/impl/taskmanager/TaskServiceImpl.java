@@ -15,10 +15,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.IConfigurationService;
-import tr.org.liderahenk.lider.core.api.messaging.IMessage;
 import tr.org.liderahenk.lider.core.api.messaging.IMessageFactory;
 import tr.org.liderahenk.lider.core.api.messaging.IMessagingService;
-import tr.org.liderahenk.lider.core.api.messaging.IPresenceSubscriber;
+import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
+import tr.org.liderahenk.lider.core.api.messaging.subscribers.IPresenceSubscriber;
 import tr.org.liderahenk.lider.core.api.rest.Priority;
 import tr.org.liderahenk.lider.core.api.taskmanager.ITask;
 import tr.org.liderahenk.lider.core.api.taskmanager.ITaskService;
@@ -213,12 +213,12 @@ public class TaskServiceImpl implements ITaskService, IPresenceSubscriber {
 			if (!subTasks.isEmpty()) {
 				// retry subtasks, not parent
 				for (TaskImpl subTask : subTasks) {
-					IMessage message = messageFactory.create(subTask);
+					ILiderMessage message = messageFactory.create(subTask);
 					messagingService.sendMessage(message);
 					// update( subTask.getId(), TaskCommState.AGENT_RETRY );
 				}
 			} else {
-				IMessage message = messageFactory.create(task);
+				ILiderMessage message = messageFactory.create(task);
 				messagingService.sendMessage(message);
 				// update( task.getId(), TaskCommState.AGENT_RETRY );
 			}
