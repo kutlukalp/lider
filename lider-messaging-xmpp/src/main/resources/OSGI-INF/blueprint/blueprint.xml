@@ -12,6 +12,7 @@
 	<bean id="messagingServiceImpl"
 		class="tr.org.liderahenk.lider.impl.messaging.MessagingServiceImpl">
 		<property name="xmppClient" ref="xmppClient" />
+		<property name="eventAdmin" ref="eventAdmin" />
 	</bean>
 
 	<service ref="messageFactory"
@@ -29,13 +30,22 @@
 		<property name="configurationService" ref="configurationService" />
 	</bean>
 
-	<service ref="defaultRegistrationSubscriber"
-		interface="tr.org.liderahenk.lider.core.api.messaging.subscribers.IRegistrationSubscriber" />
+	<service ref="defaultRegistrationSubscriber">
+		<interfaces>
+			<value>tr.org.liderahenk.lider.core.api.messaging.subscribers.IRegistrationSubscriber</value>
+			<value>org.osgi.service.event.EventHandler</value>
+		</interfaces>
+		<service-properties>
+			<entry key="event.topics" value="tr/org/liderahenk/file/received" />
+		</service-properties>
+	</service>
 	<bean id="defaultRegistrationSubscriber"
 		class="tr.org.liderahenk.lider.messaging.subscribers.DefaultRegistrationSubscriber">
 		<property name="ldapService" ref="ldapService" />
 		<property name="configurationService" ref="configurationService" />
 		<property name="agentDao" ref="agentDaoRef" />
+		<property name="messagingService" ref="messagingServiceImpl" />
+		<property name="context" ref="blueprintBundleContext" />
 	</bean>
 
 	<service ref="defaultUserSessionSubscriber"
@@ -63,5 +73,6 @@
 		interface="tr.org.liderahenk.lider.core.api.ldap.ILDAPService" />
 	<reference id="agentDaoRef"
 		interface="tr.org.liderahenk.lider.core.api.agent.dao.IAgentDao" />
+	<reference id="eventAdmin" interface="org.osgi.service.event.EventAdmin" />
 
 </blueprint>

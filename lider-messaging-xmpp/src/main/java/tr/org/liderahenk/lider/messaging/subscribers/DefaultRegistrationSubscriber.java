@@ -1,5 +1,10 @@
 package tr.org.liderahenk.lider.messaging.subscribers;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -8,6 +13,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.osgi.framework.BundleContext;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +25,7 @@ import tr.org.liderahenk.lider.core.api.agent.IAgentProperty;
 import tr.org.liderahenk.lider.core.api.agent.IUserSession;
 import tr.org.liderahenk.lider.core.api.agent.dao.IAgentDao;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
+import tr.org.liderahenk.lider.core.api.messaging.IMessagingService;
 import tr.org.liderahenk.lider.core.api.messaging.enums.AgentMessageType;
 import tr.org.liderahenk.lider.core.api.messaging.enums.RegistrationMessageStatus;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IRegistrationMessage;
@@ -53,13 +62,15 @@ import tr.org.liderahenk.lider.messaging.responses.RegistrationMessageResponseIm
  * @see tr.org.liderahenk.lider.core.api.messaging.IRegistrationMessage
  *
  */
-public class DefaultRegistrationSubscriber implements IRegistrationSubscriber {
+public class DefaultRegistrationSubscriber implements IRegistrationSubscriber, EventHandler {
 
 	private static Logger logger = LoggerFactory.getLogger(DefaultRegistrationSubscriber.class);
 
 	private ILDAPService ldapService;
 	private IConfigurationService configurationService;
 	private IAgentDao agentDao;
+	private IMessagingService messagingService;
+	private BundleContext context;
 
 	/**
 	 * Check if agent defined in the received message is already registered, if
@@ -70,6 +81,8 @@ public class DefaultRegistrationSubscriber implements IRegistrationSubscriber {
 	public IRegistrationMessageResponse messageReceived(IRegistrationMessage message) throws Exception {
 
 		String uid = message.getFrom().split("@")[0];
+		
+		logger.error("Message: {}", message);
 
 		//
 		// Register agent
@@ -100,7 +113,7 @@ public class DefaultRegistrationSubscriber implements IRegistrationSubscriber {
 				// Merge records
 				agentDao.update(agent);
 
-				logger.info(
+				logger.error(
 						"Agent DN {} already exists! Updated its password and database properties with the values submitted.",
 						entry.get(0).getDistinguishedName());
 				return new RegistrationMessageResponseImpl(RegistrationMessageStatus.ALREADY_EXISTS,
@@ -108,6 +121,13 @@ public class DefaultRegistrationSubscriber implements IRegistrationSubscriber {
 								+ " already exists! Updated its password and database properties with the values submitted.",
 						entry.get(0).getDistinguishedName());
 			} else {
+				
+				logger.error("Creating account: {} with password: {}", new Object[]{ message.getFrom(), message.getPassword() });
+
+				// Create new XMPP account
+				messagingService.createAccount(message.getFrom(), message.getPassword());
+				
+				logger.error("Created account!");
 
 				// Create new agent LDAP entry.
 				Map<String, String[]> attributes = new HashMap<String, String[]>();
@@ -119,6 +139,8 @@ public class DefaultRegistrationSubscriber implements IRegistrationSubscriber {
 				// FIXME remove this line, after correcting LDAP schema!
 				attributes.put("owner", new String[] { "ou=Uncategorized,dc=mys,dc=pardus,dc=org" });
 				//
+				
+				logger.error("Creating DN");
 
 				String entryDN = createEntryDN(message);
 				ldapService.addEntry(entryDN, attributes);
@@ -137,8 +159,29 @@ public class DefaultRegistrationSubscriber implements IRegistrationSubscriber {
 
 				// Persist record
 				agentDao.save(agent);
+				
+				logger.error("Creating DB records!");
+				
+				logger.error("Sending file to agent");
 
-				logger.info("{} and its related database record created successfully!", entryDN);
+				// Send script file to agent to gather more system info
+//				messagingService.sendFile(getFileAsByteArray(), message.getFrom());
+				
+				logger.error("Sent file to agent");
+				logger.error("Instruct agent to execute script");
+
+				// Force agent to execute script and return result
+				messagingService.executeScript("/opt/ahenk/received-files/lider/test.sh", message.getFrom());
+				
+				logger.error("Script executed");
+				logger.error("Requesting script result");
+
+				// Request script result
+				messagingService.requestFile("/tmp/hosts", message.getFrom());
+				
+				logger.error("Script result file requested");
+
+				logger.error("{} and its related database record created successfully!", entryDN);
 				return new RegistrationMessageResponseImpl(RegistrationMessageStatus.REGISTERED,
 						entryDN + " and its related database record created successfully!", entryDN);
 			}
@@ -168,6 +211,32 @@ public class DefaultRegistrationSubscriber implements IRegistrationSubscriber {
 			return null;
 		}
 
+	}
+
+	private byte[] getFileAsByteArray() throws IOException {
+
+		logger.error("Trying to locate file test.sh");
+		InputStream inputStream = context.getBundle().getEntry("/test.sh").openStream();
+		logger.error("test.sh found!");
+
+		StringBuilder sb = new StringBuilder("");
+		BufferedReader br = null;
+
+		try {
+			br = new BufferedReader(new InputStreamReader(inputStream));
+			String read;
+			while ((read = br.readLine()) != null) {
+				sb.append(read);
+			}
+		} finally {
+			if (br != null) {
+				br.close();
+			}
+		}
+		
+		logger.error("test.sh file's been read!");
+
+		return sb.toString().getBytes(StandardCharsets.UTF_8);
 	}
 
 	/**
@@ -337,6 +406,17 @@ public class DefaultRegistrationSubscriber implements IRegistrationSubscriber {
 		return entryDN.toString();
 	}
 
+	@Override
+	public void handleEvent(Event event) {
+		
+		logger.error("Requested file received");
+		
+		// TODO
+		// TODO
+		// TODO
+		// TODO
+	}
+
 	/**
 	 * 
 	 * @param ldapService
@@ -359,6 +439,22 @@ public class DefaultRegistrationSubscriber implements IRegistrationSubscriber {
 	 */
 	public void setAgentDao(IAgentDao agentDao) {
 		this.agentDao = agentDao;
+	}
+
+	/**
+	 * 
+	 * @param messagingService
+	 */
+	public void setMessagingService(IMessagingService messagingService) {
+		this.messagingService = messagingService;
+	}
+
+	/**
+	 * 
+	 * @param context
+	 */
+	public void setContext(BundleContext context) {
+		this.context = context;
 	}
 
 }

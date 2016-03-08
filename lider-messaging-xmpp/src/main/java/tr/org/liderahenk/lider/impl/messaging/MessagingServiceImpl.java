@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.Date;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.List;
 
 import org.jivesoftware.smack.SmackException;
@@ -15,11 +17,15 @@ import org.jivesoftware.smack.XMPPException.XMPPErrorException;
 import org.jivesoftware.smackx.bytestreams.BytestreamListener;
 import org.jivesoftware.smackx.bytestreams.BytestreamRequest;
 import org.jivesoftware.smackx.bytestreams.socks5.Socks5BytestreamManager;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tr.org.liderahenk.lider.core.api.constants.LiderConstants;
 import tr.org.liderahenk.lider.core.api.messaging.IMessagingService;
 import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
+import tr.org.liderahenk.lider.messaging.messages.ExecuteScriptMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.RequestFileMessageImpl;
 
 /**
@@ -34,6 +40,8 @@ public class MessagingServiceImpl implements IMessagingService {
 	private static Logger logger = LoggerFactory.getLogger(MessagingServiceImpl.class);
 
 	private XMPPClientImpl xmppClient;
+
+	private EventAdmin eventAdmin;
 
 	@Override
 	public boolean isRecipientOnline(String jid) {
@@ -62,13 +70,39 @@ public class MessagingServiceImpl implements IMessagingService {
 
 	@Override
 	public void createAccount(String username, String password) throws Exception {
-		xmppClient.createAccount(username, password);
+		try {
+			xmppClient.createAccount(username, password);
+		} catch (Exception e) {
+			if (e.getMessage().contains("conflict")) { // Ignore
+				logger.warn("Already registered: {}", username);
+			} else {
+				throw e; // Let the caller class handle it
+			}
+		}
+	}
+
+	@Override
+	public void executeScript(final String filePath, final String jid) throws Exception {
+		xmppClient.sendMessage(new ExecuteScriptMessageImpl(filePath, xmppClient.getFullJid(jid), new Date()));
 	}
 
 	@Override
 	public void requestFile(final String filePath, final String jid) throws Exception {
-		final String jidFinal = xmppClient.getFullJid(jid);
+		listenToIncomingFiles(filePath, jid);
+		xmppClient.sendMessage(new RequestFileMessageImpl(filePath, xmppClient.getFullJid(jid), new Date()));
+	}
 
+	/**
+	 * Listen to incoming file transfer requests, filtering them by given JID.
+	 * If the file is accepted/transfered, it will be copied under the directory
+	 * specified in config file. After successful file transfer,
+	 * <b>FILE_RECEIVED</b> event will be fired to notify any event handlers.
+	 * 
+	 * @param filePath
+	 * @param jid
+	 */
+	private void listenToIncomingFiles(final String filePath, final String jid) {
+		final String jidFinal = xmppClient.getFullJid(jid);
 		// Listen to incoming file transfer requests
 		Socks5BytestreamManager bytestreamManager = Socks5BytestreamManager
 				.getBytestreamManager(xmppClient.getConnection());
@@ -95,7 +129,12 @@ public class MessagingServiceImpl implements IMessagingService {
 						}
 						outputStream.flush();
 
-						// TODO throw file transfer event!
+						// Fire an event to notify requested file received
+						// successfully.
+						Dictionary<String, String> dict = new Hashtable<String, String>();
+						dict.put("filepath", path);
+						dict.put("from", request.getFrom());
+						eventAdmin.postEvent(new Event(LiderConstants.EVENTS.FILE_RECEIVED, dict));
 
 					} else {
 						request.reject();
@@ -150,9 +189,6 @@ public class MessagingServiceImpl implements IMessagingService {
 				return request.getFrom().equalsIgnoreCase(jidFinal);
 			}
 		});
-
-		// Request file from the agent
-		xmppClient.sendMessage(new RequestFileMessageImpl(filePath, jidFinal, new Date()));
 	}
 
 	@Override
@@ -162,6 +198,10 @@ public class MessagingServiceImpl implements IMessagingService {
 
 	public void setXmppClient(XMPPClientImpl xmppClient) {
 		this.xmppClient = xmppClient;
+	}
+
+	public void setEventAdmin(EventAdmin eventAdmin) {
+		this.eventAdmin = eventAdmin;
 	}
 
 }

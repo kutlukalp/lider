@@ -22,6 +22,7 @@ public interface IMessagingService {
 	boolean isRecipientOnline(String jid);
 
 	/**
+	 * Send message to agent
 	 * 
 	 * @param to
 	 *            recipient of message
@@ -32,6 +33,7 @@ public interface IMessagingService {
 	void sendMessage(String message, String jid) throws Exception;
 
 	/**
+	 * Send pre-defined Lider message to agent
 	 * 
 	 * @param message
 	 *            {@link ILiderMessage} to be sent
@@ -40,6 +42,7 @@ public interface IMessagingService {
 	void sendMessage(ILiderMessage message) throws Exception;
 
 	/**
+	 * Send file to agent via XEP-0065
 	 * 
 	 * @param file
 	 * @param jid
@@ -48,6 +51,7 @@ public interface IMessagingService {
 	void sendFile(byte[] file, String jid) throws Exception;
 
 	/**
+	 * Send file to agent via XEP-0065
 	 * 
 	 * @param file
 	 * @param jid
@@ -56,6 +60,7 @@ public interface IMessagingService {
 	void sendFile(File file, String jid) throws Exception;
 
 	/**
+	 * Createn XMPP account on server
 	 * 
 	 * @param username
 	 * @param password
@@ -64,6 +69,7 @@ public interface IMessagingService {
 	void createAccount(String username, String password) throws Exception;
 
 	/**
+	 * Request a specific file from agent
 	 * 
 	 * @param filePath
 	 * @param jid
@@ -72,8 +78,17 @@ public interface IMessagingService {
 	void requestFile(String filePath, String jid) throws Exception;
 
 	/**
+	 * Execute script on agent and get result as file.
 	 * 
-	 * @return
+	 * @param filePath
+	 * @param jid
+	 * @throws Exception
+	 */
+	void executeScript(String filePath, String jid) throws Exception;
+
+	/**
+	 * 
+	 * @return currently online users
 	 */
 	List<String> getOnlineUsers();
 

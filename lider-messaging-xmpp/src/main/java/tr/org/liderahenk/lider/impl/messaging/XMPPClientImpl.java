@@ -435,6 +435,7 @@ public class XMPPClientImpl {
 	 */
 	public void createAccount(String username, String password)
 			throws NoResponseException, XMPPErrorException, NotConnectedException {
+		AccountManager.sensitiveOperationOverInsecureConnectionDefault(true);
 		AccountManager accountManager = AccountManager.getInstance(connection);
 		if (accountManager.supportsAccountCreation()) {
 			accountManager.createAccount(username, password);
