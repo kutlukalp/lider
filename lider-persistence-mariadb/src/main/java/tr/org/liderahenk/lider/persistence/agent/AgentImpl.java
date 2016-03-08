@@ -103,8 +103,7 @@ public class AgentImpl implements IAgent {
 		List<? extends IAgentProperty> tmpProperties = agent.getProperties();
 		if (tmpProperties != null) {
 			for (IAgentProperty tmpProperty : tmpProperties) {
-				AgentPropertyImpl property = new AgentPropertyImpl(tmpProperty);
-				addProperty(property);
+				addProperty(tmpProperty);
 			}
 		}
 
@@ -112,8 +111,7 @@ public class AgentImpl implements IAgent {
 		List<? extends IUserSession> tmpUserSessions = agent.getSessions();
 		if (tmpUserSessions != null) {
 			for (IUserSession tmpUserSession : tmpUserSessions) {
-				UserSessionImpl userSession = new UserSessionImpl(tmpUserSession);
-				addUserSession(userSession);
+				addUserSession(tmpUserSession);
 			}
 		}
 
