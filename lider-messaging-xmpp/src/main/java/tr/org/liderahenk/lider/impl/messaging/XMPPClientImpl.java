@@ -705,11 +705,8 @@ public class XMPPClientImpl {
 					Message msg = (Message) packet;
 					logger.info("Task status update message received from => {}, body => {}", msg.getFrom(),
 							msg.getBody());
-					ObjectMapper mapper= new ObjectMapper();
-					mapper.setDateFormat(new SimpleDateFormat("dd-MM-yyyy HH:mm"));
-					
-					RegistrationMessageImpl message = mapper.readValue(msg.getBody(),RegistrationMessageImpl.class);
 
+					ObjectMapper mapper = new ObjectMapper();
 					try {
 						TaskStatusMessageImpl taskStatusUpdateMessage = mapper.readValue(msg.getBody(),
 								TaskStatusMessageImpl.class);
@@ -785,8 +782,10 @@ public class XMPPClientImpl {
 					logger.info("Register message received from => {}, body => {}", msg.getFrom(), msg.getBody());
 
 					// Construct message
-					RegistrationMessageImpl message = new ObjectMapper().readValue(msg.getBody(),
-							RegistrationMessageImpl.class);
+					ObjectMapper mapper= new ObjectMapper();
+					mapper.setDateFormat(new SimpleDateFormat("dd-MM-yyyy HH:mm"));
+					
+					RegistrationMessageImpl message = mapper.readValue(msg.getBody(),RegistrationMessageImpl.class);
 
 					// Fall back to default register subscriber if reference
 					// list is empty.
