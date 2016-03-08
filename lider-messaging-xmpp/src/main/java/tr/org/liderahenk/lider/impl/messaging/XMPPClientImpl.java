@@ -4,6 +4,7 @@ package tr.org.liderahenk.lider.impl.messaging;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -704,8 +705,11 @@ public class XMPPClientImpl {
 					Message msg = (Message) packet;
 					logger.info("Task status update message received from => {}, body => {}", msg.getFrom(),
 							msg.getBody());
+					ObjectMapper mapper= new ObjectMapper();
+					mapper.setDateFormat(new SimpleDateFormat("dd-MM-yyyy HH:mm"));
+					
+					RegistrationMessageImpl message = mapper.readValue(msg.getBody(),RegistrationMessageImpl.class);
 
-					ObjectMapper mapper = new ObjectMapper();
 					try {
 						TaskStatusMessageImpl taskStatusUpdateMessage = mapper.readValue(msg.getBody(),
 								TaskStatusMessageImpl.class);
