@@ -15,7 +15,7 @@
 			<property name="openjpa.jdbc.SchemaFactory" value="native(ForeignKeys=true)" />
 			<property name="openjpa.BrokerImpl" value="non-finalizing" />
 			<property name="openjpa.Log"
-				value="DefaultLevel=WARN, Runtime=INFO, Tool=INFO, SQL=TRACE" />
+				value="DefaultLevel=TRACE, Runtime=TRACE, Tool=TRACE, SQL=TRACE" />
 		</properties>
 	</persistence-unit>
 </persistence>

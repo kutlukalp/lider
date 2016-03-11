@@ -9,8 +9,7 @@
 
 	<service ref="policyRequestProcessor"
 		interface="tr.org.liderahenk.lider.core.api.rest.processors.IPolicyRequestProcessor" />
-	<bean id="policyRequestProcessor"
-		class="tr.org.liderahenk.lider.rest.PolicyRequestProcessorImpl">
+	<bean id="policyRequestProcessor" class="tr.org.liderahenk.lider.rest.PolicyRequestProcessorImpl">
 		<property name="requestFactory" ref="requestFactory" />
 		<property name="responseFactory" ref="responseFactory" />
 		<property name="policyDao" ref="policyDao" />
@@ -29,8 +28,7 @@
 
 	<service ref="taskRequestProcessor"
 		interface="tr.org.liderahenk.lider.core.api.rest.processors.ITaskRequestProcessor" />
-	<bean id="taskRequestProcessor"
-		class="tr.org.liderahenk.lider.rest.TaskRequestProcessorImpl">
+	<bean id="taskRequestProcessor" class="tr.org.liderahenk.lider.rest.TaskRequestProcessorImpl">
 		<property name="requestFactory" ref="requestFactory" />
 		<property name="responseFactory" ref="responseFactory" />
 		<property name="serviceRouter" ref="serviceRouter" />
@@ -39,6 +37,12 @@
 		<property name="ldapService" ref="ldapService" />
 	</bean>
 
+	<reference id="pluginDao"
+		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IPluginDao" />
+	<reference id="profileDao"
+		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IProfileDao" />
+	<reference id="policyDao"
+		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IPolicyDao" />
 	<reference id="requestFactory"
 		interface="tr.org.liderahenk.lider.core.api.rest.IRequestFactory" />
 	<reference id="responseFactory"

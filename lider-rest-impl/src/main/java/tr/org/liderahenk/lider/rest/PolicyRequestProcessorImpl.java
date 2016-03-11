@@ -288,4 +288,20 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 		return responseFactory.createResponse(RestResponseStatus.OK, "Record deleted.");
 	}
 
+	public void setPolicyDao(IPolicyDao policyDao) {
+		this.policyDao = policyDao;
+	}
+
+	public void setProfileDao(IProfileDao profileDao) {
+		this.profileDao = profileDao;
+	}
+
+	public void setRequestFactory(IRequestFactory requestFactory) {
+		this.requestFactory = requestFactory;
+	}
+
+	public void setResponseFactory(IResponseFactory responseFactory) {
+		this.responseFactory = responseFactory;
+	}
+
 }

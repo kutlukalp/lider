@@ -24,7 +24,7 @@ import tr.org.liderahenk.lider.core.api.persistence.enums.CrudType;
  *
  */
 @Entity
-@Table(name = "OPERATION_LOG")
+@Table(name = "C_OPERATION_LOG")
 public class OperationLogImpl implements IOperationLog {
 
 	@Id

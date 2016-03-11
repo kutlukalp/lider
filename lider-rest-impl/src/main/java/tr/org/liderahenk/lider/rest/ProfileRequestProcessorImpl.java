@@ -279,7 +279,7 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 			public boolean isDeleted() {
 				return profile.isDeleted();
 			}
-			
+
 			@Override
 			public byte[] getProfileData() {
 				try {
@@ -329,6 +329,10 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 
 	public void setResponseFactory(IResponseFactory responseFactory) {
 		this.responseFactory = responseFactory;
+	}
+
+	public void setPluginDao(IPluginDao pluginDao) {
+		this.pluginDao = pluginDao;
 	}
 
 }

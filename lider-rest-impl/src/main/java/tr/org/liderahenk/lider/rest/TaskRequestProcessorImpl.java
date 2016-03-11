@@ -172,12 +172,12 @@ public class TaskRequestProcessorImpl implements ITaskRequestProcessor {
 		this.authService = authService;
 	}
 
-	public void setConfig(IConfigurationService config) {
-		this.configService = config;
-	}
-
 	public void setLdapService(ILDAPService ldapService) {
 		this.ldapService = ldapService;
+	}
+
+	public void setConfigService(IConfigurationService configService) {
+		this.configService = configService;
 	}
 
 }

@@ -31,6 +31,7 @@ public class TaskObserverListCommand implements ICommand {
 	private static final Integer MAX_RESULTS = 10000;
 
 	private static transient Logger logger = LoggerFactory.getLogger(TaskObserverListCommand.class);
+
 	private ICommandResultFactory resultFactory;
 	private ITaskDao taskDao;
 
@@ -96,12 +97,12 @@ public class TaskObserverListCommand implements ICommand {
 		return false;
 	}
 
-	public ICommandResultFactory getResultFactory() {
-		return resultFactory;
+	public void setResultFactory(ICommandResultFactory resultFactory) {
+		this.resultFactory = resultFactory;
 	}
 
-	public ITaskDao getTaskDao() {
-		return taskDao;
+	public void setTaskDao(ITaskDao taskDao) {
+		this.taskDao = taskDao;
 	}
 
 }
