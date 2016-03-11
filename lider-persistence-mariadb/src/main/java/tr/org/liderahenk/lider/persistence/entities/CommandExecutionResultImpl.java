@@ -2,7 +2,6 @@ package tr.org.liderahenk.lider.persistence.entities;
 
 import java.util.Date;
 
-import javax.activation.MimeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -21,6 +20,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import tr.org.liderahenk.lider.core.api.enums.StatusCode;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecutionResult;
+import tr.org.liderahenk.lider.core.api.persistence.enums.ContentType;
 
 /**
  * Entity class for execution result.
@@ -61,7 +61,7 @@ public class CommandExecutionResultImpl implements ICommandExecutionResult {
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "CONTENT_TYPE")
-	private MimeType contentType;
+	private ContentType contentType;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "CREATE_DATE", nullable = false)
@@ -75,8 +75,8 @@ public class CommandExecutionResultImpl implements ICommandExecutionResult {
 	}
 
 	public CommandExecutionResultImpl(Long id, CommandExecutionImpl commandExecution, Long agentId,
-			StatusCode responseCode, String responseMessage, byte[] responseData, MimeType contentType, Date createDate,
-			Date modifyDate) {
+			StatusCode responseCode, String responseMessage, byte[] responseData, ContentType contentType,
+			Date createDate, Date modifyDate) {
 		super();
 		this.id = id;
 		this.commandExecution = commandExecution;
@@ -156,11 +156,11 @@ public class CommandExecutionResultImpl implements ICommandExecutionResult {
 	}
 
 	@Override
-	public MimeType getContentType() {
+	public ContentType getContentType() {
 		return contentType;
 	}
 
-	public void setContentType(MimeType contentType) {
+	public void setContentType(ContentType contentType) {
 		this.contentType = contentType;
 	}
 
@@ -193,11 +193,13 @@ public class CommandExecutionResultImpl implements ICommandExecutionResult {
 		return null;
 	}
 
-	@Override
-	public String toString() {
-		return "CommandExecutionResultImpl [id=" + id + ", responseCode=" + responseCode + ", responseMessage="
-				+ responseMessage + ", responseData=" + responseData + ", contentType=" + contentType + ", createDate="
-				+ createDate + ", modifyDate=" + modifyDate + "]";
-	}
+	// @Override
+	// public String toString() {
+	// return "CommandExecutionResultImpl [id=" + id + ", responseCode=" +
+	// responseCode + ", responseMessage="
+	// + responseMessage + ", responseData=" + responseData + ", contentType=" +
+	// contentType + ", createDate="
+	// + createDate + ", modifyDate=" + modifyDate + "]";
+	// }
 
 }

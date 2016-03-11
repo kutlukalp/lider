@@ -3,9 +3,8 @@ package tr.org.liderahenk.lider.core.api.persistence.entities;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.activation.MimeType;
-
 import tr.org.liderahenk.lider.core.api.enums.StatusCode;
+import tr.org.liderahenk.lider.core.api.persistence.enums.ContentType;
 
 /**
  * ICommandExecutionResult entity class is responsible for storing command
@@ -28,7 +27,7 @@ public interface ICommandExecutionResult extends Serializable {
 
 	byte[] getResponseData();
 
-	MimeType getContentType();
+	ContentType getContentType();
 
 	Date getCreateDate();
 
