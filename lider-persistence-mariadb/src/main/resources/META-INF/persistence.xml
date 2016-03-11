@@ -14,8 +14,9 @@
 			<property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema(ForeignKeys=true)" />
 			<property name="openjpa.jdbc.SchemaFactory" value="native(ForeignKeys=true)" />
 			<property name="openjpa.BrokerImpl" value="non-finalizing" />
+			<property name="openjpa.ConnectionFactoryProperties" value="PrintParameters=true" />
 			<property name="openjpa.Log"
-				value="DefaultLevel=TRACE, Runtime=TRACE, Tool=TRACE, SQL=TRACE" />
+				value="DefaultLevel=WARN, Runtime=INFO, Tool=INFO, SQL=TRACE" />
 		</properties>
 	</persistence-unit>
 </persistence>
