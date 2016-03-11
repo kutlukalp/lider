@@ -282,11 +282,6 @@
 				<artifactId>lider-service-impl</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>${project.groupId}</groupId>
-				<artifactId>lider-query-impl</artifactId>
-				<version>${project.version}</version>
-			</dependency>
 			<!-- Hibernate Dependecies -->
 			<dependency>
 				<groupId>org.hibernate.javax.persistence</groupId>
