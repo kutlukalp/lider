@@ -58,6 +58,7 @@ public class OperationLogDaoImpl implements IOperationLogDao {
 
 		} catch (Exception e) {
 			// this.writeToLogFile(log);
+			e.printStackTrace();
 		}
 
 		return returnLog;

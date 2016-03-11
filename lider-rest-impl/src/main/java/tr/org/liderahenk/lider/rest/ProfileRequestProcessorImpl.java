@@ -44,8 +44,11 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 	public IRestResponse add(String json) {
 		try {
 			IProfileRequest request = requestFactory.createProfileRequest(json);
+			
+			IPlugin plugin = findRelatedPlugin(request.getPluginName(), request.getPluginVersion());
 			IProfile profile = createFromRequest(request);
-			profile = profileDao.save(profile);
+			plugin.addProfile(profile);
+			plugin = pluginDao.save(plugin);
 
 			Map<String, Object> resultMap = new HashMap<String, Object>();
 			resultMap.put("profile", profile.toJson());
@@ -139,8 +142,8 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 	 */
 	private IPlugin findRelatedPlugin(String pluginName, String pluginVersion) {
 		Map<String, Object> propertiesMap = new HashMap<String, Object>();
-		propertiesMap.put("pluginName", pluginName);
-		propertiesMap.put("pluginVersion", pluginVersion);
+		propertiesMap.put("name", pluginName);
+		propertiesMap.put("version", pluginVersion);
 		List<? extends IPlugin> plugins = pluginDao.findByProperties(IPlugin.class, propertiesMap, null, 1);
 		IPlugin plugin = plugins.get(0);
 		return plugin;
@@ -229,6 +232,9 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 			}
 
 		};
+		
+		plugin.addProfile(profile);
+		
 		return profile;
 	}
 

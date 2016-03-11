@@ -1,10 +1,17 @@
 package tr.org.liderahenk.lider.persistence.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import tr.org.liderahenk.lider.core.api.persistence.PropertyOrder;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IAgentDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IAgent;
+import tr.org.liderahenk.lider.core.api.persistence.enums.OrderType;
 import tr.org.liderahenk.lider.persistence.entities.AgentImpl;
 
 /**
@@ -108,8 +116,44 @@ public class AgentDaoImpl implements IAgentDao {
 	@Override
 	public List<? extends IAgent> findByProperties(Class<? extends IAgent> obj, Map<String, Object> propertiesMap,
 			List<PropertyOrder> orders, Integer maxResults) {
-		// TODO Auto-generated method stub
-		return null;
+		orders = new ArrayList<PropertyOrder>();
+		// TODO
+//		PropertyOrder ord = new PropertyOrder("name", OrderType.ASC);
+//		orders.add(ord);
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<AgentImpl> criteria = (CriteriaQuery<AgentImpl>) builder.createQuery(AgentImpl.class);
+		Root<AgentImpl> from = (Root<AgentImpl>) criteria.from(AgentImpl.class);
+		criteria.select(from);
+		Predicate predicate = null;
+
+		if (propertiesMap != null) {
+			for (Entry<String, Object> entry : propertiesMap.entrySet()) {
+				if (entry.getValue() != null && !entry.getValue().toString().isEmpty()) {
+					Predicate pred = builder.equal(from.get(entry.getKey()), entry.getValue());
+					predicate = predicate == null ? pred : builder.and(predicate, pred);
+				}
+			}
+			if (predicate != null)
+				criteria.where(predicate);
+		}
+
+		if (orders != null && !orders.isEmpty()) {
+			List<Order> orderList = new ArrayList<Order>();
+			for (PropertyOrder order : orders) {
+				orderList.add(order.getOrderType() == OrderType.ASC ? builder.asc(from.get(order.getPropertyName()))
+						: builder.desc(from.get(order.getPropertyName())));
+			}
+			criteria.orderBy(orderList);
+		}
+
+		List<AgentImpl> list = null;
+		if (null != maxResults) {
+			list = entityManager.createQuery(criteria).setMaxResults(maxResults).getResultList();
+		} else {
+			list = entityManager.createQuery(criteria).getResultList();
+		}
+
+		return list;
 	}
 
 	public void setEntityManager(EntityManager entityManager) {
