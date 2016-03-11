@@ -86,7 +86,7 @@ public class MessagingServiceImpl implements IMessagingService {
 	public void executeScript(final String filePath, final String jid) throws Exception {
 		xmppClient.sendMessage(new ExecuteScriptMessageImpl(filePath, xmppClient.getFullJid(jid), new Date()));
 	}
-	
+
 	@Override
 	public void moveFile(String fileName, String filePath, String jid) throws Exception {
 		xmppClient.sendMessage(new MoveFileMessageImpl(filePath, fileName, xmppClient.getFullJid(jid), new Date()));
@@ -108,10 +108,11 @@ public class MessagingServiceImpl implements IMessagingService {
 	 * @param jid
 	 */
 	private void listenToIncomingFiles(final String filePath, final String jid) {
-		
+
 		final String jidFinal = xmppClient.getFullJid(jid);
 		// Listen to incoming file transfer requests
-		Socks5BytestreamManager bytestreamManager = Socks5BytestreamManager.getBytestreamManager(xmppClient.getConnection());
+		Socks5BytestreamManager bytestreamManager = Socks5BytestreamManager
+				.getBytestreamManager(xmppClient.getConnection());
 		bytestreamManager.addIncomingBytestreamListener(new BytestreamListener() {
 			@Override
 			public void incomingBytestreamRequest(BytestreamRequest request) {
@@ -123,13 +124,12 @@ public class MessagingServiceImpl implements IMessagingService {
 						String filename = extractFilenameFromPath(filePath);
 						String path = xmppClient.getFileReceivePath(jid, filename);
 						File file = new File(path);
-						
-						
+
 						File parent = file.getParentFile();
-						if(!parent.exists() && !parent.mkdirs()){
+						if (!parent.exists() && !parent.mkdirs()) {
 							logger.error("Couldn't create dir: " + parent);
 						}
-						
+
 						inputStream = request.accept().getInputStream();
 						outputStream = new FileOutputStream(new File(path));
 
@@ -148,8 +148,7 @@ public class MessagingServiceImpl implements IMessagingService {
 						dict.put("filepath", path);
 						dict.put("from", request.getFrom());
 						eventAdmin.postEvent(new Event(LiderConstants.EVENTS.FILE_RECEIVED, dict));
-						
-	
+
 					} else {
 						request.reject();
 					}
