@@ -1,9 +1,10 @@
 package tr.org.liderahenk.lider.core.api.taskmanager;
 
-import tr.org.liderahenk.lider.core.api.rest.IRestRequest;
+import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
+import tr.org.liderahenk.lider.core.api.rest.requests.IRequest;
 
 /**
- * Factory to create {@link ITask} from {@link IRestRequest}
+ * Factory to create {@link ITask} from {@link IRequest}
  * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
  *
  */

@@ -6,12 +6,12 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tr.org.liderahenk.lider.core.api.agent.IAgent;
-import tr.org.liderahenk.lider.core.api.agent.IUserSession;
-import tr.org.liderahenk.lider.core.api.agent.SessionEvent;
-import tr.org.liderahenk.lider.core.api.agent.dao.IAgentDao;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IUserSessionMessage;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IUserSessionSubscriber;
+import tr.org.liderahenk.lider.core.api.persistence.dao.IAgentDao;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IAgent;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IUserSession;
+import tr.org.liderahenk.lider.core.api.persistence.enums.SessionEvent;
 
 /**
  * <p>

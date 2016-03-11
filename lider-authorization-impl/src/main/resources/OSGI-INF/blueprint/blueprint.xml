@@ -10,7 +10,7 @@
 		interface="tr.org.liderahenk.lider.core.api.authorization.IAuthService" />
 
 	<bean id="authService"
-		class="tr.org.liderahenk.lider.impl.authorization.AuthServiceImpl">
+		class="tr.org.liderahenk.lider.authorization.AuthServiceImpl">
 		<property name="ldapService" ref="ldapService" />
 		<property name="configurationService" ref="configurationService" />
 	</bean>
@@ -18,5 +18,5 @@
 	<reference id="ldapService"
 		interface="tr.org.liderahenk.lider.core.api.ldap.ILDAPService" />
 	<reference id="configurationService"
-		interface="tr.org.liderahenk.lider.core.api.IConfigurationService" />
+		interface="tr.org.liderahenk.lider.core.api.configuration.IConfigurationService" />
 </blueprint>

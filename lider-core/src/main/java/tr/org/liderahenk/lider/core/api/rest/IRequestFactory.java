@@ -1,20 +1,15 @@
 package tr.org.liderahenk.lider.core.api.rest;
 
-/**
- * Factory to create {@link IRestRequest}'s from REST request attributes
- * 
- * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
- *
- */
+import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyRequest;
+import tr.org.liderahenk.lider.core.api.rest.requests.IProfileRequest;
+import tr.org.liderahenk.lider.core.api.rest.requests.ITaskCommandRequest;
+
 public interface IRequestFactory {
 
-	/**
-	 * Creates an instance of IRestRequest from the provided JSON string.
-	 * 
-	 * @param json
-	 * @return
-	 * @throws Exception
-	 */
-	public IRestRequest createRequest(String json) throws Exception;
+	IProfileRequest createProfileRequest(String json) throws Exception;
+
+	IPolicyRequest createPolicyRequest(String json) throws Exception;
+
+	ITaskCommandRequest createTaskCommandRequest(String json) throws Exception;
 
 }

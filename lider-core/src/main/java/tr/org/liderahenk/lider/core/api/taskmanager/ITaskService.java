@@ -3,7 +3,9 @@ package tr.org.liderahenk.lider.core.api.taskmanager;
 import java.util.List;
 import java.util.Map;
 
-import tr.org.liderahenk.lider.core.api.rest.Priority;
+import org.apache.log4j.Priority;
+
+import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 
 /**
  * Provides {@link ITask} related database services.

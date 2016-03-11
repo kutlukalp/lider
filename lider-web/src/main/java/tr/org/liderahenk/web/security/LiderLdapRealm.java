@@ -19,7 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import tr.org.liderahenk.lider.core.api.IConfigurationService;
+import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
 
 /**
  * Main realm class which works as a security-specific DAO for Shiro to

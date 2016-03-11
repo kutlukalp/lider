@@ -4,7 +4,7 @@ import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteScriptMessage
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteTaskMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IRequestFileMessage;
-import tr.org.liderahenk.lider.core.api.taskmanager.ITask;
+import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 
 /**
  * Factory interface to create {@link ILiderMessage}'s from various objects

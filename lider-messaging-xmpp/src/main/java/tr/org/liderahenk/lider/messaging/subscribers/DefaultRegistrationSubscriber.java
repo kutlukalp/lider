@@ -19,18 +19,18 @@ import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tr.org.liderahenk.lider.core.api.IConfigurationService;
-import tr.org.liderahenk.lider.core.api.agent.IAgent;
-import tr.org.liderahenk.lider.core.api.agent.IAgentProperty;
-import tr.org.liderahenk.lider.core.api.agent.IUserSession;
-import tr.org.liderahenk.lider.core.api.agent.dao.IAgentDao;
+import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
+import tr.org.liderahenk.lider.core.api.enums.StatusCode;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
 import tr.org.liderahenk.lider.core.api.messaging.IMessagingService;
 import tr.org.liderahenk.lider.core.api.messaging.enums.AgentMessageType;
-import tr.org.liderahenk.lider.core.api.messaging.enums.RegistrationMessageStatus;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IRegistrationMessage;
 import tr.org.liderahenk.lider.core.api.messaging.responses.IRegistrationMessageResponse;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IRegistrationSubscriber;
+import tr.org.liderahenk.lider.core.api.persistence.dao.IAgentDao;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IAgent;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IAgentProperty;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IUserSession;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 import tr.org.liderahenk.lider.messaging.responses.RegistrationMessageResponseImpl;
 
@@ -81,7 +81,7 @@ public class DefaultRegistrationSubscriber implements IRegistrationSubscriber, E
 	public IRegistrationMessageResponse messageReceived(IRegistrationMessage message) throws Exception {
 
 		String uid = message.getFrom().split("@")[0];
-		
+
 		logger.error("Message: {}", message);
 
 		//
@@ -116,17 +116,18 @@ public class DefaultRegistrationSubscriber implements IRegistrationSubscriber, E
 				logger.error(
 						"Agent DN {} already exists! Updated its password and database properties with the values submitted.",
 						entry.get(0).getDistinguishedName());
-				return new RegistrationMessageResponseImpl(RegistrationMessageStatus.ALREADY_EXISTS,
+				return new RegistrationMessageResponseImpl(StatusCode.ALREADY_EXISTS,
 						entry.get(0).getDistinguishedName()
 								+ " already exists! Updated its password and database properties with the values submitted.",
 						entry.get(0).getDistinguishedName());
 			} else {
-				
-				logger.error("Creating account: {} with password: {}", new Object[]{ message.getFrom(), message.getPassword() });
+
+				logger.error("Creating account: {} with password: {}",
+						new Object[] { message.getFrom(), message.getPassword() });
 
 				// Create new XMPP account
 				messagingService.createAccount(message.getFrom(), message.getPassword());
-				
+
 				logger.error("Created account!");
 
 				// Create new agent LDAP entry.
@@ -139,7 +140,7 @@ public class DefaultRegistrationSubscriber implements IRegistrationSubscriber, E
 				// FIXME remove this line, after correcting LDAP schema!
 				attributes.put("owner", new String[] { "ou=Uncategorized,dc=mys,dc=pardus,dc=org" });
 				//
-				
+
 				logger.error("Creating DN");
 
 				String entryDN = createEntryDN(message);
@@ -159,30 +160,31 @@ public class DefaultRegistrationSubscriber implements IRegistrationSubscriber, E
 
 				// Persist record
 				agentDao.save(agent);
-				
+
 				logger.error("Creating DB records!");
-				
+
 				logger.error("Sending file to agent");
 
 				// Send script file to agent to gather more system info
-//				messagingService.sendFile(getFileAsByteArray(), message.getFrom());
-				
+				// messagingService.sendFile(getFileAsByteArray(),
+				// message.getFrom());
+
 				logger.error("Sent file to agent");
 				logger.error("Instruct agent to execute script");
 
 				// Force agent to execute script and return result
 				messagingService.executeScript("/opt/ahenk/received-files/lider/test.sh", message.getFrom());
-				
+
 				logger.error("Script executed");
 				logger.error("Requesting script result");
 
 				// Request script result
 				messagingService.requestFile("/tmp/hosts", message.getFrom());
-				
+
 				logger.error("Script result file requested");
 
 				logger.error("{} and its related database record created successfully!", entryDN);
-				return new RegistrationMessageResponseImpl(RegistrationMessageStatus.REGISTERED,
+				return new RegistrationMessageResponseImpl(StatusCode.REGISTERED,
 						entryDN + " and its related database record created successfully!", entryDN);
 			}
 
@@ -206,7 +208,7 @@ public class DefaultRegistrationSubscriber implements IRegistrationSubscriber, E
 			IAgent agent = agentList.get(0);
 
 			// Mark the record as deleted.
-			agentDao.markAsDeleted(agent);
+			agentDao.delete(agent.getId());
 
 			return null;
 		}
@@ -233,7 +235,7 @@ public class DefaultRegistrationSubscriber implements IRegistrationSubscriber, E
 				br.close();
 			}
 		}
-		
+
 		logger.error("test.sh file's been read!");
 
 		return sb.toString().getBytes(StandardCharsets.UTF_8);
@@ -346,7 +348,12 @@ public class DefaultRegistrationSubscriber implements IRegistrationSubscriber, E
 				}
 
 				@Override
-				public Date getCreationDate() {
+				public Date getCreateDate() {
+					return new Date();
+				}
+
+				@Override
+				public Date getModifyDate() {
 					return new Date();
 				}
 
@@ -408,9 +415,9 @@ public class DefaultRegistrationSubscriber implements IRegistrationSubscriber, E
 
 	@Override
 	public void handleEvent(Event event) {
-		
+
 		logger.error("Requested file received");
-		
+
 		// TODO
 		// TODO
 		// TODO

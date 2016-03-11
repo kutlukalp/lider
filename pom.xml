@@ -167,7 +167,6 @@
 		<module>lider-ldap-impl</module>
 		<module>lider-taskmanager-impl</module>
 		<module>lider-datasource-mariadb</module>
-		<module>lider-query-impl</module>
 		<module>lider-authorization-impl</module>
 		<module>lider-config</module>
 		<module>lider-cache-impl</module>

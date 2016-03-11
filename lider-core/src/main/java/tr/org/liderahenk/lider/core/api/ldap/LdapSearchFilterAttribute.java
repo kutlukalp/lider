@@ -1,5 +1,7 @@
 package tr.org.liderahenk.lider.core.api.ldap;
 
+import tr.org.liderahenk.lider.core.api.ldap.enums.LdapSearchFilterEnum;
+
 /**
  * This class is used to filter LDAP entries during search operations.
  * 

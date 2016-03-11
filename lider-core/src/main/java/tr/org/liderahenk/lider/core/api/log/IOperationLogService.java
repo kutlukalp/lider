@@ -5,7 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import tr.org.liderahenk.lider.core.api.enums.CrudType;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IOperationLog;
+import tr.org.liderahenk.lider.core.api.persistence.enums.CrudType;
 
 public interface IOperationLogService {
 

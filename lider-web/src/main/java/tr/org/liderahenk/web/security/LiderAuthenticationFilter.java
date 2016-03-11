@@ -15,8 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import tr.org.liderahenk.lider.core.api.enums.CrudType;
 import tr.org.liderahenk.lider.core.api.log.IOperationLogService;
+import tr.org.liderahenk.lider.core.api.persistence.enums.CrudType;
 
 /**
  * Main filter class which is used to authenticate requests.
@@ -55,7 +55,7 @@ public class LiderAuthenticationFilter extends AuthenticatingFilter {
 		HttpServletRequest req = (HttpServletRequest) request;
 		String user = req.getHeader("username");
 		logService.createLog(new Date(), user, null, null, "Unauthorized access request", getHost(request), "HTTP 401",
-				"Unauthorized access request: " + req.getRequestURI(), CrudType.Login, user);
+				"Unauthorized access request: " + req.getRequestURI(), CrudType.LOGIN, user);
 
 		HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 		httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

@@ -5,40 +5,67 @@
 	xsi:schemaLocation="http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd"
 	default-activation="eager">
 
-	<service ref="pluginDbService"
-		interface="tr.org.liderahenk.lider.core.api.plugin.IPluginDbService" />
-	<bean id="pluginDbService"
-		class="tr.org.liderahenk.lider.persistence.mariadb.plugin.impl.PluginDbServiceImpl">
+	<service ref="agentDao"
+		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IAgentDao" />
+	<bean id="agentDao" init-method="init" destroy-method="destroy"
+		class="tr.org.liderahenk.lider.persistence.dao.AgentDaoImpl">
 		<tx:transaction method="*" value="Required" />
 		<jpa:context property="entityManager" unitname="lider" />
 	</bean>
 
-	<service ref="agentDao"
-		interface="tr.org.liderahenk.lider.core.api.agent.dao.IAgentDao" />
-	<bean id="agentDao" init-method="init" destroy-method="destroy"
-		class="tr.org.liderahenk.lider.persistence.agent.dao.AgentDaoImpl">
+	<service ref="commandDao"
+		interface="tr.org.liderahenk.lider.core.api.persistence.dao.ICommandDao" />
+	<bean id="commandDao" init-method="init" destroy-method="destroy"
+		class="tr.org.liderahenk.lider.persistence.dao.CommandDaoImpl">
 		<tx:transaction method="*" value="Required" />
 		<jpa:context property="entityManager" unitname="lider" />
 	</bean>
 
 	<service ref="operationLogDao"
-		interface="tr.org.liderahenk.lider.core.api.log.dao.OperationLogDao" />
-	<bean id="operationLogDao"
-		class="tr.org.liderahenk.lider.persistence.log.dao.impl.OperationLogDaoImpl">
+		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IOperationLogDao" />
+	<bean id="operationLogDao" init-method="init" destroy-method="destroy"
+		class="tr.org.liderahenk.lider.persistence.dao.OperationLogDaoImpl">
+		<tx:transaction method="*" value="Required" />
+		<jpa:context property="entityManager" unitname="lider" />
+	</bean>
+
+	<service ref="pluginDao"
+		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IPluginDao" />
+	<bean id="pluginDao" init-method="init" destroy-method="destroy"
+		class="tr.org.liderahenk.lider.persistence.dao.PluginDaoImpl">
+		<tx:transaction method="*" value="Required" />
+		<jpa:context property="entityManager" unitname="lider" />
+	</bean>
+
+	<service ref="policyDao"
+		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IPolicyDao" />
+	<bean id="policyDao" init-method="init" destroy-method="destroy"
+		class="tr.org.liderahenk.lider.persistence.dao.PolicyDaoImpl">
+		<tx:transaction method="*" value="Required" />
+		<jpa:context property="entityManager" unitname="lider" />
+	</bean>
+
+	<service ref="profileDao"
+		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IProfileDao" />
+	<bean id="profileDao" init-method="init" destroy-method="destroy"
+		class="tr.org.liderahenk.lider.persistence.dao.ProfileDaoImpl">
 		<tx:transaction method="*" value="Required" />
 		<jpa:context property="entityManager" unitname="lider" />
 	</bean>
 
 	<service ref="taskDao"
-		interface="tr.org.liderahenk.lider.core.api.taskmanager.dao.ITaskDao" />
-	<bean id="taskDao"
-		class="tr.org.liderahenk.lider.persistence.task.dao.TaskDaoImpl">
+		interface="tr.org.liderahenk.lider.core.api.persistence.dao.ITaskDao" />
+	<bean id="taskDao" class="tr.org.liderahenk.lider.persistence.dao.TaskDaoImpl">
 		<tx:transaction method="*" value="Required" />
 		<jpa:context property="entityManager" unitname="lider" />
-		<property name="taskCriteriaBuilder" ref="criteriaBuilder"></property>
 	</bean>
 
-	<bean id="criteriaBuilder"
-		class="tr.org.liderahenk.lider.persistence.task.model.impl.TaskCriteriaBuilder" />
+	<service ref="pluginDbService"
+		interface="tr.org.liderahenk.lider.core.api.persistence.IPluginDbService" />
+	<bean id="pluginDbService"
+		class="tr.org.liderahenk.lider.persistence.PluginDbServiceImpl">
+		<tx:transaction method="*" value="Required" />
+		<jpa:context property="entityManager" unitname="lider" />
+	</bean>
 
 </blueprint>

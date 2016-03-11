@@ -16,7 +16,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import junit.framework.TestCase;
-import tr.org.liderahenk.lider.core.api.plugin.IPluginDbService;
+import tr.org.liderahenk.lider.core.api.persistence.IPluginDbService;
+import tr.org.liderahenk.lider.persistence.PluginDbServiceImpl;
 
 @RunWith(JUnit4.class)
 public class PluginDbServiceImplTest extends TestCase {

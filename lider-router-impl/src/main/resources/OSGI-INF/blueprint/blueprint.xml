@@ -5,27 +5,23 @@
 
 	<service ref="router"
 		interface="tr.org.liderahenk.lider.core.api.router.IServiceRouter" />
-
-	<bean id="router" class="tr.org.liderahenk.lider.impl.router.ServiceRouterImpl">
+	<bean id="router" class="tr.org.liderahenk.lider.router.ServiceRouterImpl">
 		<property name="serviceRegistry" ref="registry" />
 		<property name="responseFactory" ref="responseFactory" />
 		<property name="commandContextFactory" ref="commandContextFactory" />
 		<property name="taskManager" ref="taskManager" />
 	</bean>
 
-	<bean id="registry" class="tr.org.liderahenk.lider.impl.router.ServiceRegistryImpl">
+	<bean id="registry" class="tr.org.liderahenk.lider.router.ServiceRegistryImpl">
 		<property name="registeredCommmands" ref="commands" />
 	</bean>
 
 	<reference id="commandContextFactory"
-		interface="tr.org.liderahenk.lider.core.api.plugin.ICommandContextFactory" />
-
+		interface="tr.org.liderahenk.lider.core.api.service.ICommandContextFactory" />
 	<reference id="responseFactory"
 		interface="tr.org.liderahenk.lider.core.api.rest.IResponseFactory" />
-
 	<reference id="taskManager"
 		interface="tr.org.liderahenk.lider.core.api.taskmanager.ITaskManager" />
-
 	<reference-list id="commands" availability="optional"
 		interface="tr.org.liderahenk.lider.core.api.plugin.ICommand" />
 

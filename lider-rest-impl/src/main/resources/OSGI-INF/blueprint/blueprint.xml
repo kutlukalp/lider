@@ -7,28 +7,48 @@
                  http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://svn.apache.org/repos/asf/aries/trunk/blueprint/blueprint-cm/src/main/resources/org/apache/aries/blueprint/compendium/cm/blueprint-cm-1.1.0.xsd
          ">
 
-	<service ref="restRequestProcessor"
-		interface="tr.org.liderahenk.lider.core.api.rest.IRestRequestProcessor" />
-	<bean id="restRequestProcessor"
-		class="tr.org.liderahenk.lider.impl.rest.RestRequestProcessorImpl">
+	<service ref="policyRequestProcessor"
+		interface="tr.org.liderahenk.lider.core.api.rest.processors.IPolicyRequestProcessor" />
+	<bean id="policyRequestProcessor"
+		class="tr.org.liderahenk.lider.rest.PolicyRequestProcessorImpl">
+		<property name="requestFactory" ref="requestFactory" />
+		<property name="responseFactory" ref="responseFactory" />
+		<property name="policyDao" ref="policyDao" />
+		<property name="profileDao" ref="profileDao" />
+	</bean>
+
+	<service ref="profileRequestProcessor"
+		interface="tr.org.liderahenk.lider.core.api.rest.processors.IProfileRequestProcessor" />
+	<bean id="profileRequestProcessor"
+		class="tr.org.liderahenk.lider.rest.ProfileRequestProcessorImpl">
+		<property name="requestFactory" ref="requestFactory" />
+		<property name="responseFactory" ref="responseFactory" />
+		<property name="pluginDao" ref="pluginDao" />
+		<property name="profileDao" ref="profileDao" />
+	</bean>
+
+	<service ref="taskRequestProcessor"
+		interface="tr.org.liderahenk.lider.core.api.rest.processors.ITaskRequestProcessor" />
+	<bean id="taskRequestProcessor"
+		class="tr.org.liderahenk.lider.rest.TaskRequestProcessorImpl">
+		<property name="requestFactory" ref="requestFactory" />
+		<property name="responseFactory" ref="responseFactory" />
 		<property name="serviceRouter" ref="serviceRouter" />
-		<property name="requestFactory" ref="restRequestFactory" />
-		<property name="responseFactory" ref="restResponseFactory" />
-		<property name="authService" ref="authServiceRef" />
-		<property name="config" ref="configurationService" />
+		<property name="authService" ref="authService" />
+		<property name="configService" ref="configService" />
 		<property name="ldapService" ref="ldapService" />
 	</bean>
 
-	<reference id="configurationService"
-		interface="tr.org.liderahenk.lider.core.api.IConfigurationService" />
+	<reference id="requestFactory"
+		interface="tr.org.liderahenk.lider.core.api.rest.IRequestFactory" />
+	<reference id="responseFactory"
+		interface="tr.org.liderahenk.lider.core.api.rest.IResponseFactory" />
+	<reference id="configService"
+		interface="tr.org.liderahenk.lider.core.api.configuration.IConfigurationService" />
 	<reference id="serviceRouter"
 		interface="tr.org.liderahenk.lider.core.api.router.IServiceRouter" />
-	<reference id="authServiceRef"
+	<reference id="authService"
 		interface="tr.org.liderahenk.lider.core.api.authorization.IAuthService" />
-	<reference id="restRequestFactory"
-		interface="tr.org.liderahenk.lider.core.api.rest.IRequestFactory" />
-	<reference id="restResponseFactory"
-		interface="tr.org.liderahenk.lider.core.api.rest.IResponseFactory" />
 	<reference id="ldapService"
 		interface="tr.org.liderahenk.lider.core.api.ldap.ILDAPService" />
 

@@ -7,9 +7,11 @@
                  http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://svn.apache.org/repos/asf/aries/trunk/blueprint/blueprint-cm/src/main/resources/org/apache/aries/blueprint/compendium/cm/blueprint-cm-1.1.0.xsd
          ">
 
-	<service ref="cacheService" interface="tr.org.liderahenk.lider.core.api.caching.ICacheService" />
+	<service ref="cacheService"
+		interface="tr.org.liderahenk.lider.core.api.caching.ICacheService" />
 
-	<bean id="cacheService" class="tr.org.liderahenk.impl.cache.CacheServiceImpl" init-method="init" destroy-method="destroy">
+	<bean id="cacheService" class="tr.org.liderahenk.lider.cache.CacheServiceImpl"
+		init-method="init" destroy-method="destroy">
 	</bean>
 
 </blueprint>

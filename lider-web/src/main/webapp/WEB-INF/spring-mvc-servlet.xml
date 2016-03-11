@@ -51,19 +51,27 @@
 		</property>
 		<property name="filterChainDefinitions">
 			<value>
-				/lider/rest/** = myAuthcAuth
+				/lider/policy/** = myAuthcAuth
+				/lider/profile/** = myAuthcAuth
+				/lider/task/** = myAuthcAuth
 				/** = myAuthcAuth
 			</value>
 		</property>
 	</bean>
 
-	<osgi:reference id="restRequestProcessor"
-		interface="tr.org.liderahenk.lider.core.api.rest.IRestRequestProcessor" />
+	<osgi:reference id="policyProcessor"
+		interface="tr.org.liderahenk.lider.core.api.rest.processors.IPolicyRequestProcessor" />
+
+	<osgi:reference id="profileProcessor"
+		interface="tr.org.liderahenk.lider.core.api.rest.processors.IProfileRequestProcessor" />
+
+	<osgi:reference id="taskProcessor"
+		interface="tr.org.liderahenk.lider.core.api.rest.processors.ITaskRequestProcessor" />
 
 	<osgi:reference id="operationLogService"
 		interface="tr.org.liderahenk.lider.core.api.log.IOperationLogService" />
 
 	<osgi:reference id="configurationService"
-		interface="tr.org.liderahenk.lider.core.api.IConfigurationService" />
+		interface="tr.org.liderahenk.lider.core.api.configuration.IConfigurationService" />
 
 </beans>

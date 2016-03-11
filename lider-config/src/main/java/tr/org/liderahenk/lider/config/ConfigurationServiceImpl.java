@@ -1,6 +1,6 @@
 package tr.org.liderahenk.lider.config;
 
-import tr.org.liderahenk.lider.core.api.IConfigurationService;
+import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
 
 /**
  * This class provides configurations throughout the system. Configurations are

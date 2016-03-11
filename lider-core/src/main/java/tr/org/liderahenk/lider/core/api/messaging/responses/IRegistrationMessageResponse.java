@@ -1,11 +1,10 @@
 package tr.org.liderahenk.lider.core.api.messaging.responses;
 
-import tr.org.liderahenk.lider.core.api.messaging.enums.RegistrationMessageStatus;
+import tr.org.liderahenk.lider.core.api.enums.StatusCode;
 
 /**
  * Registration information returned from {@link IRegistrationService}
  * 
- * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
@@ -15,7 +14,7 @@ public interface IRegistrationMessageResponse {
 	 * 
 	 * @return status of registration {@link RegistrationMessageStatus}
 	 */
-	RegistrationMessageStatus getStatus();
+	StatusCode getStatus();
 
 	/**
 	 * 

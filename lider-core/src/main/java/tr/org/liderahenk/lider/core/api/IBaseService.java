@@ -4,7 +4,7 @@ package tr.org.liderahenk.lider.core.api;
 import java.util.List;
 import java.util.Map;
 
-import tr.org.liderahenk.lider.core.api.dao.PropertyOrder;
+import tr.org.liderahenk.lider.core.api.persistence.PropertyOrder;
 
 
 public interface IBaseService<T> {

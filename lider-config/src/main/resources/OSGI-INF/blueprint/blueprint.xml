@@ -12,7 +12,7 @@
 	</cm:property-placeholder>
 
 	<service ref="configurationService"
-		interface="tr.org.liderahenk.lider.core.api.IConfigurationService" />
+		interface="tr.org.liderahenk.lider.core.api.configuration.IConfigurationService" />
 	<bean id="configurationService" class="tr.org.liderahenk.lider.config.ConfigurationServiceImpl">
 		<property name="dbServer" value="${db.server}" />
 		<property name="dbPort" value="${db.port}" />
@@ -62,6 +62,6 @@
 	</bean>
 
 	<reference id="resultFactory"
-		interface="tr.org.liderahenk.lider.core.api.plugin.ICommandResultFactory" />
+		interface="tr.org.liderahenk.lider.core.api.service.ICommandResultFactory" />
 
 </blueprint>

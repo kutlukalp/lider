@@ -1,5 +1,8 @@
 package tr.org.liderahenk.lider.core.api.plugin;
 
+import tr.org.liderahenk.lider.core.api.service.ICommandContext;
+import tr.org.liderahenk.lider.core.api.service.ICommandResult;
+
 /**
  * 
  * <p>
@@ -70,6 +73,6 @@ public interface ICommand {
 	 * @return true if this command needs agent interaction to fulfil its job,
 	 *         false otherwise.
 	 */
-	Boolean needsTask();
+	Boolean executeOnAgent();
 
 }

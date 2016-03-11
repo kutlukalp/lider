@@ -3,6 +3,8 @@ package tr.org.liderahenk.lider.core.api.taskmanager;
 import java.util.List;
 import java.util.Map;
 
+import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
+
 /**
  * Provides in-memory {@link ITask} store CRUD services
  * 

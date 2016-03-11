@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import org.osgi.service.blueprint.reflect.RegistrationListener;
 
-import tr.org.liderahenk.lider.core.api.messaging.enums.RegistrationMessageStatus;
+import tr.org.liderahenk.lider.core.api.enums.StatusCode;
 import tr.org.liderahenk.lider.core.api.messaging.responses.IRegistrationMessageResponse;
 
 /**
@@ -17,7 +17,7 @@ public class RegistrationMessageResponseImpl implements IRegistrationMessageResp
 
 	private static final long serialVersionUID = 7047749308792675311L;
 
-	private RegistrationMessageStatus status;
+	private StatusCode status;
 
 	private String message;
 
@@ -27,18 +27,18 @@ public class RegistrationMessageResponseImpl implements IRegistrationMessageResp
 		super();
 	}
 
-	public RegistrationMessageResponseImpl(RegistrationMessageStatus status, String message, String agentDn) {
+	public RegistrationMessageResponseImpl(StatusCode status, String message, String agentDn) {
 		super();
 		this.status = status;
 		this.message = message;
 		this.agentDn = agentDn;
 	}
 
-	public RegistrationMessageStatus getStatus() {
+	public StatusCode getStatus() {
 		return status;
 	}
 
-	public void setStatus(RegistrationMessageStatus status) {
+	public void setStatus(StatusCode status) {
 		this.status = status;
 	}
 
