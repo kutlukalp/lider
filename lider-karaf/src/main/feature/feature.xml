@@ -42,7 +42,6 @@
         <bundle start-level="84">mvn:${groupId}/lider-log-impl/${project.version}</bundle>
         <bundle start-level="84">mvn:${groupId}/lider-authorization-impl/${project.version}</bundle>
         <bundle start-level="84">mvn:${groupId}/lider-messaging-xmpp/${project.version}</bundle>
-        <bundle start-level="84">mvn:${groupId}/lider-query-impl/${project.version}</bundle>
         <bundle start-level="84">mvn:${groupId}/lider-rest-impl/${project.version}</bundle>
         <bundle start-level="84">mvn:${groupId}/lider-router-impl/${project.version}</bundle>
         <bundle start-level="84">mvn:${groupId}/lider-service-impl/${project.version}</bundle>
