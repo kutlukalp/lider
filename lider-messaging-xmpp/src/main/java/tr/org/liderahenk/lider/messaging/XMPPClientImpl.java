@@ -455,6 +455,7 @@ public class XMPPClientImpl {
 	public void sendFile(byte[] file, String jid)
 			throws XMPPException, IOException, InterruptedException, SmackException {
 		String jidFinal = getFullJid(jid);
+		jidFinal+="/receiver";
 		Socks5BytestreamManager bytestreamManager = Socks5BytestreamManager.getBytestreamManager(connection);
 		OutputStream outputStream = null;
 		try {
