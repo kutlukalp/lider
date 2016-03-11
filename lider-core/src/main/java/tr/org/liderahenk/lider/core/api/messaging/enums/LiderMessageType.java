@@ -9,11 +9,15 @@ package tr.org.liderahenk.lider.core.api.messaging.enums;
  * its result as response.<br/>
  * <b>REQUEST_FILE</b>: Commands agent to send a desired file back to Lider.
  * <br/>
+ * <b>MOVE_FILE</b>: Commands agent to move file in Ahenk file system.
+ * <br/>
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ * @author <a href="mailto:bm.volkansahin@gmail.com">Volkan Şahin</a>
  * @see tr.org.liderahenk.lider.impl.messaging.XMPPClientImpl
  * 
  */
+
 public enum LiderMessageType {
-	EXECUTE_TASK, EXECUTE_SCRIPT, REQUEST_FILE
+	EXECUTE_TASK, EXECUTE_SCRIPT, REQUEST_FILE, MOVE_FILE
 }
