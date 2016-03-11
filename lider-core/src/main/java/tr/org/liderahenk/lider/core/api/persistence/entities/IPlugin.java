@@ -16,7 +16,7 @@ public interface IPlugin extends Serializable {
 	 * 
 	 * @return
 	 */
-	String getId();
+	Long getId();
 
 	/**
 	 * 

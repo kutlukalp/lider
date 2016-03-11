@@ -35,7 +35,7 @@ public class PluginImpl implements IPlugin {
 	@Id
 	@GeneratedValue
 	@Column(name = "PLUGIN_ID", unique = true, nullable = false)
-	private String id;
+	private Long id;
 
 	@Column(name = "PLUGIN_NAME", nullable = false)
 	private String name;
@@ -75,7 +75,7 @@ public class PluginImpl implements IPlugin {
 	public PluginImpl() {
 	}
 
-	public PluginImpl(String id, String name, String version, String description, boolean active, boolean deleted,
+	public PluginImpl(Long id, String name, String version, String description, boolean active, boolean deleted,
 			boolean machineOriented, boolean userOriented, boolean policyPlugin, List<ProfileImpl> profiles,
 			Date createDate, Date modifyDate) {
 		super();
@@ -116,11 +116,11 @@ public class PluginImpl implements IPlugin {
 	}
 
 	@Override
-	public String getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
