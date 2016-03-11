@@ -10,6 +10,7 @@ import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
  * 
  * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ * @author <a href="mailto:bm.volkansahin@gmail.com">Volkan Şahin</a>
  *
  */
 public interface IMessagingService {
@@ -85,6 +86,16 @@ public interface IMessagingService {
 	 * @throws Exception
 	 */
 	void executeScript(String filePath, String jid) throws Exception;
+	
+	/**
+	 * Move file on agent and get result as file.
+	 * 
+	 * @param fileName
+	 * @param filePath
+	 * @param jid
+	 * @throws Exception
+	 */
+	void moveFile(String fileName, String filePath, String jid) throws Exception;
 
 	/**
 	 * 

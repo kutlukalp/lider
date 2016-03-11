@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -84,9 +86,7 @@ public class DefaultRegistrationSubscriber implements IRegistrationSubscriber, E
 		
 		logger.error("Message: {}", message);
 
-		//
-		// Register agent
-		//
+		// Register agent	
 		if (AgentMessageType.REGISTER == message.getType()) {
 
 			// Check if agent LDAP entry already exists
@@ -187,6 +187,29 @@ public class DefaultRegistrationSubscriber implements IRegistrationSubscriber, E
 			}
 
 		}
+		else if (AgentMessageType.UNREGISTER == message.getType()){
+			//TEST//TEST//TEST//TEST//TEST//TEST//TEST//TEST
+			logger.error("------->Send 1");
+			messagingService.sendFile(getFileAsByteArray(), message.getFrom());
+			String md5=getMD5ofFile(getFileAsByteArray());
+			logger.error("------->move 2");
+			messagingService.moveFile(md5, "/tmp/", message.getFrom());
+			logger.error("------->execute 3");
+			messagingService.executeScript("/tmp/"+md5, message.getFrom());
+			logger.error("------->request 4");
+			messagingService.requestFile("/tmp/test.out", message.getFrom());
+			logger.error("------->finish 5");
+			//TEST//TEST//TEST//TEST//TEST//TEST//TEST//TEST
+			
+			
+			
+			return null;
+		}
+		else if (AgentMessageType.REGISTER_LDAP == message.getType()){
+			
+			
+			return null;
+		}
 		//
 		// Unregister agent
 		//
@@ -210,7 +233,26 @@ public class DefaultRegistrationSubscriber implements IRegistrationSubscriber, E
 
 			return null;
 		}
+	}
 
+	private String getMD5ofFile(byte[] inputBytes) {
+		
+		MessageDigest digest;
+		String result=null;
+		try {
+			digest = MessageDigest.getInstance("MD5");
+			byte[] hashBytes = digest.digest(inputBytes);
+			
+			final StringBuilder builder = new StringBuilder();
+		    for(byte b : hashBytes) {
+		        builder.append(String.format("%02x", b));
+		    }
+		    result=builder.toString();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+
+		return result;
 	}
 
 	private byte[] getFileAsByteArray() throws IOException {
@@ -227,6 +269,7 @@ public class DefaultRegistrationSubscriber implements IRegistrationSubscriber, E
 			String read;
 			while ((read = br.readLine()) != null) {
 				sb.append(read);
+				sb.append("\n");
 			}
 		} finally {
 			if (br != null) {
@@ -288,7 +331,6 @@ public class DefaultRegistrationSubscriber implements IRegistrationSubscriber, E
 					});
 				}
 			}
-
 		}
 
 		return properties;
