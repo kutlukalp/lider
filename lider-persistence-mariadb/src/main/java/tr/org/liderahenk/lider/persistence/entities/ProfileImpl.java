@@ -106,7 +106,9 @@ public class ProfileImpl implements IProfile {
 		this.profileData = profile.getProfileData();
 		this.createDate = profile.getCreateDate();
 		this.modifyDate = profile.getModifyDate();
-		// DID NOT set 'policies' here, as it may cause infinite loop
+		if (profile.getPlugin() instanceof PluginImpl) {
+			this.plugin = (PluginImpl) profile.getPlugin();
+		}
 	}
 
 	@Override

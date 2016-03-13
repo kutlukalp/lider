@@ -1,11 +1,19 @@
 package tr.org.liderahenk.lider.persistence.dao;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +21,8 @@ import org.slf4j.LoggerFactory;
 import tr.org.liderahenk.lider.core.api.persistence.PropertyOrder;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IProfileDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
+import tr.org.liderahenk.lider.core.api.persistence.enums.OrderType;
+import tr.org.liderahenk.lider.persistence.entities.PluginImpl;
 import tr.org.liderahenk.lider.persistence.entities.ProfileImpl;
 
 /**
@@ -114,8 +124,45 @@ public class ProfileDaoImpl implements IProfileDao {
 	@Override
 	public List<? extends IProfile> findByProperties(Class<? extends IProfile> obj, Map<String, Object> propertiesMap,
 			List<PropertyOrder> orders, Integer maxResults) {
-		// TODO Auto-generated method stub
-		return null;
+		orders = new ArrayList<PropertyOrder>();
+		// TODO
+		// PropertyOrder ord = new PropertyOrder("name", OrderType.ASC);
+		// orders.add(ord);
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<ProfileImpl> criteria = (CriteriaQuery<ProfileImpl>) builder.createQuery(ProfileImpl.class);
+		Root<ProfileImpl> from = (Root<ProfileImpl>) criteria.from(ProfileImpl.class);
+		Join<PluginImpl, ProfileImpl> join = from.join("plugin");
+		criteria.select(join);
+		Predicate predicate = null;
+
+		if (propertiesMap != null) {
+			for (Entry<String, Object> entry : propertiesMap.entrySet()) {
+				if (entry.getValue() != null && !entry.getValue().toString().isEmpty()) {
+					Predicate pred = builder.equal(join.get(entry.getKey()), entry.getValue());
+					predicate = predicate == null ? pred : builder.and(predicate, pred);
+				}
+			}
+			if (predicate != null)
+				criteria.where(predicate);
+		}
+
+		if (orders != null && !orders.isEmpty()) {
+			List<Order> orderList = new ArrayList<Order>();
+			for (PropertyOrder order : orders) {
+				orderList.add(order.getOrderType() == OrderType.ASC ? builder.asc(from.get(order.getPropertyName()))
+						: builder.desc(from.get(order.getPropertyName())));
+			}
+			criteria.orderBy(orderList);
+		}
+
+		List<ProfileImpl> list = null;
+		if (null != maxResults) {
+			list = entityManager.createQuery(criteria).setMaxResults(maxResults).getResultList();
+		} else {
+			list = entityManager.createQuery(criteria).getResultList();
+		}
+
+		return list;
 	}
 
 	public void setEntityManager(EntityManager entityManager) {

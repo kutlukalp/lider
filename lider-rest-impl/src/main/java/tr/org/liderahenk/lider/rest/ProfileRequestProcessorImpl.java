@@ -1,14 +1,11 @@
 package tr.org.liderahenk.lider.rest;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,11 +41,10 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 	public IRestResponse add(String json) {
 		try {
 			IProfileRequest request = requestFactory.createProfileRequest(json);
-			
+
 			IPlugin plugin = findRelatedPlugin(request.getPluginName(), request.getPluginVersion());
-			IProfile profile = createFromRequest(request);
-			plugin.addProfile(profile);
-			plugin = pluginDao.save(plugin);
+			IProfile profile = createFromRequest(request, plugin);
+			profile = profileDao.save(profile);
 
 			Map<String, Object> resultMap = new HashMap<String, Object>();
 			resultMap.put("profile", profile.toJson());
@@ -64,6 +60,7 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 	public IRestResponse update(String json) {
 		try {
 			IProfileRequest request = requestFactory.createProfileRequest(json);
+
 			IProfile profile = profileDao.find(request.getId());
 			profile = mergeValues(profile, request);
 			profile = profileDao.saveOrUpdate(profile);
@@ -85,7 +82,7 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 
 		// Build search criteria
 		Map<String, Object> propertiesMap = new HashMap<String, Object>();
-		propertiesMap.put("pluginId", plugin.getId());
+		propertiesMap.put("plugin.id", plugin.getId());
 		if (label != null && !label.isEmpty()) {
 			propertiesMap.put("label", label);
 		}
@@ -95,18 +92,16 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 
 		// Find desired profiles
 		List<? extends IProfile> profiles = profileDao.findByProperties(IProfile.class, propertiesMap, null, null);
+		logger.error("Found profiles: {}", profiles);
 
 		// Construct result map
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			resultMap.put("profiles", mapper.writeValueAsString(profiles));
-		} catch (JsonGenerationException e) {
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			return responseFactory.createResponse(RestResponseStatus.ERROR, e.getMessage());
 		}
 
 		return responseFactory.createResponse(RestResponseStatus.OK, "Records listed.", resultMap);
@@ -156,8 +151,7 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 	 * @param request
 	 * @return
 	 */
-	private IProfile createFromRequest(final IProfileRequest request) {
-		final IPlugin plugin = findRelatedPlugin(request.getPluginName(), request.getPluginVersion());
+	private IProfile createFromRequest(final IProfileRequest request, final IPlugin plugin) {
 		IProfile profile = new IProfile() {
 
 			private static final long serialVersionUID = -6007076622113830682L;
@@ -232,9 +226,7 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 			}
 
 		};
-		
-		plugin.addProfile(profile);
-		
+
 		return profile;
 	}
 

@@ -211,7 +211,9 @@ public class PluginImpl implements IPlugin {
 			profiles = new ArrayList<ProfileImpl>();
 		}
 		ProfileImpl profImpl = new ProfileImpl(profile);
-		profImpl.setPlugin(this);
+		if (profImpl.getPlugin() != this) {
+			profImpl.setPlugin(this);
+		}
 		profiles.add(profImpl);
 	}
 
