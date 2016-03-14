@@ -52,11 +52,11 @@ public class PolicyImpl implements IPolicy {
 	@Column(name = "DELETED")
 	private boolean deleted = false;
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinTable(name = "C_POLICY_PROFILE", joinColumns = {
 			@JoinColumn(name = "POLICY_ID", nullable = false, updatable = false) }, inverseJoinColumns = {
 					@JoinColumn(name = "PROFILE_ID", nullable = false, updatable = false) })
-	private Set<ProfileImpl> profiles = new HashSet<ProfileImpl>();
+	private Set<ProfileImpl> profiles = new HashSet<ProfileImpl>(); // unidirectional
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "CREATE_DATE", nullable = false)
@@ -71,7 +71,6 @@ public class PolicyImpl implements IPolicy {
 
 	public PolicyImpl(Long id, String label, String description, boolean active, boolean deleted,
 			Set<ProfileImpl> profiles, Date createDate, Date modifyDate) {
-		super();
 		this.id = id;
 		this.label = label;
 		this.description = description;
@@ -178,7 +177,12 @@ public class PolicyImpl implements IPolicy {
 		if (profiles == null) {
 			profiles = new HashSet<ProfileImpl>();
 		}
-		ProfileImpl profileImpl = new ProfileImpl(profile);
+		ProfileImpl profileImpl = null;
+		if (profile instanceof ProfileImpl) {
+			profileImpl = (ProfileImpl) profile;
+		} else {
+			profileImpl = new ProfileImpl(profile);
+		}
 		profiles.add(profileImpl);
 	}
 

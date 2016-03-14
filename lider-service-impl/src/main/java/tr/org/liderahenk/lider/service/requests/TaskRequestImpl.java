@@ -53,6 +53,9 @@ public class TaskRequestImpl implements ITaskCommandRequest {
 	 */
 	private String cronExpression;
 
+	/**
+	 * Timestamp of the request
+	 */
 	private Date timestamp;
 
 	public TaskRequestImpl() {

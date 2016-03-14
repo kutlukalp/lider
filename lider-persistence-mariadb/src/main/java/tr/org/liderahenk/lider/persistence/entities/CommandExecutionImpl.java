@@ -16,6 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecution;
@@ -29,6 +30,7 @@ import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
  * @see tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecution
  *
  */
+@JsonIgnoreProperties({ "command" })
 @Entity
 @Table(name = "C_COMMAND_EXECUTION")
 public class CommandExecutionImpl implements ICommandExecution {
@@ -42,7 +44,7 @@ public class CommandExecutionImpl implements ICommandExecution {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "COMMAND_ID", nullable = false)
-	private CommandImpl command;
+	private CommandImpl command; // bidirectional
 
 	@Enumerated(EnumType.STRING)
 	@Column(name = "DN_TYPE")
@@ -52,7 +54,7 @@ public class CommandExecutionImpl implements ICommandExecution {
 	private String dn;
 
 	@OneToMany(mappedBy = "commandExecution", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = false)
-	private List<CommandExecutionResultImpl> commandExecutionResults = new ArrayList<CommandExecutionResultImpl>();
+	private List<CommandExecutionResultImpl> commandExecutionResults = new ArrayList<CommandExecutionResultImpl>(); // bidirectional
 
 	public CommandExecutionImpl() {
 	}
@@ -80,7 +82,9 @@ public class CommandExecutionImpl implements ICommandExecution {
 			}
 		}
 
-		// DO NOT set 'command' here!
+		if (commandExecution.getCommand() instanceof CommandImpl) {
+			this.command = (CommandImpl) commandExecution.getCommand();
+		}
 	}
 
 	@Override
@@ -133,8 +137,15 @@ public class CommandExecutionImpl implements ICommandExecution {
 		if (commandExecutionResults == null) {
 			commandExecutionResults = new ArrayList<CommandExecutionResultImpl>();
 		}
-		CommandExecutionResultImpl commandExecutionResultImpl = new CommandExecutionResultImpl(commandExecutionResult);
-		commandExecutionResultImpl.setCommandExecution(this);
+		CommandExecutionResultImpl commandExecutionResultImpl = null;
+		if (commandExecutionResult instanceof CommandExecutionResultImpl) {
+			commandExecutionResultImpl = (CommandExecutionResultImpl) commandExecutionResult;
+		} else {
+			commandExecutionResultImpl = new CommandExecutionResultImpl(commandExecutionResult);
+		}
+		if (commandExecutionResultImpl.getCommandExecution() != this) {
+			commandExecutionResultImpl.setCommandExecution(this);
+		}
 		commandExecutionResults.add(commandExecutionResultImpl);
 	}
 

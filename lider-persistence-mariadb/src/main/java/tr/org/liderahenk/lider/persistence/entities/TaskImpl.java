@@ -32,7 +32,7 @@ public class TaskImpl implements ITask {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "PLUGIN_ID", nullable = false)
-	private PluginImpl plugin;
+	private PluginImpl plugin; // unidirectional
 
 	@Column(name = "COMMAND_CLS_ID")
 	private String commandClsId;
@@ -57,7 +57,6 @@ public class TaskImpl implements ITask {
 
 	public TaskImpl(Long id, PluginImpl plugin, String commandClsId, byte[] parameterMap, boolean deleted,
 			Date createDate, Date modifyDate) {
-		super();
 		this.id = id;
 		this.plugin = plugin;
 		this.commandClsId = commandClsId;
@@ -74,7 +73,9 @@ public class TaskImpl implements ITask {
 		this.deleted = task.isDeleted();
 		this.createDate = task.getCreateDate();
 		this.modifyDate = task.getModifyDate();
-		// DO NOT set 'plugin' here!
+		if (task.getPlugin() instanceof PluginImpl) {
+			this.plugin = (PluginImpl) task.getPlugin();
+		}
 	}
 
 	@Override

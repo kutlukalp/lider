@@ -16,6 +16,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import tr.org.liderahenk.lider.core.api.enums.StatusCode;
@@ -30,6 +31,7 @@ import tr.org.liderahenk.lider.core.api.persistence.enums.ContentType;
  *      ICommandExecutionResult
  *
  */
+@JsonIgnoreProperties({ "commandExecution" })
 @Entity
 @Table(name = "C_COMMAND_EXECUTION_RESULT")
 public class CommandExecutionResultImpl implements ICommandExecutionResult {
@@ -43,7 +45,7 @@ public class CommandExecutionResultImpl implements ICommandExecutionResult {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "COMMAND_EXECUTION_ID", nullable = false)
-	private CommandExecutionImpl commandExecution;
+	private CommandExecutionImpl commandExecution; // bidirectional
 
 	@Column(name = "AGENT_ID")
 	private Long agentId;
@@ -98,7 +100,9 @@ public class CommandExecutionResultImpl implements ICommandExecutionResult {
 		this.contentType = commandExecutionResult.getContentType();
 		this.createDate = commandExecutionResult.getCreateDate();
 		this.modifyDate = commandExecutionResult.getModifyDate();
-		// DO NOT set 'commandExecution' here!
+		if (commandExecutionResult.getCommandExecution() instanceof CommandExecutionImpl) {
+			this.commandExecution = (CommandExecutionImpl) commandExecutionResult.getCommandExecution();
+		}
 	}
 
 	@Override
@@ -192,14 +196,5 @@ public class CommandExecutionResultImpl implements ICommandExecutionResult {
 		}
 		return null;
 	}
-
-	// @Override
-	// public String toString() {
-	// return "CommandExecutionResultImpl [id=" + id + ", responseCode=" +
-	// responseCode + ", responseMessage="
-	// + responseMessage + ", responseData=" + responseData + ", contentType=" +
-	// contentType + ", createDate="
-	// + createDate + ", modifyDate=" + modifyDate + "]";
-	// }
 
 }

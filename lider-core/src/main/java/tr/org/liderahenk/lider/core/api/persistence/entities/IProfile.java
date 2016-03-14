@@ -2,7 +2,6 @@ package tr.org.liderahenk.lider.core.api.persistence.entities;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Set;
 
 /**
  * IAgent entity class is responsible for storing plugin related profile
@@ -65,12 +64,6 @@ public interface IProfile extends Serializable {
 	 * 
 	 * @return
 	 */
-	Set<? extends IPolicy> getPolicies();
-
-	/**
-	 * 
-	 * @return
-	 */
 	Date getModifyDate();
 
 	/**
@@ -78,12 +71,6 @@ public interface IProfile extends Serializable {
 	 * @return
 	 */
 	Date getCreateDate();
-
-	/**
-	 * 
-	 * @param policy
-	 */
-	void addPolicy(IPolicy policy);
 
 	/**
 	 * 

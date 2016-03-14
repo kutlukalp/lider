@@ -62,7 +62,7 @@ public class PluginImpl implements IPlugin {
 	private boolean policyPlugin;
 
 	@OneToMany(mappedBy = "plugin", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = false)
-	private List<ProfileImpl> profiles = new ArrayList<ProfileImpl>();
+	private List<ProfileImpl> profiles = new ArrayList<ProfileImpl>(); // bidirectional
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "CREATE_DATE", nullable = false)
@@ -78,7 +78,6 @@ public class PluginImpl implements IPlugin {
 	public PluginImpl(Long id, String name, String version, String description, boolean active, boolean deleted,
 			boolean machineOriented, boolean userOriented, boolean policyPlugin, List<ProfileImpl> profiles,
 			Date createDate, Date modifyDate) {
-		super();
 		this.id = id;
 		this.name = name;
 		this.version = version;
@@ -210,7 +209,12 @@ public class PluginImpl implements IPlugin {
 		if (profiles == null) {
 			profiles = new ArrayList<ProfileImpl>();
 		}
-		ProfileImpl profImpl = new ProfileImpl(profile);
+		ProfileImpl profImpl = null;
+		if (profile instanceof ProfileImpl) {
+			profImpl = (ProfileImpl) profile;
+		} else {
+			profImpl = new ProfileImpl(profile);
+		}
 		if (profImpl.getPlugin() != this) {
 			profImpl.setPlugin(this);
 		}

@@ -10,6 +10,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 import tr.org.liderahenk.lider.core.api.persistence.entities.IAgentProperty;
 
 /**
@@ -19,6 +21,7 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IAgentProperty;
  * @see tr.org.liderahenk.lider.core.api.persistence.entities.IAgentProperty
  *
  */
+@JsonIgnoreProperties({ "agent" })
 @Entity
 @Table(name = "C_AGENT_PROPERTY", uniqueConstraints = @UniqueConstraint(columnNames = { "AGENT_ID", "PROPERTY_NAME",
 		"PROPERTY_VALUE" }) )
@@ -33,7 +36,7 @@ public class AgentPropertyImpl implements IAgentProperty {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "AGENT_ID", nullable = false)
-	private AgentImpl agent;
+	private AgentImpl agent; // bidirectional
 
 	@Column(name = "PROPERTY_NAME", nullable = false)
 	private String propertyName;
@@ -44,19 +47,20 @@ public class AgentPropertyImpl implements IAgentProperty {
 	public AgentPropertyImpl() {
 	}
 
-	public AgentPropertyImpl(Long id, String propertyName, String propertyValue) {
-		super();
+	public AgentPropertyImpl(Long id, AgentImpl agent, String propertyName, String propertyValue) {
 		this.id = id;
+		this.agent = agent;
 		this.propertyName = propertyName;
 		this.propertyValue = propertyValue;
 	}
 
 	public AgentPropertyImpl(IAgentProperty property) {
-		super();
 		this.id = property.getId();
 		this.propertyName = property.getPropertyName();
 		this.propertyValue = property.getPropertyValue();
-		// Do NOT set 'agent' here!
+		if (property.getAgent() instanceof AgentImpl) {
+			this.agent = (AgentImpl) property.getAgent();
+		}
 	}
 
 	@Override

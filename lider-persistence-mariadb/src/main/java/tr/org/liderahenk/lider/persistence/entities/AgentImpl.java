@@ -67,10 +67,10 @@ public class AgentImpl implements IAgent {
 	private Date modifyDate;
 
 	@OneToMany(mappedBy = "agent", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-	private List<AgentPropertyImpl> properties = new ArrayList<AgentPropertyImpl>();
+	private List<AgentPropertyImpl> properties = new ArrayList<AgentPropertyImpl>(); // bidirectional
 
 	@OneToMany(mappedBy = "agent", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = false)
-	private List<UserSessionImpl> sessions = new ArrayList<UserSessionImpl>();
+	private List<UserSessionImpl> sessions = new ArrayList<UserSessionImpl>(); // bidirectional
 
 	public AgentImpl() {
 	}
@@ -227,8 +227,15 @@ public class AgentImpl implements IAgent {
 		if (properties == null) {
 			properties = new ArrayList<AgentPropertyImpl>();
 		}
-		AgentPropertyImpl propertyImpl = new AgentPropertyImpl(property);
-		propertyImpl.setAgent(this);
+		AgentPropertyImpl propertyImpl = null;
+		if (property instanceof AgentPropertyImpl) {
+			propertyImpl = (AgentPropertyImpl) property;
+		} else {
+			propertyImpl = new AgentPropertyImpl(property);
+		}
+		if (propertyImpl.getAgent() != this) {
+			propertyImpl.setAgent(this);
+		}
 		properties.add(propertyImpl);
 	}
 
@@ -246,8 +253,15 @@ public class AgentImpl implements IAgent {
 		if (sessions == null) {
 			sessions = new ArrayList<UserSessionImpl>();
 		}
-		UserSessionImpl userSessionImpl = new UserSessionImpl(userSession);
-		userSessionImpl.setAgent(this);
+		UserSessionImpl userSessionImpl = null;
+		if (userSession instanceof UserSessionImpl) {
+			userSessionImpl = (UserSessionImpl) userSession;
+		} else {
+			userSessionImpl = new UserSessionImpl(userSession);
+		}
+		if (userSessionImpl.getAgent() != this) {
+			userSessionImpl.setAgent(this);
+		}
 		sessions.add(userSessionImpl);
 	}
 

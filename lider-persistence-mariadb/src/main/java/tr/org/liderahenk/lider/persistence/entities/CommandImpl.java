@@ -70,7 +70,7 @@ public class CommandImpl implements ICommand {
 	private Date modifyDate;
 
 	@OneToMany(mappedBy = "command", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-	private List<CommandExecutionImpl> commandExecutions = new ArrayList<CommandExecutionImpl>();
+	private List<CommandExecutionImpl> commandExecutions = new ArrayList<CommandExecutionImpl>(); // bidirectional
 
 	public CommandImpl() {
 	}
@@ -78,12 +78,10 @@ public class CommandImpl implements ICommand {
 	public CommandImpl(Long id, Long policyId, Long taskId, List<String> dnList, RestDNType dnType, Date createDate,
 			Date modifyDate, List<CommandExecutionImpl> commandExecutions)
 					throws JsonGenerationException, JsonMappingException, IOException {
-		super();
 		this.id = id;
 		this.policyId = policyId;
 		this.taskId = taskId;
 		this.dnListJsonString = new ObjectMapper().writeValueAsString(dnList);
-		;
 		this.dnType = dnType;
 		this.createDate = createDate;
 		this.modifyDate = modifyDate;
@@ -198,8 +196,15 @@ public class CommandImpl implements ICommand {
 		if (commandExecutions == null) {
 			commandExecutions = new ArrayList<CommandExecutionImpl>();
 		}
-		CommandExecutionImpl commandExecutionImpl = new CommandExecutionImpl(commandExecution);
-		commandExecutionImpl.setCommand(this);
+		CommandExecutionImpl commandExecutionImpl = null;
+		if (commandExecution instanceof CommandExecutionImpl) {
+			commandExecutionImpl = (CommandExecutionImpl) commandExecution;
+		} else {
+			commandExecutionImpl = new CommandExecutionImpl(commandExecution);
+		}
+		if (commandExecutionImpl.getCommand() != this) {
+			commandExecutionImpl.setCommand(this);
+		}
 		commandExecutions.add(commandExecutionImpl);
 	}
 

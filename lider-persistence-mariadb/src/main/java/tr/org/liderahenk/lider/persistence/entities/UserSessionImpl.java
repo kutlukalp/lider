@@ -15,6 +15,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 import tr.org.liderahenk.lider.core.api.persistence.entities.IUserSession;
 import tr.org.liderahenk.lider.core.api.persistence.enums.SessionEvent;
 
@@ -25,6 +27,7 @@ import tr.org.liderahenk.lider.core.api.persistence.enums.SessionEvent;
  * @see tr.org.liderahenk.lider.core.api.persistence.entities.IUserSession
  *
  */
+@JsonIgnoreProperties({ "agent" })
 @Entity
 @Table(name = "C_AGENT_USER_SESSION")
 public class UserSessionImpl implements IUserSession {
@@ -38,7 +41,7 @@ public class UserSessionImpl implements IUserSession {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "AGENT_ID", nullable = false)
-	private AgentImpl agent;
+	private AgentImpl agent; // bidirectional
 
 	@Column(name = "USERNAME", nullable = false)
 	private String username;
@@ -68,8 +71,9 @@ public class UserSessionImpl implements IUserSession {
 		this.username = userSession.getUsername();
 		this.sessionEvent = userSession.getSessionEvent();
 		this.creationDate = userSession.getCreationDate();
-		// Do NOT set 'agent' here! Use IAgent.addUserSession() to add
-		// IUserSession to parent.
+		if (userSession.getAgent() instanceof AgentImpl) {
+			this.agent = (AgentImpl) userSession.getAgent();
+		}
 	}
 
 	@Override

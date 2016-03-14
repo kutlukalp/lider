@@ -1,8 +1,6 @@
 package tr.org.liderahenk.lider.persistence.entities;
 
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -12,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -21,7 +18,6 @@ import javax.persistence.TemporalType;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.ObjectMapper;
 
-import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
 
 /**
@@ -45,7 +41,7 @@ public class ProfileImpl implements IProfile {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "PLUGIN_ID", nullable = false)
-	private PluginImpl plugin;
+	private PluginImpl plugin; // bidirectional
 
 	@Column(name = "LABEL", unique = true, nullable = false)
 	private String label;
@@ -66,9 +62,6 @@ public class ProfileImpl implements IProfile {
 	@Column(name = "PROFILE_DATA")
 	private byte[] profileData;
 
-	@ManyToMany(fetch = FetchType.LAZY, mappedBy = "profiles")
-	private Set<PolicyImpl> policies;
-
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "CREATE_DATE", nullable = false)
 	private Date createDate;
@@ -78,13 +71,11 @@ public class ProfileImpl implements IProfile {
 	private Date modifyDate;
 
 	public ProfileImpl() {
-		super();
 	}
 
 	public ProfileImpl(Long id, PluginImpl plugin, String label, String description, boolean overridable,
 			boolean active, boolean deleted, byte[] profileData, Set<PolicyImpl> policies, Date createDate,
 			Date modifyDate) {
-		super();
 		this.id = id;
 		this.plugin = plugin;
 		this.label = label;
@@ -93,7 +84,6 @@ public class ProfileImpl implements IProfile {
 		this.active = active;
 		this.deleted = deleted;
 		this.profileData = profileData;
-		this.policies = policies;
 		this.createDate = createDate;
 		this.modifyDate = modifyDate;
 	}
@@ -186,15 +176,6 @@ public class ProfileImpl implements IProfile {
 	}
 
 	@Override
-	public Set<PolicyImpl> getPolicies() {
-		return policies;
-	}
-
-	public void setPolicies(Set<PolicyImpl> policies) {
-		this.policies = policies;
-	}
-
-	@Override
 	public Date getCreateDate() {
 		return createDate;
 	}
@@ -210,15 +191,6 @@ public class ProfileImpl implements IProfile {
 
 	public void setModifyDate(Date modifyDate) {
 		this.modifyDate = modifyDate;
-	}
-
-	@Override
-	public void addPolicy(IPolicy policy) {
-		if (policies == null) {
-			policies = new HashSet<PolicyImpl>();
-		}
-		PolicyImpl policyImpl = new PolicyImpl(policy);
-		policies.add(policyImpl);
 	}
 
 	@Override
