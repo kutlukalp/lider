@@ -109,7 +109,7 @@ public class MessagingServiceImpl implements IMessagingService {
 	 */
 	private void listenToIncomingFiles(final String filePath, final String jid) {
 
-		final String jidFinal = xmppClient.getFullJid(jid);
+		final String jidFinal = xmppClient.getFullJid(jid)+"/sender";
 		// Listen to incoming file transfer requests
 		Socks5BytestreamManager bytestreamManager = Socks5BytestreamManager
 				.getBytestreamManager(xmppClient.getConnection());
@@ -119,17 +119,18 @@ public class MessagingServiceImpl implements IMessagingService {
 				InputStream inputStream = null;
 				OutputStream outputStream = null;
 				try {
+					logger.error("filtering...");
 					if (filter(request)) {
 						// Find target path and file name.
 						String filename = extractFilenameFromPath(filePath);
 						String path = xmppClient.getFileReceivePath(jid, filename);
 						File file = new File(path);
-
+						
 						File parent = file.getParentFile();
 						if (!parent.exists() && !parent.mkdirs()) {
 							logger.error("Couldn't create dir: " + parent);
 						}
-
+						
 						inputStream = request.accept().getInputStream();
 						outputStream = new FileOutputStream(new File(path));
 
