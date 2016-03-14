@@ -22,7 +22,6 @@ import tr.org.liderahenk.lider.core.api.persistence.PropertyOrder;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IProfileDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
 import tr.org.liderahenk.lider.core.api.persistence.enums.OrderType;
-import tr.org.liderahenk.lider.persistence.entities.PluginImpl;
 import tr.org.liderahenk.lider.persistence.entities.ProfileImpl;
 
 /**
@@ -131,19 +130,30 @@ public class ProfileDaoImpl implements IProfileDao {
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<ProfileImpl> criteria = (CriteriaQuery<ProfileImpl>) builder.createQuery(ProfileImpl.class);
 		Root<ProfileImpl> from = (Root<ProfileImpl>) criteria.from(ProfileImpl.class);
-		Join<PluginImpl, ProfileImpl> join = from.join("plugin");
-		criteria.select(join);
+		criteria.select(from);
 		Predicate predicate = null;
 
 		if (propertiesMap != null) {
+			Predicate pred = null;
 			for (Entry<String, Object> entry : propertiesMap.entrySet()) {
 				if (entry.getValue() != null && !entry.getValue().toString().isEmpty()) {
-					Predicate pred = builder.equal(join.get(entry.getKey()), entry.getValue());
+					String[] key = entry.getKey() != null ? entry.getKey().split("\\.") : null;
+					if (key != null && key.length > 1) {
+						Join<Object, Object> join = null;
+						for (int i = 0; i < key.length - 1; i++) {
+							join = join != null ? join.join(key[i]) : from.join(key[i]);
+						}
+						pred = builder.equal(join.get(key[key.length-1]), entry.getValue());
+					}
+					else {
+						pred = builder.equal(from.get(entry.getKey()), entry.getValue());
+					}
 					predicate = predicate == null ? pred : builder.and(predicate, pred);
 				}
 			}
-			if (predicate != null)
+			if (predicate != null) {
 				criteria.where(predicate);
+			}
 		}
 
 		if (orders != null && !orders.isEmpty()) {

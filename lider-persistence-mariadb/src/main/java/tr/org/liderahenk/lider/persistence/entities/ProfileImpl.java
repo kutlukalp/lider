@@ -18,6 +18,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
@@ -30,6 +31,7 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
  * @see tr.org.liderahenk.lider.core.api.persistence.entities.IProfile
  *
  */
+@JsonIgnoreProperties({ "plugin" })
 @Entity
 @Table(name = "C_PROFILE")
 public class ProfileImpl implements IProfile {
@@ -232,9 +234,8 @@ public class ProfileImpl implements IProfile {
 
 	@Override
 	public String toString() {
-		return "ProfileImpl [id=" + id + ", plugin=" + plugin + ", label=" + label + ", description=" + description
-				+ ", overridable=" + overridable + ", active=" + active + ", deleted=" + deleted + ", profileData="
-				+ Arrays.toString(profileData) + ", policies=" + policies + ", createDate=" + createDate
+		return "ProfileImpl [id=" + id + ", label=" + label + ", description=" + description + ", overridable="
+				+ overridable + ", active=" + active + ", deleted=" + deleted + ", createDate=" + createDate
 				+ ", modifyDate=" + modifyDate + "]";
 	}
 

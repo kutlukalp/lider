@@ -9,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -127,14 +128,26 @@ public class AgentDaoImpl implements IAgentDao {
 		Predicate predicate = null;
 
 		if (propertiesMap != null) {
+			Predicate pred = null;
 			for (Entry<String, Object> entry : propertiesMap.entrySet()) {
 				if (entry.getValue() != null && !entry.getValue().toString().isEmpty()) {
-					Predicate pred = builder.equal(from.get(entry.getKey()), entry.getValue());
+					String[] key = entry.getKey().split(".");
+					if (key.length > 1) {
+						Join<Object, Object> join = null;
+						for (int i = 0; i < key.length - 1; i++) {
+							join = join != null ? join.join(key[i]) : from.join(key[i]);
+						}
+						pred = builder.equal(join.get(key[key.length-1]), entry.getValue());
+					}
+					else {
+						pred = builder.equal(from.get(entry.getKey()), entry.getValue());
+					}
 					predicate = predicate == null ? pred : builder.and(predicate, pred);
 				}
 			}
-			if (predicate != null)
+			if (predicate != null) {
 				criteria.where(predicate);
+			}
 		}
 
 		if (orders != null && !orders.isEmpty()) {
