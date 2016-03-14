@@ -250,6 +250,30 @@ public class XMPPClientImpl {
 	}
 
 	/**
+	 * Delete specific user
+	 * 
+	 * @param jid
+	 * @param password
+	 */
+	private void deleteUser(String jid, String password) {
+
+	    XMPPTCPConnection tempConnection = null;
+	       try{
+	      tempConnection = new XMPPTCPConnection(this.host, this.port.toString());
+	      tempConnection.login(jid, password);
+	       
+	      AccountManager accountManager = AccountManager.getInstance(tempConnection);
+	      accountManager.deleteAccount();
+	       }
+	       catch (Exception ex){
+	         logger.error("A problem occured while removing user: "+ex.getMessage());
+	       }
+	 
+	       tempConnection.disconnect();
+	}
+
+	
+	/**
 	 * Get online users from roster and store in onlineUsers
 	 */
 	private void getInitialOnlineUsers() {
