@@ -35,7 +35,7 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 	private IResponseFactory responseFactory;
 
 	@Override
-	public IRestResponse execute(String id) {
+	public IRestResponse execute(Long id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -269,7 +269,7 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 	}
 
 	@Override
-	public IRestResponse get(String id) {
+	public IRestResponse get(Long id) {
 		if (id == null) {
 			throw new IllegalArgumentException("ID was null.");
 		}
@@ -280,7 +280,7 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 	}
 
 	@Override
-	public IRestResponse delete(String id) {
+	public IRestResponse delete(Long id) {
 		if (id == null) {
 			throw new IllegalArgumentException("ID was null.");
 		}

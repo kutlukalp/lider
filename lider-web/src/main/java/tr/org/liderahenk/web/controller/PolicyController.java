@@ -28,9 +28,9 @@ public class PolicyController {
 	@Autowired
 	private IPolicyRequestProcessor policyProcessor;
 
-	@RequestMapping(value = "/{id: [\\d]+}/execute", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "/{id:[\\d]+}/execute", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
-	public IRestResponse executePolicy(@PathVariable String id, HttpServletRequest request)
+	public IRestResponse executePolicy(@PathVariable final long id, HttpServletRequest request)
 			throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/policy/{}/execute'", id);
 		IRestResponse restResponse = policyProcessor.execute(id);
@@ -71,9 +71,9 @@ public class PolicyController {
 		return restResponse;
 	}
 
-	@RequestMapping(value = "/{id: [\\d]+}/get", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "/{id:[\\d]+}/get", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
-	public IRestResponse getPolicy(@PathVariable String id, HttpServletRequest request)
+	public IRestResponse getPolicy(@PathVariable final long id, HttpServletRequest request)
 			throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/policy/{}/get'", id);
 		IRestResponse restResponse = policyProcessor.get(id);
@@ -81,9 +81,9 @@ public class PolicyController {
 		return restResponse;
 	}
 
-	@RequestMapping(value = "/{id: [\\d]+}/delete", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "/{id:[\\d]+}/delete", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
-	public IRestResponse deletePolicy(@PathVariable String id, HttpServletRequest request)
+	public IRestResponse deletePolicy(@PathVariable final long id, HttpServletRequest request)
 			throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/policy/{}/delete'", id);
 		IRestResponse restResponse = policyProcessor.delete(id);
