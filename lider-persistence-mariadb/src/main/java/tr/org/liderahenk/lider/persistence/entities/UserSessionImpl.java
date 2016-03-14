@@ -4,8 +4,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -46,9 +44,8 @@ public class UserSessionImpl implements IUserSession {
 	@Column(name = "USERNAME", nullable = false)
 	private String username;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "SESSION_EVENT", nullable = false)
-	private SessionEvent sessionEvent;
+	@Column(name = "SESSION_EVENT", nullable = false, length = 1)
+	private Integer sessionEvent;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "CREATION_DATE", nullable = false)
@@ -62,14 +59,14 @@ public class UserSessionImpl implements IUserSession {
 		this.id = id;
 		this.agent = agent;
 		this.username = username;
-		this.sessionEvent = sessionEvent;
+		setSessionEvent(sessionEvent);
 		this.creationDate = creationDate;
 	}
 
 	public UserSessionImpl(IUserSession userSession) {
 		this.id = userSession.getId();
 		this.username = userSession.getUsername();
-		this.sessionEvent = userSession.getSessionEvent();
+		setSessionEvent(userSession.getSessionEvent());
 		this.creationDate = userSession.getCreationDate();
 		if (userSession.getAgent() instanceof AgentImpl) {
 			this.agent = (AgentImpl) userSession.getAgent();
@@ -105,11 +102,15 @@ public class UserSessionImpl implements IUserSession {
 
 	@Override
 	public SessionEvent getSessionEvent() {
-		return sessionEvent;
+		return SessionEvent.getType(sessionEvent);
 	}
 
 	public void setSessionEvent(SessionEvent sessionEvent) {
-		this.sessionEvent = sessionEvent;
+		if (sessionEvent == null) {
+			this.sessionEvent = null;
+		} else {
+			this.sessionEvent = sessionEvent.getId();
+		}
 	}
 
 	@Override

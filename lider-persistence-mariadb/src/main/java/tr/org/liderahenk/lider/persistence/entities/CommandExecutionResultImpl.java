@@ -4,8 +4,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -50,9 +48,8 @@ public class CommandExecutionResultImpl implements ICommandExecutionResult {
 	@Column(name = "AGENT_ID")
 	private Long agentId;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "RESPONSE_CODE", nullable = false)
-	private StatusCode responseCode;
+	@Column(name = "RESPONSE_CODE", nullable = false, length = 3)
+	private Integer responseCode;
 
 	@Column(name = "RESPONSE_MESSAGE")
 	private String responseMessage;
@@ -61,9 +58,8 @@ public class CommandExecutionResultImpl implements ICommandExecutionResult {
 	@Column(name = "RESPONSE_DATA")
 	private byte[] responseData;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "CONTENT_TYPE")
-	private ContentType contentType;
+	@Column(name = "CONTENT_TYPE", length = 3)
+	private Integer contentType;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "CREATE_DATE", nullable = false)
@@ -83,10 +79,10 @@ public class CommandExecutionResultImpl implements ICommandExecutionResult {
 		this.id = id;
 		this.commandExecution = commandExecution;
 		this.agentId = agentId;
-		this.responseCode = responseCode;
+		setResponseCode(responseCode);
 		this.responseMessage = responseMessage;
 		this.responseData = responseData;
-		this.contentType = contentType;
+		setContentType(contentType);
 		this.createDate = createDate;
 		this.modifyDate = modifyDate;
 	}
@@ -94,10 +90,10 @@ public class CommandExecutionResultImpl implements ICommandExecutionResult {
 	public CommandExecutionResultImpl(ICommandExecutionResult commandExecutionResult) {
 		this.id = commandExecutionResult.getId();
 		this.agentId = commandExecutionResult.getAgentId();
-		this.responseCode = commandExecutionResult.getResponseCode();
+		setResponseCode(commandExecutionResult.getResponseCode());
 		this.responseMessage = commandExecutionResult.getResponseMessage();
 		this.responseData = commandExecutionResult.getResponseData();
-		this.contentType = commandExecutionResult.getContentType();
+		setContentType(commandExecutionResult.getContentType());
 		this.createDate = commandExecutionResult.getCreateDate();
 		this.modifyDate = commandExecutionResult.getModifyDate();
 		if (commandExecutionResult.getCommandExecution() instanceof CommandExecutionImpl) {
@@ -125,11 +121,15 @@ public class CommandExecutionResultImpl implements ICommandExecutionResult {
 
 	@Override
 	public StatusCode getResponseCode() {
-		return responseCode;
+		return StatusCode.getType(responseCode);
 	}
 
 	public void setResponseCode(StatusCode responseCode) {
-		this.responseCode = responseCode;
+		if (responseCode == null) {
+			this.responseCode = null;
+		} else {
+			this.responseCode = responseCode.getId();
+		}
 	}
 
 	@Override
@@ -161,11 +161,15 @@ public class CommandExecutionResultImpl implements ICommandExecutionResult {
 
 	@Override
 	public ContentType getContentType() {
-		return contentType;
+		return ContentType.getType(contentType);
 	}
 
 	public void setContentType(ContentType contentType) {
-		this.contentType = contentType;
+		if (contentType == null) {
+			this.contentType = null;
+		} else {
+			this.contentType = contentType.getId();
+		}
 	}
 
 	@Override

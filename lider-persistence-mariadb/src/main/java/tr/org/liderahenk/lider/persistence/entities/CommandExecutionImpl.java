@@ -6,8 +6,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -46,9 +44,8 @@ public class CommandExecutionImpl implements ICommandExecution {
 	@JoinColumn(name = "COMMAND_ID", nullable = false)
 	private CommandImpl command; // bidirectional
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "DN_TYPE")
-	private RestDNType dnType;
+	@Column(name = "DN_TYPE", length = 1)
+	private Integer dnType;
 
 	@Column(name = "DN")
 	private String dn;
@@ -63,14 +60,14 @@ public class CommandExecutionImpl implements ICommandExecution {
 			List<CommandExecutionResultImpl> commandExecutionResults) {
 		this.id = id;
 		this.command = command;
-		this.dnType = dnType;
+		setDnType(dnType);
 		this.dn = dn;
 		this.commandExecutionResults = commandExecutionResults;
 	}
 
 	public CommandExecutionImpl(ICommandExecution commandExecution) {
 		this.id = commandExecution.getId();
-		this.dnType = commandExecution.getDnType();
+		setDnType(commandExecution.getDnType());
 		this.dn = commandExecution.getDn();
 
 		// Convert ICommandExecutionResult to CommandExecutionResultImpl
@@ -107,11 +104,15 @@ public class CommandExecutionImpl implements ICommandExecution {
 
 	@Override
 	public RestDNType getDnType() {
-		return dnType;
+		return RestDNType.getType(dnType);
 	}
 
 	public void setDnType(RestDNType dnType) {
-		this.dnType = dnType;
+		if (dnType == null) {
+			this.dnType = null;
+		} else {
+			this.dnType = dnType.getId();
+		}
 	}
 
 	@Override

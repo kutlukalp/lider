@@ -8,8 +8,6 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -57,9 +55,8 @@ public class CommandImpl implements ICommand {
 	@Column(name = "DN_LIST")
 	private String dnListJsonString;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "DN_TYPE")
-	private RestDNType dnType;
+	@Column(name = "DN_TYPE", length = 1)
+	private Integer dnType;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "CREATE_DATE", nullable = false)
@@ -82,7 +79,7 @@ public class CommandImpl implements ICommand {
 		this.policyId = policyId;
 		this.taskId = taskId;
 		this.dnListJsonString = new ObjectMapper().writeValueAsString(dnList);
-		this.dnType = dnType;
+		setDnType(dnType);
 		this.createDate = createDate;
 		this.modifyDate = modifyDate;
 		this.commandExecutions = commandExecutions;
@@ -93,7 +90,7 @@ public class CommandImpl implements ICommand {
 		this.policyId = command.getPolicyId();
 		this.taskId = command.getTaskId();
 		this.dnListJsonString = new ObjectMapper().writeValueAsString(command.getDnList());
-		this.dnType = command.getDnType();
+		setDnType(command.getDnType());
 		this.createDate = command.getCreateDate();
 		this.modifyDate = command.getModifyDate();
 
@@ -157,11 +154,15 @@ public class CommandImpl implements ICommand {
 
 	@Override
 	public RestDNType getDnType() {
-		return dnType;
+		return RestDNType.getType(dnType);
 	}
 
 	public void setDnType(RestDNType dnType) {
-		this.dnType = dnType;
+		if (dnType == null) {
+			this.dnType = null;
+		} else {
+			this.dnType = dnType.getId();
+		}
 	}
 
 	@Override

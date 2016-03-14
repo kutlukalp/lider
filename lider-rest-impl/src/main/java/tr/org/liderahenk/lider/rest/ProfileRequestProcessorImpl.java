@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
@@ -13,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IPluginDao;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IProfileDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin;
-import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
 import tr.org.liderahenk.lider.core.api.rest.IRequestFactory;
 import tr.org.liderahenk.lider.core.api.rest.IResponseFactory;
@@ -203,11 +201,6 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 			}
 
 			@Override
-			public Set<? extends IPolicy> getPolicies() {
-				return null;
-			}
-
-			@Override
 			public Date getModifyDate() {
 				return null;
 			}
@@ -215,10 +208,6 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 			@Override
 			public Date getCreateDate() {
 				return null;
-			}
-
-			@Override
-			public void addPolicy(IPolicy policy) {
 			}
 
 			@Override
@@ -290,11 +279,6 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 			}
 
 			@Override
-			public Set<? extends IPolicy> getPolicies() {
-				return profile.getPolicies();
-			}
-
-			@Override
 			public Date getModifyDate() {
 				return null;
 			}
@@ -302,10 +286,6 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 			@Override
 			public Date getCreateDate() {
 				return null;
-			}
-
-			@Override
-			public void addPolicy(IPolicy policy) {
 			}
 
 			@Override
