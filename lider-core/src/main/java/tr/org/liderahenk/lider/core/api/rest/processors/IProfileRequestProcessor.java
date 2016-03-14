@@ -4,7 +4,7 @@ import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
 
 public interface IProfileRequestProcessor {
 
-	IRestResponse execute(String id);
+	IRestResponse execute(Long id);
 
 	IRestResponse add(String requestBodyDecoded);
 
@@ -12,8 +12,8 @@ public interface IProfileRequestProcessor {
 
 	IRestResponse list(String pluginName, String pluginVersion, String label, Boolean active);
 
-	IRestResponse get(String id);
+	IRestResponse get(Long id);
 
-	IRestResponse delete(String id);
+	IRestResponse delete(Long id);
 
 }
