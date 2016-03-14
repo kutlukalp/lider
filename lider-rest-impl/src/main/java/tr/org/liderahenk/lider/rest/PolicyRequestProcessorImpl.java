@@ -241,6 +241,7 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 	public IRestResponse list(String label, Boolean active) {
 		// Build search criteria
 		Map<String, Object> propertiesMap = new HashMap<String, Object>();
+		propertiesMap.put("deleted", false);
 		if (label != null && !label.isEmpty()) {
 			propertiesMap.put("label", label);
 		}

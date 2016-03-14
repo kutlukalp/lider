@@ -28,9 +28,9 @@ public class ProfileController {
 	@Autowired
 	private IProfileRequestProcessor profileProcessor;
 	
-	@RequestMapping(value = "/{id: [\\d]+}/execute", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "/{id:[\\d]+}/execute", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
-	public IRestResponse executeProfile(@PathVariable String id, HttpServletRequest request)
+	public IRestResponse executeProfile(@PathVariable final long id, HttpServletRequest request)
 			throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/profile/{}/execute'", id);
 		IRestResponse restResponse = profileProcessor.execute(id);
@@ -74,9 +74,9 @@ public class ProfileController {
 		return restResponse;
 	}
 
-	@RequestMapping(value = "/{id: [\\d]+}/get", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "/{id:[\\d]+}/get", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
-	public IRestResponse getProfile(@PathVariable String id, HttpServletRequest request)
+	public IRestResponse getProfile(@PathVariable final long id, HttpServletRequest request)
 			throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/profile/{}/get'", id);
 		IRestResponse restResponse = profileProcessor.get(id);
@@ -84,9 +84,9 @@ public class ProfileController {
 		return restResponse;
 	}
 
-	@RequestMapping(value = "/{id: [\\d]+}/delete", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "/{id:[\\d]+}/delete", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
-	public IRestResponse deleteProfile(@PathVariable String id, HttpServletRequest request)
+	public IRestResponse deleteProfile(@PathVariable final long id, HttpServletRequest request)
 			throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/profile/{}/delete'", id);
 		IRestResponse restResponse = profileProcessor.delete(id);
