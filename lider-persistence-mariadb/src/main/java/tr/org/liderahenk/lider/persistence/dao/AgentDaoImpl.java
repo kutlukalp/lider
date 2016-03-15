@@ -47,7 +47,7 @@ public class AgentDaoImpl implements IAgentDao {
 
 	@Override
 	public IAgent save(IAgent agent) {
-		AgentImpl agentImpl = new AgentImpl(agent);
+		AgentImpl agentImpl = new AgentImpl((IAgent) agent);
 		entityManager.persist(agentImpl);
 		logger.debug("IAgent object persisted: {}", agentImpl.toString());
 		return agentImpl;
@@ -119,8 +119,8 @@ public class AgentDaoImpl implements IAgentDao {
 			List<PropertyOrder> orders, Integer maxResults) {
 		orders = new ArrayList<PropertyOrder>();
 		// TODO
-//		PropertyOrder ord = new PropertyOrder("name", OrderType.ASC);
-//		orders.add(ord);
+		// PropertyOrder ord = new PropertyOrder("name", OrderType.ASC);
+		// orders.add(ord);
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<AgentImpl> criteria = (CriteriaQuery<AgentImpl>) builder.createQuery(AgentImpl.class);
 		Root<AgentImpl> from = (Root<AgentImpl>) criteria.from(AgentImpl.class);
@@ -137,9 +137,8 @@ public class AgentDaoImpl implements IAgentDao {
 						for (int i = 0; i < key.length - 1; i++) {
 							join = join != null ? join.join(key[i]) : from.join(key[i]);
 						}
-						pred = builder.equal(join.get(key[key.length-1]), entry.getValue());
-					}
-					else {
+						pred = builder.equal(join.get(key[key.length - 1]), entry.getValue());
+					} else {
 						pred = builder.equal(from.get(entry.getKey()), entry.getValue());
 					}
 					predicate = predicate == null ? pred : builder.and(predicate, pred);

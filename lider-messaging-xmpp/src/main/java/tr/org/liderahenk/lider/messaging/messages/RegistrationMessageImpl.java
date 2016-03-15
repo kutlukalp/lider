@@ -3,6 +3,8 @@ package tr.org.liderahenk.lider.messaging.messages;
 import java.util.Date;
 import java.util.Map;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 import tr.org.liderahenk.lider.core.api.messaging.enums.AgentMessageType;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IRegistrationMessage;
 
@@ -12,7 +14,10 @@ import tr.org.liderahenk.lider.core.api.messaging.messages.IRegistrationMessage;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class RegistrationMessageImpl implements IRegistrationMessage {
+
+	private static final long serialVersionUID = -7391747508878706457L;
 
 	private AgentMessageType type;
 	private String from;
@@ -23,6 +28,7 @@ public class RegistrationMessageImpl implements IRegistrationMessage {
 	private Map<String, Object> data;
 	private Date timestamp;
 
+	@Override
 	public AgentMessageType getType() {
 		return type;
 	}
@@ -31,6 +37,7 @@ public class RegistrationMessageImpl implements IRegistrationMessage {
 		this.type = type;
 	}
 
+	@Override
 	public String getFrom() {
 		return from;
 	}
@@ -39,6 +46,7 @@ public class RegistrationMessageImpl implements IRegistrationMessage {
 		this.from = from;
 	}
 
+	@Override
 	public String getPassword() {
 		return password;
 	}
@@ -47,6 +55,7 @@ public class RegistrationMessageImpl implements IRegistrationMessage {
 		this.password = password;
 	}
 
+	@Override
 	public String getHostname() {
 		return hostname;
 	}
@@ -55,6 +64,7 @@ public class RegistrationMessageImpl implements IRegistrationMessage {
 		this.hostname = hostname;
 	}
 
+	@Override
 	public String getIpAddresses() {
 		return ipAddresses;
 	}
@@ -63,6 +73,7 @@ public class RegistrationMessageImpl implements IRegistrationMessage {
 		this.ipAddresses = ipAddresses;
 	}
 
+	@Override
 	public String getMacAddresses() {
 		return macAddresses;
 	}
@@ -71,6 +82,7 @@ public class RegistrationMessageImpl implements IRegistrationMessage {
 		this.macAddresses = macAddresses;
 	}
 
+	@Override
 	public Map<String, Object> getData() {
 		return data;
 	}
@@ -79,6 +91,7 @@ public class RegistrationMessageImpl implements IRegistrationMessage {
 		this.data = data;
 	}
 
+	@Override
 	public Date getTimestamp() {
 		return timestamp;
 	}

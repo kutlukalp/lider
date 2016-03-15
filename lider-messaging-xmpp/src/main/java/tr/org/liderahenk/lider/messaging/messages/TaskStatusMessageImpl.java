@@ -3,6 +3,8 @@ package tr.org.liderahenk.lider.messaging.messages;
 import java.util.Date;
 import java.util.Map;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 import tr.org.liderahenk.lider.core.api.messaging.messages.ITaskStatusMessage;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskState;
 
@@ -13,6 +15,7 @@ import tr.org.liderahenk.lider.core.api.taskmanager.TaskState;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TaskStatusMessageImpl implements ITaskStatusMessage {
 
 	private TaskState type;

@@ -27,6 +27,8 @@ import tr.org.liderahenk.lider.core.api.persistence.enums.CrudType;
 @Table(name = "C_OPERATION_LOG")
 public class OperationLogImpl implements IOperationLog {
 
+	private static final long serialVersionUID = -241241606291513291L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "ID")
@@ -267,4 +269,9 @@ public class OperationLogImpl implements IOperationLog {
 		this.version = version;
 	}
 
+	@Override
+	public Date getCreateDate() {
+		return null;
+	}
+	
 }

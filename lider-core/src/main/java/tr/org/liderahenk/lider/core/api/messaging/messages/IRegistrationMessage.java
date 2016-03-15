@@ -1,5 +1,7 @@
 package tr.org.liderahenk.lider.core.api.messaging.messages;
 
+import java.util.Map;
+
 /**
  * IRegistrationMessage is used to register (or unregister) an agent in the
  * system.
@@ -27,4 +29,10 @@ public interface IRegistrationMessage extends IAgentMessage {
 	 * @return commad seperated MAC addresses.
 	 */
 	String getMacAddresses();
+
+	/**
+	 * 
+	 * @return Additional data used to set agent properties.
+	 */
+	Map<String, Object> getData();
 }

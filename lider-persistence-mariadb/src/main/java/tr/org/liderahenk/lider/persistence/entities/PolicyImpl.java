@@ -66,11 +66,14 @@ public class PolicyImpl implements IPolicy {
 	@Column(name = "MODIFY_DATE")
 	private Date modifyDate;
 
+	@Column(name = "POLICY_VERSION")
+	private String policyVersion;
+
 	public PolicyImpl() {
 	}
 
 	public PolicyImpl(Long id, String label, String description, boolean active, boolean deleted,
-			Set<ProfileImpl> profiles, Date createDate, Date modifyDate) {
+			Set<ProfileImpl> profiles, Date createDate, Date modifyDate, String policyVersion) {
 		this.id = id;
 		this.label = label;
 		this.description = description;
@@ -79,6 +82,7 @@ public class PolicyImpl implements IPolicy {
 		this.profiles = profiles;
 		this.createDate = createDate;
 		this.modifyDate = modifyDate;
+		this.policyVersion = policyVersion;
 	}
 
 	public PolicyImpl(IPolicy policy) {
@@ -89,6 +93,7 @@ public class PolicyImpl implements IPolicy {
 		this.deleted = policy.isDeleted();
 		this.createDate = policy.getCreateDate();
 		this.modifyDate = policy.getModifyDate();
+		this.policyVersion = policy.getPolicyVersion();
 
 		// Convert IProfile to ProfileImpl
 		Set<? extends IProfile> tmpProfiles = policy.getProfiles();
@@ -184,6 +189,15 @@ public class PolicyImpl implements IPolicy {
 			profileImpl = new ProfileImpl(profile);
 		}
 		profiles.add(profileImpl);
+	}
+
+	@Override
+	public String getPolicyVersion() {
+		return policyVersion;
+	}
+
+	public void setPolicyVersion(String policyVersion) {
+		this.policyVersion = policyVersion;
 	}
 
 	@Override

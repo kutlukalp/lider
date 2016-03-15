@@ -48,26 +48,26 @@ public class UserSessionImpl implements IUserSession {
 	private Integer sessionEvent;
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "CREATION_DATE", nullable = false)
-	private Date creationDate;
+	@Column(name = "CREATE_DATE", nullable = false)
+	private Date createDate;
 
 	public UserSessionImpl() {
 	}
 
-	public UserSessionImpl(Long id, AgentImpl agent, String username, SessionEvent sessionEvent, Date creationDate) {
+	public UserSessionImpl(Long id, AgentImpl agent, String username, SessionEvent sessionEvent, Date createDate) {
 		super();
 		this.id = id;
 		this.agent = agent;
 		this.username = username;
 		setSessionEvent(sessionEvent);
-		this.creationDate = creationDate;
+		this.createDate = createDate;
 	}
 
 	public UserSessionImpl(IUserSession userSession) {
 		this.id = userSession.getId();
 		this.username = userSession.getUsername();
 		setSessionEvent(userSession.getSessionEvent());
-		this.creationDate = userSession.getCreationDate();
+		this.createDate = userSession.getCreateDate();
 		if (userSession.getAgent() instanceof AgentImpl) {
 			this.agent = (AgentImpl) userSession.getAgent();
 		}
@@ -114,18 +114,18 @@ public class UserSessionImpl implements IUserSession {
 	}
 
 	@Override
-	public Date getCreationDate() {
-		return creationDate;
+	public Date getCreateDate() {
+		return createDate;
 	}
 
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
 	}
 
 	@Override
 	public String toString() {
 		return "UserSessionImpl [id=" + id + ", username=" + username + ", sessionEvent=" + sessionEvent
-				+ ", creationDate=" + creationDate + "]";
+				+ ", createDate=" + createDate + "]";
 	}
 
 }

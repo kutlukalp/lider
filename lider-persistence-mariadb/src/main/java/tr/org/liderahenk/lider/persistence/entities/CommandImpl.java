@@ -62,10 +62,6 @@ public class CommandImpl implements ICommand {
 	@Column(name = "CREATE_DATE", nullable = false)
 	private Date createDate;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "MODIFY_DATE")
-	private Date modifyDate;
-
 	@OneToMany(mappedBy = "command", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	private List<CommandExecutionImpl> commandExecutions = new ArrayList<CommandExecutionImpl>(); // bidirectional
 
@@ -81,7 +77,6 @@ public class CommandImpl implements ICommand {
 		this.dnListJsonString = new ObjectMapper().writeValueAsString(dnList);
 		setDnType(dnType);
 		this.createDate = createDate;
-		this.modifyDate = modifyDate;
 		this.commandExecutions = commandExecutions;
 	}
 
@@ -92,7 +87,6 @@ public class CommandImpl implements ICommand {
 		this.dnListJsonString = new ObjectMapper().writeValueAsString(command.getDnList());
 		setDnType(command.getDnType());
 		this.createDate = command.getCreateDate();
-		this.modifyDate = command.getModifyDate();
 
 		// Convert ICommandExecution to CommandExecutionImpl
 		List<? extends ICommandExecution> tmpCommandExecutions = command.getCommandExecutions();
@@ -175,15 +169,6 @@ public class CommandImpl implements ICommand {
 	}
 
 	@Override
-	public Date getModifyDate() {
-		return modifyDate;
-	}
-
-	public void setModifyDate(Date modifyDate) {
-		this.modifyDate = modifyDate;
-	}
-
-	@Override
 	public List<CommandExecutionImpl> getCommandExecutions() {
 		return commandExecutions;
 	}
@@ -223,8 +208,8 @@ public class CommandImpl implements ICommand {
 	@Override
 	public String toString() {
 		return "CommandImpl [id=" + id + ", policyId=" + policyId + ", taskId=" + taskId + ", dnListJsonString="
-				+ dnListJsonString + ", dnType=" + dnType + ", createDate=" + createDate + ", modifyDate=" + modifyDate
-				+ ", commandExecutions=" + commandExecutions + "]";
+				+ dnListJsonString + ", dnType=" + dnType + ", createDate=" + createDate + ", commandExecutions="
+				+ commandExecutions + "]";
 	}
 
 }

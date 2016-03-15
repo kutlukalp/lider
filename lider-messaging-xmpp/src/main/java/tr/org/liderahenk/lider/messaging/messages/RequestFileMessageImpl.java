@@ -2,6 +2,8 @@ package tr.org.liderahenk.lider.messaging.messages;
 
 import java.util.Date;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 import tr.org.liderahenk.lider.core.api.messaging.enums.LiderMessageType;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IRequestFileMessage;
 
@@ -11,6 +13,7 @@ import tr.org.liderahenk.lider.core.api.messaging.messages.IRequestFileMessage;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  * 
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class RequestFileMessageImpl implements IRequestFileMessage {
 
 	private static final long serialVersionUID = -6326655333278936177L;
@@ -22,9 +25,6 @@ public class RequestFileMessageImpl implements IRequestFileMessage {
 	private String recipient;
 
 	private Date timestamp;
-
-	public RequestFileMessageImpl() {
-	}
 
 	public RequestFileMessageImpl(String filePath, String recipient, Date timestamp) {
 		super();

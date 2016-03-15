@@ -24,9 +24,9 @@ import tr.org.liderahenk.lider.core.api.persistence.enums.SessionEvent;
  * @see tr.org.liderahenk.lider.core.api.messaging.IUserSessionMessage
  *
  */
-public class DefaultUserSessionSubscriber implements IUserSessionSubscriber {
+public class DefaultUserSessionSubscriberImpl implements IUserSessionSubscriber {
 
-	private static Logger logger = LoggerFactory.getLogger(DefaultUserSessionSubscriber.class);
+	private static Logger logger = LoggerFactory.getLogger(DefaultUserSessionSubscriberImpl.class);
 
 	private IAgentDao agentDao;
 
@@ -83,7 +83,7 @@ public class DefaultUserSessionSubscriber implements IUserSessionSubscriber {
 			}
 
 			@Override
-			public Date getCreationDate() {
+			public Date getCreateDate() {
 				return message.getTimestamp();
 			}
 

@@ -5,22 +5,24 @@ import java.util.Date;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import tr.org.liderahenk.lider.core.api.messaging.enums.AgentMessageType;
-import tr.org.liderahenk.lider.core.api.messaging.messages.IUserSessionMessage;
+import tr.org.liderahenk.lider.core.api.messaging.messages.IGetPoliciesMessage;
 
 /**
- * Default implementation for {@link IUserSessionMessage}
- * 
- * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ * Default implementation for {@link IGetPoliciesMessage}
  *
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ * 
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class UserSessionMessageImpl implements IUserSessionMessage {
+public class GetPoliciesMessageImpl implements IGetPoliciesMessage {
 
-	private static final long serialVersionUID = -5432714879052699027L;
+	private static final long serialVersionUID = -1867891171608060994L;
 
 	private AgentMessageType type;
 	private String from;
 	private String username;
+	private String userPolicyVersion;
+	private String machinePolicyVersion;
 	private Date timestamp;
 
 	@Override
@@ -48,6 +50,24 @@ public class UserSessionMessageImpl implements IUserSessionMessage {
 
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	@Override
+	public String getUserPolicyVersion() {
+		return userPolicyVersion;
+	}
+
+	public void setUserPolicyVersion(String userPolicyVersion) {
+		this.userPolicyVersion = userPolicyVersion;
+	}
+
+	@Override
+	public String getMachinePolicyVersion() {
+		return machinePolicyVersion;
+	}
+
+	public void setMachinePolicyVersion(String machinePolicyVersion) {
+		this.machinePolicyVersion = machinePolicyVersion;
 	}
 
 	@Override

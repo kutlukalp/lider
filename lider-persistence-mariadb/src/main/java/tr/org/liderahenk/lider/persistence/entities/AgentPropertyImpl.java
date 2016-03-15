@@ -1,5 +1,7 @@
 package tr.org.liderahenk.lider.persistence.entities;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -8,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
@@ -44,20 +48,26 @@ public class AgentPropertyImpl implements IAgentProperty {
 	@Column(name = "PROPERTY_VALUE", nullable = false)
 	private String propertyValue;
 
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "CREATE_DATE", nullable = false)
+	private Date createDate;
+
 	public AgentPropertyImpl() {
 	}
 
-	public AgentPropertyImpl(Long id, AgentImpl agent, String propertyName, String propertyValue) {
+	public AgentPropertyImpl(Long id, AgentImpl agent, String propertyName, String propertyValue, Date createDate) {
 		this.id = id;
 		this.agent = agent;
 		this.propertyName = propertyName;
 		this.propertyValue = propertyValue;
+		this.createDate = createDate;
 	}
 
 	public AgentPropertyImpl(IAgentProperty property) {
 		this.id = property.getId();
 		this.propertyName = property.getPropertyName();
 		this.propertyValue = property.getPropertyValue();
+		this.createDate = property.getCreateDate();
 		if (property.getAgent() instanceof AgentImpl) {
 			this.agent = (AgentImpl) property.getAgent();
 		}
@@ -100,9 +110,18 @@ public class AgentPropertyImpl implements IAgentProperty {
 	}
 
 	@Override
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+
+	@Override
 	public String toString() {
 		return "AgentPropertyImpl [id=" + id + ", propertyName=" + propertyName + ", propertyValue=" + propertyValue
-				+ "]";
+				+ ", createDate=" + createDate + "]";
 	}
 
 }

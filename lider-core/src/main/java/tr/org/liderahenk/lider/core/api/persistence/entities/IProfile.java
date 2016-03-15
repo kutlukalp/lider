@@ -1,6 +1,5 @@
 package tr.org.liderahenk.lider.core.api.persistence.entities;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -10,72 +9,62 @@ import java.util.Date;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Kağan Akkaya</a>
  *
  */
-public interface IProfile extends Serializable {
+public interface IProfile extends IEntity {
 
 	/**
 	 * 
-	 * @return
-	 */
-	Long getId();
-
-	/**
-	 * 
-	 * @return
+	 * @return related IPlugin instance
 	 */
 	IPlugin getPlugin();
 
 	/**
 	 * 
-	 * @return
+	 * @return profile label
 	 */
 	String getLabel();
 
 	/**
 	 * 
-	 * @return
+	 * @return profile description
 	 */
 	String getDescription();
 
 	/**
+	 * Indicates this profile record is overridable by a higher priority profile
+	 * during agent execution.
 	 * 
-	 * @return
+	 * @return overridable flag
 	 */
 	boolean isOverridable();
 
 	/**
 	 * 
-	 * @return
+	 * @return active flag
 	 */
 	boolean isActive();
 
 	/**
 	 * 
-	 * @return
+	 * @return deleted flag
 	 */
 	boolean isDeleted();
 
 	/**
 	 * 
-	 * @return
+	 * @return profile data sent from Lider Console
 	 */
 	byte[] getProfileData();
 
 	/**
 	 * 
-	 * @return
-	 */
-	Date getModifyDate();
-
-	/**
-	 * 
-	 * @return
-	 */
-	Date getCreateDate();
-
-	/**
-	 * 
-	 * @return
+	 * @return JSON string representation of this instance
 	 */
 	String toJson();
+
+	/**
+	 * 
+	 * @return record modification date
+	 */
+	Date getModifyDate();
 
 }

@@ -2,10 +2,9 @@ package tr.org.liderahenk.lider.core.api.persistence.entities;
 
 import java.util.Date;
 
-import tr.org.liderahenk.lider.core.api.IBaseObject;
 import tr.org.liderahenk.lider.core.api.persistence.enums.CrudType;
 
-public interface IOperationLog extends IBaseObject {
+public interface IOperationLog extends IEntity {
 	Date getDate();
 
 	String getUserId();
@@ -27,4 +26,14 @@ public interface IOperationLog extends IBaseObject {
 	String getChecksum();
 
 	CrudType getCrudType();
+
+	Boolean getActive();
+
+	Date getChangedDate();
+
+	Date getCreationDate();
+
+	String getName();
+
+	Integer getVersion();
 }

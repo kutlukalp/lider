@@ -205,6 +205,8 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 	private ICommandExecution createCommandExecution(final String dn, final ICommand command) {
 		ICommandExecution ce = new ICommandExecution() {
 
+			private static final long serialVersionUID = -8693337675888677300L;
+
 			@Override
 			public String toJson() {
 				return null;
@@ -240,6 +242,11 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 			@Override
 			public void addCommandExecutionResult(ICommandExecutionResult commandExecutionResult) {
 			}
+
+			@Override
+			public Date getCreateDate() {
+				return new Date();
+			}
 		};
 
 		return ce;
@@ -262,11 +269,6 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 
 			@Override
 			public Long getPolicyId() {
-				return null;
-			}
-
-			@Override
-			public Date getModifyDate() {
 				return null;
 			}
 

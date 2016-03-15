@@ -1,6 +1,5 @@
 package tr.org.liderahenk.lider.core.api.persistence.entities;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -10,69 +9,64 @@ import java.util.List;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Kağan Akkaya</a>
  *
  */
-public interface IPlugin extends Serializable {
+public interface IPlugin extends IEntity {
 
 	/**
 	 * 
-	 * @return
-	 */
-	Long getId();
-
-	/**
-	 * 
-	 * @return
+	 * @return plugin name
 	 */
 	String getName();
 
 	/**
 	 * 
-	 * @return
+	 * @return plugin version
 	 */
 	String getVersion();
 
 	/**
 	 * 
-	 * @return
+	 * @return plugin description
 	 */
 	String getDescription();
 
 	/**
 	 * 
-	 * @return
+	 * @return active flag
 	 */
 	boolean isActive();
 
 	/**
 	 * 
-	 * @return
+	 * @return deleted flag
 	 */
 	boolean isDeleted();
 
 	/**
 	 * 
-	 * @return
+	 * @return true if this plugin can be executed on a machine DN, false otherwise
 	 */
 	boolean isMachineOriented();
 
 	/**
 	 * 
-	 * @return
+	 * @return true if this plugin can be executed on a user DN, false otherwise
 	 */
 	boolean isUserOriented();
 
 	/**
 	 * 
-	 * @return
+	 * @return true if this plugin can be used in a policy, false otherwise
 	 */
 	boolean isPolicyPlugin();
 
 	/**
 	 * 
-	 * @return
+	 * @return a collection of IProfile instances
 	 */
 	List<? extends IProfile> getProfiles();
 
 	/**
+	 * Add new IProfile instance to profiles collection
 	 * 
 	 * @param profile
 	 */
@@ -80,13 +74,7 @@ public interface IPlugin extends Serializable {
 
 	/**
 	 * 
-	 * @return
-	 */
-	Date getCreateDate();
-
-	/**
-	 * 
-	 * @return
+	 * @return record modification date
 	 */
 	Date getModifyDate();
 

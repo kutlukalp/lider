@@ -1,18 +1,17 @@
 package tr.org.liderahenk.lider.core.api.messaging.messages;
 
+import java.io.Serializable;
 import java.util.Date;
-import java.util.Map;
 
 import tr.org.liderahenk.lider.core.api.messaging.enums.AgentMessageType;
 
 /**
- * Interface for messages sent <b>from agents to Lider</b>.
+ * Main interface for messages sent <b>from agents to Lider</b>.
  * 
- * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  * 
  */
-public interface IAgentMessage {
+public interface IAgentMessage extends Serializable {
 
 	/**
 	 * 
@@ -25,12 +24,6 @@ public interface IAgentMessage {
 	 * @return message sender
 	 */
 	String getFrom();
-
-	/**
-	 * 
-	 * @return message data
-	 */
-	Map<String, Object> getData();
 
 	/**
 	 * 

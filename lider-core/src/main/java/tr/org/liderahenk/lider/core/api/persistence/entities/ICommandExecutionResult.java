@@ -1,6 +1,5 @@
 package tr.org.liderahenk.lider.core.api.persistence.entities;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import tr.org.liderahenk.lider.core.api.enums.StatusCode;
@@ -13,26 +12,54 @@ import tr.org.liderahenk.lider.core.api.persistence.enums.ContentType;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Kağan Akkaya</a>
  *
  */
-public interface ICommandExecutionResult extends Serializable {
+public interface ICommandExecutionResult extends IEntity {
 
-	Long getId();
-
+	/**
+	 * 
+	 * @return related agent ID
+	 */
 	Long getAgentId();
 
+	/**
+	 * 
+	 * @return related ICommandExecution instance
+	 */
 	ICommandExecution getCommandExecution();
 
+	/**
+	 * 
+	 * @return response code indicating status of response
+	 */
 	StatusCode getResponseCode();
 
+	/**
+	 * 
+	 * @return response message
+	 */
 	String getResponseMessage();
 
+	/**
+	 * 
+	 * @return response data sent from a agent or a task
+	 */
 	byte[] getResponseData();
 
+	/**
+	 * 
+	 * @return content type of response data
+	 */
 	ContentType getContentType();
 
-	Date getCreateDate();
-
-	Date getModifyDate();
-
+	/**
+	 * 
+	 * @return JSON string representation of this instance
+	 */
 	String toJson();
+
+	/**
+	 * 
+	 * @return record modification date
+	 */
+	Date getModifyDate();
 
 }

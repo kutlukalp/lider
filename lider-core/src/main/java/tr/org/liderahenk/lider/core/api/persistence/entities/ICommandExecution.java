@@ -1,6 +1,5 @@
 package tr.org.liderahenk.lider.core.api.persistence.entities;
 
-import java.io.Serializable;
 import java.util.List;
 
 import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
@@ -12,9 +11,7 @@ import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Kağan Akkaya</a>
  *
  */
-public interface ICommandExecution extends Serializable {
-
-	Long getId();
+public interface ICommandExecution extends IEntity {
 
 	ICommand getCommand();
 
