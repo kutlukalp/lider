@@ -52,7 +52,7 @@ public class PolicyImpl implements IPolicy {
 	@Column(name = "DELETED")
 	private boolean deleted = false;
 
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
 	@JoinTable(name = "C_POLICY_PROFILE", joinColumns = {
 			@JoinColumn(name = "POLICY_ID", nullable = false, updatable = false) }, inverseJoinColumns = {
 					@JoinColumn(name = "PROFILE_ID", nullable = false, updatable = false) })
