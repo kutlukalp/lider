@@ -56,16 +56,17 @@ import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.enums.StatusCode;
 import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
 import tr.org.liderahenk.lider.core.api.messaging.responses.IRegistrationMessageResponse;
+import tr.org.liderahenk.lider.core.api.messaging.subscribers.IPolicySubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IPresenceSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IRegistrationSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.ITaskStatusSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IUserSessionSubscriber;
+import tr.org.liderahenk.lider.messaging.messages.GetPoliciesMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.RegistrationMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.TaskStatusMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.UserSessionMessageImpl;
 import tr.org.liderahenk.lider.messaging.responses.RegistrationMessageResponseImpl;
-import tr.org.liderahenk.lider.messaging.subscribers.DefaultRegistrationSubscriber;
-import tr.org.liderahenk.lider.messaging.subscribers.DefaultUserSessionSubscriber;
+import tr.org.liderahenk.lider.messaging.subscribers.DefaultRegistrationSubscriberImpl;
 
 /**
  * This class works as an XMPP client which listens to incoming packets and
@@ -106,6 +107,7 @@ public class XMPPClientImpl {
 	private TaskStatusUpdateListener taskStatusUpdateListener;
 	private RegistrationListener registrationListener;
 	private UserSessionListener userSessionListener;
+	private PolicyListener policyListener;
 
 	/**
 	 * Packet subscribers
@@ -114,17 +116,20 @@ public class XMPPClientImpl {
 	private List<IPresenceSubscriber> presenceSubscribers;
 	private List<IRegistrationSubscriber> registrationSubscribers;
 	private List<IUserSessionSubscriber> userSessionSubscribers;
+	private IPolicySubscriber policySubscriber;
 
 	private List<String> onlineUsers = new ArrayList<String>();
 	private XMPPTCPConnection connection;
 	private XMPPTCPConnectionConfiguration config;
 	private MultiUserChatManager mucManager;
 
+	private Pattern taskPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"TASK.*", Pattern.CASE_INSENSITIVE);
 	private Pattern registerPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"(REGISTER|UNREGISTER)\\\".*",
 			Pattern.CASE_INSENSITIVE);
 	private Pattern userSessionPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"LOG(IN|OUT)\\\".*",
 			Pattern.CASE_INSENSITIVE);
-	private Pattern taskPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"TASK.*", Pattern.CASE_INSENSITIVE);
+	private Pattern policyPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"GET_POLICIES\\\".*",
+			Pattern.CASE_INSENSITIVE);
 
 	private IConfigurationService configurationService;
 
@@ -236,12 +241,14 @@ public class XMPPClientImpl {
 		iqListener = new IQPacketListener();
 		taskStatusUpdateListener = new TaskStatusUpdateListener();
 		registrationListener = new RegistrationListener();
+		policyListener = new PolicyListener();
 		userSessionListener = new UserSessionListener();
 		connection.addConnectionListener(connectionListener);
 		PingManager.getInstanceFor(connection).registerPingFailedListener(pingFailedListener);
 		ChatManager.getInstanceFor(connection).addChatListener(chatManagerListener);
 		connection.addAsyncStanzaListener(packetListener, packetListener);
 		connection.addAsyncStanzaListener(registrationListener, registrationListener);
+		connection.addAsyncStanzaListener(policyListener, policyListener);
 		connection.addAsyncStanzaListener(userSessionListener, userSessionListener);
 		connection.addAsyncStanzaListener(taskStatusUpdateListener, taskStatusUpdateListener);
 		connection.addAsyncStanzaListener(iqListener, iqListener);
@@ -255,24 +262,20 @@ public class XMPPClientImpl {
 	 * @param jid
 	 * @param password
 	 */
-	private void deleteUser(String jid, String password) {
+	public void deleteUser(String jid, String password) {
+		XMPPTCPConnection tempConnection = null;
+		try {
+			tempConnection = new XMPPTCPConnection(this.host, this.port.toString());
+			tempConnection.login(jid, password);
 
-	    XMPPTCPConnection tempConnection = null;
-	       try{
-	      tempConnection = new XMPPTCPConnection(this.host, this.port.toString());
-	      tempConnection.login(jid, password);
-	       
-	      AccountManager accountManager = AccountManager.getInstance(tempConnection);
-	      accountManager.deleteAccount();
-	       }
-	       catch (Exception ex){
-	         logger.error("A problem occured while removing user: "+ex.getMessage());
-	       }
-	 
-	       tempConnection.disconnect();
+			AccountManager accountManager = AccountManager.getInstance(tempConnection);
+			accountManager.deleteAccount();
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+		tempConnection.disconnect();
 	}
 
-	
 	/**
 	 * Get online users from roster and store in onlineUsers
 	 */
@@ -318,6 +321,9 @@ public class XMPPClientImpl {
 			Roster.getInstanceFor(connection).removeRosterListener(rosterListener);
 			connection.removeAsyncStanzaListener(packetListener);
 			connection.removeAsyncStanzaListener(taskStatusUpdateListener);
+			connection.removeAsyncStanzaListener(registrationListener);
+			connection.removeAsyncStanzaListener(userSessionListener);
+			connection.removeAsyncStanzaListener(policyListener);
 			connection.removeAsyncStanzaListener(iqListener);
 			connection.removeConnectionListener(connectionListener);
 			logger.debug("Listeners are removed.");
@@ -479,7 +485,7 @@ public class XMPPClientImpl {
 	public void sendFile(byte[] file, String jid)
 			throws XMPPException, IOException, InterruptedException, SmackException {
 		String jidFinal = getFullJid(jid);
-		jidFinal+="/receiver";
+		jidFinal += "/receiver";
 		Socks5BytestreamManager bytestreamManager = Socks5BytestreamManager.getBytestreamManager(connection);
 		OutputStream outputStream = null;
 		try {
@@ -722,38 +728,6 @@ public class XMPPClientImpl {
 	class TaskStatusUpdateListener implements StanzaListener, StanzaFilter {
 
 		@Override
-		public void processPacket(Stanza packet) throws NotConnectedException {
-			try {
-				if (packet instanceof Message) {
-
-					Message msg = (Message) packet;
-					logger.info("Task status update message received from => {}, body => {}", msg.getFrom(),
-							msg.getBody());
-
-					ObjectMapper mapper = new ObjectMapper();
-					try {
-						TaskStatusMessageImpl taskStatusUpdateMessage = mapper.readValue(msg.getBody(),
-								TaskStatusMessageImpl.class);
-						// TODO improvement: trigger only related subscriber(s)
-						// by matching its plugin properties?
-						for (ITaskStatusSubscriber subscriber : taskStatusUpdateSubscribers) {
-							try {
-								subscriber.messageReceived(taskStatusUpdateMessage);
-							} catch (Exception e) {
-								logger.error("Subscriber could not handle message: ", e);
-							}
-							logger.debug("Notified subscriber => {}", subscriber);
-						}
-					} catch (Exception e) {
-						logger.error(e.getMessage(), e);
-					}
-				}
-			} catch (Exception e) {
-				logger.error(e.getMessage(), e);
-			}
-		}
-
-		@Override
 		public boolean accept(Stanza stanza) {
 			if (stanza instanceof Message) {
 				Message msg = (Message) stanza;
@@ -765,6 +739,35 @@ public class XMPPClientImpl {
 			return false;
 		}
 
+		@Override
+		public void processPacket(Stanza packet) throws NotConnectedException {
+			try {
+				if (packet instanceof Message) {
+
+					Message msg = (Message) packet;
+					logger.info("Task status update message received from => {}, body => {}", msg.getFrom(),
+							msg.getBody());
+
+					ObjectMapper mapper = new ObjectMapper();
+					TaskStatusMessageImpl message = mapper.readValue(msg.getBody(), TaskStatusMessageImpl.class);
+					message.setFrom(msg.getFrom());
+
+					// TODO improvement: trigger only related subscriber(s)
+					// by matching its plugin properties?
+					for (ITaskStatusSubscriber subscriber : taskStatusUpdateSubscribers) {
+						try {
+							subscriber.messageReceived(message);
+						} catch (Exception e) {
+							logger.error("Subscriber could not handle message: ", e);
+						}
+						logger.debug("Notified subscriber => {}", subscriber);
+					}
+				}
+			} catch (Exception e) {
+				logger.error(e.getMessage(), e);
+			}
+		}
+
 	}
 
 	/**
@@ -774,7 +777,7 @@ public class XMPPClientImpl {
 	 * the default subscriber to handle registration.
 	 * 
 	 * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
-	 * @see tr.org.liderahenk.lider.impl.registration.
+	 * @see tr.org.liderahenk.lider.DefaultRegistrationSubscriberImpl.registration.
 	 *      DefaultRegistrationSubscriber
 	 *
 	 */
@@ -817,17 +820,17 @@ public class XMPPClientImpl {
 						registrationInfo = triggerDefaultSubscriber(message);
 					} else {
 						// Try to find subscriber other than the default one.
-						IRegistrationSubscriber registerSubscriber = null;
+						IRegistrationSubscriber subscriber = null;
 						for (IRegistrationSubscriber temp : registrationSubscribers) {
-							if (!(temp instanceof DefaultRegistrationSubscriber)) {
-								registerSubscriber = temp;
+							if (!(temp instanceof DefaultRegistrationSubscriberImpl)) {
+								subscriber = temp;
 								break;
 							}
 						}
 						// Found another subscriber, notify it.
-						if (registerSubscriber != null) {
-							registrationInfo = registerSubscriber.messageReceived(message);
-							logger.debug("Notified subscriber => {}", registerSubscriber);
+						if (subscriber != null) {
+							registrationInfo = subscriber.messageReceived(message);
+							logger.debug("Notified subscriber => {}", subscriber);
 						} else {
 							// We cannot find another subscriber, trigger the
 							// default.
@@ -856,7 +859,7 @@ public class XMPPClientImpl {
 		private IRegistrationMessageResponse triggerDefaultSubscriber(RegistrationMessageImpl message)
 				throws Exception {
 			logger.info("Triggering default register subscriber.");
-			IRegistrationSubscriber subscriber = new DefaultRegistrationSubscriber();
+			IRegistrationSubscriber subscriber = new DefaultRegistrationSubscriberImpl();
 			IRegistrationMessageResponse registrationInfo = subscriber.messageReceived(message);
 			logger.debug("Notified subscriber => {}", subscriber);
 			return registrationInfo;
@@ -901,33 +904,17 @@ public class XMPPClientImpl {
 					// Construct message
 					UserSessionMessageImpl message = new ObjectMapper().readValue(msg.getBody(),
 							UserSessionMessageImpl.class);
+					message.setFrom(msg.getFrom());
 
-					// TODO commented this line, for test purposes. we should
-					// set 'from' property to ensure
-					// sender jid
-					// message.setFrom(msg.getFrom());
-
-					// Fall back to default subscriber if reference list is
-					// empty.
-					if (userSessionSubscribers == null || userSessionSubscribers.isEmpty()) {
-						triggerDefaultSubscriber(message);
-					} else {
-						// Try to find subscriber other than the default one.
-						IUserSessionSubscriber userSessionSubscriber = null;
-						for (IUserSessionSubscriber temp : userSessionSubscribers) {
-							if (!(temp instanceof DefaultUserSessionSubscriber)) {
-								userSessionSubscriber = temp;
-								break;
+					if (userSessionSubscribers != null && !userSessionSubscribers.isEmpty()) {
+						// Notify each subscriber
+						for (IUserSessionSubscriber subscriber : userSessionSubscribers) {
+							try {
+								subscriber.messageReceived(message);
+							} catch (Exception e) {
+								logger.error("Subscriber could not handle message: ", e);
 							}
-						}
-						// Found another subscriber, notify it.
-						if (userSessionSubscriber != null) {
-							userSessionSubscriber.messageReceived(message);
-							logger.debug("Notified subscriber => {}", userSessionSubscriber);
-						} else {
-							// We cannot find another subscriber, trigger the
-							// default.
-							triggerDefaultSubscriber(message);
+							logger.debug("Notified subscriber => {}", subscriber);
 						}
 					}
 
@@ -939,11 +926,55 @@ public class XMPPClientImpl {
 
 		}
 
-		private void triggerDefaultSubscriber(UserSessionMessageImpl message) throws Exception {
-			logger.info("Triggering default user session subscriber.");
-			IUserSessionSubscriber subscriber = new DefaultUserSessionSubscriber();
-			subscriber.messageReceived(message);
-			logger.debug("Notified subscriber => {}", subscriber);
+	}
+
+	/**
+	 * Policy listener is responsible for sending (machine and user) policies to
+	 * agent.
+	 * 
+	 * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+	 *
+	 */
+	class PolicyListener implements StanzaListener, StanzaFilter {
+
+		@Override
+		public boolean accept(Stanza stanza) {
+			if (stanza instanceof Message) {
+				Message msg = (Message) stanza;
+				// All messages from agents are type normal
+				// Message body must contain one of these strings => "type":
+				// "GET_POLICIES"
+				if (Message.Type.normal.equals(msg.getType()) && policyPattern.matcher(msg.getBody()).matches()) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		@Override
+		public void processPacket(Stanza packet) throws NotConnectedException {
+
+			Message msg = null;
+
+			try {
+				if (packet instanceof Message) {
+
+					msg = (Message) packet;
+					logger.info("Policy message received from => {}, body => {}", msg.getFrom(), msg.getBody());
+
+					// Construct message
+					GetPoliciesMessageImpl message = new ObjectMapper().readValue(msg.getBody(),
+							GetPoliciesMessageImpl.class);
+					message.setFrom(msg.getFrom());
+
+					if (policySubscriber != null) {
+						policySubscriber.messageReceived(message);
+					}
+				}
+
+			} catch (Exception e) {
+				logger.error(e.getMessage(), e);
+			}
 		}
 
 	}
@@ -986,6 +1017,14 @@ public class XMPPClientImpl {
 	 */
 	public void setUserSessionSubscribers(List<IUserSessionSubscriber> userSessionSubscribers) {
 		this.userSessionSubscribers = userSessionSubscribers;
+	}
+
+	/**
+	 * 
+	 * @param policySubscriber
+	 */
+	public void setPolicySubscriber(IPolicySubscriber policySubscriber) {
+		this.policySubscriber = policySubscriber;
 	}
 
 	/**
