@@ -1,6 +1,7 @@
 package tr.org.liderahenk.lider.rest;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,16 +15,24 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
+import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
+import tr.org.liderahenk.lider.core.api.ldap.LdapSearchFilterAttribute;
+import tr.org.liderahenk.lider.core.api.ldap.enums.LdapSearchFilterEnum;
+import tr.org.liderahenk.lider.core.api.ldap.exception.LdapException;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IPolicyDao;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IProfileDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
 import tr.org.liderahenk.lider.core.api.rest.IRequestFactory;
 import tr.org.liderahenk.lider.core.api.rest.IResponseFactory;
+import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
 import tr.org.liderahenk.lider.core.api.rest.enums.RestResponseStatus;
 import tr.org.liderahenk.lider.core.api.rest.processors.IPolicyRequestProcessor;
+import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyExecutionRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyRequest;
 import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
+import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
 public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 
@@ -33,10 +42,30 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 	private IProfileDao profileDao;
 	private IRequestFactory requestFactory;
 	private IResponseFactory responseFactory;
+	private IConfigurationService configService;
+	private ILDAPService ldapService;
 
 	@Override
-	public IRestResponse execute(Long id) {
-		// TODO Auto-generated method stub
+	public IRestResponse execute(String json) {
+		try {
+			// TODO convert json to IPolicyExecutionRequest
+			IPolicyExecutionRequest request = requestFactory.createPolicyExecutionRequest(json);
+			// TODO find IPolicy by IPolicyExecutionRequest.getPoliyId
+			IPolicy policy = policyDao.find(request.getPolicyId());
+			// TODO find target LDAP entries from dnList and dnType
+			
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			return responseFactory.createResponse(RestResponseStatus.ERROR, e.getMessage());
+		}
+		
+		
+		
+		
+		// TODO insert ICommand record using IPolicy
+		
+		// TODO insert ICommandExecution records using IPolicy
+		
 		return null;
 	}
 
@@ -303,6 +332,60 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 
 	public void setResponseFactory(IResponseFactory responseFactory) {
 		this.responseFactory = responseFactory;
+	}
+	
+	/**
+	 * Find target entries which subject to command execution from provided DN
+	 * list.
+	 * 
+	 * @param dnList
+	 * @param dnType
+	 * @return
+	 */
+	private List<LdapEntry> findTargetEntries(List<String> dnList, RestDNType dnType) {
+		List<LdapEntry> entries = null;
+		if (dnList != null && !dnList.isEmpty() && dnType != null) {
+
+			// Determine returning attributes
+			String[] returningAttributes = new String[] { configService.getUserLdapPrivilegeAttribute() };
+
+			// Construct filtering attributes
+			String objectClasses = dnType == RestDNType.AHENK ? configService.getAgentLdapObjectClasses()
+					: (dnType == RestDNType.USER ? configService.getUserLdapObjectClasses() : "*");
+			List<LdapSearchFilterAttribute> filterAttributes = new ArrayList<LdapSearchFilterAttribute>();
+			// There may be multiple object classes
+			String[] objectClsArr = objectClasses.split(",");
+			for (String objectClass : objectClsArr) {
+				LdapSearchFilterAttribute fAttr = new LdapSearchFilterAttribute("objectClass", objectClass,
+						LdapSearchFilterEnum.EQ);
+				filterAttributes.add(fAttr);
+			}
+
+			entries = new ArrayList<LdapEntry>();
+
+			// For each DN, find its target (child) entries according to desired
+			// DN type:
+			for (String dn : dnList) {
+				try {
+					List<LdapEntry> result = ldapService.search(dn, filterAttributes, returningAttributes);
+					if (result != null && !result.isEmpty()) {
+						entries.addAll(result);
+					}
+				} catch (LdapException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return entries;
+	}
+
+	public void setConfigService(IConfigurationService configService) {
+		this.configService = configService;
+	}
+
+	public void setLdapService(ILDAPService ldapService) {
+		this.ldapService = ldapService;
 	}
 
 }

@@ -3,8 +3,8 @@ package tr.org.liderahenk.lider.core.api.rest.processors;
 import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
 
 public interface IPolicyRequestProcessor {
-	
-	IRestResponse execute(Long id);
+
+	IRestResponse execute(String json);
 
 	IRestResponse add(String json);
 
@@ -15,5 +15,5 @@ public interface IPolicyRequestProcessor {
 	IRestResponse get(Long id);
 
 	IRestResponse delete(Long id);
-	
+
 }

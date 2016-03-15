@@ -14,6 +14,8 @@
 		<property name="responseFactory" ref="responseFactory" />
 		<property name="policyDao" ref="policyDao" />
 		<property name="profileDao" ref="profileDao" />
+		<property name="configService" ref="configService" />
+		<property name="ldapService" ref="ldapService" />
 	</bean>
 
 	<service ref="profileRequestProcessor"
