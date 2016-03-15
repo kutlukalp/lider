@@ -23,11 +23,12 @@
 
 	<bean id="xmppClient" class="tr.org.liderahenk.lider.messaging.XMPPClientImpl"
 		init-method="init" destroy-method="destroy">
-		<property name="presenceSubscribers" ref="presenceSubscribersRef" />
-		<property name="taskStatusUpdateSubscribers" ref="taskStatusUpdateSubscribersRef" />
-		<property name="registrationSubscribers" ref="registrationSubscribersRef" />
-		<property name="userSessionSubscribers" ref="userSessionSubscribersRef" />
 		<property name="configurationService" ref="configurationService" />
+		<property name="presenceSubscribers" ref="presenceSubscribers" />
+		<property name="taskStatusUpdateSubscribers" ref="taskStatusUpdateSubscribers" />
+		<property name="registrationSubscribers" ref="registrationSubscribers" />
+		<property name="userSessionSubscribers" ref="userSessionSubscribers" />
+		<property name="policySubscriber" ref="policySubscriber" />
 	</bean>
 
 	<service ref="defaultRegistrationSubscriber">
@@ -40,7 +41,7 @@
 		</service-properties>
 	</service>
 	<bean id="defaultRegistrationSubscriber"
-		class="tr.org.liderahenk.lider.messaging.subscribers.DefaultRegistrationSubscriber">
+		class="tr.org.liderahenk.lider.messaging.subscribers.DefaultRegistrationSubscriberImpl">
 		<property name="ldapService" ref="ldapService" />
 		<property name="configurationService" ref="configurationService" />
 		<property name="agentDao" ref="agentDao" />
@@ -51,20 +52,26 @@
 	<service ref="defaultUserSessionSubscriber"
 		interface="tr.org.liderahenk.lider.core.api.messaging.subscribers.IUserSessionSubscriber" />
 	<bean id="defaultUserSessionSubscriber"
-		class="tr.org.liderahenk.lider.messaging.subscribers.DefaultUserSessionSubscriber">
+		class="tr.org.liderahenk.lider.messaging.subscribers.DefaultUserSessionSubscriberImpl">
 		<property name="agentDao" ref="agentDao" />
 	</bean>
+	
+	<bean id="policySubscriber"
+		class="tr.org.liderahenk.lider.messaging.subscribers.PolicySubscriberImpl">
+		<property name="ldapService" ref="ldapService" />
+		<property name="commandDao" ref="commandDao" />
+	</bean>
 
-	<reference-list id="presenceSubscribersRef"
+	<reference-list id="presenceSubscribers"
 		interface="tr.org.liderahenk.lider.core.api.messaging.subscribers.IPresenceSubscriber"
 		availability="optional" />
-	<reference-list id="taskStatusUpdateSubscribersRef"
+	<reference-list id="taskStatusUpdateSubscribers"
 		interface="tr.org.liderahenk.lider.core.api.messaging.subscribers.ITaskStatusSubscriber"
 		availability="optional" />
-	<reference-list id="registrationSubscribersRef"
+	<reference-list id="registrationSubscribers"
 		interface="tr.org.liderahenk.lider.core.api.messaging.subscribers.IRegistrationSubscriber"
 		availability="optional" />
-	<reference-list id="userSessionSubscribersRef"
+	<reference-list id="userSessionSubscribers"
 		interface="tr.org.liderahenk.lider.core.api.messaging.subscribers.IUserSessionSubscriber"
 		availability="optional" />
 	<reference id="configurationService"
@@ -73,6 +80,8 @@
 		interface="tr.org.liderahenk.lider.core.api.ldap.ILDAPService" />
 	<reference id="agentDao"
 		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IAgentDao" />
+	<reference id="commandDao"
+		interface="tr.org.liderahenk.lider.core.api.persistence.dao.ICommandDao" />
 	<reference id="eventAdmin" interface="org.osgi.service.event.EventAdmin" />
 
 </blueprint>
