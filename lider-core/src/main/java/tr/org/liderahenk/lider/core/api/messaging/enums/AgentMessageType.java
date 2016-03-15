@@ -20,7 +20,6 @@ package tr.org.liderahenk.lider.core.api.messaging.enums;
  * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  * @author <a href="mailto:bm.volkansahin@gmail.com">Volkan Şahin</a>
- * @see tr.org.liderahenk.lider.impl.messaging.XMPPClientImpl
  * 
  */
 public enum AgentMessageType {

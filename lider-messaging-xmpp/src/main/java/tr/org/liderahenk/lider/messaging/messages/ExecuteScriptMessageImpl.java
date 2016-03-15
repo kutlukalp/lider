@@ -2,6 +2,8 @@ package tr.org.liderahenk.lider.messaging.messages;
 
 import java.util.Date;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 import tr.org.liderahenk.lider.core.api.messaging.enums.LiderMessageType;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteScriptMessage;
 
@@ -11,6 +13,7 @@ import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteScriptMessage
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  * 
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ExecuteScriptMessageImpl implements IExecuteScriptMessage {
 
 	private static final long serialVersionUID = -2825255461238352219L;
@@ -22,9 +25,6 @@ public class ExecuteScriptMessageImpl implements IExecuteScriptMessage {
 	private String recipient;
 
 	private Date timestamp;
-
-	public ExecuteScriptMessageImpl() {
-	}
 
 	public ExecuteScriptMessageImpl(String filePath, String recipient, Date timestamp) {
 		super();

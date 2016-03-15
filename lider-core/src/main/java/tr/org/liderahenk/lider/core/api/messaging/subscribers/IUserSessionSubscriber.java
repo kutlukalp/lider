@@ -8,7 +8,6 @@ import tr.org.liderahenk.lider.core.api.messaging.messages.IUserSessionMessage;
  * messaging system.
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
- * @see tr.org.liderahenk.lider.impl.registration.DefaultUserSessionSubscriber
  *
  */
 public interface IUserSessionSubscriber {

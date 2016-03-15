@@ -64,9 +64,9 @@ import tr.org.liderahenk.lider.messaging.responses.RegistrationMessageResponseIm
  * @see tr.org.liderahenk.lider.core.api.messaging.IRegistrationMessage
  *
  */
-public class DefaultRegistrationSubscriber implements IRegistrationSubscriber, EventHandler {
+public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscriber, EventHandler {
 
-	private static Logger logger = LoggerFactory.getLogger(DefaultRegistrationSubscriber.class);
+	private static Logger logger = LoggerFactory.getLogger(DefaultRegistrationSubscriberImpl.class);
 
 	private ILDAPService ldapService;
 	private IConfigurationService configurationService;
@@ -328,6 +328,11 @@ public class DefaultRegistrationSubscriber implements IRegistrationSubscriber, E
 						@Override
 						public String getPropertyValue() {
 							return propValue;
+						}
+
+						@Override
+						public Date getCreateDate() {
+							return message.getTimestamp();
 						}
 
 					});

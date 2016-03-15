@@ -2,6 +2,8 @@ package tr.org.liderahenk.lider.messaging.messages;
 
 import java.util.Date;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 import tr.org.liderahenk.lider.core.api.messaging.enums.LiderMessageType;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IMoveFileMessage;
 
@@ -11,24 +13,22 @@ import tr.org.liderahenk.lider.core.api.messaging.messages.IMoveFileMessage;
  * @author <a href="mailto:bm.volkansahin@gmail.com">Volkan Şahin</a>
  *
  */
-public class MoveFileMessageImpl implements IMoveFileMessage{
-	
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class MoveFileMessageImpl implements IMoveFileMessage {
+
 	private static final long serialVersionUID = -5907807902363422906L;
 
 	private LiderMessageType type = LiderMessageType.MOVE_FILE;
 
 	private String filePath;
-	
+
 	private String fileName;
 
 	private String recipient;
 
 	private Date timestamp;
 
-	
-	
-	public MoveFileMessageImpl(String filePath,
-			String fileName, String recipient, Date timestamp) {
+	public MoveFileMessageImpl(String filePath, String fileName, String recipient, Date timestamp) {
 		super();
 		this.filePath = filePath;
 		this.fileName = fileName;
@@ -36,6 +36,7 @@ public class MoveFileMessageImpl implements IMoveFileMessage{
 		this.timestamp = timestamp;
 	}
 
+	@Override
 	public LiderMessageType getType() {
 		return type;
 	}
@@ -44,6 +45,7 @@ public class MoveFileMessageImpl implements IMoveFileMessage{
 		this.type = type;
 	}
 
+	@Override
 	public String getFilePath() {
 		return filePath;
 	}
@@ -52,6 +54,7 @@ public class MoveFileMessageImpl implements IMoveFileMessage{
 		this.filePath = filePath;
 	}
 
+	@Override
 	public String getFileName() {
 		return fileName;
 	}
@@ -60,6 +63,7 @@ public class MoveFileMessageImpl implements IMoveFileMessage{
 		this.fileName = fileName;
 	}
 
+	@Override
 	public String getRecipient() {
 		return recipient;
 	}
@@ -68,6 +72,7 @@ public class MoveFileMessageImpl implements IMoveFileMessage{
 		this.recipient = recipient;
 	}
 
+	@Override
 	public Date getTimestamp() {
 		return timestamp;
 	}
