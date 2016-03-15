@@ -143,6 +143,11 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 				return null;
 			}
 
+			@Override
+			public String getPolicyVersion() {
+				return null;
+			}
+
 		};
 
 		if (request.getProfileIdList() != null) {
@@ -221,6 +226,11 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 			@Override
 			public String toJson() {
 				return null;
+			}
+
+			@Override
+			public String getPolicyVersion() {
+				return policy.getPolicyVersion();
 			}
 
 		};

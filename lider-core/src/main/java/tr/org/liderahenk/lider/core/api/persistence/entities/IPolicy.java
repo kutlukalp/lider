@@ -1,6 +1,5 @@
 package tr.org.liderahenk.lider.core.api.persistence.entities;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
@@ -10,57 +9,40 @@ import java.util.Set;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Kağan Akkaya</a>
  *
  */
-public interface IPolicy extends Serializable {
+public interface IPolicy extends IEntity {
 
 	/**
 	 * 
-	 * @return
-	 */
-	Long getId();
-
-	/**
-	 * 
-	 * @return
+	 * @return policy label
 	 */
 	String getLabel();
 
 	/**
 	 * 
-	 * @return
+	 * @return policy description
 	 */
 	String getDescription();
 
 	/**
 	 * 
-	 * @return
+	 * @return active flag
 	 */
 	boolean isActive();
 
 	/**
 	 * 
-	 * @return
+	 * @return deleted flag
 	 */
 	boolean isDeleted();
 
 	/**
 	 * 
-	 * @return
+	 * @return a collection of IProfile instances
 	 */
 	Set<? extends IProfile> getProfiles();
 
 	/**
-	 * 
-	 * @return
-	 */
-	Date getCreateDate();
-
-	/**
-	 * 
-	 * @return
-	 */
-	Date getModifyDate();
-
-	/**
+	 * Add new IProfile instance to profiles collection
 	 * 
 	 * @param profile
 	 */
@@ -68,8 +50,21 @@ public interface IPolicy extends Serializable {
 
 	/**
 	 * 
-	 * @return
+	 * @return JSON string representation of this instance
 	 */
 	String toJson();
+
+	/**
+	 * 
+	 * @return record modification date
+	 */
+	Date getModifyDate();
+
+	/**
+	 * 
+	 * @return version number used to manage policies sent to agents in order to
+	 *         be executed.
+	 */
+	String getPolicyVersion();
 
 }

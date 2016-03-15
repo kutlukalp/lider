@@ -1,6 +1,5 @@
 package tr.org.liderahenk.lider.core.api.persistence.entities;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -9,22 +8,42 @@ import java.util.Date;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Kağan Akkaya</a>
  *
  */
-public interface ITask extends Serializable {
+public interface ITask extends IEntity {
 
-	Long getId();
-
+	/**
+	 * 
+	 * @return related IPlugin instance
+	 */
 	IPlugin getPlugin();
 
+	/**
+	 * 
+	 * @return Command ID
+	 */
 	String getCommandClsId();
 
+	/**
+	 * 
+	 * @return parameter map sent from Lider Console
+	 */
 	byte[] getParameterMap();
 
+	/**
+	 * 
+	 * @return deleted flag
+	 */
 	boolean isDeleted();
 
-	Date getCreateDate();
-
-	Date getModifyDate();
-
+	/**
+	 * 
+	 * @return JSON string representation of this instance
+	 */
 	String toJson();
+
+	/**
+	 * 
+	 * @return record modification date
+	 */
+	Date getModifyDate();
 
 }

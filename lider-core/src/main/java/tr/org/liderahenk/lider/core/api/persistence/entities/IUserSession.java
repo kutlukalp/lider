@@ -1,8 +1,5 @@
 package tr.org.liderahenk.lider.core.api.persistence.entities;
 
-import java.io.Serializable;
-import java.util.Date;
-
 import tr.org.liderahenk.lider.core.api.persistence.enums.SessionEvent;
 
 /**
@@ -12,13 +9,7 @@ import tr.org.liderahenk.lider.core.api.persistence.enums.SessionEvent;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Kağan Akkaya</a>
  *
  */
-public interface IUserSession extends Serializable {
-
-	/**
-	 * 
-	 * @return
-	 */
-	Long getId();
+public interface IUserSession extends IEntity {
 
 	/**
 	 * 
@@ -37,11 +28,5 @@ public interface IUserSession extends Serializable {
 	 * @return
 	 */
 	SessionEvent getSessionEvent();
-
-	/**
-	 * 
-	 * @return
-	 */
-	Date getCreationDate();
 
 }

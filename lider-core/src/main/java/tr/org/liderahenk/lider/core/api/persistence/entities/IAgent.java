@@ -1,6 +1,5 @@
 package tr.org.liderahenk.lider.core.api.persistence.entities;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -10,13 +9,7 @@ import java.util.List;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Kağan Akkaya</a>
  *
  */
-public interface IAgent extends Serializable {
-
-	/**
-	 * 
-	 * @return
-	 */
-	Long getId();
+public interface IAgent extends IEntity {
 
 	/**
 	 * 
@@ -64,18 +57,6 @@ public interface IAgent extends Serializable {
 	 * 
 	 * @return
 	 */
-	Date getCreateDate();
-
-	/**
-	 * 
-	 * @return
-	 */
-	Date getModifyDate();
-
-	/**
-	 * 
-	 * @return
-	 */
 	List<? extends IAgentProperty> getProperties();
 
 	/**
@@ -95,5 +76,11 @@ public interface IAgent extends Serializable {
 	 * @param userSession
 	 */
 	void addUserSession(IUserSession userSession);
+
+	/**
+	 * 
+	 * @return
+	 */
+	Date getModifyDate();
 
 }

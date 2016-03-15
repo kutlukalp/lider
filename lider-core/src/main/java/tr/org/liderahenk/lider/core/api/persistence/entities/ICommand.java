@@ -1,7 +1,5 @@
 package tr.org.liderahenk.lider.core.api.persistence.entities;
 
-import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
@@ -12,26 +10,49 @@ import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Kağan Akkaya</a>
  *
  */
-public interface ICommand extends Serializable {
+public interface ICommand extends IEntity {
 
-	Long getId();
-
+	/**
+	 * 
+	 * @return related policy record ID (nullable)
+	 */
 	Long getPolicyId();
 
+	/**
+	 * 
+	 * @return related task record ID (nullable)
+	 */
 	Long getTaskId();
 
+	/**
+	 * 
+	 * @return a collection of DN sent from Lider Console
+	 */
 	List<String> getDnList();
 
+	/**
+	 * 
+	 * @return DN type which subject to command execution
+	 */
 	RestDNType getDnType();
 
-	Date getCreateDate();
-
-	Date getModifyDate();
-
+	/**
+	 * 
+	 * @return JSON string representation of this instance
+	 */
 	String toJson();
 
+	/**
+	 * 
+	 * @return a collection of ICommandExecution instances
+	 */
 	List<? extends ICommandExecution> getCommandExecutions();
 
+	/**
+	 * Add new ICommandExecution instance to command-executions collection
+	 * 
+	 * @param commandExecution
+	 */
 	void addCommandExecution(ICommandExecution commandExecution);
 
 }

@@ -1,6 +1,7 @@
 package tr.org.liderahenk.lider.persistence.entities;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -13,6 +14,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -50,18 +53,23 @@ public class CommandExecutionImpl implements ICommandExecution {
 	@Column(name = "DN")
 	private String dn;
 
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "CREATE_DATE", nullable = false)
+	private Date createDate;
+
 	@OneToMany(mappedBy = "commandExecution", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = false)
 	private List<CommandExecutionResultImpl> commandExecutionResults = new ArrayList<CommandExecutionResultImpl>(); // bidirectional
 
 	public CommandExecutionImpl() {
 	}
 
-	public CommandExecutionImpl(Long id, CommandImpl command, RestDNType dnType, String dn,
+	public CommandExecutionImpl(Long id, CommandImpl command, RestDNType dnType, String dn, Date createDate,
 			List<CommandExecutionResultImpl> commandExecutionResults) {
 		this.id = id;
 		this.command = command;
 		setDnType(dnType);
 		this.dn = dn;
+		this.createDate = createDate;
 		this.commandExecutionResults = commandExecutionResults;
 	}
 
@@ -69,6 +77,7 @@ public class CommandExecutionImpl implements ICommandExecution {
 		this.id = commandExecution.getId();
 		setDnType(commandExecution.getDnType());
 		this.dn = commandExecution.getDn();
+		this.createDate = commandExecution.getCreateDate();
 
 		// Convert ICommandExecutionResult to CommandExecutionResultImpl
 		List<? extends ICommandExecutionResult> tmpCommandExecutionResults = commandExecution
@@ -148,6 +157,15 @@ public class CommandExecutionImpl implements ICommandExecution {
 			commandExecutionResultImpl.setCommandExecution(this);
 		}
 		commandExecutionResults.add(commandExecutionResultImpl);
+	}
+
+	@Override
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
 	}
 
 	@Override

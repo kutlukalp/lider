@@ -16,7 +16,7 @@ package tr.org.liderahenk.lider.core.api.enums;
  */
 public enum StatusCode {
 
-	REGISTERED(1), REGISTERED_WITHOUT_LDAP(2), ALREADY_EXISTS(3), REGISTRATION_ERROR(4);
+	REGISTERED(1), REGISTERED_WITHOUT_LDAP(2), ALREADY_EXISTS(3), REGISTRATION_ERROR(4), EXECUTE_POLICY(5);
 
 	private int id;
 
