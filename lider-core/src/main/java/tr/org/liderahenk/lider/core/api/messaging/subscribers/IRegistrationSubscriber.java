@@ -1,7 +1,7 @@
 package tr.org.liderahenk.lider.core.api.messaging.subscribers;
 
 import tr.org.liderahenk.lider.core.api.messaging.messages.IRegistrationMessage;
-import tr.org.liderahenk.lider.core.api.messaging.responses.IRegistrationMessageResponse;
+import tr.org.liderahenk.lider.core.api.messaging.messages.IRegistrationResponseMessage;
 
 /**
  * Agent registration interface, any bundle - exposing an implementation of this
@@ -9,7 +9,6 @@ import tr.org.liderahenk.lider.core.api.messaging.responses.IRegistrationMessage
  * messaging system.
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
- * @see tr.org.liderahenk.lider.impl.registration.DefaultRegistrationSubscriber
  *
  */
 public interface IRegistrationSubscriber {
@@ -23,6 +22,6 @@ public interface IRegistrationSubscriber {
 	 * @throws Exception
 	 * 
 	 */
-	IRegistrationMessageResponse messageReceived(IRegistrationMessage message) throws Exception;
+	IRegistrationResponseMessage messageReceived(IRegistrationMessage message) throws Exception;
 
 }

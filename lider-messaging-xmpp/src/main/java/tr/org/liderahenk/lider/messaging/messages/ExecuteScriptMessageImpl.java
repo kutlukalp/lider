@@ -19,10 +19,10 @@ public class ExecuteScriptMessageImpl implements IExecuteScriptMessage {
 	private static final long serialVersionUID = -2825255461238352219L;
 
 	private LiderMessageType type = LiderMessageType.EXECUTE_SCRIPT;
+	
+	private String recipient;
 
 	private String filePath;
-
-	private String recipient;
 
 	private Date timestamp;
 

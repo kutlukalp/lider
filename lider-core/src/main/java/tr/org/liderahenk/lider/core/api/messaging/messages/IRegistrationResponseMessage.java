@@ -1,14 +1,15 @@
-package tr.org.liderahenk.lider.core.api.messaging.responses;
+package tr.org.liderahenk.lider.core.api.messaging.messages;
 
 import tr.org.liderahenk.lider.core.api.enums.StatusCode;
+import tr.org.liderahenk.lider.core.api.messaging.subscribers.IRegistrationSubscriber;
 
 /**
- * Registration information returned from {@link IRegistrationService}
+ * Registration information returned from {@link IRegistrationSubscriber}
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
-public interface IRegistrationMessageResponse {
+public interface IRegistrationResponseMessage extends ILiderMessage {
 
 	/**
 	 * 
@@ -27,4 +28,5 @@ public interface IRegistrationMessageResponse {
 	 * @return LDAP DN assigned to agent during registration
 	 */
 	String getAgentDn();
+
 }

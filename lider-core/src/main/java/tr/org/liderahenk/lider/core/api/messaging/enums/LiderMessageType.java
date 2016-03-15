@@ -18,5 +18,5 @@ package tr.org.liderahenk.lider.core.api.messaging.enums;
  */
 
 public enum LiderMessageType {
-	EXECUTE_TASK, EXECUTE_SCRIPT, EXECUTE_POLICY, REQUEST_FILE, MOVE_FILE
+	EXECUTE_TASK, EXECUTE_SCRIPT, EXECUTE_POLICY, REQUEST_FILE, MOVE_FILE, REGISTRATION_RESPONSE
 }

@@ -1,7 +1,8 @@
 package tr.org.liderahenk.lider.core.api.enums;
 
 /**
- * Status code used throughout the system.
+ * Status code used throughout the system. These status codes can be used in
+ * (XMPP or REST) all messaging mechanisms.
  * 
  * <b>REGISTERED</b>: registration successful, agent IS registered.<br/>
  * <b>REGISTERED_WITHOUT_LDAP</b>: registered only for XMPP server, LDAP

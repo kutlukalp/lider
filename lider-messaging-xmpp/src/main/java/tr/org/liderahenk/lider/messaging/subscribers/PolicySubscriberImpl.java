@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
+import tr.org.liderahenk.lider.core.api.messaging.messages.IExecutePoliciesMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IGetPoliciesMessage;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IPolicySubscriber;
 import tr.org.liderahenk.lider.core.api.persistence.dao.ICommandDao;
@@ -25,7 +26,7 @@ public class PolicySubscriberImpl implements IPolicySubscriber {
 	private ICommandDao commandDao;
 
 	@Override
-	public void messageReceived(IGetPoliciesMessage message) throws Exception {
+	public IExecutePoliciesMessage messageReceived(IGetPoliciesMessage message) throws Exception {
 
 		String agentUid = message.getFrom().split("@")[0];
 		String userUid = message.getUsername();
@@ -45,6 +46,7 @@ public class PolicySubscriberImpl implements IPolicySubscriber {
 		// Find machine policy
 		// TODO
 
+		return null;
 	}
 
 	public void setLdapService(ILDAPService ldapService) {

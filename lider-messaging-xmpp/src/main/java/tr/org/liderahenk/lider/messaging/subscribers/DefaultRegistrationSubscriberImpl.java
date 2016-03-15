@@ -27,14 +27,14 @@ import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
 import tr.org.liderahenk.lider.core.api.messaging.IMessagingService;
 import tr.org.liderahenk.lider.core.api.messaging.enums.AgentMessageType;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IRegistrationMessage;
-import tr.org.liderahenk.lider.core.api.messaging.responses.IRegistrationMessageResponse;
+import tr.org.liderahenk.lider.core.api.messaging.messages.IRegistrationResponseMessage;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IRegistrationSubscriber;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IAgentDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IAgent;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IAgentProperty;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IUserSession;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
-import tr.org.liderahenk.lider.messaging.responses.RegistrationMessageResponseImpl;
+import tr.org.liderahenk.lider.messaging.messages.RegistrationResponseMessageImpl;
 
 /**
  * <p>
@@ -80,13 +80,13 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 	 * entry and new agent database record.
 	 */
 	@Override
-	public IRegistrationMessageResponse messageReceived(IRegistrationMessage message) throws Exception {
+	public IRegistrationResponseMessage messageReceived(IRegistrationMessage message) throws Exception {
 
 		String uid = message.getFrom().split("@")[0];
 
 		logger.error("Message: {}", message);
 
-		// Register agent	
+		// Register agent
 		if (AgentMessageType.REGISTER == message.getType()) {
 
 			// Check if agent LDAP entry already exists
@@ -116,10 +116,10 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 				logger.error(
 						"Agent DN {} already exists! Updated its password and database properties with the values submitted.",
 						entry.get(0).getDistinguishedName());
-				return new RegistrationMessageResponseImpl(StatusCode.ALREADY_EXISTS,
+				return new RegistrationResponseMessageImpl(StatusCode.ALREADY_EXISTS,
 						entry.get(0).getDistinguishedName()
 								+ " already exists! Updated its password and database properties with the values submitted.",
-						entry.get(0).getDistinguishedName());
+						entry.get(0).getDistinguishedName(), null, new Date());
 			} else {
 
 				logger.error("Creating account: {} with password: {}",
@@ -184,32 +184,27 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 				logger.error("Script result file requested");
 
 				logger.error("{} and its related database record created successfully!", entryDN);
-				return new RegistrationMessageResponseImpl(StatusCode.REGISTERED,
-						entryDN + " and its related database record created successfully!", entryDN);
+				return new RegistrationResponseMessageImpl(StatusCode.REGISTERED,
+						entryDN + " and its related database record created successfully!", entryDN, null, new Date());
 			}
 
-		}
-		else if (AgentMessageType.UNREGISTER == message.getType()){
-			//TEST//TEST//TEST//TEST//TEST//TEST//TEST//TEST
+		} else if (AgentMessageType.UNREGISTER == message.getType()) {
+			// TEST//TEST//TEST//TEST//TEST//TEST//TEST//TEST
 			logger.error("------->Send 1");
 			messagingService.sendFile(getFileAsByteArray(), message.getFrom());
-			String md5=getMD5ofFile(getFileAsByteArray());
+			String md5 = getMD5ofFile(getFileAsByteArray());
 			logger.error("------->move 2");
 			messagingService.moveFile(md5, "/tmp/", message.getFrom());
 			logger.error("------->execute 3");
-			messagingService.executeScript("/tmp/"+md5, message.getFrom());
+			messagingService.executeScript("/tmp/" + md5, message.getFrom());
 			logger.error("------->request 4");
 			messagingService.requestFile("/tmp/test.out", message.getFrom());
 			logger.error("------->finish 5");
-			//TEST//TEST//TEST//TEST//TEST//TEST//TEST//TEST
-			
-			
-			
+			// TEST//TEST//TEST//TEST//TEST//TEST//TEST//TEST
+
 			return null;
-		}
-		else if (AgentMessageType.REGISTER_LDAP == message.getType()){
-			
-			
+		} else if (AgentMessageType.REGISTER_LDAP == message.getType()) {
+
 			return null;
 		}
 		//
@@ -238,18 +233,18 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 	}
 
 	private String getMD5ofFile(byte[] inputBytes) {
-		
+
 		MessageDigest digest;
-		String result=null;
+		String result = null;
 		try {
 			digest = MessageDigest.getInstance("MD5");
 			byte[] hashBytes = digest.digest(inputBytes);
-			
+
 			final StringBuilder builder = new StringBuilder();
-		    for(byte b : hashBytes) {
-		        builder.append(String.format("%02x", b));
-		    }
-		    result=builder.toString();
+			for (byte b : hashBytes) {
+				builder.append(String.format("%02x", b));
+			}
+			result = builder.toString();
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}

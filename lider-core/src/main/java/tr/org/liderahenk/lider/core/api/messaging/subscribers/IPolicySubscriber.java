@@ -1,5 +1,6 @@
 package tr.org.liderahenk.lider.core.api.messaging.subscribers;
 
+import tr.org.liderahenk.lider.core.api.messaging.messages.IExecutePoliciesMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IGetPoliciesMessage;
 
 /**
@@ -13,13 +14,12 @@ import tr.org.liderahenk.lider.core.api.messaging.messages.IGetPoliciesMessage;
 public interface IPolicySubscriber {
 
 	/**
-	 * Handle user login/logout events.
+	 * Handle machine and user policies that need to be executed
 	 * 
 	 * @param message
 	 * @return
 	 * @throws Exception
-	 * 
 	 */
-	void messageReceived(IGetPoliciesMessage message) throws Exception;
+	IExecutePoliciesMessage messageReceived(IGetPoliciesMessage message) throws Exception;
 
 }

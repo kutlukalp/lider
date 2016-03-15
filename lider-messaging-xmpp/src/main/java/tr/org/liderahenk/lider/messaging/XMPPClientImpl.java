@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -54,8 +55,9 @@ import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.enums.StatusCode;
+import tr.org.liderahenk.lider.core.api.messaging.messages.IExecutePoliciesMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
-import tr.org.liderahenk.lider.core.api.messaging.responses.IRegistrationMessageResponse;
+import tr.org.liderahenk.lider.core.api.messaging.messages.IRegistrationResponseMessage;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IPolicySubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IPresenceSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IRegistrationSubscriber;
@@ -63,9 +65,9 @@ import tr.org.liderahenk.lider.core.api.messaging.subscribers.ITaskStatusSubscri
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IUserSessionSubscriber;
 import tr.org.liderahenk.lider.messaging.messages.GetPoliciesMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.RegistrationMessageImpl;
+import tr.org.liderahenk.lider.messaging.messages.RegistrationResponseMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.TaskStatusMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.UserSessionMessageImpl;
-import tr.org.liderahenk.lider.messaging.responses.RegistrationMessageResponseImpl;
 import tr.org.liderahenk.lider.messaging.subscribers.DefaultRegistrationSubscriberImpl;
 
 /**
@@ -777,8 +779,8 @@ public class XMPPClientImpl {
 	 * the default subscriber to handle registration.
 	 * 
 	 * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
-	 * @see tr.org.liderahenk.lider.DefaultRegistrationSubscriberImpl.registration.
-	 *      DefaultRegistrationSubscriber
+	 * @see tr.org.liderahenk.lider.DefaultRegistrationSubscriberImpl.
+	 *      registration. DefaultRegistrationSubscriber
 	 *
 	 */
 	class RegistrationListener implements StanzaListener, StanzaFilter {
@@ -799,7 +801,7 @@ public class XMPPClientImpl {
 		@Override
 		public void processPacket(Stanza packet) throws NotConnectedException {
 
-			IRegistrationMessageResponse registrationInfo = null;
+			IRegistrationResponseMessage responseMessage = null;
 			Message msg = null;
 
 			try {
@@ -817,7 +819,7 @@ public class XMPPClientImpl {
 					// Fall back to default register subscriber if reference
 					// list is empty.
 					if (registrationSubscribers == null || registrationSubscribers.isEmpty()) {
-						registrationInfo = triggerDefaultSubscriber(message);
+						responseMessage = triggerDefaultSubscriber(message);
 					} else {
 						// Try to find subscriber other than the default one.
 						IRegistrationSubscriber subscriber = null;
@@ -829,24 +831,25 @@ public class XMPPClientImpl {
 						}
 						// Found another subscriber, notify it.
 						if (subscriber != null) {
-							registrationInfo = subscriber.messageReceived(message);
+							responseMessage = subscriber.messageReceived(message);
 							logger.debug("Notified subscriber => {}", subscriber);
 						} else {
 							// We cannot find another subscriber, trigger the
 							// default.
-							registrationInfo = triggerDefaultSubscriber(message);
+							responseMessage = triggerDefaultSubscriber(message);
 						}
 					}
 				}
 			} catch (Exception e) {
 				logger.error(e.getMessage(), e);
-				registrationInfo = new RegistrationMessageResponseImpl(StatusCode.REGISTRATION_ERROR,
-						"Unexpected error occurred while registring agent, see Lider logs for more info.", null);
+				responseMessage = new RegistrationResponseMessageImpl(StatusCode.REGISTRATION_ERROR,
+						"Unexpected error occurred while registring agent, see Lider logs for more info.", null,
+						msg.getFrom(), new Date());
 			}
 
 			// Send registration info back to agent
 			try {
-				sendMessage(new ObjectMapper().writeValueAsString(registrationInfo), msg.getFrom());
+				sendMessage(new ObjectMapper().writeValueAsString(responseMessage), msg.getFrom());
 			} catch (JsonGenerationException e) {
 				logger.error(e.getMessage(), e);
 			} catch (JsonMappingException e) {
@@ -854,13 +857,14 @@ public class XMPPClientImpl {
 			} catch (IOException e) {
 				logger.error(e.getMessage(), e);
 			}
+
 		}
 
-		private IRegistrationMessageResponse triggerDefaultSubscriber(RegistrationMessageImpl message)
+		private IRegistrationResponseMessage triggerDefaultSubscriber(RegistrationMessageImpl message)
 				throws Exception {
 			logger.info("Triggering default register subscriber.");
 			IRegistrationSubscriber subscriber = new DefaultRegistrationSubscriberImpl();
-			IRegistrationMessageResponse registrationInfo = subscriber.messageReceived(message);
+			IRegistrationResponseMessage registrationInfo = subscriber.messageReceived(message);
 			logger.debug("Notified subscriber => {}", subscriber);
 			return registrationInfo;
 		}
@@ -954,6 +958,7 @@ public class XMPPClientImpl {
 		@Override
 		public void processPacket(Stanza packet) throws NotConnectedException {
 
+			IExecutePoliciesMessage responseMessage = null;
 			Message msg = null;
 
 			try {
@@ -968,11 +973,21 @@ public class XMPPClientImpl {
 					message.setFrom(msg.getFrom());
 
 					if (policySubscriber != null) {
-						policySubscriber.messageReceived(message);
+						responseMessage = policySubscriber.messageReceived(message);
 					}
 				}
-
 			} catch (Exception e) {
+				logger.error(e.getMessage(), e);
+			}
+
+			// Send registration info back to agent
+			try {
+				sendMessage(new ObjectMapper().writeValueAsString(responseMessage), msg.getFrom());
+			} catch (JsonGenerationException e) {
+				logger.error(e.getMessage(), e);
+			} catch (JsonMappingException e) {
+				logger.error(e.getMessage(), e);
+			} catch (IOException e) {
 				logger.error(e.getMessage(), e);
 			}
 		}
