@@ -23,5 +23,37 @@ package tr.org.liderahenk.lider.core.api.messaging.enums;
  * 
  */
 public enum AgentMessageType {
-	TASK_STATUS, REGISTER, UNREGISTER, REGISTER_LDAP, GET_POLICIES, LOGIN, LOGOUT
+	TASK_STATUS(1), REGISTER(2), UNREGISTER(3), REGISTER_LDAP(4), GET_POLICIES(5), LOGIN(6), LOGOUT(7);
+
+	private int id;
+
+	private AgentMessageType(int id) {
+		this.id = id;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	/**
+	 * Provide mapping enums with a fixed ID in JPA (a more robust alternative
+	 * to EnumType.String and EnumType.Ordinal)
+	 * 
+	 * @param id
+	 * @return related AgentMessageType enum
+	 * @see http://blog.chris-ritchie.com/2013/09/mapping-enums-with-fixed-id-in
+	 *      -jpa.html
+	 * 
+	 */
+	public static AgentMessageType getType(Integer id) {
+		if (id == null) {
+			return null;
+		}
+		for (AgentMessageType position : AgentMessageType.values()) {
+			if (id.equals(position.getId())) {
+				return position;
+			}
+		}
+		throw new IllegalArgumentException("No matching type for id: " + id);
+	}
 }

@@ -17,7 +17,7 @@ package tr.org.liderahenk.lider.core.api.enums;
  */
 public enum StatusCode {
 
-	REGISTERED(1), REGISTERED_WITHOUT_LDAP(2), ALREADY_EXISTS(3), REGISTRATION_ERROR(4), EXECUTE_POLICY(5);
+	REGISTERED(1), REGISTERED_WITHOUT_LDAP(2), ALREADY_EXISTS(3), REGISTRATION_ERROR(4);
 
 	private int id;
 
@@ -34,7 +34,7 @@ public enum StatusCode {
 	 * to EnumType.String and EnumType.Ordinal)
 	 * 
 	 * @param id
-	 * @return related SessionEvent enum
+	 * @return related StatusCode enum
 	 * @see http://blog.chris-ritchie.com/2013/09/mapping-enums-with-fixed-id-in
 	 *      -jpa.html
 	 * 

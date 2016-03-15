@@ -45,6 +45,7 @@ public class ExecutePoliciesMessageImpl implements IExecutePoliciesMessage {
 		this.timestamp = timestamp;
 	}
 
+	@Override
 	public LiderMessageType getType() {
 		return type;
 	}
@@ -53,6 +54,7 @@ public class ExecutePoliciesMessageImpl implements IExecutePoliciesMessage {
 		this.type = type;
 	}
 
+	@Override
 	public String getRecipient() {
 		return recipient;
 	}
@@ -61,6 +63,7 @@ public class ExecutePoliciesMessageImpl implements IExecutePoliciesMessage {
 		this.recipient = recipient;
 	}
 
+	@Override
 	public List<IProfile> getUserPolicyProfiles() {
 		return userPolicyProfiles;
 	}
@@ -69,6 +72,7 @@ public class ExecutePoliciesMessageImpl implements IExecutePoliciesMessage {
 		this.userPolicyProfiles = userPolicyProfiles;
 	}
 
+	@Override
 	public List<IProfile> getMachinePolicyProfiles() {
 		return machinePolicyProfiles;
 	}
@@ -77,6 +81,7 @@ public class ExecutePoliciesMessageImpl implements IExecutePoliciesMessage {
 		this.machinePolicyProfiles = machinePolicyProfiles;
 	}
 
+	@Override
 	public String getUserPolicyVersion() {
 		return userPolicyVersion;
 	}
@@ -85,6 +90,7 @@ public class ExecutePoliciesMessageImpl implements IExecutePoliciesMessage {
 		this.userPolicyVersion = userPolicyVersion;
 	}
 
+	@Override
 	public String getMachinePolicyVersion() {
 		return machinePolicyVersion;
 	}
@@ -93,6 +99,7 @@ public class ExecutePoliciesMessageImpl implements IExecutePoliciesMessage {
 		this.machinePolicyVersion = machinePolicyVersion;
 	}
 
+	@Override
 	public Date getTimestamp() {
 		return timestamp;
 	}

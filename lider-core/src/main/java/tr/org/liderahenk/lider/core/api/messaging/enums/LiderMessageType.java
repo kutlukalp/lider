@@ -16,7 +16,39 @@ package tr.org.liderahenk.lider.core.api.messaging.enums;
  * @author <a href="mailto:bm.volkansahin@gmail.com">Volkan Şahin</a>
  * 
  */
-
 public enum LiderMessageType {
-	EXECUTE_TASK, EXECUTE_SCRIPT, EXECUTE_POLICY, REQUEST_FILE, MOVE_FILE, REGISTRATION_RESPONSE
+	EXECUTE_TASK(1), EXECUTE_SCRIPT(2), EXECUTE_POLICY(3), REQUEST_FILE(4), MOVE_FILE(5), REGISTRATION_RESPONSE(6);
+
+	private int id;
+
+	private LiderMessageType(int id) {
+		this.id = id;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	/**
+	 * Provide mapping enums with a fixed ID in JPA (a more robust alternative
+	 * to EnumType.String and EnumType.Ordinal)
+	 * 
+	 * @param id
+	 * @return related LiderMessageType enum
+	 * @see http://blog.chris-ritchie.com/2013/09/mapping-enums-with-fixed-id-in
+	 *      -jpa.html
+	 * 
+	 */
+	public static LiderMessageType getType(Integer id) {
+		if (id == null) {
+			return null;
+		}
+		for (LiderMessageType position : LiderMessageType.values()) {
+			if (id.equals(position.getId())) {
+				return position;
+			}
+		}
+		throw new IllegalArgumentException("No matching type for id: " + id);
+	}
+
 }
