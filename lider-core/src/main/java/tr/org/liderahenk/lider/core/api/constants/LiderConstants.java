@@ -10,6 +10,7 @@ public class LiderConstants {
 
 	public static final class EVENTS {
 		public static final String FILE_RECEIVED = "tr/org/liderahenk/file/received";
+		public static final String PLUGIN_REGISTERED = "tr/org/liderahenk/plugin/registered";
 	}
 
 }

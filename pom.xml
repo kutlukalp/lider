@@ -171,6 +171,7 @@
 		<module>lider-config</module>
 		<module>lider-cache-impl</module>
 		<module>lider-service-impl</module>
+		<module>lider-pluginmanager-impl</module>
 	</modules>
 
 	<build>
