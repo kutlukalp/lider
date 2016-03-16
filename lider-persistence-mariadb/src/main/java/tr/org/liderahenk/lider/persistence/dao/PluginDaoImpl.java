@@ -1,5 +1,6 @@
 package tr.org.liderahenk.lider.persistence.dao;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -17,9 +19,11 @@ import javax.persistence.criteria.Root;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tr.org.liderahenk.lider.core.api.persistence.IQueryCriteria;
 import tr.org.liderahenk.lider.core.api.persistence.PropertyOrder;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IPluginDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin;
+import tr.org.liderahenk.lider.core.api.persistence.enums.CriteriaOperator;
 import tr.org.liderahenk.lider.core.api.persistence.enums.OrderType;
 import tr.org.liderahenk.lider.persistence.entities.PluginImpl;
 
@@ -160,6 +164,72 @@ public class PluginDaoImpl implements IPluginDao {
 		}
 
 		return list;
+	}
+
+	@Override
+	public int updateByProperties(Map<String, Object> propertiesMap, List<IQueryCriteria> criterias) {
+		if (propertiesMap == null) {
+			throw new IllegalArgumentException("Property map was null.");
+		}
+
+		List<Object> parameters = new ArrayList<Object>();
+		int position = 1;
+
+		// Build query string
+		StringBuilder sql = new StringBuilder("UPDATE ");
+		sql.append(PluginImpl.class.getSimpleName()).append(" t SET ");
+
+		// Append fields that needs to be updated
+		for (Entry<String, Object> entry : propertiesMap.entrySet()) {
+			if (entry.getKey() != null && !entry.getKey().isEmpty()) {
+				sql.append("t.").append(entry.getKey()).append(" = ?").append(position++);
+				parameters.add(entry.getValue());
+			}
+		}
+
+		// Append query conditions (criterias)
+		if (criterias != null && !criterias.isEmpty()) {
+			boolean hasCriteria = false;
+			for (IQueryCriteria criteria : criterias) {
+				if (hasCriteria) { // TODO this should be also generic!
+					sql.append(" AND ");
+					hasCriteria = true;
+				}
+				// Handle BETWEEN criteria
+				if (criteria.getOperator() == CriteriaOperator.BT) {
+					sql.append(" t.").append(criteria.getField()).append(" BETWEEN ").append(" ?").append(position++)
+							.append(" AND ").append(" ?").append(position++);
+					parameters.add(Array.get(criteria.getValues(), 0));
+					parameters.add(Array.get(criteria.getValues(), 1));
+				}
+				// Handle IN criteria
+				else if (criteria.getOperator() == CriteriaOperator.IN) {
+					sql.append(" t.").append(criteria.getField()).append(" IN ( ?").append(position++).append(" )");
+					parameters.add(criteria.getValues());
+				}
+				// Handle NOT IN criteria
+				else if (criteria.getOperator() == CriteriaOperator.NOT_IN) {
+					sql.append(" t.").append(criteria.getField()).append(" NOT IN ( ?").append(position++).append(" )");
+					parameters.add(criteria.getValues());
+				} else {
+					// For rest of the operators
+					sql.append(" t.").append(criteria.getField()).append(" ").append(criteria.getOperator().toString())
+							.append(" ?").append(position++);
+					parameters.add(criteria.getValues());
+				}
+			}
+		}
+
+		// Set query parameters
+		Query query = entityManager.createQuery(sql.toString());
+		if (!parameters.isEmpty()) {
+			for (int i = 0; i < parameters.size(); i++) {
+				query.setParameter(i + 1, parameters);
+			}
+		}
+
+		// Execute
+		return query.executeUpdate();
 	}
 
 	public void setEntityManager(EntityManager entityManager) {

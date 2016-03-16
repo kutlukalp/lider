@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import tr.org.liderahenk.lider.core.api.persistence.IBaseDao;
+import tr.org.liderahenk.lider.core.api.persistence.IQueryCriteria;
 import tr.org.liderahenk.lider.core.api.persistence.PropertyOrder;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin;
 
@@ -11,38 +12,38 @@ public interface IPluginDao extends IBaseDao<IPlugin> {
 
 	/**
 	 * 
-	 * @param profile
+	 * @param plugin
 	 * @return
 	 */
-	IPlugin save(IPlugin profile);
+	IPlugin save(IPlugin plugin);
 
 	/**
 	 * 
-	 * @param profile
+	 * @param plugin
 	 * @return
 	 */
 	@Override
-	IPlugin update(IPlugin profile);
+	IPlugin update(IPlugin plugin);
 
 	/**
 	 * 
-	 * @param profile
+	 * @param plugin
 	 * @return
 	 */
-	IPlugin saveOrUpdate(IPlugin profile);
+	IPlugin saveOrUpdate(IPlugin plugin);
 
 	/**
 	 * 
-	 * @param profileId
+	 * @param pluginId
 	 */
-	void delete(Long profileId);
+	void delete(Long pluginId);
 
 	/**
 	 * 
-	 * @param profileId
+	 * @param pluginId
 	 * @return
 	 */
-	IPlugin find(Long profileId);
+	IPlugin find(Long pluginId);
 
 	/**
 	 * 
@@ -63,5 +64,7 @@ public interface IPluginDao extends IBaseDao<IPlugin> {
 	 */
 	List<? extends IPlugin> findByProperties(Class<? extends IPlugin> obj, Map<String, Object> propertiesMap,
 			List<PropertyOrder> orders, Integer maxResults);
+
+	int updateByProperties(Map<String, Object> propertiesMap, List<IQueryCriteria> criterias);
 
 }
