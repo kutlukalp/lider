@@ -870,7 +870,6 @@ public class LDAPServiceImpl implements ILDAPService {
 		return false;
 	}
 	
-	@Override
 	/**
 	 * Find target entries which subject to command execution from provided DN
 	 * list.
@@ -879,6 +878,7 @@ public class LDAPServiceImpl implements ILDAPService {
 	 * @param dnType
 	 * @return
 	 */
+	@Override
 	public List<LdapEntry> findTargetEntries(List<String> dnList, RestDNType dnType) {
 		List<LdapEntry> entries = null;
 		if (dnList != null && !dnList.isEmpty() && dnType != null) {

@@ -57,7 +57,7 @@ public class TaskRequestProcessorImpl implements ITaskRequestProcessor {
 			// subject
 			// to command execution. Therefore we need to find these LDAP
 			// entries first before authorization and command execution phases.
-			targetEntries = findTargetEntries(request.getDnList(), request.getDnType());
+			targetEntries = ldapService.findTargetEntries(request.getDnList(), request.getDnType());
 
 			if (configService.getUserAuthorizationEnabled()) {
 				Subject currentUser = null;
@@ -108,52 +108,6 @@ public class TaskRequestProcessorImpl implements ITaskRequestProcessor {
 			return responseFactory.createResponse(request, RestResponseStatus.ERROR, Arrays.asList(
 					new String[] { "Cannot submit task for request!", e.getMessage(), e.getCause().getMessage() }));
 		}
-	}
-
-	/**
-	 * Find target entries which subject to command execution from provided DN
-	 * list.
-	 * 
-	 * @param dnList
-	 * @param dnType
-	 * @return
-	 */
-	private List<LdapEntry> findTargetEntries(List<String> dnList, RestDNType dnType) {
-		List<LdapEntry> entries = null;
-		if (dnList != null && !dnList.isEmpty() && dnType != null) {
-
-			// Determine returning attributes
-			String[] returningAttributes = new String[] { configService.getUserLdapPrivilegeAttribute() };
-
-			// Construct filtering attributes
-			String objectClasses = dnType == RestDNType.AHENK ? configService.getAgentLdapObjectClasses()
-					: (dnType == RestDNType.USER ? configService.getUserLdapObjectClasses() : "*");
-			List<LdapSearchFilterAttribute> filterAttributes = new ArrayList<LdapSearchFilterAttribute>();
-			// There may be multiple object classes
-			String[] objectClsArr = objectClasses.split(",");
-			for (String objectClass : objectClsArr) {
-				LdapSearchFilterAttribute fAttr = new LdapSearchFilterAttribute("objectClass", objectClass,
-						LdapSearchFilterEnum.EQ);
-				filterAttributes.add(fAttr);
-			}
-
-			entries = new ArrayList<LdapEntry>();
-
-			// For each DN, find its target (child) entries according to desired
-			// DN type:
-			for (String dn : dnList) {
-				try {
-					List<LdapEntry> result = ldapService.search(dn, filterAttributes, returningAttributes);
-					if (result != null && !result.isEmpty()) {
-						entries.addAll(result);
-					}
-				} catch (LdapException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-
-		return entries;
 	}
 
 	public void setServiceRouter(IServiceRouter serviceRouter) {
