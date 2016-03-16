@@ -224,7 +224,7 @@ public class PluginDaoImpl implements IPluginDao {
 		Query query = entityManager.createQuery(sql.toString());
 		if (!parameters.isEmpty()) {
 			for (int i = 0; i < parameters.size(); i++) {
-				query.setParameter(i + 1, parameters);
+				query.setParameter(i + 1, parameters.get(i));
 			}
 		}
 
