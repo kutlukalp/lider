@@ -2,14 +2,18 @@ package tr.org.liderahenk.lider.pluginmanager;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tr.org.liderahenk.lider.core.api.constants.LiderConstants;
 import tr.org.liderahenk.lider.core.api.persistence.IQueryCriteria;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IPluginDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin;
@@ -101,6 +105,11 @@ public class PluginManagerImpl {
 			});
 
 			pluginDao.updateByProperties(propertiesMap, criterias);
+
+			// Fire an event to notify plugins registered successfully.
+			Dictionary<String, Object> dict = new Hashtable<String, Object>();
+			dict.put("pluginIdList", pluginIdList);
+			eventAdmin.postEvent(new Event(LiderConstants.EVENTS.PLUGIN_REGISTERED, dict));
 		}
 
 	}
