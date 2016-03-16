@@ -53,29 +53,37 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 	@Override
 	public IRestResponse execute(String json) {
 		try {
-			// TODO convert json to IPolicyExecutionRequest
+			logger.error("Creating IPolicyExecutionRequest object.");
 			IPolicyExecutionRequest request = requestFactory.createPolicyExecutionRequest(json);
 
-			// TODO find IPolicy by IPolicyExecutionRequest.getPolicyId
+			logger.error("Finding IPolicy by requested policyId.");
 			IPolicy policy = policyDao.find(request.getPolicyId());
 
-			// TODO find target LDAP entries from dnList and dnType
-			List<LdapEntry> entryList = ldapService.findTargetEntries(request.getDnList(), request.getDnType());
-
-			// TODO insert ICommand record using IPolicy
+			logger.error("Finding target entries under requested dnList.");
+			logger.error("dnList size: " + request.getDnList().size());
+			logger.error("dnType: " + request.getDnType());
+			List<LdapEntry> targetEntryList = ldapService.findTargetEntries(request.getDnList(), request.getDnType());
+			
+			logger.error("Creating ICommand object.");
 			ICommand command = createCommandFromRequest(request, policy);
 
-			for (LdapEntry entry : entryList) {
-				// TODO insert ICommandExecution records using IPolicy
-				command.addCommandExecution(
-						createCommandExecution(command, request.getDnType(), entry.getDistinguishedName()));
+			logger.error("target entry list size: " + targetEntryList.size());
+			if (targetEntryList != null && targetEntryList.size() > 0) {
+				logger.error("Adding a ICommandExecution to ICommand for each target DN. List size: " + targetEntryList.size());
+				for (LdapEntry targetEntry : targetEntryList) {
+					command.addCommandExecution(
+							createCommandExecution(command, request.getDnType(), targetEntry.getDistinguishedName()));
+				}
 			}
-
+			
+			logger.error("Saving command.");
 			commandDao.save(command);
 			
 			Map<String, Object> resultMap = new HashMap<String, Object>();
+			logger.error("Putting saved command object to resultMap as JSON.");
 			resultMap.put("command", command.toJson());
 			
+			logger.error("Creating Rest Response that contains resultMap. ResponseStatus: OK");
 			return responseFactory.createResponse(RestResponseStatus.OK, "Record saved.", resultMap);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -281,6 +289,10 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 
 	public void setLdapService(ILDAPService ldapService) {
 		this.ldapService = ldapService;
+	}
+	
+	public void setCommandDao(ICommandDao commandDao) {
+		this.commandDao = commandDao;
 	}
 	
 	/**
