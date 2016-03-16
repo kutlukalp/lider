@@ -47,7 +47,9 @@ import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
 import tr.org.liderahenk.lider.core.api.ldap.ILdapExtension;
 import tr.org.liderahenk.lider.core.api.ldap.LdapSearchFilterAttribute;
+import tr.org.liderahenk.lider.core.api.ldap.enums.LdapSearchFilterEnum;
 import tr.org.liderahenk.lider.core.api.ldap.exception.LdapException;
+import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
 import tr.org.liderahenk.lider.core.model.ldap.IUser;
 import tr.org.liderahenk.lider.core.model.ldap.IUserPrivilege;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
@@ -866,6 +868,53 @@ public class LDAPServiceImpl implements ILDAPService {
 	public boolean isAhenk(LdapEntry entry) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+	
+	@Override
+	/**
+	 * Find target entries which subject to command execution from provided DN
+	 * list.
+	 * 
+	 * @param dnList
+	 * @param dnType
+	 * @return
+	 */
+	public List<LdapEntry> findTargetEntries(List<String> dnList, RestDNType dnType) {
+		List<LdapEntry> entries = null;
+		if (dnList != null && !dnList.isEmpty() && dnType != null) {
+
+			// Determine returning attributes
+			String[] returningAttributes = new String[] { configurationService.getUserLdapPrivilegeAttribute() };
+
+			// Construct filtering attributes
+			String objectClasses = dnType == RestDNType.AHENK ? configurationService.getAgentLdapObjectClasses()
+					: (dnType == RestDNType.USER ? configurationService.getUserLdapObjectClasses() : "*");
+			List<LdapSearchFilterAttribute> filterAttributes = new ArrayList<LdapSearchFilterAttribute>();
+			// There may be multiple object classes
+			String[] objectClsArr = objectClasses.split(",");
+			for (String objectClass : objectClsArr) {
+				LdapSearchFilterAttribute fAttr = new LdapSearchFilterAttribute("objectClass", objectClass,
+						LdapSearchFilterEnum.EQ);
+				filterAttributes.add(fAttr);
+			}
+
+			entries = new ArrayList<LdapEntry>();
+
+			// For each DN, find its target (child) entries according to desired
+			// DN type:
+			for (String dn : dnList) {
+				try {
+					List<LdapEntry> result = this.search(dn, filterAttributes, returningAttributes);
+					if (result != null && !result.isEmpty()) {
+						entries.addAll(result);
+					}
+				} catch (LdapException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+		return entries;
 	}
 
 }
