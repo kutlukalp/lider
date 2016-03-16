@@ -46,6 +46,7 @@
         <bundle start-level="84">mvn:${groupId}/lider-router-impl/${project.version}</bundle>
         <bundle start-level="84">mvn:${groupId}/lider-service-impl/${project.version}</bundle>
         <bundle start-level="84">mvn:${groupId}/lider-taskmanager-impl/${project.version}</bundle>
+        <bundle start-level="84">mvn:${groupId}/lider-pluginmanager-impl/${project.version}</bundle>
     </feature>
     
     <feature name="lider-dependent-bundles" description="${project.name}" version="${project.version}">
