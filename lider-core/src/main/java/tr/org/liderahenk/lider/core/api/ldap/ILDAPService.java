@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.directory.api.ldap.model.entry.Entry;
 
 import tr.org.liderahenk.lider.core.api.ldap.exception.LdapException;
+import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
 import tr.org.liderahenk.lider.core.model.ldap.IUser;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
@@ -120,5 +121,7 @@ public interface ILDAPService {
 
 	List<LdapEntry> search(String baseDn, List<LdapSearchFilterAttribute> filterAttributes, String[] attributes)
 			throws LdapException;
+
+	List<LdapEntry> findTargetEntries(List<String> dnList, RestDNType dnType);
 
 }

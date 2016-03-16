@@ -28,12 +28,13 @@ public class PolicyController {
 	@Autowired
 	private IPolicyRequestProcessor policyProcessor;
 
-	@RequestMapping(value = "/{id:[\\d]+}/execute", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "/execute", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
-	public IRestResponse executePolicy(@PathVariable final long id, HttpServletRequest request)
+	public IRestResponse executePolicy(@RequestBody String requestBody, HttpServletRequest request)
 			throws UnsupportedEncodingException {
-		logger.info("Request received. URL: '/lider/policy/{}/execute'", id);
-		IRestResponse restResponse = policyProcessor.execute(id);
+		String requestBodyDecoded = decodeRequestBody(requestBody);
+		logger.info("Request received. URL: '/lider/policy/execute' Body: {}", requestBodyDecoded);
+		IRestResponse restResponse = policyProcessor.execute(requestBodyDecoded);
 		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
