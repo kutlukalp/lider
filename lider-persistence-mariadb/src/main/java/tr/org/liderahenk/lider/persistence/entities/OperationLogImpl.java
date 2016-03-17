@@ -4,8 +4,6 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,7 +18,7 @@ import tr.org.liderahenk.lider.core.api.persistence.enums.CrudType;
  * Entity class for IOperationLog objects.
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
- * @see
+ * @see tr.org.liderahenk.lider.core.api.persistence.entities.IOperationLog
  *
  */
 @Entity
@@ -31,108 +29,68 @@ public class OperationLogImpl implements IOperationLog {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "ID")
+	@Column(name = "ID", unique = true, nullable = false)
 	private Long id;
-
-	@Column(name = "NAME")
-	private String name;
-
-	@Column(name = "ACTIVE")
-	private Boolean active;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "CHANGED_DATE")
-	private Date changedDate;
-
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "CREATION_DATE")
-	private Date creationDate;
-
-	@Column(name = "VERSION")
-	private Integer version;
-
-	@Temporal(TemporalType.DATE)
-	@Column(name = "DATE")
-	private Date date;
 
 	@Column(name = "USER_ID")
 	private String userId;
 
-	@Column(name = "PLUGIN_ID")
-	private String pluginId;
+	@Column(name = "CRUD_TYPE", length = 1)
+	private Integer crudType;
 
 	@Column(name = "TASK_ID")
-	private String taskId;
+	private Long taskId;
 
-	@Column(name = "ACTION")
-	private String action;
+	@Column(name = "POLICY_ID")
+	private Long policyId;
 
-	@Column(name = "SERVER_IP")
-	private String serverIp;
+	@Column(name = "PROFILE_ID")
+	private Long profileId;
 
-	@Column(name = "RESULT_CODE")
-	private String resultCode;
+	@Column(name = "LOG_MESSAGE", nullable = false)
+	private String logMessage;
 
-	@Column(name = "LOG_TEXT")
-	private String logText;
+	@Column(name = "REQUEST_DATA")
+	private byte[] requestData;
 
-	@Column(name = "CHECKSUM")
-	private String checksum;
+	@Column(name = "REQUEST_IP")
+	private String requestIp;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "CRUD_TYPE")
-	private CrudType crudType;
-
-	@Column(name = "CLIENT_CN")
-	private String clientCN;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "CREATE_DATE", nullable = false)
+	private Date createDate;
 
 	public OperationLogImpl() {
-		super();
 	}
 
-	public OperationLogImpl(Long id, String name, Boolean active, Date changedDate, Date creationDate, Integer version,
-			Date date, String userId, String pluginId, String taskId, String action, String serverIp, String resultCode,
-			String logText, String checksum, CrudType crudType, String clientCN) {
-		super();
+	public OperationLogImpl(Long id, String userId, CrudType crudType, Long taskId, Long policyId, Long profileId,
+			String logMessage, byte[] requestData, String requestIp, Date createDate) {
 		this.id = id;
-		this.name = name;
-		this.active = active;
-		this.changedDate = changedDate;
-		this.creationDate = creationDate;
-		this.version = version;
-		this.date = date;
 		this.userId = userId;
-		this.pluginId = pluginId;
+		setCrudType(crudType);
 		this.taskId = taskId;
-		this.action = action;
-		this.serverIp = serverIp;
-		this.resultCode = resultCode;
-		this.logText = logText;
-		this.checksum = checksum;
-		this.crudType = crudType;
-		this.clientCN = clientCN;
+		this.policyId = policyId;
+		this.profileId = profileId;
+		this.logMessage = logMessage;
+		this.requestData = requestData;
+		this.requestIp = requestIp;
+		this.createDate = createDate;
 	}
 
-	public OperationLogImpl(IOperationLog operationLog) {
-		this.id = operationLog.getId();
-		this.action = operationLog.getAction();
-		this.active = operationLog.getActive();
-		this.changedDate = operationLog.getChangedDate();
-		this.checksum = operationLog.getChecksum();
-		this.clientCN = operationLog.getClientCN();
-		this.creationDate = operationLog.getCreationDate();
-		this.crudType = operationLog.getCrudType();
-		this.date = operationLog.getDate();
-		this.logText = operationLog.getLogText();
-		this.name = operationLog.getName();
-		this.pluginId = operationLog.getPluginId();
-		this.resultCode = operationLog.getResultCode();
-		this.serverIp = operationLog.getServerIp();
-		this.taskId = operationLog.getTaskId();
-		this.userId = operationLog.getUserId();
-		this.version = operationLog.getVersion();
+	public OperationLogImpl(IOperationLog log) {
+		this.id = log.getId();
+		this.userId = log.getUserId();
+		setCrudType(log.getCrudType());
+		this.taskId = log.getTaskId();
+		this.policyId = log.getPolicyId();
+		this.profileId = log.getProfileId();
+		this.logMessage = log.getLogMessage();
+		this.requestData = log.getRequestData();
+		this.requestIp = log.getRequestIp();
+		this.createDate = log.getCreateDate();
 	}
 
+	@Override
 	public Long getId() {
 		return id;
 	}
@@ -141,22 +99,7 @@ public class OperationLogImpl implements IOperationLog {
 		this.id = id;
 	}
 
-	public String getClientCN() {
-		return clientCN;
-	}
-
-	public void setClientCN(String clientCN) {
-		this.clientCN = clientCN;
-	}
-
-	public Date getDate() {
-		return date;
-	}
-
-	public void setDate(Date date) {
-		this.date = date;
-	}
-
+	@Override
 	public String getUserId() {
 		return userId;
 	}
@@ -165,113 +108,80 @@ public class OperationLogImpl implements IOperationLog {
 		this.userId = userId;
 	}
 
-	public String getPluginId() {
-		return pluginId;
-	}
-
-	public void setPluginId(String pluginId) {
-		this.pluginId = pluginId;
-	}
-
-	public String getTaskId() {
-		return taskId;
-	}
-
-	public void setTaskId(String taskId) {
-		this.taskId = taskId;
-	}
-
-	public String getAction() {
-		return action;
-	}
-
-	public void setAction(String action) {
-		this.action = action;
-	}
-
-	public String getServerIp() {
-		return serverIp;
-	}
-
-	public void setServerIp(String serverIp) {
-		this.serverIp = serverIp;
-	}
-
-	public String getResultCode() {
-		return resultCode;
-	}
-
-	public void setResultCode(String resultCode) {
-		this.resultCode = resultCode;
-	}
-
-	public String getLogText() {
-		return logText;
-	}
-
-	public void setLogText(String logText) {
-		this.logText = logText;
-	}
-
-	public String getChecksum() {
-		return checksum;
-	}
-
-	public void setChecksum(String checksum) {
-		this.checksum = checksum;
-	}
-
+	@Override
 	public CrudType getCrudType() {
-		return crudType;
+		return CrudType.getType(crudType);
 	}
 
 	public void setCrudType(CrudType crudType) {
-		this.crudType = crudType;
+		if (crudType == null) {
+			this.crudType = null;
+		} else {
+			this.crudType = crudType.getId();
+		}
 	}
 
-	public String getName() {
-		return name;
+	@Override
+	public Long getTaskId() {
+		return taskId;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setTaskId(Long taskId) {
+		this.taskId = taskId;
 	}
 
-	public Boolean getActive() {
-		return active;
+	@Override
+	public Long getPolicyId() {
+		return policyId;
 	}
 
-	public void setActive(Boolean active) {
-		this.active = active;
+	public void setPolicyId(Long policyId) {
+		this.policyId = policyId;
 	}
 
-	public Date getChangedDate() {
-		return changedDate;
+	@Override
+	public Long getProfileId() {
+		return profileId;
 	}
 
-	public void setChangedDate(Date changedDate) {
-		this.changedDate = changedDate;
+	public void setProfileId(Long profileId) {
+		this.profileId = profileId;
 	}
 
-	public Date getCreationDate() {
-		return creationDate;
+	@Override
+	public String getLogMessage() {
+		return logMessage;
 	}
 
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
+	public void setLogMessage(String logMessage) {
+		this.logMessage = logMessage;
 	}
 
-	public Integer getVersion() {
-		return version;
+	@Override
+	public byte[] getRequestData() {
+		return requestData;
 	}
 
-	public void setVersion(Integer version) {
-		this.version = version;
+	public void setRequestData(byte[] requestData) {
+		this.requestData = requestData;
+	}
+
+	@Override
+	public String getRequestIp() {
+		return requestIp;
+	}
+
+	public void setRequestIp(String requestIp) {
+		this.requestIp = requestIp;
 	}
 
 	@Override
 	public Date getCreateDate() {
-		return null;
+		return createDate;
 	}
-	
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+
 }

@@ -1,10 +1,5 @@
 package tr.org.liderahenk.lider.core.api.log;
 
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import tr.org.liderahenk.lider.core.api.persistence.entities.IOperationLog;
 import tr.org.liderahenk.lider.core.api.persistence.enums.CrudType;
 
@@ -12,43 +7,57 @@ public interface IOperationLogService {
 
 	/**
 	 * 
-	 * @param date
 	 * @param userId
-	 * @param pluginId
-	 * @param taskId
-	 * @param action
-	 * @param serverIp
-	 * @param resultCode
-	 * @param logText
+	 * @param crudType
+	 * @param message
+	 * @param requestData
+	 * @param requestIp
+	 * @return
+	 * @throws Exception
 	 */
-	IOperationLog createLog(Date date, String userId, String pluginId, String taskId, String action, String serverIp,
-			String resultCode, String logText, CrudType crudType, String clientCN);
+	IOperationLog saveLog(String userId, CrudType crudType, String message, byte[] requestData, String requestIp)
+			throws Exception;
 
-	List<? extends IOperationLog> getLogsByUserId(String userId, int maxResults);
+	/**
+	 * 
+	 * @param userId
+	 * @param crudType
+	 * @param taskId
+	 * @param message
+	 * @param requestData
+	 * @param requestIp
+	 * @return
+	 * @throws Exception
+	 */
+	IOperationLog saveTaskLog(String userId, CrudType crudType, Long taskId, String message, byte[] requestData,
+			String requestIp) throws Exception;
 
-	List<? extends IOperationLog> getLogsByCrudType(CrudType crudType, int maxResults);
+	/**
+	 * 
+	 * @param userId
+	 * @param crudType
+	 * @param policyId
+	 * @param message
+	 * @param requestData
+	 * @param requestIp
+	 * @return
+	 * @throws Exception
+	 */
+	IOperationLog savePolicyLog(String userId, CrudType crudType, Long policyId, String message, byte[] requestData,
+			String requestIp) throws Exception;
 
-	List<? extends IOperationLog> getLogsByClientCN(String clientCN, int maxResults);
+	/**
+	 * 
+	 * @param userId
+	 * @param crudType
+	 * @param profileId
+	 * @param message
+	 * @param requestData
+	 * @param requestIp
+	 * @return
+	 * @throws Exception
+	 */
+	IOperationLog saveProfileLog(String userId, CrudType crudType, Long profileId, String message, byte[] requestData,
+			String requestIp) throws Exception;
 
-	List<? extends IOperationLog> getLogsByResultCode(String resultCode, int maxResults);
-
-	List<? extends IOperationLog> getLogsByPluginId(String pluginId, int maxResults);
-
-	List<? extends IOperationLog> getLogsByTaskId(String taskId, int maxResults);
-
-	List<? extends IOperationLog> getLogsByDate(Date startDate, Date finishDate, int maxResults);
-
-	List<? extends IOperationLog> getLogsByText(String freeText, int maxResults);
-
-	void fileToDB(String path) throws IOException;
-
-	String getChecksum(IOperationLog log);
-
-	List<? extends IOperationLog> getAllLogs(Integer maxResults);
-
-	List<? extends IOperationLog> getLogsBy(Map<String, Object> params, Integer maxResults);
-
-	void importAgentLogLines(List<String> lines);
-
-	List<? extends IOperationLog> getLogsByDate(Long startDate, Long endDate);
 }

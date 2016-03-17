@@ -1,7 +1,5 @@
 package tr.org.liderahenk.web.security;
 
-import java.util.Date;
-
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -26,26 +24,26 @@ import tr.org.liderahenk.lider.core.api.persistence.enums.CrudType;
  */
 public class LiderAuthenticationFilter extends AuthenticatingFilter {
 
-	private static Logger log = LoggerFactory.getLogger(LiderAuthenticationFilter.class);
+	private static Logger logger = LoggerFactory.getLogger(LiderAuthenticationFilter.class);
 
 	@Autowired
 	private IOperationLogService logService;
 
 	@Override
 	protected AuthenticationToken createToken(ServletRequest request, ServletResponse response) throws Exception {
-		log.debug("parsing token from request header");
+		logger.debug("parsing token from request header");
 		HttpServletRequest req = (HttpServletRequest) request;
 
 		String user = req.getHeader("username");
 		String pwd = req.getHeader("password");
 
-		log.debug("creating usernamepassword token for user: {}, pwd: {}", user, "*****");
+		logger.debug("creating usernamepassword token for user: {}, pwd: {}", user, "*****");
 		return new UsernamePasswordToken(user, pwd);
 	}
 
 	@Override
 	protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception {
-		log.debug("will try to authenticate now...");
+		logger.debug("will try to authenticate now...");
 		return executeLogin(request, response);
 	}
 
@@ -54,9 +52,11 @@ public class LiderAuthenticationFilter extends AuthenticatingFilter {
 			ServletResponse response) {
 		HttpServletRequest req = (HttpServletRequest) request;
 		String user = req.getHeader("username");
-		logService.createLog(new Date(), user, null, null, "Unauthorized access request", getHost(request), "HTTP 401",
-				"Unauthorized access request: " + req.getRequestURI(), CrudType.LOGIN, user);
-
+		try {
+			logService.saveLog(user, CrudType.LOGIN, "Unauthorized access request", null, getHost(request));
+		} catch (Exception e1) {
+			logger.error(e1.getMessage(), e1);
+		}
 		HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 		httpServletResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 		return false;

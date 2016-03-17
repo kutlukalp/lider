@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
-	<bean id="operationLogService" class="tr.org.liderahenk.lider.log.OperationLogServiceImpl">
-		<property name="logDao" ref="operationLogDao" />
-	</bean>
-
-	<reference id="operationLogDao"
-		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IOperationLogDao" />
-
 	<service ref="operationLogService"
 		interface="tr.org.liderahenk.lider.core.api.log.IOperationLogService" />
+	<bean id="operationLogService" class="tr.org.liderahenk.lider.log.OperationLogServiceImpl">
+		<property name="logDao" ref="logDao" />
+		<property name="logFactory" ref="logFactory" />
+	</bean>
+
+	<reference id="logDao"
+		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IOperationLogDao" />
+	<reference id="logFactory"
+		interface="tr.org.liderahenk.lider.core.api.persistence.factories.IOperationLogFactory" />
 
 </blueprint>

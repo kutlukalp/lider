@@ -1,39 +1,62 @@
 package tr.org.liderahenk.lider.core.api.persistence.entities;
 
-import java.util.Date;
-
 import tr.org.liderahenk.lider.core.api.persistence.enums.CrudType;
 
+/**
+ * IOperationLog entity class is responsible for storing system-wide log
+ * records.
+ * 
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Kağan Akkaya</a>
+ *
+ */
 public interface IOperationLog extends IEntity {
-	Date getDate();
 
+	/**
+	 * 
+	 * @return LDAO UID of the user
+	 */
 	String getUserId();
 
-	String getPluginId();
-
-	String getTaskId();
-
-	String getAction();
-
-	String getClientCN();
-
-	String getServerIp();
-
-	String getResultCode();
-
-	String getLogText();
-
-	String getChecksum();
-
+	/**
+	 * 
+	 * @return CRUD type
+	 */
 	CrudType getCrudType();
 
-	Boolean getActive();
+	/**
+	 * 
+	 * @return task ID
+	 */
+	Long getTaskId();
 
-	Date getChangedDate();
+	/**
+	 * 
+	 * @return policy ID
+	 */
+	Long getPolicyId();
 
-	Date getCreationDate();
+	/**
+	 * 
+	 * @return profile ID
+	 */
+	Long getProfileId();
 
-	String getName();
+	/**
+	 * 
+	 * @return log message
+	 */
+	String getLogMessage();
 
-	Integer getVersion();
+	/**
+	 * 
+	 * @return binary representation of data in received request
+	 */
+	byte[] getRequestData();
+
+	/**
+	 * 
+	 * @return sender IP
+	 */
+	String getRequestIp();
+
 }
