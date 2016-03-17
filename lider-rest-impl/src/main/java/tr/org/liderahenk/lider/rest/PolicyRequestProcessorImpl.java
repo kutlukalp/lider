@@ -47,44 +47,39 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 	private ICommandDao commandDao;
 	private IRequestFactory requestFactory;
 	private IResponseFactory responseFactory;
-	private IConfigurationService configService;
 	private ILDAPService ldapService;
 
 	@Override
 	public IRestResponse execute(String json) {
 		try {
-			logger.error("Creating IPolicyExecutionRequest object.");
+			logger.debug("Creating IPolicyExecutionRequest object.");
 			IPolicyExecutionRequest request = requestFactory.createPolicyExecutionRequest(json);
 
-			logger.error("Finding IPolicy by requested policyId.");
+			logger.debug("Finding IPolicy by requested policyId.");
 			IPolicy policy = policyDao.find(request.getPolicyId());
 
-			logger.error("Finding target entries under requested dnList.");
-			logger.error("dnList size: " + request.getDnList().size());
-			logger.error("dnType: " + request.getDnType());
+			logger.debug("Finding target entries under requested dnList.");
+			logger.debug("dnList size: " + request.getDnList().size());
+			logger.debug("dnType: " + request.getDnType());
 			List<LdapEntry> targetEntryList = ldapService.findTargetEntries(request.getDnList(), request.getDnType());
 			
-			logger.error("Creating ICommand object.");
+			logger.debug("Creating ICommand object.");
 			ICommand command = createCommandFromRequest(request, policy);
 
-			logger.error("target entry list size: " + targetEntryList.size());
+			logger.debug("Target entry list size: " + targetEntryList.size());
 			if (targetEntryList != null && targetEntryList.size() > 0) {
-				logger.error("Adding a ICommandExecution to ICommand for each target DN. List size: " + targetEntryList.size());
+				logger.debug("Adding a ICommandExecution to ICommand for each target DN. List size: " + targetEntryList.size());
 				for (LdapEntry targetEntry : targetEntryList) {
 					command.addCommandExecution(
 							createCommandExecution(command, request.getDnType(), targetEntry.getDistinguishedName()));
 				}
 			}
 			
-			logger.error("Saving command.");
+			logger.debug("Saving command.");
 			commandDao.save(command);
 			
-			Map<String, Object> resultMap = new HashMap<String, Object>();
-			logger.error("Putting saved command object to resultMap as JSON.");
-			resultMap.put("command", command.toJson());
-			
-			logger.error("Creating Rest Response that contains resultMap. ResponseStatus: OK");
-			return responseFactory.createResponse(RestResponseStatus.OK, "Record saved.", resultMap);
+			logger.debug("Creating rest response ResponseStatus: OK");
+			return responseFactory.createResponse(RestResponseStatus.OK, "Record saved.", null);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			return responseFactory.createResponse(RestResponseStatus.ERROR, e.getMessage());
@@ -281,10 +276,6 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 
 	public void setResponseFactory(IResponseFactory responseFactory) {
 		this.responseFactory = responseFactory;
-	}
-
-	public void setConfigService(IConfigurationService configService) {
-		this.configService = configService;
 	}
 
 	public void setLdapService(ILDAPService ldapService) {
