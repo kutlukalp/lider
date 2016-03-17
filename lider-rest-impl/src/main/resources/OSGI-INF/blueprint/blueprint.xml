@@ -14,6 +14,7 @@
 		<property name="responseFactory" ref="responseFactory" />
 		<property name="policyDao" ref="policyDao" />
 		<property name="profileDao" ref="profileDao" />
+		<property name="commandDao" ref="commandDao" />
 		<property name="configService" ref="configService" />
 		<property name="ldapService" ref="ldapService" />
 	</bean>
@@ -45,6 +46,8 @@
 		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IProfileDao" />
 	<reference id="policyDao"
 		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IPolicyDao" />
+	<reference id="commandDao"
+		interface="tr.org.liderahenk.lider.core.api.persistence.dao.ICommandDao" />
 	<reference id="requestFactory"
 		interface="tr.org.liderahenk.lider.core.api.rest.IRequestFactory" />
 	<reference id="responseFactory"
