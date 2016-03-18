@@ -15,7 +15,6 @@
 		<property name="policyDao" ref="policyDao" />
 		<property name="profileDao" ref="profileDao" />
 		<property name="commandDao" ref="commandDao" />
-		<property name="configService" ref="configService" />
 		<property name="ldapService" ref="ldapService" />
 	</bean>
 
