@@ -8,12 +8,9 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import org.osgi.service.event.Event;
-import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tr.org.liderahenk.lider.core.api.constants.LiderConstants;
 import tr.org.liderahenk.lider.core.api.persistence.IQueryCriteria;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IPluginDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin;
@@ -27,7 +24,6 @@ public class PluginManagerImpl {
 
 	private List<IPluginInfo> pluginInfoList;
 	private IPluginDao pluginDao;
-	private EventAdmin eventAdmin;
 
 	/**
 	 * Register plugins which provided by plugin info list.<br/>
@@ -62,12 +58,12 @@ public class PluginManagerImpl {
 				if (plugins != null && !plugins.isEmpty()) {
 					plugin = plugins.get(0);
 					plugin = mergeValues(plugin, pluginInfo);
+					plugin = pluginDao.update(plugin);
 				} else {
 					// If not, create new plugin record
 					plugin = createPlugin(pluginInfo);
+					plugin = pluginDao.save(plugin);
 				}
-
-				plugin = pluginDao.save(plugin);
 
 				pluginIdList.add(plugin.getId());
 			}
@@ -109,7 +105,6 @@ public class PluginManagerImpl {
 			// Fire an event to notify plugins registered successfully.
 			Dictionary<String, Object> dict = new Hashtable<String, Object>();
 			dict.put("pluginIdList", pluginIdList);
-			eventAdmin.postEvent(new Event(LiderConstants.EVENTS.PLUGIN_REGISTERED, dict));
 		}
 
 	}
@@ -272,6 +267,10 @@ public class PluginManagerImpl {
 		return plugin;
 	}
 
+	/**
+	 * 
+	 * @param pluginInfoList
+	 */
 	public void setPluginInfoList(List<IPluginInfo> pluginInfoList) {
 		this.pluginInfoList = pluginInfoList;
 		// Trigger plugin registration to insert new plugins and update existing
@@ -279,12 +278,12 @@ public class PluginManagerImpl {
 		registerPlugins();
 	}
 
+	/**
+	 * 
+	 * @param pluginDao
+	 */
 	public void setPluginDao(IPluginDao pluginDao) {
 		this.pluginDao = pluginDao;
-	}
-
-	public void setEventAdmin(EventAdmin eventAdmin) {
-		this.eventAdmin = eventAdmin;
 	}
 
 }

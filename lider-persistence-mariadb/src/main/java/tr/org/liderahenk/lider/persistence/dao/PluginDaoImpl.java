@@ -177,7 +177,7 @@ public class PluginDaoImpl implements IPluginDao {
 
 		// Build query string
 		StringBuilder sql = new StringBuilder("UPDATE ");
-		sql.append(PluginImpl.class.getSimpleName()).append(" t SET ");
+		sql.append(PluginImpl.class.getSimpleName()).append(" AS t SET ");
 
 		// Append fields that needs to be updated
 		for (Entry<String, Object> entry : propertiesMap.entrySet()) {
@@ -189,11 +189,11 @@ public class PluginDaoImpl implements IPluginDao {
 
 		// Append query conditions (criterias)
 		if (criterias != null && !criterias.isEmpty()) {
+			sql.append(" WHERE ");
 			boolean hasCriteria = false;
 			for (IQueryCriteria criteria : criterias) {
-				if (hasCriteria) { // TODO this should be also generic!
+				if (hasCriteria) {
 					sql.append(" AND ");
-					hasCriteria = true;
 				}
 				// Handle BETWEEN criteria
 				if (criteria.getOperator() == CriteriaOperator.BT) {
@@ -217,8 +217,11 @@ public class PluginDaoImpl implements IPluginDao {
 							.append(" ?").append(position++);
 					parameters.add(criteria.getValues());
 				}
+				hasCriteria = true;
 			}
 		}
+
+		logger.error("SQL: {}", sql.toString());
 
 		// Set query parameters
 		Query query = entityManager.createQuery(sql.toString());

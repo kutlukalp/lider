@@ -10,13 +10,11 @@
 	<bean id="pluginManager" class="tr.org.liderahenk.lider.pluginmanager.PluginManagerImpl">
 		<property name="pluginDao" ref="pluginDao" />
 		<property name="pluginInfoList" ref="pluginInfoList" />
-		<property name="eventAdmin" ref="eventAdmin" />
 	</bean>
 
 	<reference-list id="pluginInfoList" availability="optional"
 		interface="tr.org.liderahenk.lider.core.api.plugin.IPluginInfo" />
 	<reference id="pluginDao"
 		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IPluginDao" />
-	<reference id="eventAdmin" interface="org.osgi.service.event.EventAdmin" />
 
 </blueprint>
