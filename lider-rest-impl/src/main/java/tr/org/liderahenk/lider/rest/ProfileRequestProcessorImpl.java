@@ -1,24 +1,36 @@
 package tr.org.liderahenk.lider.rest;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
+import tr.org.liderahenk.lider.core.api.persistence.dao.ICommandDao;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IPluginDao;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IProfileDao;
+import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
+import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecution;
+import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecutionResult;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
 import tr.org.liderahenk.lider.core.api.rest.IRequestFactory;
 import tr.org.liderahenk.lider.core.api.rest.IResponseFactory;
+import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
 import tr.org.liderahenk.lider.core.api.rest.enums.RestResponseStatus;
 import tr.org.liderahenk.lider.core.api.rest.processors.IProfileRequestProcessor;
+import tr.org.liderahenk.lider.core.api.rest.requests.IProfileExecutionRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IProfileRequest;
 import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
+import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
 public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 
@@ -26,13 +38,45 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 
 	private IProfileDao profileDao;
 	private IPluginDao pluginDao;
+	private ICommandDao commandDao;
 	private IRequestFactory requestFactory;
 	private IResponseFactory responseFactory;
+	private ILDAPService ldapService;
 
 	@Override
-	public IRestResponse execute(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+	public IRestResponse execute(String json) {
+		
+		try {
+			logger.debug("Creating IProfileExecutionRequest object.");
+			IProfileExecutionRequest request = requestFactory.createProfileExecutionRequest(json);
+			IPolicy policy = createPolicyFromRequest(request);
+			
+			logger.debug("Finding target entries under requested dnList.");
+			logger.debug("dnList size: " + request.getDnList().size());
+			logger.debug("dnType: " + request.getDnType());
+			List<LdapEntry> targetEntryList = ldapService.findTargetEntries(request.getDnList(), request.getDnType());
+			
+			logger.debug("Creating ICommand object.");
+			ICommand command = createCommandFromRequest(request, policy);
+			
+			logger.debug("Target entry list size: " + targetEntryList.size());
+			if (targetEntryList != null && targetEntryList.size() > 0) {
+				logger.debug("Adding a ICommandExecution to ICommand for each target DN. List size: " + targetEntryList.size());
+				for (LdapEntry targetEntry : targetEntryList) {
+					command.addCommandExecution(
+							createCommandExecution(command, request.getDnType(), targetEntry.getDistinguishedName()));
+				}
+			}
+			
+			logger.debug("Saving command.");
+			commandDao.save(command);
+			
+			logger.debug("Creating rest response ResponseStatus: OK");
+			return responseFactory.createResponse(RestResponseStatus.OK, "Record executed.", null);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			return responseFactory.createResponse(RestResponseStatus.ERROR, e.getMessage());
+		}
 	}
 
 	@Override
@@ -297,6 +341,211 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 
 		return mergedProfile;
 	}
+	
+	/**
+	 * Create new IPolicy instance from values retrieved from the provided
+	 * request.
+	 * 
+	 * @param request
+	 * @return
+	 */
+	private IPolicy createPolicyFromRequest(final IProfileExecutionRequest request) {
+
+		IPolicy policy = new IPolicy() {
+
+			private static final long serialVersionUID = 2617531228166961570L;
+
+			Set<IProfile> profiles = null;
+
+			@Override
+			public Long getId() {
+				return null;
+			}
+
+			@Override
+			public String getLabel() {
+				return "Single Profile Policy";
+			}
+
+			@Override
+			public String getDescription() {
+				return "Single Profile Policy";
+			}
+
+			@Override
+			public boolean isActive() {
+				return true;
+			}
+
+			@Override
+			public boolean isDeleted() {
+				return false;
+			}
+
+			@Override
+			public Set<? extends IProfile> getProfiles() {
+				return this.profiles;
+			}
+
+			@Override
+			public Date getCreateDate() {
+				return null;
+			}
+
+			@Override
+			public Date getModifyDate() {
+				return null;
+			}
+
+			@Override
+			public void addProfile(IProfile profile) {
+				if (profiles == null) {
+					profiles = new HashSet<IProfile>();
+				}
+				profiles.add(profile);
+			}
+
+			@Override
+			public String toJson() {
+				return null;
+			}
+
+			@Override
+			public String getPolicyVersion() {
+				return null;
+			}
+
+		};
+
+		// Add a profile to policy
+		if (request.getId() != null) {
+			IProfile profile = profileDao.find(request.getId());
+			policy.addProfile(profile);
+		}
+
+		return policy;
+	}
+	
+	private ICommand createCommandFromRequest(final IProfileExecutionRequest request, final IPolicy policy) {
+
+		ICommand command = new ICommand() {
+
+			private static final long serialVersionUID = -4957864665202951511L;
+
+			List<ICommandExecution> commandExecutions = new ArrayList<ICommandExecution>();
+
+			@Override
+			public String toJson() {
+				ObjectMapper mapper = new ObjectMapper();
+				try {
+					return mapper.writeValueAsString(this);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				return null;
+			}
+
+			@Override
+			public Long getTaskId() {
+				return null;
+			}
+
+			@Override
+			public Long getPolicyId() {
+				return policy.getId();
+			}
+
+			@Override
+			public RestDNType getDnType() {
+				return request.getDnType();
+			}
+
+			@Override
+			public List<String> getDnList() {
+				return request.getDnList();
+			}
+
+			@Override
+			public List<? extends ICommandExecution> getCommandExecutions() {
+				return commandExecutions;
+			}
+
+			@Override
+			public void addCommandExecution(ICommandExecution commandExecution) {
+				commandExecutions.add(commandExecution);
+			}
+
+			@Override
+			public Long getId() {
+				return null;
+			}
+
+			@Override
+			public Date getCreateDate() {
+				return new Date();
+			}
+		};
+
+		return command;
+	}
+	
+	private ICommandExecution createCommandExecution(final ICommand command, final RestDNType dnType, final String distinguishedName) {
+
+		ICommandExecution commandExecution = new ICommandExecution() {
+			
+			private static final long serialVersionUID = -308895485597688635L;
+
+			@Override
+			public Long getId() {
+				return null;
+			}
+			
+			@Override
+			public Date getCreateDate() {
+				return new Date();
+			}
+			
+			@Override
+			public String toJson() {
+				ObjectMapper mapper = new ObjectMapper();
+				try {
+					return mapper.writeValueAsString(this);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				return null;
+			}
+			
+			@Override
+			public RestDNType getDnType() {
+				return dnType;
+			}
+			
+			@Override
+			public String getDn() {
+				return distinguishedName;
+			}
+			
+			@Override
+			public List<? extends ICommandExecutionResult> getCommandExecutionResults() {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+			@Override
+			public ICommand getCommand() {
+				return command;
+			}
+			
+			@Override
+			public void addCommandExecutionResult(ICommandExecutionResult commandExecutionResult) {
+				// TODO Auto-generated method stub
+				
+			}
+		};
+		
+		return commandExecution;
+	}
 
 	public void setProfileDao(IProfileDao profileDao) {
 		this.profileDao = profileDao;
@@ -312,6 +561,10 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 
 	public void setPluginDao(IPluginDao pluginDao) {
 		this.pluginDao = pluginDao;
+	}
+
+	public void setLdapService(ILDAPService ldapService) {
+		this.ldapService = ldapService;
 	}
 
 }

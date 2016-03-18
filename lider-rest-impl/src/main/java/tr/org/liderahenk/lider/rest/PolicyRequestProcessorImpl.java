@@ -15,11 +15,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
-import tr.org.liderahenk.lider.core.api.ldap.LdapSearchFilterAttribute;
-import tr.org.liderahenk.lider.core.api.ldap.enums.LdapSearchFilterEnum;
-import tr.org.liderahenk.lider.core.api.ldap.exception.LdapException;
 import tr.org.liderahenk.lider.core.api.persistence.dao.ICommandDao;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IPolicyDao;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IProfileDao;
@@ -56,7 +52,7 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 			IPolicyExecutionRequest request = requestFactory.createPolicyExecutionRequest(json);
 
 			logger.debug("Finding IPolicy by requested policyId.");
-			IPolicy policy = policyDao.find(request.getPolicyId());
+			IPolicy policy = policyDao.find(request.getId());
 
 			logger.debug("Finding target entries under requested dnList.");
 			logger.debug("dnList size: " + request.getDnList().size());
@@ -79,14 +75,12 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 			commandDao.save(command);
 			
 			logger.debug("Creating rest response ResponseStatus: OK");
-			return responseFactory.createResponse(RestResponseStatus.OK, "Record saved.", null);
+			return responseFactory.createResponse(RestResponseStatus.OK, "Record executed.", null);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			return responseFactory.createResponse(RestResponseStatus.ERROR, e.getMessage());
 		}
 	}
-
-	
 
 	@Override
 	public IRestResponse add(String json) {
@@ -455,7 +449,7 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 
 			@Override
 			public Long getPolicyId() {
-				return request.getPolicyId();
+				return request.getId();
 			}
 
 			@Override

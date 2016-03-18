@@ -8,8 +8,15 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
 import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyExecutionRequest;
 
+/**
+ * 
+ * @author Caner Feyzullahoğlu <caner.feyzullahoglu@agem.com.tr>
+ *
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PolicyExecutionRequestImpl implements IPolicyExecutionRequest {
+
+	private static final long serialVersionUID = -4023348875434687232L;
 
 	private Long id;
 
@@ -17,20 +24,17 @@ public class PolicyExecutionRequestImpl implements IPolicyExecutionRequest {
 
 	private RestDNType dnType;
 
-	private Long policyId;
-
-	private Date createDate;
+	private Date timestamp;
 
 	public PolicyExecutionRequestImpl() {
 	}
 
-	public PolicyExecutionRequestImpl(Long id, List<String> dnList, RestDNType dnType, Long policyId, Date createDate) {
+	public PolicyExecutionRequestImpl(Long id, List<String> dnList, RestDNType dnType, Date timestamp) {
 		super();
 		this.id = id;
 		this.dnList = dnList;
 		this.dnType = dnType;
-		this.policyId = policyId;
-		this.createDate = createDate;
+		this.timestamp = timestamp;
 	}
 
 	@Override
@@ -45,18 +49,12 @@ public class PolicyExecutionRequestImpl implements IPolicyExecutionRequest {
 
 	@Override
 	public RestDNType getDnType() {
-		// TODO Auto-generated method stub
 		return dnType;
 	}
 
 	@Override
-	public Long getPolicyId() {
-		return policyId;
-	}
-
-	@Override
-	public Date getCreateDate() {
-		return createDate;
+	public Date getTimestamp() {
+		return timestamp;
 	}
 
 	public void setId(Long id) {
@@ -71,12 +69,7 @@ public class PolicyExecutionRequestImpl implements IPolicyExecutionRequest {
 		this.dnType = dnType;
 	}
 
-	public void setPolicyId(Long policyId) {
-		this.policyId = policyId;
+	public void setTimestamp(Date timestamp) {
+		this.timestamp = timestamp;
 	}
-
-	public void setCreateDate(Date createDate) {
-		this.createDate = createDate;
-	}
-
 }

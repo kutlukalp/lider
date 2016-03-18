@@ -7,10 +7,12 @@ import org.slf4j.LoggerFactory;
 import tr.org.liderahenk.lider.core.api.rest.IRequestFactory;
 import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyExecutionRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyRequest;
+import tr.org.liderahenk.lider.core.api.rest.requests.IProfileExecutionRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IProfileRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.ITaskCommandRequest;
 import tr.org.liderahenk.lider.service.requests.PolicyExecutionRequestImpl;
 import tr.org.liderahenk.lider.service.requests.PolicyRequestImpl;
+import tr.org.liderahenk.lider.service.requests.ProfileExecutionRequestImpl;
 import tr.org.liderahenk.lider.service.requests.ProfileRequestImpl;
 import tr.org.liderahenk.lider.service.requests.TaskRequestImpl;
 
@@ -50,6 +52,13 @@ public class RequestFactoryImpl implements IRequestFactory {
 		logger.debug("Creating TaskRequestImpl instance from json: {}", json);
 		ObjectMapper mapper = new ObjectMapper();
 		return mapper.readValue(json, TaskRequestImpl.class);
+	}
+	
+	@Override
+	public IProfileExecutionRequest createProfileExecutionRequest(String json) throws Exception {
+		logger.debug("Creating ProfileExecutionImpl instance from json: {}", json);
+		ObjectMapper mapper = new ObjectMapper();
+		return mapper.readValue(json, ProfileExecutionRequestImpl.class);
 	}
 
 }

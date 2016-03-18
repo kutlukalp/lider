@@ -4,7 +4,7 @@ import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
 
 public interface IProfileRequestProcessor {
 
-	IRestResponse execute(Long id);
+	IRestResponse execute(String json);
 
 	IRestResponse add(String requestBodyDecoded);
 
