@@ -8,34 +8,62 @@ import tr.org.liderahenk.lider.core.api.rest.requests.IProfileExecutionRequest;
 
 public class ProfileExecutionRequestImpl implements IProfileExecutionRequest {
 
+	private static final long serialVersionUID = 5426256457990513443L;
+
+	private Long id;
+
+	private List<String> dnList;
+
+	private RestDNType dnType;
+
+	private Date timestamp;
+	
+	public ProfileExecutionRequestImpl() {
+	}
+
+	public ProfileExecutionRequestImpl(Long id, List<String> dnList, RestDNType dnType, Date timestamp) {
+		super();
+		this.id = id;
+		this.dnList = dnList;
+		this.dnType = dnType;
+		this.timestamp = timestamp;
+	}
+
 	@Override
 	public Date getTimestamp() {
-		// TODO Auto-generated method stub
-		return null;
+		return timestamp;
 	}
 
 	@Override
 	public Long getId() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Long getProfileId() {
-		// TODO Auto-generated method stub
-		return null;
+		return id;
 	}
 
 	@Override
 	public List<String> getDnList() {
-		// TODO Auto-generated method stub
-		return null;
+		return dnList;
 	}
 
 	@Override
 	public RestDNType getDnType() {
 		// TODO Auto-generated method stub
-		return null;
+		return dnType;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public void setDnList(List<String> dnList) {
+		this.dnList = dnList;
+	}
+
+	public void setDnType(RestDNType dnType) {
+		this.dnType = dnType;
+	}
+
+	public void setTimestamp(Date timestamp) {
+		this.timestamp = timestamp;
 	}
 
 }

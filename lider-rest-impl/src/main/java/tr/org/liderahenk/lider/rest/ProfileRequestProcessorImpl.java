@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
 import tr.org.liderahenk.lider.core.api.persistence.dao.ICommandDao;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IPluginDao;
+import tr.org.liderahenk.lider.core.api.persistence.dao.IPolicyDao;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IProfileDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecution;
@@ -42,6 +43,7 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 	private IRequestFactory requestFactory;
 	private IResponseFactory responseFactory;
 	private ILDAPService ldapService;
+	private IPolicyDao policyDao;
 
 	@Override
 	public IRestResponse execute(String json) {
@@ -51,6 +53,9 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 			IProfileExecutionRequest request = requestFactory.createProfileExecutionRequest(json);
 			IPolicy policy = createPolicyFromRequest(request);
 			
+			logger.debug("Persisting policy with active attribute false.");
+			policyDao.save(policy);
+
 			logger.debug("Finding target entries under requested dnList.");
 			logger.debug("dnList size: " + request.getDnList().size());
 			logger.debug("dnType: " + request.getDnType());
@@ -59,8 +64,8 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 			logger.debug("Creating ICommand object.");
 			ICommand command = createCommandFromRequest(request, policy);
 			
-			logger.debug("Target entry list size: " + targetEntryList.size());
 			if (targetEntryList != null && targetEntryList.size() > 0) {
+				logger.debug("Target entry list size: " + targetEntryList.size());
 				logger.debug("Adding a ICommandExecution to ICommand for each target DN. List size: " + targetEntryList.size());
 				for (LdapEntry targetEntry : targetEntryList) {
 					command.addCommandExecution(
@@ -374,7 +379,7 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 
 			@Override
 			public boolean isActive() {
-				return true;
+				return false;
 			}
 
 			@Override
@@ -565,6 +570,14 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 
 	public void setLdapService(ILDAPService ldapService) {
 		this.ldapService = ldapService;
+	}
+
+	public void setCommandDao(ICommandDao commandDao) {
+		this.commandDao = commandDao;
+	}
+
+	public void setPolicyDao(IPolicyDao policyDao) {
+		this.policyDao = policyDao;
 	}
 
 }
