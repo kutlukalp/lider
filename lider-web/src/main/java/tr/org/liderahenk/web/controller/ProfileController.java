@@ -28,12 +28,12 @@ public class ProfileController {
 	@Autowired
 	private IProfileRequestProcessor profileProcessor;
 	
-	@RequestMapping(value = "/{id:[\\d]+}/execute", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "/execute", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
-	public IRestResponse executeProfile(@PathVariable final long id, HttpServletRequest request)
+	public IRestResponse executeProfile(@RequestBody String requestBody, HttpServletRequest request)
 			throws UnsupportedEncodingException {
-		logger.info("Request received. URL: '/lider/profile/{}/execute'", id);
-		IRestResponse restResponse = profileProcessor.execute(id);
+		logger.info("Request received. URL: '/lider/profile/execute' Body: {}", requestBody);
+		IRestResponse restResponse = profileProcessor.execute(requestBody);
 		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
