@@ -92,7 +92,7 @@ public class CommandDaoImpl implements ICommandDao {
 	}
 
 	@Override
-	public List<? extends ICommand> findAll(Class<? extends ICommand> obj, int maxResults) {
+	public List<? extends ICommand> findAll(Class<? extends ICommand> obj, Integer maxResults) {
 		List<CommandImpl> commandList = entityManager
 				.createQuery("select t from " + CommandImpl.class.getSimpleName() + " t", CommandImpl.class)
 				.getResultList();
@@ -102,7 +102,7 @@ public class CommandDaoImpl implements ICommandDao {
 
 	@Override
 	public List<? extends ICommand> findByProperty(Class<? extends ICommand> obj, String propertyName,
-			Object propertyValue, int maxResults) {
+			Object propertyValue, Integer maxResults) {
 		TypedQuery<CommandImpl> query = entityManager.createQuery("select t from " + CommandImpl.class.getSimpleName()
 				+ " t where t." + propertyName + "= :propertyValue", CommandImpl.class)
 				.setParameter("propertyValue", propertyValue);

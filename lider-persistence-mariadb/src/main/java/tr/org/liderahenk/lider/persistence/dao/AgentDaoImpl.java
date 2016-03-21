@@ -92,7 +92,7 @@ public class AgentDaoImpl implements IAgentDao {
 	}
 
 	@Override
-	public List<? extends IAgent> findAll(Class<? extends IAgent> obj, int maxResults) {
+	public List<? extends IAgent> findAll(Class<? extends IAgent> obj, Integer maxResults) {
 		List<AgentImpl> agentList = entityManager
 				.createQuery("select t from " + AgentImpl.class.getSimpleName() + " t", AgentImpl.class)
 				.getResultList();
@@ -102,7 +102,7 @@ public class AgentDaoImpl implements IAgentDao {
 
 	@Override
 	public List<? extends IAgent> findByProperty(Class<? extends IAgent> obj, String propertyName, Object propertyValue,
-			int maxResults) {
+			Integer maxResults) {
 		TypedQuery<AgentImpl> query = entityManager.createQuery(
 				"select t from " + AgentImpl.class.getSimpleName() + " t where t." + propertyName + "= :propertyValue",
 				AgentImpl.class).setParameter("propertyValue", propertyValue);

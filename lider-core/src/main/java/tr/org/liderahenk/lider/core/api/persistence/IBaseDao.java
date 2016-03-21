@@ -26,9 +26,9 @@ public interface IBaseDao<T> {
 
 	T find(Long id);
 
-	List<? extends T> findAll(Class<? extends T> obj, int maxResults);
+	List<? extends T> findAll(Class<? extends T> obj, Integer maxResults);
 
-	List<? extends T> findByProperty(Class<? extends T> obj, String propertyName, Object value, int maxResults);
+	List<? extends T> findByProperty(Class<? extends T> obj, String propertyName, Object value, Integer maxResults);
 
 	List<? extends T> findByProperties(Class<? extends T> obj, Map<String, Object> propertiesMap,
 			List<PropertyOrder> orders, Integer maxResults);

@@ -34,11 +34,11 @@ public interface IOperationLogDao extends IBaseDao<IOperationLog> {
 	IOperationLog find(Long id);
 
 	@Override
-	List<? extends IOperationLog> findAll(Class<? extends IOperationLog> obj, int maxResults);
+	List<? extends IOperationLog> findAll(Class<? extends IOperationLog> obj, Integer maxResults);
 
 	@Override
 	List<? extends IOperationLog> findByProperty(Class<? extends IOperationLog> obj, String propertyName, Object value,
-			int maxResults);
+			Integer maxResults);
 
 	@Override
 	List<? extends IOperationLog> findByProperties(Class<? extends IOperationLog> obj,

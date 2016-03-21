@@ -14,6 +14,8 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.metamodel.EntityType;
+import javax.persistence.metamodel.Metamodel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +54,7 @@ public class PolicyDaoImpl implements IPolicyDao {
 		policyImpl.setCreateDate(new Date());
 		policyImpl.setModifyDate(null);
 		entityManager.persist(policyImpl);
+		policyImpl.setPolicyVersion(policyImpl.getId() + "-1");
 		logger.debug("IPolicy object persisted: {}", policyImpl.toString());
 		return policyImpl;
 	}
@@ -98,7 +101,7 @@ public class PolicyDaoImpl implements IPolicyDao {
 	}
 
 	@Override
-	public List<? extends IPolicy> findAll(Class<? extends IPolicy> obj, int maxResults) {
+	public List<? extends IPolicy> findAll(Class<? extends IPolicy> obj, Integer maxResults) {
 		List<PolicyImpl> policyList = entityManager
 				.createQuery("select t from " + PolicyImpl.class.getSimpleName() + " t", PolicyImpl.class)
 				.getResultList();
@@ -108,7 +111,7 @@ public class PolicyDaoImpl implements IPolicyDao {
 
 	@Override
 	public List<? extends IPolicy> findByProperty(Class<? extends IPolicy> obj, String propertyName,
-			Object propertyValue, int maxResults) {
+			Object propertyValue, Integer maxResults) {
 		TypedQuery<PolicyImpl> query = entityManager.createQuery(
 				"select t from " + PolicyImpl.class.getSimpleName() + " t where t." + propertyName + "= :propertyValue",
 				PolicyImpl.class).setParameter("propertyValue", propertyValue);
@@ -129,7 +132,9 @@ public class PolicyDaoImpl implements IPolicyDao {
 //		orders.add(ord);
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<PolicyImpl> criteria = (CriteriaQuery<PolicyImpl>) builder.createQuery(PolicyImpl.class);
-		Root<PolicyImpl> from = (Root<PolicyImpl>) criteria.from(PolicyImpl.class);
+		Metamodel metamodel = entityManager.getMetamodel();
+		EntityType<PolicyImpl> entityType = metamodel.entity(PolicyImpl.class);
+		Root<PolicyImpl> from = (Root<PolicyImpl>) criteria.from(entityType);
 		criteria.select(from);
 		Predicate predicate = null;
 

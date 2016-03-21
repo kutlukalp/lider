@@ -101,7 +101,7 @@ public class PluginDaoImpl implements IPluginDao {
 	}
 
 	@Override
-	public List<? extends IPlugin> findAll(Class<? extends IPlugin> obj, int maxResults) {
+	public List<? extends IPlugin> findAll(Class<? extends IPlugin> obj, Integer maxResults) {
 		List<PluginImpl> pluginList = entityManager
 				.createQuery("select t from " + PluginImpl.class.getSimpleName() + " t", PluginImpl.class)
 				.getResultList();
@@ -111,7 +111,7 @@ public class PluginDaoImpl implements IPluginDao {
 
 	@Override
 	public List<? extends IPlugin> findByProperty(Class<? extends IPlugin> obj, String propertyName,
-			Object propertyValue, int maxResults) {
+			Object propertyValue, Integer maxResults) {
 		TypedQuery<PluginImpl> query = entityManager.createQuery(
 				"select t from " + PluginImpl.class.getSimpleName() + " t where t." + propertyName + "= :propertyValue",
 				PluginImpl.class).setParameter("propertyValue", propertyValue);

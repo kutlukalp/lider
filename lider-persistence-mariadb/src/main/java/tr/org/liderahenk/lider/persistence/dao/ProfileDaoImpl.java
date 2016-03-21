@@ -98,7 +98,7 @@ public class ProfileDaoImpl implements IProfileDao {
 	}
 
 	@Override
-	public List<? extends IProfile> findAll(Class<? extends IProfile> obj, int maxResults) {
+	public List<? extends IProfile> findAll(Class<? extends IProfile> obj, Integer maxResults) {
 		List<ProfileImpl> profileList = entityManager
 				.createQuery("select t from " + ProfileImpl.class.getSimpleName() + " t", ProfileImpl.class)
 				.getResultList();
@@ -108,7 +108,7 @@ public class ProfileDaoImpl implements IProfileDao {
 
 	@Override
 	public List<? extends IProfile> findByProperty(Class<? extends IProfile> obj, String propertyName,
-			Object propertyValue, int maxResults) {
+			Object propertyValue, Integer maxResults) {
 		TypedQuery<ProfileImpl> query = entityManager.createQuery("select t from " + ProfileImpl.class.getSimpleName()
 				+ " t where t." + propertyName + "= :propertyValue", ProfileImpl.class)
 				.setParameter("propertyValue", propertyValue);

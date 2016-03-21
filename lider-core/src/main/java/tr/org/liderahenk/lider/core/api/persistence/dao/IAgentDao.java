@@ -60,7 +60,7 @@ public interface IAgentDao extends IBaseDao<IAgent> {
 	 * @return
 	 */
 	@Override
-	List<? extends IAgent> findAll(Class<? extends IAgent> obj, int maxResults);
+	List<? extends IAgent> findAll(Class<? extends IAgent> obj, Integer maxResults);
 
 	/**
 	 * 
@@ -68,7 +68,7 @@ public interface IAgentDao extends IBaseDao<IAgent> {
 	 */
 	@Override
 	List<? extends IAgent> findByProperty(Class<? extends IAgent> obj, String propertyName, Object propertyValue,
-			int maxResults);
+			Integer maxResults);
 
 	/**
 	 * 

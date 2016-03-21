@@ -195,7 +195,8 @@ public class PolicyImpl implements IPolicy {
 	public String getPolicyVersion() {
 		return policyVersion;
 	}
-
+	
+	@Override
 	public void setPolicyVersion(String policyVersion) {
 		this.policyVersion = policyVersion;
 	}

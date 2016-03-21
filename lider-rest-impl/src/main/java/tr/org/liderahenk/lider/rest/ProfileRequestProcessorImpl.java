@@ -111,6 +111,18 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 			IProfile profile = profileDao.find(request.getId());
 			profile = mergeValues(profile, request);
 			profile = profileDao.saveOrUpdate(profile);
+			
+			Map<String, Object> propertiesMap = new HashMap<String, Object>();
+			propertiesMap.put("profiles.id", profile.getId());
+			logger.error("Finding policies by given properties.");
+			List<? extends IPolicy> policies = policyDao.findByProperties(null, propertiesMap, null, null);
+			if (policies != null) {
+				logger.error("policies.size(): " + policies.size());
+				for (IPolicy policy : policies) {
+					logger.error("Updating policy: " + policy.getId());
+					incrementPolicyVersion(policy);
+				}
+			}
 
 			Map<String, Object> resultMap = new HashMap<String, Object>();
 			resultMap.put("profile", profile.toJson());
@@ -176,6 +188,21 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 		return responseFactory.createResponse(RestResponseStatus.OK, "Record deleted.");
 	}
 
+	/**
+	 * Increments version number of a policy by one.
+	 * 
+	 * @param policy
+	 */
+	private void incrementPolicyVersion(IPolicy policy) {
+		if (policy.getPolicyVersion() != null) {
+			String oldVersion = policy.getPolicyVersion().split("-")[1];
+			Integer newVersion = new Integer(oldVersion) + 1;
+			policy.setPolicyVersion(policy.getId() + "-" + newVersion);
+			logger.debug(
+					"Version of policy: " + policy.getId() + " is increased from " + oldVersion + " to " + newVersion);
+		}
+	}
+	
 	/**
 	 * Find IPlugin instance by given plugin name and version.
 	 * 
@@ -362,6 +389,8 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 
 			Set<IProfile> profiles = null;
 
+			private String policyVersion;
+			
 			@Override
 			public Long getId() {
 				return null;
@@ -417,7 +446,12 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 
 			@Override
 			public String getPolicyVersion() {
-				return null;
+				return policyVersion;
+			}
+
+			@Override
+			public void setPolicyVersion(String policyVersion) {
+				this.policyVersion = policyVersion;
 			}
 
 		};

@@ -89,7 +89,7 @@ public class TaskDaoImpl implements ITaskDao {
 	}
 
 	@Override
-	public List<? extends ITask> findAll(Class<? extends ITask> obj, int maxResults) {
+	public List<? extends ITask> findAll(Class<? extends ITask> obj, Integer maxResults) {
 		List<TaskImpl> taskList = entityManager
 				.createQuery("select t from " + TaskImpl.class.getSimpleName() + " t", TaskImpl.class)
 				.getResultList();
@@ -99,7 +99,7 @@ public class TaskDaoImpl implements ITaskDao {
 
 	@Override
 	public List<? extends ITask> findByProperty(Class<? extends ITask> obj, String propertyName,
-			Object propertyValue, int maxResults) {
+			Object propertyValue, Integer maxResults) {
 		TypedQuery<TaskImpl> query = entityManager.createQuery("select t from " + TaskImpl.class.getSimpleName()
 				+ " t where t." + propertyName + "= :propertyValue", TaskImpl.class)
 				.setParameter("propertyValue", propertyValue);

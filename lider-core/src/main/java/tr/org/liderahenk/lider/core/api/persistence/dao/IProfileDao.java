@@ -59,7 +59,7 @@ public interface IProfileDao extends IBaseDao<IProfile> {
 	 * @return
 	 */
 	@Override
-	List<? extends IProfile> findAll(Class<? extends IProfile> obj, int maxResults);
+	List<? extends IProfile> findAll(Class<? extends IProfile> obj, Integer maxResults);
 
 	/**
 	 * 
@@ -67,7 +67,7 @@ public interface IProfileDao extends IBaseDao<IProfile> {
 	 */
 	@Override
 	List<? extends IProfile> findByProperty(Class<? extends IProfile> obj, String propertyName, Object propertyValue,
-			int maxResults);
+			Integer maxResults);
 
 	/**
 	 * 
