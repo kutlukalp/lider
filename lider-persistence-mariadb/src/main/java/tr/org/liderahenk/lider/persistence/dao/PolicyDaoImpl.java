@@ -142,7 +142,7 @@ public class PolicyDaoImpl implements IPolicyDao {
 			Predicate pred = null;
 			for (Entry<String, Object> entry : propertiesMap.entrySet()) {
 				if (entry.getValue() != null && !entry.getValue().toString().isEmpty()) {
-					String[] key = entry.getKey().split(".");
+					String[] key = entry.getKey().split("\\.");
 					if (key.length > 1) {
 						Join<Object, Object> join = null;
 						for (int i = 0; i < key.length - 1; i++) {

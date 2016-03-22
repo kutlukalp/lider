@@ -114,12 +114,12 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 			
 			Map<String, Object> propertiesMap = new HashMap<String, Object>();
 			propertiesMap.put("profiles.id", profile.getId());
-			logger.error("Finding policies by given properties.");
+			logger.debug("Finding policies by given properties.");
 			List<? extends IPolicy> policies = policyDao.findByProperties(null, propertiesMap, null, null);
 			if (policies != null) {
-				logger.error("policies.size(): " + policies.size());
+				logger.debug("policies.size(): " + policies.size());
 				for (IPolicy policy : policies) {
-					logger.error("Updating policy: " + policy.getId());
+					logger.debug("Updating policy: " + policy.getId());
 					incrementPolicyVersion(policy);
 				}
 			}
@@ -152,7 +152,7 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 
 		// Find desired profiles
 		List<? extends IProfile> profiles = profileDao.findByProperties(IProfile.class, propertiesMap, null, null);
-		logger.error("Found profiles: {}", profiles);
+		logger.debug("Found profiles: {}", profiles);
 
 		// Construct result map
 		Map<String, Object> resultMap = new HashMap<String, Object>();
@@ -185,6 +185,19 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 		}
 		profileDao.delete(new Long(id));
 		logger.info("Profile record deleted: {}", id);
+		
+		Map<String, Object> propertiesMap = new HashMap<String, Object>();
+		propertiesMap.put("profiles.id", id);
+		logger.debug("Finding policies by given properties.");
+		List<? extends IPolicy> policies = policyDao.findByProperties(null, propertiesMap, null, null);
+		if (policies != null) {
+			logger.debug("policies.size(): " + policies.size());
+			for (IPolicy policy : policies) {
+				logger.debug("Updating policy: " + policy.getId());
+				incrementPolicyVersion(policy);
+			}
+		}
+		
 		return responseFactory.createResponse(RestResponseStatus.OK, "Record deleted.");
 	}
 
@@ -195,9 +208,14 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 	 */
 	private void incrementPolicyVersion(IPolicy policy) {
 		if (policy.getPolicyVersion() != null) {
+			
 			String oldVersion = policy.getPolicyVersion().split("-")[1];
+			
 			Integer newVersion = new Integer(oldVersion) + 1;
+			
 			policy.setPolicyVersion(policy.getId() + "-" + newVersion);
+			
+			policyDao.saveOrUpdate(policy);
 			logger.debug(
 					"Version of policy: " + policy.getId() + " is increased from " + oldVersion + " to " + newVersion);
 		}
