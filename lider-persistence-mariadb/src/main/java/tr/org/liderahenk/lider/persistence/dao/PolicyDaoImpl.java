@@ -24,7 +24,9 @@ import tr.org.liderahenk.lider.core.api.persistence.PropertyOrder;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IPolicyDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
 import tr.org.liderahenk.lider.core.api.persistence.enums.OrderType;
+import tr.org.liderahenk.lider.persistence.entities.CommandImpl;
 import tr.org.liderahenk.lider.persistence.entities.PolicyImpl;
+import tr.org.liderahenk.lider.persistence.entities.ProfileImpl;
 
 /**
  * Provides database access for policies. CRUD operations for policies and their
@@ -182,6 +184,25 @@ public class PolicyDaoImpl implements IPolicyDao {
 
 	public void setEntityManager(EntityManager entityManager) {
 		this.entityManager = entityManager;
+	}
+
+	@Override
+	public IPolicy getLatestPolicy(String userDn, String[] groupDns) {
+		
+		CriteriaBuilder critBuilder = entityManager.getCriteriaBuilder();
+		
+		CriteriaQuery<PolicyImpl> query = critBuilder.createQuery(PolicyImpl.class);
+		
+		Metamodel model = entityManager.getMetamodel();
+		
+		EntityType<PolicyImpl> pEntityType = model.entity(PolicyImpl.class);
+		
+		Root<PolicyImpl> policyTable = query.from(PolicyImpl.class);
+
+//		Join<PolicyImpl, CommandImpl> commandTable = policyTable.join(pEntityType.)
+		
+		
+		return null;
 	}
 
 }

@@ -70,5 +70,7 @@ public interface IPolicyDao extends IBaseDao<IPolicy> {
 	@Override
 	List<? extends IPolicy> findByProperties(Class<? extends IPolicy> obj, Map<String, Object> propertiesMap,
 			List<PropertyOrder> orders, Integer maxResults);
+	
+	IPolicy getLatestPolicy(String userDn, String[] groupDns);
 
 }
