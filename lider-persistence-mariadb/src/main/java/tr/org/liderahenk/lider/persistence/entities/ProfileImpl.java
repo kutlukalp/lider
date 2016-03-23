@@ -1,6 +1,8 @@
 package tr.org.liderahenk.lider.persistence.entities;
 
+import java.io.IOException;
 import java.util.Date;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -14,9 +16,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
 
@@ -27,7 +34,7 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
  * @see tr.org.liderahenk.lider.core.api.persistence.entities.IProfile
  *
  */
-@JsonIgnoreProperties({ "plugin" })
+@JsonIgnoreProperties({ "plugin", "profileDataBlob" })
 @Entity
 @Table(name = "C_PROFILE")
 public class ProfileImpl implements IProfile {
@@ -60,7 +67,10 @@ public class ProfileImpl implements IProfile {
 
 	@Lob
 	@Column(name = "PROFILE_DATA")
-	private byte[] profileData;
+	private byte[] profileDataBlob;
+
+	@Transient
+	private Map<String, Object> profileData;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "CREATE_DATE", nullable = false)
@@ -74,7 +84,7 @@ public class ProfileImpl implements IProfile {
 	}
 
 	public ProfileImpl(Long id, PluginImpl plugin, String label, String description, boolean overridable,
-			boolean active, boolean deleted, byte[] profileData, Set<PolicyImpl> policies, Date createDate,
+			boolean active, boolean deleted, Map<String, Object> profileData, Set<PolicyImpl> policies, Date createDate,
 			Date modifyDate) {
 		this.id = id;
 		this.plugin = plugin;
@@ -83,7 +93,7 @@ public class ProfileImpl implements IProfile {
 		this.overridable = overridable;
 		this.active = active;
 		this.deleted = deleted;
-		this.profileData = profileData;
+		setProfileData(profileData);
 		this.createDate = createDate;
 		this.modifyDate = modifyDate;
 	}
@@ -95,7 +105,7 @@ public class ProfileImpl implements IProfile {
 		this.overridable = profile.isOverridable();
 		this.active = profile.isActive();
 		this.deleted = profile.isDeleted();
-		this.profileData = profile.getProfileData();
+		setProfileData(profile.getProfileData());
 		this.createDate = profile.getCreateDate();
 		this.modifyDate = profile.getModifyDate();
 		if (profile.getPlugin() instanceof PluginImpl) {
@@ -167,12 +177,64 @@ public class ProfileImpl implements IProfile {
 	}
 
 	@Override
-	public byte[] getProfileData() {
+	public byte[] getProfileDataBlob() {
+		if (profileDataBlob == null && profileData != null) {
+			try {
+				this.profileDataBlob = new ObjectMapper().writeValueAsBytes(profileData);
+			} catch (JsonGenerationException e) {
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return profileDataBlob;
+	}
+
+	public void setProfileDataBlob(byte[] profileDataBlob) {
+		this.profileDataBlob = profileDataBlob;
+		try {
+			this.profileData = new ObjectMapper().readValue(profileDataBlob, new TypeReference<Map<String, Object>>() {
+			});
+		} catch (JsonParseException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public Map<String, Object> getProfileData() {
+		if (profileData == null && profileDataBlob != null) {
+			try {
+				this.profileData = new ObjectMapper().readValue(profileDataBlob,
+						new TypeReference<Map<String, Object>>() {
+						});
+			} catch (JsonParseException e) {
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		return profileData;
 	}
 
-	public void setProfileData(byte[] profileData) {
+	public void setProfileData(Map<String, Object> profileData) {
 		this.profileData = profileData;
+		try {
+			this.profileDataBlob = new ObjectMapper().writeValueAsBytes(profileData);
+		} catch (JsonGenerationException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -192,7 +254,7 @@ public class ProfileImpl implements IProfile {
 	public void setModifyDate(Date modifyDate) {
 		this.modifyDate = modifyDate;
 	}
-	
+
 	@Override
 	public String toJson() {
 		ObjectMapper mapper = new ObjectMapper();

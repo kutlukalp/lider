@@ -221,8 +221,6 @@ public class PluginDaoImpl implements IPluginDao {
 			}
 		}
 
-		logger.error("SQL: {}", sql.toString());
-
 		// Set query parameters
 		Query query = entityManager.createQuery(sql.toString());
 		if (!parameters.isEmpty()) {

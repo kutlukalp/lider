@@ -1,6 +1,7 @@
 package tr.org.liderahenk.lider.core.api.persistence.entities;
 
 import java.util.Date;
+import java.util.Map;
 
 /**
  * IAgent entity class is responsible for storing plugin related profile
@@ -53,7 +54,13 @@ public interface IProfile extends IEntity {
 	 * 
 	 * @return profile data sent from Lider Console
 	 */
-	byte[] getProfileData();
+	Map<String, Object> getProfileData();
+	
+	/**
+	 * 
+	 * @return profile data sent from Lider Console as json byte array
+	 */
+	byte[] getProfileDataBlob();
 
 	/**
 	 * 

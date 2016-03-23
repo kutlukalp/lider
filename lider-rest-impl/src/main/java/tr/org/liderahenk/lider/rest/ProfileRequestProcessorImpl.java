@@ -47,12 +47,12 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 
 	@Override
 	public IRestResponse execute(String json) {
-		
+
 		try {
 			logger.debug("Creating IProfileExecutionRequest object.");
 			IProfileExecutionRequest request = requestFactory.createProfileExecutionRequest(json);
 			IPolicy policy = createPolicyFromRequest(request);
-			
+
 			logger.debug("Persisting policy with active attribute false.");
 			policyDao.save(policy);
 
@@ -60,22 +60,23 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 			logger.debug("dnList size: " + request.getDnList().size());
 			logger.debug("dnType: " + request.getDnType());
 			List<LdapEntry> targetEntryList = ldapService.findTargetEntries(request.getDnList(), request.getDnType());
-			
+
 			logger.debug("Creating ICommand object.");
 			ICommand command = createCommandFromRequest(request, policy);
-			
+
 			if (targetEntryList != null && targetEntryList.size() > 0) {
 				logger.debug("Target entry list size: " + targetEntryList.size());
-				logger.debug("Adding a ICommandExecution to ICommand for each target DN. List size: " + targetEntryList.size());
+				logger.debug("Adding a ICommandExecution to ICommand for each target DN. List size: "
+						+ targetEntryList.size());
 				for (LdapEntry targetEntry : targetEntryList) {
 					command.addCommandExecution(
 							createCommandExecution(command, request.getDnType(), targetEntry.getDistinguishedName()));
 				}
 			}
-			
+
 			logger.debug("Saving command.");
 			commandDao.save(command);
-			
+
 			logger.debug("Creating rest response ResponseStatus: OK");
 			return responseFactory.createResponse(RestResponseStatus.OK, "Record executed.", null);
 		} catch (Exception e) {
@@ -111,7 +112,7 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 			IProfile profile = profileDao.find(request.getId());
 			profile = mergeValues(profile, request);
 			profile = profileDao.saveOrUpdate(profile);
-			
+
 			Map<String, Object> propertiesMap = new HashMap<String, Object>();
 			propertiesMap.put("profiles.id", profile.getId());
 			logger.debug("Finding policies by given properties.");
@@ -158,6 +159,8 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		ObjectMapper mapper = new ObjectMapper();
 		try {
+			// Explicitly write object as json string, it will handled by
+			// related rest utility class in Lider Console
 			resultMap.put("profiles", mapper.writeValueAsString(profiles));
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -185,7 +188,7 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 		}
 		profileDao.delete(new Long(id));
 		logger.info("Profile record deleted: {}", id);
-		
+
 		Map<String, Object> propertiesMap = new HashMap<String, Object>();
 		propertiesMap.put("profiles.id", id);
 		logger.debug("Finding policies by given properties.");
@@ -197,7 +200,7 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 				incrementPolicyVersion(policy);
 			}
 		}
-		
+
 		return responseFactory.createResponse(RestResponseStatus.OK, "Record deleted.");
 	}
 
@@ -208,19 +211,19 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 	 */
 	private void incrementPolicyVersion(IPolicy policy) {
 		if (policy.getPolicyVersion() != null) {
-			
+
 			String oldVersion = policy.getPolicyVersion().split("-")[1];
-			
+
 			Integer newVersion = new Integer(oldVersion) + 1;
-			
+
 			policy.setPolicyVersion(policy.getId() + "-" + newVersion);
-			
+
 			policyDao.saveOrUpdate(policy);
 			logger.debug(
 					"Version of policy: " + policy.getId() + " is increased from " + oldVersion + " to " + newVersion);
 		}
 	}
-	
+
 	/**
 	 * Find IPlugin instance by given plugin name and version.
 	 * 
@@ -285,13 +288,18 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 			}
 
 			@Override
-			public byte[] getProfileData() {
+			public byte[] getProfileDataBlob() {
 				try {
 					return new ObjectMapper().writeValueAsBytes(request.getProfileData());
 				} catch (Exception e) {
 					logger.error(e.getMessage(), e);
 				}
 				return null;
+			}
+
+			@Override
+			public Map<String, Object> getProfileData() {
+				return request.getProfileData();
 			}
 
 			@Override
@@ -363,13 +371,18 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 			}
 
 			@Override
-			public byte[] getProfileData() {
+			public byte[] getProfileDataBlob() {
 				try {
 					return new ObjectMapper().writeValueAsBytes(request.getProfileData());
 				} catch (Exception e) {
 					logger.error(e.getMessage(), e);
 				}
 				return null;
+			}
+
+			@Override
+			public Map<String, Object> getProfileData() {
+				return request.getProfileData();
 			}
 
 			@Override
@@ -391,7 +404,7 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 
 		return mergedProfile;
 	}
-	
+
 	/**
 	 * Create new IPolicy instance from values retrieved from the provided
 	 * request.
@@ -408,7 +421,7 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 			Set<IProfile> profiles = null;
 
 			private String policyVersion;
-			
+
 			@Override
 			public Long getId() {
 				return null;
@@ -482,7 +495,7 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 
 		return policy;
 	}
-	
+
 	private ICommand createCommandFromRequest(final IProfileExecutionRequest request, final IPolicy policy) {
 
 		ICommand command = new ICommand() {
@@ -545,23 +558,24 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 
 		return command;
 	}
-	
-	private ICommandExecution createCommandExecution(final ICommand command, final RestDNType dnType, final String distinguishedName) {
+
+	private ICommandExecution createCommandExecution(final ICommand command, final RestDNType dnType,
+			final String distinguishedName) {
 
 		ICommandExecution commandExecution = new ICommandExecution() {
-			
+
 			private static final long serialVersionUID = -308895485597688635L;
 
 			@Override
 			public Long getId() {
 				return null;
 			}
-			
+
 			@Override
 			public Date getCreateDate() {
 				return new Date();
 			}
-			
+
 			@Override
 			public String toJson() {
 				ObjectMapper mapper = new ObjectMapper();
@@ -572,35 +586,35 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 				}
 				return null;
 			}
-			
+
 			@Override
 			public RestDNType getDnType() {
 				return dnType;
 			}
-			
+
 			@Override
 			public String getDn() {
 				return distinguishedName;
 			}
-			
+
 			@Override
 			public List<? extends ICommandExecutionResult> getCommandExecutionResults() {
 				// TODO Auto-generated method stub
 				return null;
 			}
-			
+
 			@Override
 			public ICommand getCommand() {
 				return command;
 			}
-			
+
 			@Override
 			public void addCommandExecutionResult(ICommandExecutionResult commandExecutionResult) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		};
-		
+
 		return commandExecution;
 	}
 

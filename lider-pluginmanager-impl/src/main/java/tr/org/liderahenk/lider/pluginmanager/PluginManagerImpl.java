@@ -18,6 +18,13 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
 import tr.org.liderahenk.lider.core.api.persistence.enums.CriteriaOperator;
 import tr.org.liderahenk.lider.core.api.plugin.IPluginInfo;
 
+/**
+ * This class listens to new installed bundles on Lider server and manages their
+ * registration if an implementation of {@link IPluginInfo} is provided.
+ * 
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ *
+ */
 public class PluginManagerImpl {
 
 	private Logger logger = LoggerFactory.getLogger(PluginManagerImpl.class);
