@@ -2,6 +2,7 @@ package tr.org.liderahenk.lider.persistence.dao;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -11,6 +12,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -24,6 +26,8 @@ import tr.org.liderahenk.lider.core.api.persistence.PropertyOrder;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IPolicyDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
 import tr.org.liderahenk.lider.core.api.persistence.enums.OrderType;
+import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
+import tr.org.liderahenk.lider.persistence.entities.CommandExecutionImpl;
 import tr.org.liderahenk.lider.persistence.entities.CommandImpl;
 import tr.org.liderahenk.lider.persistence.entities.PolicyImpl;
 import tr.org.liderahenk.lider.persistence.entities.ProfileImpl;
@@ -41,6 +45,39 @@ public class PolicyDaoImpl implements IPolicyDao {
 	private static Logger logger = LoggerFactory.getLogger(PolicyDaoImpl.class);
 
 	private EntityManager entityManager;
+	
+	private final static String GET_LATEST_POLICY_QUERY = 
+			"SELECT "
+			+ "prof.PROFILE_ID, "
+			+ "prof.ACTIVE, "
+			+ "prof.CREATE_DATE, "
+			+ "prof.DELETED, "
+			+ "prof.DESCRIPTION, "
+			+ "prof.LABEL, "
+			+ "prof.MODIFY_DATE, "
+			+ "prof.OVERRIDABLE, "
+			+ "prof.PROFILE_DATA, "
+			+ "prof.PLUGIN_ID, "
+			+ "p.POLICY_VERSION "
+			+ "FROM "
+			+ "C_PROFILE prof "
+			+ "INNER JOIN "
+			+ "C_POLICY_PROFILE pp ON (pp.PROFILE_ID = prof.PROFILE_ID) "
+			+ "INNER JOIN "
+			+ "C_POLICY p ON (p.POLICY_ID = pp.POLICY_ID) "
+			+ "WHERE "
+			+ "pp.POLICY_ID = "
+			+ "(SELECT DISTINCT "
+			+ "	p.POLICY_ID "
+			+ "	FROM "
+			+ "	C_POLICY p "
+			+ "	INNER JOIN "
+			+ "	C_COMMAND c ON (c.POLICY_ID = p.POLICY_ID) "
+			+ "	INNER JOIN "
+			+ "	C_COMMAND_EXECUTION ce ON (ce.COMMAND_ID = c.COMMAND_ID) "
+			+ "	WHERE "
+			+ "	(ce.DN_TYPE = {0} AND ce.DN = '{1}') OR (ce.DN_TYPE = {2} AND ce.DN IN ({3})) "
+			+ "	ORDER BY ce.CREATE_DATE DESC LIMIT 1)";
 
 	public void init() {
 		logger.info("Initializing policy DAO.");
@@ -187,20 +224,17 @@ public class PolicyDaoImpl implements IPolicyDao {
 	}
 
 	@Override
-	public IPolicy getLatestPolicy(String userDn, String[] groupDns) {
+	public IPolicy getLatestPolicy(String userDn, List<LdapEntry> groupDns) {
 		
-		CriteriaBuilder critBuilder = entityManager.getCriteriaBuilder();
+		logger.error("Preparing user profile query.");
+		// TODO listedeki dnleri '', '', '' şeklinde hazırla
+		// Prepare user profile query
+		String userProfileQuery = GET_LATEST_POLICY_QUERY.replace("{0}", "1").replace("{1}", userDn).replace("{2}", "3").replace("{3}", groupDns == null ? "" : groupDns.toString());
 		
-		CriteriaQuery<PolicyImpl> query = critBuilder.createQuery(PolicyImpl.class);
+		logger.error("User profile query: " + userProfileQuery);
 		
-		Metamodel model = entityManager.getMetamodel();
-		
-		EntityType<PolicyImpl> pEntityType = model.entity(PolicyImpl.class);
-		
-		Root<PolicyImpl> policyTable = query.from(PolicyImpl.class);
-
-//		Join<PolicyImpl, CommandImpl> commandTable = policyTable.join(pEntityType.)
-		
+		// TODO ExecutePolicies listesine nasıl cevirecem
+		entityManager.createNativeQuery(userProfileQuery).getResultList();
 		
 		return null;
 	}

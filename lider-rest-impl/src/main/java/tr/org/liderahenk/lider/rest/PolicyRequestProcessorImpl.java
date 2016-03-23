@@ -93,6 +93,9 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 			Map<String, Object> resultMap = new HashMap<String, Object>();
 			resultMap.put("policy", policy.toJson());
 
+			// TODO testing, will be removed
+			policyDao.getLatestPolicy("cn=ahenk1,ou=Uncategorized,dc=mys,dc=pardus,dc=org", null);
+			
 			return responseFactory.createResponse(RestResponseStatus.OK, "Record saved.", resultMap);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);

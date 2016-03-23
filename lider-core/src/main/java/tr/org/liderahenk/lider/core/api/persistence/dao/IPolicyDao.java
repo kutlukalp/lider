@@ -6,6 +6,7 @@ import java.util.Map;
 import tr.org.liderahenk.lider.core.api.persistence.IBaseDao;
 import tr.org.liderahenk.lider.core.api.persistence.PropertyOrder;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
+import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
 public interface IPolicyDao extends IBaseDao<IPolicy> {
 
@@ -71,6 +72,6 @@ public interface IPolicyDao extends IBaseDao<IPolicy> {
 	List<? extends IPolicy> findByProperties(Class<? extends IPolicy> obj, Map<String, Object> propertiesMap,
 			List<PropertyOrder> orders, Integer maxResults);
 	
-	IPolicy getLatestPolicy(String userDn, String[] groupDns);
+	IPolicy getLatestPolicy(String userDn, List<LdapEntry> groupsOfUser);
 
 }
