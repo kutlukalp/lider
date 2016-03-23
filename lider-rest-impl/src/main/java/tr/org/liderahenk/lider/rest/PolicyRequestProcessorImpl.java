@@ -58,22 +58,23 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 			logger.debug("dnList size: " + request.getDnList().size());
 			logger.debug("dnType: " + request.getDnType());
 			List<LdapEntry> targetEntryList = ldapService.findTargetEntries(request.getDnList(), request.getDnType());
-			
+
 			logger.debug("Creating ICommand object.");
 			ICommand command = createCommandFromRequest(request, policy);
 
 			logger.debug("Target entry list size: " + targetEntryList.size());
 			if (targetEntryList != null && targetEntryList.size() > 0) {
-				logger.debug("Adding a ICommandExecution to ICommand for each target DN. List size: " + targetEntryList.size());
+				logger.debug("Adding a ICommandExecution to ICommand for each target DN. List size: "
+						+ targetEntryList.size());
 				for (LdapEntry targetEntry : targetEntryList) {
 					command.addCommandExecution(
 							createCommandExecution(command, request.getDnType(), targetEntry.getDistinguishedName()));
 				}
 			}
-			
+
 			logger.debug("Saving command.");
 			commandDao.save(command);
-			
+
 			logger.debug("Creating rest response ResponseStatus: OK");
 			return responseFactory.createResponse(RestResponseStatus.OK, "Record executed.", null);
 		} catch (Exception e) {
@@ -104,6 +105,9 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 		try {
 			IPolicyRequest request = requestFactory.createPolicyRequest(json);
 			IPolicy policy = policyDao.find(request.getId());
+
+			incrementPolicyVersion(policy);
+
 			policy = mergeValues(policy, request);
 			policy = policyDao.saveOrUpdate(policy);
 
@@ -114,6 +118,21 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			return responseFactory.createResponse(RestResponseStatus.ERROR, e.getMessage());
+		}
+	}
+
+	/**
+	 * Increments version number of a policy by one.
+	 * 
+	 * @param policy
+	 */
+	private void incrementPolicyVersion(IPolicy policy) {
+		if (policy.getPolicyVersion() != null) {
+			String oldVersion = policy.getPolicyVersion().split("-")[1];
+			Integer newVersion = new Integer(oldVersion) + 1;
+			policy.setPolicyVersion(policy.getId() + "-" + newVersion);
+			logger.debug(
+					"Version of policy: " + policy.getId() + " is increased from " + oldVersion + " to " + newVersion);
 		}
 	}
 
@@ -188,6 +207,10 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 			@Override
 			public String getPolicyVersion() {
 				return policy.getPolicyVersion();
+			}
+
+			@Override
+			public void setPolicyVersion(String policyVersion) {
 			}
 
 		};
@@ -275,11 +298,11 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 	public void setLdapService(ILDAPService ldapService) {
 		this.ldapService = ldapService;
 	}
-	
+
 	public void setCommandDao(ICommandDao commandDao) {
 		this.commandDao = commandDao;
 	}
-	
+
 	/**
 	 * Create new IPolicy instance from values retrieved from the provided
 	 * request.
@@ -353,6 +376,10 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 				return null;
 			}
 
+			@Override
+			public void setPolicyVersion(String policyVersion) {
+			}
+
 		};
 
 		if (request.getProfileIdList() != null) {
@@ -364,23 +391,24 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 
 		return policy;
 	}
-	
-	private ICommandExecution createCommandExecution(final ICommand command, final RestDNType dnType, final String distinguishedName) {
+
+	private ICommandExecution createCommandExecution(final ICommand command, final RestDNType dnType,
+			final String distinguishedName) {
 
 		ICommandExecution commandExecution = new ICommandExecution() {
-			
+
 			private static final long serialVersionUID = -308895485597688635L;
 
 			@Override
 			public Long getId() {
 				return null;
 			}
-			
+
 			@Override
 			public Date getCreateDate() {
 				return new Date();
 			}
-			
+
 			@Override
 			public String toJson() {
 				ObjectMapper mapper = new ObjectMapper();
@@ -391,35 +419,35 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 				}
 				return null;
 			}
-			
+
 			@Override
 			public RestDNType getDnType() {
 				return dnType;
 			}
-			
+
 			@Override
 			public String getDn() {
 				return distinguishedName;
 			}
-			
+
 			@Override
 			public List<? extends ICommandExecutionResult> getCommandExecutionResults() {
 				// TODO Auto-generated method stub
 				return null;
 			}
-			
+
 			@Override
 			public ICommand getCommand() {
 				return command;
 			}
-			
+
 			@Override
 			public void addCommandExecutionResult(ICommandExecutionResult commandExecutionResult) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		};
-		
+
 		return commandExecution;
 	}
 

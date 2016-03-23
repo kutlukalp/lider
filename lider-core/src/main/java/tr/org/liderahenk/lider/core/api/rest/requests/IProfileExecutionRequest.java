@@ -8,8 +8,6 @@ public interface IProfileExecutionRequest extends IRequest {
 	
 	Long getId();
 
-	Long getProfileId();
-	
 	List<String> getDnList();
 	
 	RestDNType getDnType();

@@ -49,14 +49,14 @@ public interface IPluginDao extends IBaseDao<IPlugin> {
 	 * 
 	 * @return
 	 */
-	List<? extends IPlugin> findAll(Class<? extends IPlugin> obj, int maxResults);
+	List<? extends IPlugin> findAll(Class<? extends IPlugin> obj, Integer maxResults);
 
 	/**
 	 * 
 	 * @return
 	 */
 	List<? extends IPlugin> findByProperty(Class<? extends IPlugin> obj, String propertyName, Object propertyValue,
-			int maxResults);
+			Integer maxResults);
 
 	/**
 	 * 

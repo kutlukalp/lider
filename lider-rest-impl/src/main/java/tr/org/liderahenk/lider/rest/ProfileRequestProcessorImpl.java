@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
 import tr.org.liderahenk.lider.core.api.persistence.dao.ICommandDao;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IPluginDao;
+import tr.org.liderahenk.lider.core.api.persistence.dao.IPolicyDao;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IProfileDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecution;
@@ -42,6 +43,7 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 	private IRequestFactory requestFactory;
 	private IResponseFactory responseFactory;
 	private ILDAPService ldapService;
+	private IPolicyDao policyDao;
 
 	@Override
 	public IRestResponse execute(String json) {
@@ -51,6 +53,9 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 			IProfileExecutionRequest request = requestFactory.createProfileExecutionRequest(json);
 			IPolicy policy = createPolicyFromRequest(request);
 			
+			logger.debug("Persisting policy with active attribute false.");
+			policyDao.save(policy);
+
 			logger.debug("Finding target entries under requested dnList.");
 			logger.debug("dnList size: " + request.getDnList().size());
 			logger.debug("dnType: " + request.getDnType());
@@ -59,8 +64,8 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 			logger.debug("Creating ICommand object.");
 			ICommand command = createCommandFromRequest(request, policy);
 			
-			logger.debug("Target entry list size: " + targetEntryList.size());
 			if (targetEntryList != null && targetEntryList.size() > 0) {
+				logger.debug("Target entry list size: " + targetEntryList.size());
 				logger.debug("Adding a ICommandExecution to ICommand for each target DN. List size: " + targetEntryList.size());
 				for (LdapEntry targetEntry : targetEntryList) {
 					command.addCommandExecution(
@@ -106,6 +111,18 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 			IProfile profile = profileDao.find(request.getId());
 			profile = mergeValues(profile, request);
 			profile = profileDao.saveOrUpdate(profile);
+			
+			Map<String, Object> propertiesMap = new HashMap<String, Object>();
+			propertiesMap.put("profiles.id", profile.getId());
+			logger.debug("Finding policies by given properties.");
+			List<? extends IPolicy> policies = policyDao.findByProperties(null, propertiesMap, null, null);
+			if (policies != null) {
+				logger.debug("policies.size(): " + policies.size());
+				for (IPolicy policy : policies) {
+					logger.debug("Updating policy: " + policy.getId());
+					incrementPolicyVersion(policy);
+				}
+			}
 
 			Map<String, Object> resultMap = new HashMap<String, Object>();
 			resultMap.put("profile", profile.toJson());
@@ -135,7 +152,7 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 
 		// Find desired profiles
 		List<? extends IProfile> profiles = profileDao.findByProperties(IProfile.class, propertiesMap, null, null);
-		logger.error("Found profiles: {}", profiles);
+		logger.debug("Found profiles: {}", profiles);
 
 		// Construct result map
 		Map<String, Object> resultMap = new HashMap<String, Object>();
@@ -168,9 +185,42 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 		}
 		profileDao.delete(new Long(id));
 		logger.info("Profile record deleted: {}", id);
+		
+		Map<String, Object> propertiesMap = new HashMap<String, Object>();
+		propertiesMap.put("profiles.id", id);
+		logger.debug("Finding policies by given properties.");
+		List<? extends IPolicy> policies = policyDao.findByProperties(null, propertiesMap, null, null);
+		if (policies != null) {
+			logger.debug("policies.size(): " + policies.size());
+			for (IPolicy policy : policies) {
+				logger.debug("Updating policy: " + policy.getId());
+				incrementPolicyVersion(policy);
+			}
+		}
+		
 		return responseFactory.createResponse(RestResponseStatus.OK, "Record deleted.");
 	}
 
+	/**
+	 * Increments version number of a policy by one.
+	 * 
+	 * @param policy
+	 */
+	private void incrementPolicyVersion(IPolicy policy) {
+		if (policy.getPolicyVersion() != null) {
+			
+			String oldVersion = policy.getPolicyVersion().split("-")[1];
+			
+			Integer newVersion = new Integer(oldVersion) + 1;
+			
+			policy.setPolicyVersion(policy.getId() + "-" + newVersion);
+			
+			policyDao.saveOrUpdate(policy);
+			logger.debug(
+					"Version of policy: " + policy.getId() + " is increased from " + oldVersion + " to " + newVersion);
+		}
+	}
+	
 	/**
 	 * Find IPlugin instance by given plugin name and version.
 	 * 
@@ -357,6 +407,8 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 
 			Set<IProfile> profiles = null;
 
+			private String policyVersion;
+			
 			@Override
 			public Long getId() {
 				return null;
@@ -374,7 +426,7 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 
 			@Override
 			public boolean isActive() {
-				return true;
+				return false;
 			}
 
 			@Override
@@ -412,7 +464,12 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 
 			@Override
 			public String getPolicyVersion() {
-				return null;
+				return policyVersion;
+			}
+
+			@Override
+			public void setPolicyVersion(String policyVersion) {
+				this.policyVersion = policyVersion;
 			}
 
 		};
@@ -565,6 +622,14 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 
 	public void setLdapService(ILDAPService ldapService) {
 		this.ldapService = ldapService;
+	}
+
+	public void setCommandDao(ICommandDao commandDao) {
+		this.commandDao = commandDao;
+	}
+
+	public void setPolicyDao(IPolicyDao policyDao) {
+		this.policyDao = policyDao;
 	}
 
 }

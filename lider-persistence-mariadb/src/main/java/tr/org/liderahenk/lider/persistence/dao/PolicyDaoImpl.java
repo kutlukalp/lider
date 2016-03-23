@@ -14,6 +14,8 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.metamodel.EntityType;
+import javax.persistence.metamodel.Metamodel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +24,9 @@ import tr.org.liderahenk.lider.core.api.persistence.PropertyOrder;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IPolicyDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
 import tr.org.liderahenk.lider.core.api.persistence.enums.OrderType;
+import tr.org.liderahenk.lider.persistence.entities.CommandImpl;
 import tr.org.liderahenk.lider.persistence.entities.PolicyImpl;
+import tr.org.liderahenk.lider.persistence.entities.ProfileImpl;
 
 /**
  * Provides database access for policies. CRUD operations for policies and their
@@ -52,6 +56,7 @@ public class PolicyDaoImpl implements IPolicyDao {
 		policyImpl.setCreateDate(new Date());
 		policyImpl.setModifyDate(null);
 		entityManager.persist(policyImpl);
+		policyImpl.setPolicyVersion(policyImpl.getId() + "-1");
 		logger.debug("IPolicy object persisted: {}", policyImpl.toString());
 		return policyImpl;
 	}
@@ -98,7 +103,7 @@ public class PolicyDaoImpl implements IPolicyDao {
 	}
 
 	@Override
-	public List<? extends IPolicy> findAll(Class<? extends IPolicy> obj, int maxResults) {
+	public List<? extends IPolicy> findAll(Class<? extends IPolicy> obj, Integer maxResults) {
 		List<PolicyImpl> policyList = entityManager
 				.createQuery("select t from " + PolicyImpl.class.getSimpleName() + " t", PolicyImpl.class)
 				.getResultList();
@@ -108,7 +113,7 @@ public class PolicyDaoImpl implements IPolicyDao {
 
 	@Override
 	public List<? extends IPolicy> findByProperty(Class<? extends IPolicy> obj, String propertyName,
-			Object propertyValue, int maxResults) {
+			Object propertyValue, Integer maxResults) {
 		TypedQuery<PolicyImpl> query = entityManager.createQuery(
 				"select t from " + PolicyImpl.class.getSimpleName() + " t where t." + propertyName + "= :propertyValue",
 				PolicyImpl.class).setParameter("propertyValue", propertyValue);
@@ -129,7 +134,9 @@ public class PolicyDaoImpl implements IPolicyDao {
 //		orders.add(ord);
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<PolicyImpl> criteria = (CriteriaQuery<PolicyImpl>) builder.createQuery(PolicyImpl.class);
-		Root<PolicyImpl> from = (Root<PolicyImpl>) criteria.from(PolicyImpl.class);
+		Metamodel metamodel = entityManager.getMetamodel();
+		EntityType<PolicyImpl> entityType = metamodel.entity(PolicyImpl.class);
+		Root<PolicyImpl> from = (Root<PolicyImpl>) criteria.from(entityType);
 		criteria.select(from);
 		Predicate predicate = null;
 
@@ -137,7 +144,7 @@ public class PolicyDaoImpl implements IPolicyDao {
 			Predicate pred = null;
 			for (Entry<String, Object> entry : propertiesMap.entrySet()) {
 				if (entry.getValue() != null && !entry.getValue().toString().isEmpty()) {
-					String[] key = entry.getKey().split(".");
+					String[] key = entry.getKey().split("\\.");
 					if (key.length > 1) {
 						Join<Object, Object> join = null;
 						for (int i = 0; i < key.length - 1; i++) {
@@ -177,6 +184,25 @@ public class PolicyDaoImpl implements IPolicyDao {
 
 	public void setEntityManager(EntityManager entityManager) {
 		this.entityManager = entityManager;
+	}
+
+	@Override
+	public IPolicy getLatestPolicy(String userDn, String[] groupDns) {
+		
+		CriteriaBuilder critBuilder = entityManager.getCriteriaBuilder();
+		
+		CriteriaQuery<PolicyImpl> query = critBuilder.createQuery(PolicyImpl.class);
+		
+		Metamodel model = entityManager.getMetamodel();
+		
+		EntityType<PolicyImpl> pEntityType = model.entity(PolicyImpl.class);
+		
+		Root<PolicyImpl> policyTable = query.from(PolicyImpl.class);
+
+//		Join<PolicyImpl, CommandImpl> commandTable = policyTable.join(pEntityType.)
+		
+		
+		return null;
 	}
 
 }

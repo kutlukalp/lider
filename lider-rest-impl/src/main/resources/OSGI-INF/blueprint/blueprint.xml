@@ -26,6 +26,9 @@
 		<property name="responseFactory" ref="responseFactory" />
 		<property name="pluginDao" ref="pluginDao" />
 		<property name="profileDao" ref="profileDao" />
+		<property name="commandDao" ref="commandDao" />
+		<property name="ldapService" ref="ldapService" />
+		<property name="policyDao" ref="policyDao" />
 	</bean>
 
 	<service ref="taskRequestProcessor"

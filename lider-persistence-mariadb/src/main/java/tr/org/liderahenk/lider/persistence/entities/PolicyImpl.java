@@ -40,7 +40,7 @@ public class PolicyImpl implements IPolicy {
 	@Column(name = "POLICY_ID", unique = true, nullable = false)
 	private Long id;
 
-	@Column(name = "LABEL", unique = true, nullable = false)
+	@Column(name = "LABEL", nullable = false)
 	private String label;
 
 	@Column(name = "DESCRIPTION")
@@ -195,7 +195,8 @@ public class PolicyImpl implements IPolicy {
 	public String getPolicyVersion() {
 		return policyVersion;
 	}
-
+	
+	@Override
 	public void setPolicyVersion(String policyVersion) {
 		this.policyVersion = policyVersion;
 	}

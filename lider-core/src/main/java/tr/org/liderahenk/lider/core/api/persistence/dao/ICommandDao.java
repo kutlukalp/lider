@@ -63,7 +63,7 @@ public interface ICommandDao extends IBaseDao<ICommand> {
 	 * @return
 	 */
 	@Override
-	List<? extends ICommand> findAll(Class<? extends ICommand> obj, int maxResults);
+	List<? extends ICommand> findAll(Class<? extends ICommand> obj, Integer maxResults);
 
 	/**
 	 * 
@@ -71,7 +71,7 @@ public interface ICommandDao extends IBaseDao<ICommand> {
 	 */
 	@Override
 	List<? extends ICommand> findByProperty(Class<? extends ICommand> obj, String propertyName, Object propertyValue,
-			int maxResults);
+			Integer maxResults);
 
 	/**
 	 * 

@@ -81,7 +81,7 @@ public class OperationLogDaoImpl implements IOperationLogDao {
 	}
 
 	@Override
-	public List<? extends IOperationLog> findAll(Class<? extends IOperationLog> obj, int maxResults) {
+	public List<? extends IOperationLog> findAll(Class<? extends IOperationLog> obj, Integer maxResults) {
 		List<OperationLogImpl> logList = entityManager
 				.createQuery("select t from " + OperationLogImpl.class.getSimpleName() + " t", OperationLogImpl.class)
 				.getResultList();
@@ -91,7 +91,7 @@ public class OperationLogDaoImpl implements IOperationLogDao {
 
 	@Override
 	public List<? extends IOperationLog> findByProperty(Class<? extends IOperationLog> obj, String propertyName,
-			Object propertyValue, int maxResults) {
+			Object propertyValue, Integer maxResults) {
 		TypedQuery<OperationLogImpl> query = entityManager
 				.createQuery("select t from " + OperationLogImpl.class.getSimpleName() + " t where t." + propertyName
 						+ "= :propertyValue", OperationLogImpl.class)

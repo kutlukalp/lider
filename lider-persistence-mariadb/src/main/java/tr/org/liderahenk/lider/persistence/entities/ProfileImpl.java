@@ -192,7 +192,7 @@ public class ProfileImpl implements IProfile {
 	public void setModifyDate(Date modifyDate) {
 		this.modifyDate = modifyDate;
 	}
-
+	
 	@Override
 	public String toJson() {
 		ObjectMapper mapper = new ObjectMapper();

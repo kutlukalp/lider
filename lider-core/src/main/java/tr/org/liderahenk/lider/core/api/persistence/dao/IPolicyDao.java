@@ -53,7 +53,7 @@ public interface IPolicyDao extends IBaseDao<IPolicy> {
 	 * @return
 	 */
 	@Override
-	List<? extends IPolicy> findAll(Class<? extends IPolicy> obj, int maxResults);
+	List<? extends IPolicy> findAll(Class<? extends IPolicy> obj, Integer maxResults);
 
 	/**
 	 * 
@@ -61,7 +61,7 @@ public interface IPolicyDao extends IBaseDao<IPolicy> {
 	 */
 	@Override
 	List<? extends IPolicy> findByProperty(Class<? extends IPolicy> obj, String propertyName, Object propertyValue,
-			int maxResults);
+			Integer maxResults);
 
 	/**
 	 * 
@@ -70,5 +70,7 @@ public interface IPolicyDao extends IBaseDao<IPolicy> {
 	@Override
 	List<? extends IPolicy> findByProperties(Class<? extends IPolicy> obj, Map<String, Object> propertiesMap,
 			List<PropertyOrder> orders, Integer maxResults);
+	
+	IPolicy getLatestPolicy(String userDn, String[] groupDns);
 
 }
