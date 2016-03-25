@@ -177,6 +177,8 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 		}
 		IProfile profile = profileDao.find(new Long(id));
 		Map<String, Object> resultMap = new HashMap<String, Object>();
+		// Explicitly write object as json string, it will handled by
+		// related rest utility class in Lider Console
 		resultMap.put("profile", profile.toJson());
 		return responseFactory.createResponse(RestResponseStatus.OK, "Record retrieved.", resultMap);
 	}

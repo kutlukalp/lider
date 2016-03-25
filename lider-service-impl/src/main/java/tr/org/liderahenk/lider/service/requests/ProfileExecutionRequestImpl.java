@@ -46,7 +46,6 @@ public class ProfileExecutionRequestImpl implements IProfileExecutionRequest {
 
 	@Override
 	public RestDNType getDnType() {
-		// TODO Auto-generated method stub
 		return dnType;
 	}
 
