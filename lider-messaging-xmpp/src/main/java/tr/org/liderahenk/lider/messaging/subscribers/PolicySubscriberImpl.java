@@ -14,6 +14,7 @@ import tr.org.liderahenk.lider.core.api.messaging.messages.IExecutePoliciesMessa
 import tr.org.liderahenk.lider.core.api.messaging.messages.IGetPoliciesMessage;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IPolicySubscriber;
 import tr.org.liderahenk.lider.core.api.persistence.dao.ICommandDao;
+import tr.org.liderahenk.lider.core.api.persistence.dao.IPolicyDao;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
 /**
@@ -32,6 +33,7 @@ public class PolicySubscriberImpl implements IPolicySubscriber {
 	private ILDAPService ldapService;
 	private ICommandDao commandDao;
 	private IConfigurationService configurationService;
+	private IPolicyDao policyDao;
 
 	@Override
 	public IExecutePoliciesMessage messageReceived(IGetPoliciesMessage message) throws Exception {
@@ -56,12 +58,12 @@ public class PolicySubscriberImpl implements IPolicySubscriber {
 		
 		// Find user policy related to either user entry or group entries which
 		// ever is the latest
-		// TODO
+		IExecutePoliciesMessage executePoliciesMessage = policyDao.getLatestPolicy(userDn, groupsOfUser, userPolicyVersion);
 
 		// Find machine policy
 		// TODO
-
-		return null;
+		
+		return executePoliciesMessage;
 	}
 
 	public void setLdapService(ILDAPService ldapService) {

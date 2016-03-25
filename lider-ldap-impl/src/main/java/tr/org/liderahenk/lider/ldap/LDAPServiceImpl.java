@@ -645,9 +645,11 @@ public class LDAPServiceImpl implements ILDAPService {
 			connection = getConnection();
 			SearchRequest req = new SearchRequestImpl();
 			req.setScope(SearchScope.SUBTREE);
-			for (String attr : attributes) {
-				req.addAttributes(attr);
-			}
+			if (attributes != null) {
+				for (String attr : attributes) {
+					req.addAttributes(attr);
+				}
+			} 
 
 			String searchFilterStr = "(&";
 
@@ -665,9 +667,11 @@ public class LDAPServiceImpl implements ILDAPService {
 				attrs = new HashMap<String, String>();
 				if (response instanceof SearchResultEntry) {
 					Entry resultEntry = ((SearchResultEntry) response).getEntry();
-					for (String attr : attributes) {
-
-						attrs.put(attr, resultEntry.get(attr) != null ? resultEntry.get(attr).getString() : "");
+					if (attributes != null) {
+						for (String attr : attributes) {
+							
+							attrs.put(attr, resultEntry.get(attr) != null ? resultEntry.get(attr).getString() : "");
+						}
 					}
 
 					result.add(new LdapEntry(resultEntry.getDn().toString(), attrs));

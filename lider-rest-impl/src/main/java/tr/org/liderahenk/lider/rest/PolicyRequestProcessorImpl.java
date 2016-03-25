@@ -87,12 +87,13 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 	public IRestResponse add(String json) {
 		try {
 			IPolicyRequest request = requestFactory.createPolicyRequest(json);
+			
 			IPolicy policy = createFromRequest(request);
 			policy = policyDao.save(policy);
 
 			Map<String, Object> resultMap = new HashMap<String, Object>();
 			resultMap.put("policy", policy.toJson());
-
+			
 			return responseFactory.createResponse(RestResponseStatus.OK, "Record saved.", resultMap);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
