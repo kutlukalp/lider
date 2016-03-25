@@ -40,7 +40,7 @@ public interface ILDAPService {
 
 	Entry getRootDSE() throws LdapException;
 
-	LdapEntry getEntry(String entryDn, String[] requestedAttributes);
+	LdapEntry getEntry(String entryDn, String[] requestedAttributes) throws LdapException;
 
 	String getDN(String baseDn, String attributeName, String attributeValue) throws LdapException;
 

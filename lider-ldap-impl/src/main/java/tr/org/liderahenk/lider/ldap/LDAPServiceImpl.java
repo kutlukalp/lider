@@ -174,6 +174,7 @@ public class LDAPServiceImpl implements ILDAPService {
 			}
 			return null;
 		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
 			throw new LdapException(e);
 		} finally {
 			releaseConnection(connection);
@@ -185,15 +186,16 @@ public class LDAPServiceImpl implements ILDAPService {
 	// TODO
 	// TODO
 	private List<IUserPrivilege> getGroupPrivileges(String userDn) throws LdapException {
-		logger.debug("will search group privileges for user {}", userDn);
-		LdapConnection connection = null;
+
 		List<IUserPrivilege> groupPrivileges = new ArrayList<IUserPrivilege>();
+		LdapConnection connection = null;
+		EntryCursor cursor = null;
 
 		try {
 			connection = getConnection();
 
 			String filter = "(&(objectClass=pardusLider)(member=$1))".replace("$1", userDn);
-			EntryCursor cursor = connection.search(configurationService.getLdapRootDn(), filter, SearchScope.SUBTREE);
+			cursor = connection.search(configurationService.getLdapRootDn(), filter, SearchScope.SUBTREE);
 
 			while (cursor.next()) {
 
@@ -227,6 +229,9 @@ public class LDAPServiceImpl implements ILDAPService {
 			logger.error(e.getMessage(), e);
 			throw new LdapException(e);
 		} finally {
+			if (cursor != null) {
+				cursor.close();
+			}
 			releaseConnection(connection);
 		}
 
@@ -238,8 +243,12 @@ public class LDAPServiceImpl implements ILDAPService {
 	 */
 	@Override
 	public void addEntry(String newDn, Map<String, String[]> attributes) throws LdapException {
-		LdapConnection connection = getConnection();
+
+		LdapConnection connection = null;
+
 		try {
+			connection = getConnection();
+
 			Dn dn = new Dn(newDn);
 			Entry entry = new DefaultEntry(dn);
 
@@ -263,6 +272,7 @@ public class LDAPServiceImpl implements ILDAPService {
 				throw new LdapException(ldapResult.getDiagnosticMessage());
 			}
 		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
 			throw new LdapException(e);
 		} finally {
 			releaseConnection(connection);
@@ -417,10 +427,13 @@ public class LDAPServiceImpl implements ILDAPService {
 	}
 
 	@Override
-	public LdapEntry getEntry(String entryDn, String[] returningAttributes) {
+	public LdapEntry getEntry(String entryDn, String[] returningAttributes) throws LdapException {
+
 		LdapConnection conn = null;
+		EntryCursor cursor = null;
+
 		try {
-			conn = pool.getConnection();
+			conn = getConnection();
 
 			// Add 'objectClass' to requested attributes to determine entry type
 			Set<String> requestAttributeSet = new HashSet<String>();
@@ -430,7 +443,7 @@ public class LDAPServiceImpl implements ILDAPService {
 			}
 
 			// Search for entries
-			EntryCursor cursor = conn.search(entryDn, "(objectClass=*)", SearchScope.OBJECT,
+			cursor = conn.search(entryDn, "(objectClass=*)", SearchScope.OBJECT,
 					requestAttributeSet.toArray(new String[requestAttributeSet.size()]));
 			if (cursor.next()) {
 				Entry entry = cursor.get();
@@ -448,21 +461,26 @@ public class LDAPServiceImpl implements ILDAPService {
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
+			throw new LdapException(e);
 		} finally {
+			if (cursor != null) {
+				cursor.close();
+			}
 			releaseConnection(conn);
 		}
-
-		return null;
 	}
 
 	@Override
 	public String getDN(String baseDn, String attributeName, String attributeValue) throws LdapException {
 
-		LdapConnection connection = getConnection();
+		LdapConnection connection = null;
+		EntryCursor cursor = null;
+
 		String filter = "(" + attributeName + "=" + attributeValue + ")";
 
 		try {
-			EntryCursor cursor = connection.search(baseDn, filter, SearchScope.OBJECT);
+			connection = getConnection();
+			cursor = connection.search(baseDn, filter, SearchScope.OBJECT);
 			while (cursor.next()) {
 				return cursor.get().getDn().getName();
 			}
@@ -470,6 +488,9 @@ public class LDAPServiceImpl implements ILDAPService {
 			logger.error(e.getMessage(), e);
 			throw new LdapException(e);
 		} finally {
+			if (cursor != null) {
+				cursor.close();
+			}
 			releaseConnection(connection);
 		}
 
