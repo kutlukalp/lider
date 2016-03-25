@@ -51,6 +51,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 	private String userLdapPrivilegeAttribute;
 	private String userLdapObjectClasses;
 	private Boolean userAuthorizationEnabled;
+	private String groupLdapObjectClasses;
 
 	// Task manager configuration
 	private Long taskManagerTaskTimeout;
@@ -66,13 +67,14 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 				+ xmppPort + ", xmppUsername=" + xmppUsername + ", xmppPassword=" + xmppPassword + ", xmppServiceName="
 				+ xmppServiceName + ", xmppMaxRetryConnectionCount=" + xmppMaxRetryConnectionCount
 				+ ", xmppPacketReplayTimeout=" + xmppPacketReplayTimeout + ", xmppPingTimeout=" + xmppPingTimeout
-				+ ", xmppUseSsl=" + xmppUseSsl + ", agentLdapBaseDn=" + agentLdapBaseDn + ", agentLdapIdAttribute="
-				+ agentLdapIdAttribute + ", agentLdapJidAttribute=" + agentLdapJidAttribute
-				+ ", agentLdapObjectClasses=" + agentLdapObjectClasses + ", userLdapBaseDn=" + userLdapBaseDn
-				+ ", userLdapUidAttribute=" + userLdapUidAttribute + ", userLdapPrivilegeAttribute="
+				+ ", xmppUseSsl=" + xmppUseSsl + ", xmppFilePath=" + xmppFilePath + ", agentLdapBaseDn="
+				+ agentLdapBaseDn + ", agentLdapIdAttribute=" + agentLdapIdAttribute + ", agentLdapJidAttribute="
+				+ agentLdapJidAttribute + ", agentLdapObjectClasses=" + agentLdapObjectClasses + ", userLdapBaseDn="
+				+ userLdapBaseDn + ", userLdapUidAttribute=" + userLdapUidAttribute + ", userLdapPrivilegeAttribute="
 				+ userLdapPrivilegeAttribute + ", userLdapObjectClasses=" + userLdapObjectClasses
-				+ ", userAuthorizationEnabled=" + userAuthorizationEnabled + ", taskManagerTaskTimeout="
-				+ taskManagerTaskTimeout + ", taskManagerMulticastEnabled=" + taskManagerMulticastEnabled
+				+ ", userAuthorizationEnabled=" + userAuthorizationEnabled + ", groupLdapObjectClasses="
+				+ groupLdapObjectClasses + ", taskManagerTaskTimeout=" + taskManagerTaskTimeout
+				+ ", taskManagerMulticastEnabled=" + taskManagerMulticastEnabled
 				+ ", taskManagerLogXmppMessagesEnabled=" + taskManagerLogXmppMessagesEnabled + "]";
 	}
 
@@ -344,6 +346,15 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 
 	public void setUserAuthorizationEnabled(Boolean userAuthorizationEnabled) {
 		this.userAuthorizationEnabled = userAuthorizationEnabled;
+	}
+
+	@Override
+	public String getGroupLdapObjectClasses() {
+		return groupLdapObjectClasses;
+	}
+
+	public void setGroupLdapObjectClasses(String groupLdapObjectClasses) {
+		this.groupLdapObjectClasses = groupLdapObjectClasses;
 	}
 
 	@Override

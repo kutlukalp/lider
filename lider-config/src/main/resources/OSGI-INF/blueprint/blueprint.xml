@@ -48,6 +48,7 @@
 		<property name="userLdapPrivilegeAttribute" value="${user.ldap.privilege.attribute}" />
 		<property name="userLdapObjectClasses" value="${user.ldap.object.classes}" />
 		<property name="userAuthorizationEnabled" value="${user.authorization.enabled}" />
+		<property name="groupLdapObjectClasses" value="${group.ldap.object.classes}" />
 
 		<property name="taskManagerTaskTimeout" value="${taskmanager.task.timeout}" />
 		<property name="taskManagerMulticastEnabled" value="${taskmanager.multicast.enabled}" />

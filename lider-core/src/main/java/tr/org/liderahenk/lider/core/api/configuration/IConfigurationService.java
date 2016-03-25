@@ -209,6 +209,13 @@ public interface IConfigurationService {
 	 */
 	Boolean getUserAuthorizationEnabled();
 
+	/**
+	 * 
+	 * @return comma separated LDAP group object classes (which is usually just
+	 *         'groupOfNames')
+	 */
+	String getGroupLdapObjectClasses();
+
 	//
 	// Task manager configuration
 	//
