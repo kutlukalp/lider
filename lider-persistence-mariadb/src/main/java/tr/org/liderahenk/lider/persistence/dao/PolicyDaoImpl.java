@@ -1,36 +1,42 @@
 package tr.org.liderahenk.lider.persistence.dao;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tr.org.liderahenk.lider.core.api.messaging.enums.LiderMessageType;
+import tr.org.liderahenk.lider.core.api.messaging.messages.IExecutePoliciesMessage;
 import tr.org.liderahenk.lider.core.api.persistence.PropertyOrder;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IPolicyDao;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
 import tr.org.liderahenk.lider.core.api.persistence.enums.OrderType;
+import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
-import tr.org.liderahenk.lider.persistence.entities.CommandExecutionImpl;
-import tr.org.liderahenk.lider.persistence.entities.CommandImpl;
 import tr.org.liderahenk.lider.persistence.entities.PolicyImpl;
-import tr.org.liderahenk.lider.persistence.entities.ProfileImpl;
 
 /**
  * Provides database access for policies. CRUD operations for policies and their
@@ -47,37 +53,41 @@ public class PolicyDaoImpl implements IPolicyDao {
 	private EntityManager entityManager;
 	
 	private final static String GET_LATEST_POLICY_QUERY = 
-			"SELECT "
-			+ "prof.PROFILE_ID, "
-			+ "prof.ACTIVE, "
-			+ "prof.CREATE_DATE, "
-			+ "prof.DELETED, "
-			+ "prof.DESCRIPTION, "
-			+ "prof.LABEL, "
-			+ "prof.MODIFY_DATE, "
-			+ "prof.OVERRIDABLE, "
-			+ "prof.PROFILE_DATA, "
-			+ "prof.PLUGIN_ID, "
-			+ "p.POLICY_VERSION "
-			+ "FROM "
-			+ "C_PROFILE prof "
-			+ "INNER JOIN "
-			+ "C_POLICY_PROFILE pp ON (pp.PROFILE_ID = prof.PROFILE_ID) "
-			+ "INNER JOIN "
-			+ "C_POLICY p ON (p.POLICY_ID = pp.POLICY_ID) "
-			+ "WHERE "
-			+ "pp.POLICY_ID = "
-			+ "(SELECT DISTINCT "
-			+ "	p.POLICY_ID "
-			+ "	FROM "
-			+ "	C_POLICY p "
-			+ "	INNER JOIN "
-			+ "	C_COMMAND c ON (c.POLICY_ID = p.POLICY_ID) "
-			+ "	INNER JOIN "
-			+ "	C_COMMAND_EXECUTION ce ON (ce.COMMAND_ID = c.COMMAND_ID) "
-			+ "	WHERE "
-			+ "	(ce.DN_TYPE = {0} AND ce.DN = '{1}') OR (ce.DN_TYPE = {2} AND ce.DN IN ({3})) "
-			+ "	ORDER BY ce.CREATE_DATE DESC LIMIT 1)";
+		"SELECT "
+		+ " prof.PROFILE_ID, "
+		+ " prof.ACTIVE, "
+		+ " prof.CREATE_DATE, "
+		+ " prof.DELETED, "
+		+ " prof.DESCRIPTION, "
+		+ " prof.LABEL, "
+		+ " prof.MODIFY_DATE, "
+		+ " prof.OVERRIDABLE, "
+		+ " prof.PROFILE_DATA, "
+		+ " prof.PLUGIN_ID, "
+		+ " p.POLICY_VERSION, "
+		+ " plugin.PLUGIN_NAME, "
+		+ " plugin.PLUGIN_VERSION "
+		+ " FROM "
+		+ " C_PROFILE prof "
+		+ " INNER JOIN "
+		+ " C_POLICY_PROFILE pp ON (pp.PROFILE_ID = prof.PROFILE_ID) "
+		+ " INNER JOIN "
+		+ " C_POLICY p ON (p.POLICY_ID = pp.POLICY_ID) "
+		+ " INNER JOIN "
+		+ " C_PLUGIN plugin ON (plugin.PLUGIN_ID = prof.PLUGIN_ID) "
+		+ " WHERE "
+		+ " pp.POLICY_ID = "
+		+ " (SELECT DISTINCT "
+		+ " 	p.POLICY_ID "
+		+ " 	FROM "
+		+ " 	C_POLICY p "
+		+ " 	INNER JOIN "
+		+ " 	C_COMMAND c ON (c.POLICY_ID = p.POLICY_ID) "
+		+ " 	INNER JOIN "
+		+ " 	C_COMMAND_EXECUTION ce ON (ce.COMMAND_ID = c.COMMAND_ID) "
+		+ " 	WHERE "
+		+ " 	(ce.DN_TYPE = ?1 AND ce.DN = ?2) OR (ce.DN_TYPE = ?3 AND ce.DN IN ({0})) "
+		+ " 	ORDER BY ce.CREATE_DATE DESC LIMIT 1)";
 
 	public void init() {
 		logger.info("Initializing policy DAO.");
@@ -223,20 +233,258 @@ public class PolicyDaoImpl implements IPolicyDao {
 		this.entityManager = entityManager;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public IPolicy getLatestPolicy(String userDn, List<LdapEntry> groupDns) {
+	public IExecutePoliciesMessage getLatestPolicy(String userDn, List<LdapEntry> groupDns, String userPolicyVersion) {
+
+		StringBuilder builder;
 		
-		logger.error("Preparing user profile query.");
-		// TODO listedeki dnleri '', '', '' şeklinde hazırla
-		// Prepare user profile query
-		String userProfileQuery = GET_LATEST_POLICY_QUERY.replace("{0}", "1").replace("{1}", userDn).replace("{2}", "3").replace("{3}", groupDns == null ? "" : groupDns.toString());
+		String groupDnParam;
 		
-		logger.error("User profile query: " + userProfileQuery);
+		if (!groupDns.isEmpty()) {
+			logger.debug("Preparing group DN parameter. groupDns.size(): " + groupDns.size());
+			builder = new StringBuilder();
+			for (int i = 0; i < groupDns.size(); i++) {
+				LdapEntry entry = groupDns.get(i);
+
+				if (i != groupDns.size() - 1) {
+					builder.append("'" + entry.getDistinguishedName() + "',");
+				} else {
+					builder.append("'" + entry.getDistinguishedName() + "'");
+				}
+			}
+			
+			groupDnParam = builder.toString();
+		} else {
+			logger.debug("Group DN list is empty.");
+			groupDnParam = "";
+		}
 		
-		// TODO ExecutePolicies listesine nasıl cevirecem
-		entityManager.createNativeQuery(userProfileQuery).getResultList();
+		// TODO setParameter method of JPA does not work properly for native queries while giving a List or array as parameter
+		// there may be some bug about this issue.
+		String sql = GET_LATEST_POLICY_QUERY.replace("{0}", groupDnParam);
 		
-		return null;
+		logger.debug("Creating query.");
+		Query query = entityManager.createNativeQuery(sql).setParameter(1, RestDNType.USER.getId()).setParameter(2, userDn).setParameter(3, RestDNType.GROUP.getId());
+
+		logger.debug("Executing query.");
+		final List<Object[]> resultList = query.getResultList();
+
+		logger.debug("Getting latest policy version.");
+		final String policyVersion = !resultList.isEmpty() ? (String) (resultList.get(0)[10]) : null;
+		
+		logger.debug("Getting profile list of policy.");
+		final List<IProfile> profileList = !policyVersion.equals(userPolicyVersion) ? new ArrayList<IProfile>(): createProfileList(resultList);
+		
+		logger.debug("Creating message object.");
+		IExecutePoliciesMessage message = new IExecutePoliciesMessage() {
+			private static final long serialVersionUID = 7773614490334045662L;
+
+			@Override
+			public LiderMessageType getType() {
+				return LiderMessageType.EXECUTE_POLICY;
+			}
+			
+			@Override
+			public Date getTimestamp() {
+				return new Date();
+			}
+			
+			@Override
+			public String getRecipient() {
+				return null;
+			}
+			
+			@Override
+			public String getUserPolicyVersion() {
+				return policyVersion;
+			}
+			
+			@Override
+			public List<IProfile> getUserPolicyProfiles() {
+				return profileList;
+			}
+			
+			@Override
+			public String getMachinePolicyVersion() {
+				return null;
+			}
+			
+			@Override
+			public List<IProfile> getMachinePolicyProfiles() {
+				return null;
+			}
+		};
+		
+		return message;
+	}
+
+	private List<IProfile> createProfileList(List<Object[]> resultList) {
+		
+		List<IProfile> profileList = new ArrayList<IProfile>();
+		
+		if (!resultList.isEmpty()) {
+			for (final Object[] objArr : resultList) {
+				IProfile profile = new IProfile() {
+					
+					private static final long serialVersionUID = 1245538060673249103L;
+					
+					@Override
+					public Long getId() {
+						return (Long) objArr[0];
+					}
+					
+					@Override
+					public boolean isActive() {
+						return (Boolean) objArr[1];
+					}
+					
+					@Override
+					public Date getCreateDate() {
+						return (Date) objArr[2];
+					}
+					
+					@Override
+					public boolean isDeleted() {
+						return (Boolean) objArr[3];
+					}
+					
+					@Override
+					public String getDescription() {
+						return (String) objArr[4];
+					}
+					
+					@Override
+					public String getLabel() {
+						return (String) objArr[5];
+					}
+					
+					@Override
+					public Date getModifyDate() {
+						return (Date) objArr[6];
+					}
+					
+					@Override
+					public boolean isOverridable() {
+						return (Boolean) objArr[7];
+					}
+					
+					@Override
+					public byte[] getProfileDataBlob() {
+						try {
+							return (byte[]) objArr[8];
+						} catch (Exception e) {
+							logger.error(e.getMessage(), e);
+						}
+						return null;
+					}
+					
+					@SuppressWarnings("unchecked")
+					@Override
+					public Map<String, Object> getProfileData() {
+						try {
+							Map<String, Object> map = new HashMap<String, Object>();
+							map = new ObjectMapper().readValue(((byte[]) objArr[8]), Map.class);
+							return map;
+						} catch (Exception e) {
+							logger.error(e.getMessage(), e);
+						}
+						return null;
+					}
+					
+					@Override
+					public String toJson() {
+						try {
+							return new ObjectMapper().writeValueAsString(this);
+						} catch (JsonGenerationException e) {
+							logger.error(e.getMessage(), e);
+						} catch (JsonMappingException e) {
+							e.printStackTrace();
+						} catch (IOException e) {
+							logger.error(e.getMessage(), e);
+						}
+						return null;
+					}
+					
+					@Override
+					public IPlugin getPlugin() {
+						IPlugin plugin = new IPlugin() {
+							private static final long serialVersionUID = 7766957851982612882L;
+
+							@Override
+							public Long getId() {
+								return (Long) objArr[9];
+							}
+							
+							@Override
+							public Date getCreateDate() {
+								return null;
+							}
+							
+							@Override
+							public boolean isUserOriented() {
+								return false;
+							}
+							
+							@Override
+							public boolean isPolicyPlugin() {
+								return false;
+							}
+							
+							@Override
+							public boolean isMachineOriented() {
+								return false;
+							}
+							
+							@Override
+							public boolean isDeleted() {
+								return false;
+							}
+							
+							@Override
+							public boolean isActive() {
+								return false;
+							}
+							
+							@Override
+							public String getVersion() {
+								return (String) objArr[11];
+							}
+							
+							@Override
+							public List<? extends IProfile> getProfiles() {
+								return null;
+							}
+							
+							@Override
+							public String getName() {
+								return (String) objArr[10];
+							}
+							
+							@Override
+							public Date getModifyDate() {
+								return null;
+							}
+							
+							@Override
+							public String getDescription() {
+								return null;
+							}
+							
+							@Override
+							public void addProfile(IProfile profile) {
+							}
+						};
+						
+						return plugin;
+					}
+					
+				};
+				
+				profileList.add(profile);
+			}
+		}
+		return profileList;
 	}
 
 }

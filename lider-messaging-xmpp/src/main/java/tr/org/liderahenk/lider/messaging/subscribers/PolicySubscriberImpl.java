@@ -55,15 +55,15 @@ public class PolicySubscriberImpl implements IPolicySubscriber {
 		
 		List<LdapEntry> groupsOfUser = ldapService.search(configurationService.getLdapRootDn(), filterAttributesList, null);
 		// ------------------------------------ //
+		
 		// Find user policy related to either user entry or group entries which
 		// ever is the latest
-		policyDao.getLatestPolicy(userDn, groupsOfUser);
-		// TODO
+		IExecutePoliciesMessage executePoliciesMessage = policyDao.getLatestPolicy(userDn, groupsOfUser, userPolicyVersion);
 
 		// Find machine policy
 		// TODO
-
-		return null;
+		
+		return executePoliciesMessage;
 	}
 
 	public void setLdapService(ILDAPService ldapService) {
