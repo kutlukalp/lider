@@ -1,6 +1,5 @@
 package tr.org.liderahenk.lider.rest;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,12 +11,8 @@ import org.slf4j.LoggerFactory;
 import tr.org.liderahenk.lider.core.api.authorization.IAuthService;
 import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
-import tr.org.liderahenk.lider.core.api.ldap.LdapSearchFilterAttribute;
-import tr.org.liderahenk.lider.core.api.ldap.enums.LdapSearchFilterEnum;
-import tr.org.liderahenk.lider.core.api.ldap.exception.LdapException;
 import tr.org.liderahenk.lider.core.api.rest.IRequestFactory;
 import tr.org.liderahenk.lider.core.api.rest.IResponseFactory;
-import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
 import tr.org.liderahenk.lider.core.api.rest.enums.RestResponseStatus;
 import tr.org.liderahenk.lider.core.api.rest.exceptions.InvalidRequestException;
 import tr.org.liderahenk.lider.core.api.rest.processors.ITaskRequestProcessor;
@@ -27,6 +22,13 @@ import tr.org.liderahenk.lider.core.api.router.IServiceRouter;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskSubmissionFailedException;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
+/**
+ * 
+ * @author <a href="mailto:caner.feyzullahoglu@agem.com.tr">Caner
+ *         Feyzullahoğlu</a>
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ *
+ */
 public class TaskRequestProcessorImpl implements ITaskRequestProcessor {
 
 	private static Logger logger = LoggerFactory.getLogger(TaskRequestProcessorImpl.class);
@@ -52,11 +54,12 @@ public class TaskRequestProcessorImpl implements ITaskRequestProcessor {
 			String targetOperation = request.getPluginName() + "/" + request.getCommandId();
 			logger.debug("Target operation: {}", targetOperation);
 
-			// DN list may contain any combination of Ahenk, User and Group DNs,
+			// DN list may contain any combination of agent, user,
+			// organizational unit and group DNs,
 			// and DN type indicates what kind of entries in this list are
-			// subject
-			// to command execution. Therefore we need to find these LDAP
-			// entries first before authorization and command execution phases.
+			// subject to command execution. Therefore we need to find these
+			// LDAP entries first before authorization and command execution
+			// phases.
 			targetEntries = ldapService.findTargetEntries(request.getDnList(), request.getDnType());
 
 			if (configService.getUserAuthorizationEnabled()) {

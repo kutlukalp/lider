@@ -34,6 +34,13 @@ import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyRequest;
 import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
+/**
+ * 
+ * @author <a href="mailto:caner.feyzullahoglu@agem.com.tr">Caner
+ *         Feyzullahoğlu</a>
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ *
+ */
 public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 
 	private static Logger logger = LoggerFactory.getLogger(PolicyRequestProcessorImpl.class);
@@ -55,27 +62,26 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 			IPolicy policy = policyDao.find(request.getId());
 
 			logger.debug("Finding target entries under requested dnList.");
-			logger.debug("dnList size: " + request.getDnList().size());
-			logger.debug("dnType: " + request.getDnType());
-			List<LdapEntry> targetEntryList = ldapService.findTargetEntries(request.getDnList(), request.getDnType());
+			// DN list may contain any combination of agent, user,
+			// organizational unit and group DNs,
+			// and DN type indicates what kind of entries in this list are
+			// subject to command execution. Therefore we need to find these
+			// LDAP entries first before authorization and command execution
+			// phases.
+			List<LdapEntry> targetEntries = ldapService.findTargetEntries(request.getDnList(), request.getDnType());
 
 			logger.debug("Creating ICommand object.");
 			ICommand command = createCommandFromRequest(request, policy);
-
-			logger.debug("Target entry list size: " + targetEntryList.size());
-			if (targetEntryList != null && targetEntryList.size() > 0) {
-				logger.debug("Adding a ICommandExecution to ICommand for each target DN. List size: "
-						+ targetEntryList.size());
-				for (LdapEntry targetEntry : targetEntryList) {
+			logger.debug("Target entry list size: " + targetEntries.size());
+			if (targetEntries != null && targetEntries.size() > 0) {
+				for (LdapEntry targetEntry : targetEntries) {
 					command.addCommandExecution(
-							createCommandExecution(command, request.getDnType(), targetEntry.getDistinguishedName()));
+							createCommandExecution(command, targetEntry.getType(), targetEntry.getDistinguishedName()));
 				}
 			}
 
-			logger.debug("Saving command.");
 			commandDao.save(command);
 
-			logger.debug("Creating rest response ResponseStatus: OK");
 			return responseFactory.createResponse(RestResponseStatus.OK, "Record executed.", null);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -87,13 +93,13 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 	public IRestResponse add(String json) {
 		try {
 			IPolicyRequest request = requestFactory.createPolicyRequest(json);
-			
+
 			IPolicy policy = createFromRequest(request);
 			policy = policyDao.save(policy);
 
 			Map<String, Object> resultMap = new HashMap<String, Object>();
 			resultMap.put("policy", policy.toJson());
-			
+
 			return responseFactory.createResponse(RestResponseStatus.OK, "Record saved.", resultMap);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);

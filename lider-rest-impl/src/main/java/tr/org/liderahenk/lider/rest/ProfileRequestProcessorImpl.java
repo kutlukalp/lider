@@ -33,6 +33,13 @@ import tr.org.liderahenk.lider.core.api.rest.requests.IProfileRequest;
 import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
+/**
+ * 
+ * @author <a href="mailto:caner.feyzullahoglu@agem.com.tr">Caner
+ *         Feyzullahoğlu</a>
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ *
+ */
 public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 
 	private static Logger logger = LoggerFactory.getLogger(ProfileRequestProcessorImpl.class);
@@ -57,27 +64,25 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 			policyDao.save(policy);
 
 			logger.debug("Finding target entries under requested dnList.");
-			logger.debug("dnList size: " + request.getDnList().size());
-			logger.debug("dnType: " + request.getDnType());
-			List<LdapEntry> targetEntryList = ldapService.findTargetEntries(request.getDnList(), request.getDnType());
+			// DN list may contain any combination of agent, user,
+			// organizational unit and group DNs,
+			// and DN type indicates what kind of entries in this list are
+			// subject to command execution. Therefore we need to find these
+			// LDAP entries first before authorization and command execution
+			// phases.
+			List<LdapEntry> targetEntries = ldapService.findTargetEntries(request.getDnList(), request.getDnType());
 
 			logger.debug("Creating ICommand object.");
 			ICommand command = createCommandFromRequest(request, policy);
-
-			if (targetEntryList != null && targetEntryList.size() > 0) {
-				logger.debug("Target entry list size: " + targetEntryList.size());
-				logger.debug("Adding a ICommandExecution to ICommand for each target DN. List size: "
-						+ targetEntryList.size());
-				for (LdapEntry targetEntry : targetEntryList) {
+			if (targetEntries != null && targetEntries.size() > 0) {
+				for (LdapEntry targetEntry : targetEntries) {
 					command.addCommandExecution(
-							createCommandExecution(command, request.getDnType(), targetEntry.getDistinguishedName()));
+							createCommandExecution(command, targetEntry.getType(), targetEntry.getDistinguishedName()));
 				}
 			}
 
-			logger.debug("Saving command.");
 			commandDao.save(command);
 
-			logger.debug("Creating rest response ResponseStatus: OK");
 			return responseFactory.createResponse(RestResponseStatus.OK, "Record executed.", null);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);

@@ -91,7 +91,7 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 
 			// Check if agent LDAP entry already exists
 			final List<LdapEntry> entry = ldapService.search(configurationService.getAgentLdapJidAttribute(), uid,
-					configurationService.getAgentLdapJidAttribute());
+					new String[] { configurationService.getAgentLdapJidAttribute() });
 
 			if (entry != null && !entry.isEmpty()) {
 
@@ -214,7 +214,7 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 
 			// Check if agent LDAP entry already exists
 			final List<LdapEntry> entry = ldapService.search(configurationService.getAgentLdapJidAttribute(), uid,
-					configurationService.getAgentLdapJidAttribute());
+					new String[] { configurationService.getAgentLdapJidAttribute() });
 
 			// Delete agent LDAP entry
 			if (entry != null && !entry.isEmpty()) {
