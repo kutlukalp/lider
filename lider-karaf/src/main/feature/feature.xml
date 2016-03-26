@@ -35,6 +35,7 @@
         <bundle start-level="81">mvn:${groupId}/lider-config/${project.version}</bundle>
         <configfile finalname="/etc/tr.org.liderahenk.cfg">mvn:${groupId}/lider-config/${project.version}/cfg</configfile>
         <bundle start-level="82">mvn:${groupId}/lider-datasource-mariadb/${project.version}</bundle>
+        <configfile finalname="/etc/tr.org.liderahenk.datasource.cfg">mvn:${groupId}/lider-datasource-mariadb/${project.version}/cfg</configfile>
         <bundle start-level="83">mvn:${groupId}/lider-persistence-mariadb/${project.version}</bundle>
         <bundle start-level="84">mvn:${groupId}/lider-web/${project.version}/war</bundle>
         <bundle start-level="84">mvn:${groupId}/lider-cache-impl/${project.version}</bundle>

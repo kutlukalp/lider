@@ -1,10 +1,17 @@
 package tr.org.liderahenk.lider.config;
 
+import org.codehaus.jackson.map.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
 
 /**
  * This class provides configurations throughout the system. Configurations are
- * read from <code>${KARAF_HOME}/etc/tr.org.liderahenk.cfg</code> file.
+ * read from <code>${KARAF_HOME}/etc/tr.org.liderahenk.cfg</code> file.<br/>
+ * 
+ * The configuration service is also updated automatically when a configuration
+ * is changed via
  * 
  * @author <a href="mailto:bm.volkansahin@gmail.com">volkansahin</a>
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
@@ -12,12 +19,7 @@ import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
  */
 public class ConfigurationServiceImpl implements IConfigurationService {
 
-	// Database configuration
-	private String dbServer;
-	private Integer dbPort;
-	private String dbDatabase;
-	private String dbUsername;
-	private String dbPassword;
+	private static Logger logger = LoggerFactory.getLogger(ConfigurationServiceImpl.class);
 
 	// LDAP configuration
 	private String ldapServer;
@@ -58,19 +60,22 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 	private Boolean taskManagerMulticastEnabled;
 	private Boolean taskManagerLogXmppMessagesEnabled;
 
+	public void refresh() {
+		logger.info("Configuration updated using blueprint: {}", prettyPrintConfig());
+	}
+
 	@Override
 	public String toString() {
-		return "ConfigurationServiceImpl [dbServer=" + dbServer + ", dbPort=" + dbPort + ", dbDatabase=" + dbDatabase
-				+ ", dbUsername=" + dbUsername + ", dbPassword=" + dbPassword + ", ldapServer=" + ldapServer
-				+ ", ldapPort=" + ldapPort + ", ldapUsername=" + ldapUsername + ", ldapPassword=" + ldapPassword
-				+ ", ldapRootDn=" + ldapRootDn + ", ldapUseSsl=" + ldapUseSsl + ", xmppHost=" + xmppHost + ", xmppPort="
-				+ xmppPort + ", xmppUsername=" + xmppUsername + ", xmppPassword=" + xmppPassword + ", xmppServiceName="
-				+ xmppServiceName + ", xmppMaxRetryConnectionCount=" + xmppMaxRetryConnectionCount
-				+ ", xmppPacketReplayTimeout=" + xmppPacketReplayTimeout + ", xmppPingTimeout=" + xmppPingTimeout
-				+ ", xmppUseSsl=" + xmppUseSsl + ", xmppFilePath=" + xmppFilePath + ", agentLdapBaseDn="
-				+ agentLdapBaseDn + ", agentLdapIdAttribute=" + agentLdapIdAttribute + ", agentLdapJidAttribute="
-				+ agentLdapJidAttribute + ", agentLdapObjectClasses=" + agentLdapObjectClasses + ", userLdapBaseDn="
-				+ userLdapBaseDn + ", userLdapUidAttribute=" + userLdapUidAttribute + ", userLdapPrivilegeAttribute="
+		return "ConfigurationServiceImpl [ldapServer=" + ldapServer + ", ldapPort=" + ldapPort + ", ldapUsername="
+				+ ldapUsername + ", ldapPassword=" + ldapPassword + ", ldapRootDn=" + ldapRootDn + ", ldapUseSsl="
+				+ ldapUseSsl + ", xmppHost=" + xmppHost + ", xmppPort=" + xmppPort + ", xmppUsername=" + xmppUsername
+				+ ", xmppPassword=" + xmppPassword + ", xmppServiceName=" + xmppServiceName
+				+ ", xmppMaxRetryConnectionCount=" + xmppMaxRetryConnectionCount + ", xmppPacketReplayTimeout="
+				+ xmppPacketReplayTimeout + ", xmppPingTimeout=" + xmppPingTimeout + ", xmppUseSsl=" + xmppUseSsl
+				+ ", xmppFilePath=" + xmppFilePath + ", agentLdapBaseDn=" + agentLdapBaseDn + ", agentLdapIdAttribute="
+				+ agentLdapIdAttribute + ", agentLdapJidAttribute=" + agentLdapJidAttribute
+				+ ", agentLdapObjectClasses=" + agentLdapObjectClasses + ", userLdapBaseDn=" + userLdapBaseDn
+				+ ", userLdapUidAttribute=" + userLdapUidAttribute + ", userLdapPrivilegeAttribute="
 				+ userLdapPrivilegeAttribute + ", userLdapObjectClasses=" + userLdapObjectClasses
 				+ ", userAuthorizationEnabled=" + userAuthorizationEnabled + ", groupLdapObjectClasses="
 				+ groupLdapObjectClasses + ", taskManagerTaskTimeout=" + taskManagerTaskTimeout
@@ -78,49 +83,12 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 				+ ", taskManagerLogXmppMessagesEnabled=" + taskManagerLogXmppMessagesEnabled + "]";
 	}
 
-	@Override
-	public String getDbServer() {
-		return dbServer;
-	}
-
-	public void setDbServer(String dbServer) {
-		this.dbServer = dbServer;
-	}
-
-	@Override
-	public Integer getDbPort() {
-		return dbPort;
-	}
-
-	public void setDbPort(Integer dbPort) {
-		this.dbPort = dbPort;
-	}
-
-	@Override
-	public String getDbDatabase() {
-		return dbDatabase;
-	}
-
-	public void setDbDatabase(String dbDatabase) {
-		this.dbDatabase = dbDatabase;
-	}
-
-	@Override
-	public String getDbUsername() {
-		return dbUsername;
-	}
-
-	public void setDbUsername(String dbUsername) {
-		this.dbUsername = dbUsername;
-	}
-
-	@Override
-	public String getDbPassword() {
-		return dbPassword;
-	}
-
-	public void setDbPassword(String dbPassword) {
-		this.dbPassword = dbPassword;
+	public String prettyPrintConfig() {
+		try {
+			return new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(this);
+		} catch (Exception e) {
+		}
+		return toString();
 	}
 
 	@Override

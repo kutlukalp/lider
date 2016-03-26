@@ -11,40 +11,6 @@ package tr.org.liderahenk.lider.core.api.configuration;
 public interface IConfigurationService {
 
 	//
-	// Database configuration
-	//
-
-	/**
-	 * 
-	 * @return Database server host.
-	 */
-	String getDbServer();
-
-	/**
-	 * 
-	 * @return Database server port number.
-	 */
-	Integer getDbPort();
-
-	/**
-	 * 
-	 * @return Database schema name.
-	 */
-	String getDbDatabase();
-
-	/**
-	 * 
-	 * @return Database user name.
-	 */
-	String getDbUsername();
-
-	/**
-	 * 
-	 * @return Database password.
-	 */
-	String getDbPassword();
-
-	//
 	// LDAP configuration
 	//
 

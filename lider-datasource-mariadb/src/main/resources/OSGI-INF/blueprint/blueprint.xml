@@ -7,9 +7,10 @@
                  http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://svn.apache.org/repos/asf/aries/trunk/blueprint/blueprint-cm/src/main/resources/org/apache/aries/blueprint/compendium/cm/blueprint-cm-1.1.0.xsd
          ">
 	
-	<cm:property-placeholder persistent-id="tr.org.liderahenk"
+	<!-- Unfortunately datasource config must be seperate due to Karaf/ConfigAdmin reload bug! -->
+	<!-- See https://issues.jboss.org/browse/ENTESB-3959 for more details. -->
+	<cm:property-placeholder persistent-id="tr.org.liderahenk.datasource"
         update-strategy="reload">
-        
     </cm:property-placeholder>
   
   <service 

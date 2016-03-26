@@ -13,13 +13,7 @@
 
 	<service ref="configurationService"
 		interface="tr.org.liderahenk.lider.core.api.configuration.IConfigurationService" />
-	<bean id="configurationService" class="tr.org.liderahenk.lider.config.ConfigurationServiceImpl">
-		<property name="dbServer" value="${db.server}" />
-		<property name="dbPort" value="${db.port}" />
-		<property name="dbDatabase" value="${db.database}" />
-		<property name="dbUsername" value="${db.username}" />
-		<property name="dbPassword" value="${db.password}" />
-
+	<bean id="configurationService" class="tr.org.liderahenk.lider.config.ConfigurationServiceImpl" init-method="refresh">
 		<property name="ldapServer" value="${ldap.server}" />
 		<property name="ldapPort" value="${ldap.port}" />
 		<property name="ldapUsername" value="${ldap.username}" />
