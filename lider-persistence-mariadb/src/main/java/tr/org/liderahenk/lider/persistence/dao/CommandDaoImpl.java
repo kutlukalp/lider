@@ -41,9 +41,7 @@ public class CommandDaoImpl implements ICommandDao {
 
 	@Override
 	public ICommand save(ICommand command) throws Exception {
-		logger.error("Creating CommandImpl.");
 		CommandImpl commandImpl = new CommandImpl(command);
-		logger.error("Persisting CommandImpl.");
 		entityManager.persist(commandImpl);
 		logger.debug("ICommand object persisted: {}", commandImpl.toString());
 		return commandImpl;
