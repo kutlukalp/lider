@@ -43,6 +43,7 @@ import tr.org.liderahenk.lider.persistence.entities.PolicyImpl;
  * plugin or policy records should be handled via this service only.
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ * @author <a href="mailto:caner.feyzullahoglu@agem.com.tr">Caner Feyzullahoğlu</a>
  * @see tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy
  *
  */

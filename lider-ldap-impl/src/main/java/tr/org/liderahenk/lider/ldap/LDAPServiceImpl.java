@@ -480,7 +480,7 @@ public class LDAPServiceImpl implements ILDAPService {
 
 		try {
 			connection = getConnection();
-			cursor = connection.search(baseDn, filter, SearchScope.OBJECT);
+			cursor = connection.search(baseDn, filter, SearchScope.SUBTREE);
 			while (cursor.next()) {
 				return cursor.get().getDn().getName();
 			}
