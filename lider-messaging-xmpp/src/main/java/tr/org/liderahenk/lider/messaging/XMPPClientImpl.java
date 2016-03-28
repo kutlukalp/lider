@@ -363,7 +363,11 @@ public class XMPPClientImpl {
 	 */
 	public void sendMessage(ILiderMessage message)
 			throws NotConnectedException, JsonGenerationException, JsonMappingException, IOException {
-		String msgStr = new ObjectMapper().writeValueAsString(message);
+		
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.setDateFormat(new SimpleDateFormat("dd-MM-yyyy HH:mm"));
+		
+		String msgStr = mapper.writeValueAsString(message);
 		String jid = message.getRecipient();
 		sendMessage(msgStr, getFullJid(jid));
 	}
@@ -751,6 +755,8 @@ public class XMPPClientImpl {
 							msg.getBody());
 
 					ObjectMapper mapper = new ObjectMapper();
+					mapper.setDateFormat(new SimpleDateFormat("dd-MM-yyyy HH:mm"));
+					
 					TaskStatusMessageImpl message = mapper.readValue(msg.getBody(), TaskStatusMessageImpl.class);
 					message.setFrom(msg.getFrom());
 
@@ -905,8 +911,11 @@ public class XMPPClientImpl {
 					msg = (Message) packet;
 					logger.info("Register message received from => {}, body => {}", msg.getFrom(), msg.getBody());
 
+					ObjectMapper mapper = new ObjectMapper();
+					mapper.setDateFormat(new SimpleDateFormat("dd-MM-yyyy HH:mm"));
+					
 					// Construct message
-					UserSessionMessageImpl message = new ObjectMapper().readValue(msg.getBody(),
+					UserSessionMessageImpl message = mapper.readValue(msg.getBody(),
 							UserSessionMessageImpl.class);
 					message.setFrom(msg.getFrom());
 
@@ -967,8 +976,12 @@ public class XMPPClientImpl {
 					msg = (Message) packet;
 					logger.info("Policy message received from => {}, body => {}", msg.getFrom(), msg.getBody());
 
+					
+					ObjectMapper mapper = new ObjectMapper();
+					mapper.setDateFormat(new SimpleDateFormat("dd-MM-yyyy HH:mm"));
+					
 					// Construct message
-					GetPoliciesMessageImpl message = new ObjectMapper().readValue(msg.getBody(),
+					GetPoliciesMessageImpl message = mapper.readValue(msg.getBody(),
 							GetPoliciesMessageImpl.class);
 					message.setFrom(msg.getFrom());
 

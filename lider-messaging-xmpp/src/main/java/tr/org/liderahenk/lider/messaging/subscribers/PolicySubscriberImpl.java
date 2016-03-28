@@ -43,6 +43,8 @@ public class PolicySubscriberImpl implements IPolicySubscriber {
 		String userPolicyVersion = message.getUserPolicyVersion();
 		String machinePolicyVersion = message.getMachinePolicyVersion();
 
+		logger.info("------>"+agentUid+"*"+userUid+"*"+userPolicyVersion+"*"+machinePolicyVersion+"*");
+		
 		// Find LDAP user entry
 		String userDn = ldapService.getDN(configurationService.getLdapRootDn(), configurationService.getUserLdapUidAttribute(), userUid);
 
@@ -74,4 +76,11 @@ public class PolicySubscriberImpl implements IPolicySubscriber {
 		this.commandDao = commandDao;
 	}
 
+	public void setConfigurationService(IConfigurationService configurationService) {
+		this.configurationService = configurationService;
+	}
+
+	public void setPolicyDao(IPolicyDao policyDao) {
+		this.policyDao = policyDao;
+	}
 }

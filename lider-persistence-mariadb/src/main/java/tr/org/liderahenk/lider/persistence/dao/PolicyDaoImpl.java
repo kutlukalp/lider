@@ -257,7 +257,7 @@ public class PolicyDaoImpl implements IPolicyDao {
 			groupDnParam = builder.toString();
 		} else {
 			logger.debug("Group DN list is empty.");
-			groupDnParam = "";
+			groupDnParam = "null";
 		}
 		
 		// TODO setParameter method of JPA does not work properly for native queries while giving a List or array as parameter
@@ -274,7 +274,10 @@ public class PolicyDaoImpl implements IPolicyDao {
 		final String policyVersion = !resultList.isEmpty() ? (String) (resultList.get(0)[10]) : null;
 		
 		logger.debug("Getting profile list of policy.");
-		final List<IProfile> profileList = !policyVersion.equals(userPolicyVersion) ? new ArrayList<IProfile>(): createProfileList(resultList);
+		logger.error("policyVersion: " + policyVersion);
+		logger.error("userPolicyVersion: " + userPolicyVersion);
+		logger.error("resultList.size: " + resultList.size());
+		final List<IProfile> profileList = policyVersion != null && !policyVersion.equals(userPolicyVersion) ? createProfileList(resultList) : new ArrayList<IProfile>();
 		
 		logger.debug("Creating message object.");
 		IExecutePoliciesMessage message = new IExecutePoliciesMessage() {

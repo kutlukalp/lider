@@ -60,6 +60,8 @@
 		class="tr.org.liderahenk.lider.messaging.subscribers.PolicySubscriberImpl">
 		<property name="ldapService" ref="ldapService" />
 		<property name="commandDao" ref="commandDao" />
+		<property name="configurationService" ref="configurationService" />
+		<property name="policyDao" ref="policyDao" />
 	</bean>
 
 	<reference-list id="presenceSubscribers"
@@ -82,6 +84,8 @@
 		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IAgentDao" />
 	<reference id="commandDao"
 		interface="tr.org.liderahenk.lider.core.api.persistence.dao.ICommandDao" />
+	<reference id="policyDao"
+		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IPolicyDao" />
 	<reference id="eventAdmin" interface="org.osgi.service.event.EventAdmin" />
 
 </blueprint>
