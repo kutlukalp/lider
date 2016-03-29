@@ -34,6 +34,8 @@ public class PolicySubscriberImpl implements IPolicySubscriber {
 	private IConfigurationService configurationService;
 	private IPolicyDao policyDao;
 
+	// TODO activation date!
+
 	@Override
 	public IExecutePoliciesMessage messageReceived(IGetPoliciesMessage message) throws Exception {
 
@@ -41,8 +43,6 @@ public class PolicySubscriberImpl implements IPolicySubscriber {
 		String userUid = message.getUsername();
 		String userPolicyVersion = message.getUserPolicyVersion();
 		String machinePolicyVersion = message.getMachinePolicyVersion();
-
-		logger.info("------>" + agentUid + "*" + userUid + "*" + userPolicyVersion + "*" + machinePolicyVersion + "*");
 
 		// Find LDAP user entry
 		String userDn = ldapService.getDN(configurationService.getLdapRootDn(),
@@ -56,7 +56,6 @@ public class PolicySubscriberImpl implements IPolicySubscriber {
 			filterAttributesList
 					.add(new LdapSearchFilterAttribute("objectClass", groupObjCls, LdapSearchFilterEnum.EQ));
 		}
-		// TODO member config
 		filterAttributesList.add(new LdapSearchFilterAttribute("member", userDn, LdapSearchFilterEnum.EQ));
 
 		List<LdapEntry> groupsOfUser = ldapService.search(configurationService.getLdapRootDn(), filterAttributesList,
@@ -84,4 +83,5 @@ public class PolicySubscriberImpl implements IPolicySubscriber {
 	public void setPolicyDao(IPolicyDao policyDao) {
 		this.policyDao = policyDao;
 	}
+
 }

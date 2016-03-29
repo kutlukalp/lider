@@ -43,7 +43,8 @@ import tr.org.liderahenk.lider.persistence.entities.PolicyImpl;
  * plugin or policy records should be handled via this service only.
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
- * @author <a href="mailto:caner.feyzullahoglu@agem.com.tr">Caner Feyzullahoğlu</a>
+ * @author <a href="mailto:caner.feyzullahoglu@agem.com.tr">Caner
+ *         Feyzullahoğlu</a>
  * @see tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy
  *
  */
@@ -52,43 +53,19 @@ public class PolicyDaoImpl implements IPolicyDao {
 	private static Logger logger = LoggerFactory.getLogger(PolicyDaoImpl.class);
 
 	private EntityManager entityManager;
-	
-	private final static String GET_LATEST_POLICY_QUERY = 
-		"SELECT "
-		+ " prof.PROFILE_ID, "
-		+ " prof.ACTIVE, "
-		+ " prof.CREATE_DATE, "
-		+ " prof.DELETED, "
-		+ " prof.DESCRIPTION, "
-		+ " prof.LABEL, "
-		+ " prof.MODIFY_DATE, "
-		+ " prof.OVERRIDABLE, "
-		+ " prof.PROFILE_DATA, "
-		+ " prof.PLUGIN_ID, "
-		+ " p.POLICY_VERSION, "
-		+ " plugin.PLUGIN_NAME, "
-		+ " plugin.PLUGIN_VERSION "
-		+ " FROM "
-		+ " C_PROFILE prof "
-		+ " INNER JOIN "
-		+ " C_POLICY_PROFILE pp ON (pp.PROFILE_ID = prof.PROFILE_ID) "
-		+ " INNER JOIN "
-		+ " C_POLICY p ON (p.POLICY_ID = pp.POLICY_ID) "
-		+ " INNER JOIN "
-		+ " C_PLUGIN plugin ON (plugin.PLUGIN_ID = prof.PLUGIN_ID) "
-		+ " WHERE "
-		+ " pp.POLICY_ID = "
-		+ " (SELECT DISTINCT "
-		+ " 	p.POLICY_ID "
-		+ " 	FROM "
-		+ " 	C_POLICY p "
-		+ " 	INNER JOIN "
-		+ " 	C_COMMAND c ON (c.POLICY_ID = p.POLICY_ID) "
-		+ " 	INNER JOIN "
-		+ " 	C_COMMAND_EXECUTION ce ON (ce.COMMAND_ID = c.COMMAND_ID) "
-		+ " 	WHERE "
-		+ " 	(ce.DN_TYPE = ?1 AND ce.DN = ?2) OR (ce.DN_TYPE = ?3 AND ce.DN IN ({0})) "
-		+ " 	ORDER BY ce.CREATE_DATE DESC LIMIT 1)";
+
+	private final static String GET_LATEST_POLICY_QUERY = "SELECT " + " prof.PROFILE_ID, " + " prof.ACTIVE, "
+			+ " prof.CREATE_DATE, " + " prof.DELETED, " + " prof.DESCRIPTION, " + " prof.LABEL, "
+			+ " prof.MODIFY_DATE, " + " prof.OVERRIDABLE, " + " prof.PROFILE_DATA, " + " prof.PLUGIN_ID, "
+			+ " p.POLICY_VERSION, " + " plugin.PLUGIN_NAME, " + " plugin.PLUGIN_VERSION " + " FROM "
+			+ " C_PROFILE prof " + " INNER JOIN " + " C_POLICY_PROFILE pp ON (pp.PROFILE_ID = prof.PROFILE_ID) "
+			+ " INNER JOIN " + " C_POLICY p ON (p.POLICY_ID = pp.POLICY_ID) " + " INNER JOIN "
+			+ " C_PLUGIN plugin ON (plugin.PLUGIN_ID = prof.PLUGIN_ID) " + " WHERE " + " pp.POLICY_ID = "
+			+ " (SELECT DISTINCT " + " 	p.POLICY_ID " + " 	FROM " + " 	C_POLICY p " + " 	INNER JOIN "
+			+ " 	C_COMMAND c ON (c.POLICY_ID = p.POLICY_ID) " + " 	INNER JOIN "
+			+ " 	C_COMMAND_EXECUTION ce ON (ce.COMMAND_ID = c.COMMAND_ID) " + " 	WHERE "
+			+ " 	(ce.DN_TYPE = ?1 AND ce.DN = ?2) OR (ce.DN_TYPE = ?3 AND ce.DN IN ({0})) "
+			+ " 	ORDER BY ce.CREATE_DATE DESC LIMIT 1)";
 
 	public void init() {
 		logger.info("Initializing policy DAO.");
@@ -178,8 +155,8 @@ public class PolicyDaoImpl implements IPolicyDao {
 			List<PropertyOrder> orders, Integer maxResults) {
 		orders = new ArrayList<PropertyOrder>();
 		// TODO
-//		PropertyOrder ord = new PropertyOrder("name", OrderType.ASC);
-//		orders.add(ord);
+		// PropertyOrder ord = new PropertyOrder("name", OrderType.ASC);
+		// orders.add(ord);
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<PolicyImpl> criteria = (CriteriaQuery<PolicyImpl>) builder.createQuery(PolicyImpl.class);
 		Metamodel metamodel = entityManager.getMetamodel();
@@ -198,9 +175,8 @@ public class PolicyDaoImpl implements IPolicyDao {
 						for (int i = 0; i < key.length - 1; i++) {
 							join = join != null ? join.join(key[i]) : from.join(key[i]);
 						}
-						pred = builder.equal(join.get(key[key.length-1]), entry.getValue());
-					}
-					else {
+						pred = builder.equal(join.get(key[key.length - 1]), entry.getValue());
+					} else {
 						pred = builder.equal(from.get(entry.getKey()), entry.getValue());
 					}
 					predicate = predicate == null ? pred : builder.and(predicate, pred);
@@ -234,16 +210,18 @@ public class PolicyDaoImpl implements IPolicyDao {
 		this.entityManager = entityManager;
 	}
 
+	/**
+	 * Returns the latest policy with its version number and child profiles iff
+	 * user or his group(s) has at least one policy.
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public IExecutePoliciesMessage getLatestPolicy(String userDn, List<LdapEntry> groupDns, String userPolicyVersion) {
 
 		StringBuilder builder;
-		
+
 		String groupDnParam;
-		
 		if (!groupDns.isEmpty()) {
-			logger.debug("Preparing group DN parameter. groupDns.size(): " + groupDns.size());
 			builder = new StringBuilder();
 			for (int i = 0; i < groupDns.size(); i++) {
 				LdapEntry entry = groupDns.get(i);
@@ -254,32 +232,31 @@ public class PolicyDaoImpl implements IPolicyDao {
 					builder.append("'" + entry.getDistinguishedName() + "'");
 				}
 			}
-			
+
 			groupDnParam = builder.toString();
 		} else {
-			logger.debug("Group DN list is empty.");
 			groupDnParam = "null";
 		}
-		
-		// TODO setParameter method of JPA does not work properly for native queries while giving a List or array as parameter
+
+		// FIXME setParameter method of JPA does not work properly for native
+		// queries while giving a List or array as parameter
 		// there may be some bug about this issue.
 		String sql = GET_LATEST_POLICY_QUERY.replace("{0}", groupDnParam);
-		
+
 		logger.debug("Creating query.");
-		Query query = entityManager.createNativeQuery(sql).setParameter(1, RestDNType.USER.getId()).setParameter(2, userDn).setParameter(3, RestDNType.GROUP.getId());
+		Query query = entityManager.createNativeQuery(sql).setParameter(1, RestDNType.USER.getId())
+				.setParameter(2, userDn).setParameter(3, RestDNType.GROUP.getId());
 
 		logger.debug("Executing query.");
 		final List<Object[]> resultList = query.getResultList();
 
 		logger.debug("Getting latest policy version.");
 		final String policyVersion = !resultList.isEmpty() ? (String) (resultList.get(0)[10]) : null;
-		
+
 		logger.debug("Getting profile list of policy.");
-		logger.error("policyVersion: " + policyVersion);
-		logger.error("userPolicyVersion: " + userPolicyVersion);
-		logger.error("resultList.size: " + resultList.size());
-		final List<IProfile> profileList = policyVersion != null && !policyVersion.equals(userPolicyVersion) ? createProfileList(resultList) : new ArrayList<IProfile>();
-		
+		final List<IProfile> profileList = policyVersion != null && !policyVersion.equals(userPolicyVersion)
+				? createProfileList(resultList) : new ArrayList<IProfile>();
+
 		logger.debug("Creating message object.");
 		IExecutePoliciesMessage message = new IExecutePoliciesMessage() {
 			private static final long serialVersionUID = 7773614490334045662L;
@@ -288,91 +265,91 @@ public class PolicyDaoImpl implements IPolicyDao {
 			public LiderMessageType getType() {
 				return LiderMessageType.EXECUTE_POLICY;
 			}
-			
+
 			@Override
 			public Date getTimestamp() {
 				return new Date();
 			}
-			
+
 			@Override
 			public String getRecipient() {
 				return null;
 			}
-			
+
 			@Override
 			public String getUserPolicyVersion() {
 				return policyVersion;
 			}
-			
+
 			@Override
 			public List<IProfile> getUserPolicyProfiles() {
 				return profileList;
 			}
-			
+
 			@Override
 			public String getMachinePolicyVersion() {
 				return null;
 			}
-			
+
 			@Override
 			public List<IProfile> getMachinePolicyProfiles() {
 				return null;
 			}
 		};
-		
+
 		return message;
 	}
 
 	private List<IProfile> createProfileList(List<Object[]> resultList) {
-		
+
 		List<IProfile> profileList = new ArrayList<IProfile>();
-		
+
 		if (!resultList.isEmpty()) {
 			for (final Object[] objArr : resultList) {
 				IProfile profile = new IProfile() {
-					
+
 					private static final long serialVersionUID = 1245538060673249103L;
-					
+
 					@Override
 					public Long getId() {
 						return (Long) objArr[0];
 					}
-					
+
 					@Override
 					public boolean isActive() {
 						return (Boolean) objArr[1];
 					}
-					
+
 					@Override
 					public Date getCreateDate() {
 						return (Date) objArr[2];
 					}
-					
+
 					@Override
 					public boolean isDeleted() {
 						return (Boolean) objArr[3];
 					}
-					
+
 					@Override
 					public String getDescription() {
 						return (String) objArr[4];
 					}
-					
+
 					@Override
 					public String getLabel() {
 						return (String) objArr[5];
 					}
-					
+
 					@Override
 					public Date getModifyDate() {
 						return (Date) objArr[6];
 					}
-					
+
 					@Override
 					public boolean isOverridable() {
 						return (Boolean) objArr[7];
 					}
-					
+
 					@Override
 					public byte[] getProfileDataBlob() {
 						try {
@@ -382,7 +359,7 @@ public class PolicyDaoImpl implements IPolicyDao {
 						}
 						return null;
 					}
-					
+
 					@SuppressWarnings("unchecked")
 					@Override
 					public Map<String, Object> getProfileData() {
@@ -395,7 +372,7 @@ public class PolicyDaoImpl implements IPolicyDao {
 						}
 						return null;
 					}
-					
+
 					@Override
 					public String toJson() {
 						try {
@@ -409,7 +386,7 @@ public class PolicyDaoImpl implements IPolicyDao {
 						}
 						return null;
 					}
-					
+
 					@Override
 					public IPlugin getPlugin() {
 						IPlugin plugin = new IPlugin() {
@@ -419,72 +396,72 @@ public class PolicyDaoImpl implements IPolicyDao {
 							public Long getId() {
 								return (Long) objArr[9];
 							}
-							
+
 							@Override
 							public Date getCreateDate() {
 								return null;
 							}
-							
+
 							@Override
 							public boolean isUserOriented() {
 								return false;
 							}
-							
+
 							@Override
 							public boolean isPolicyPlugin() {
 								return false;
 							}
-							
+
 							@Override
 							public boolean isMachineOriented() {
 								return false;
 							}
-							
+
 							@Override
 							public boolean isDeleted() {
 								return false;
 							}
-							
+
 							@Override
 							public boolean isActive() {
 								return false;
 							}
-							
+
 							@Override
 							public String getVersion() {
 								return (String) objArr[11];
 							}
-							
+
 							@Override
 							public List<? extends IProfile> getProfiles() {
 								return null;
 							}
-							
+
 							@Override
 							public String getName() {
 								return (String) objArr[10];
 							}
-							
+
 							@Override
 							public Date getModifyDate() {
 								return null;
 							}
-							
+
 							@Override
 							public String getDescription() {
 								return null;
 							}
-							
+
 							@Override
 							public void addProfile(IProfile profile) {
 							}
 						};
-						
+
 						return plugin;
 					}
-					
+
 				};
-				
+
 				profileList.add(profile);
 			}
 		}

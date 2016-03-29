@@ -6,6 +6,8 @@ import java.util.List;
  * Interface defines a user
  * 
  * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ * 
  */
 public interface IUser {
 
@@ -38,4 +40,10 @@ public interface IUser {
 	 * @param surname
 	 */
 	void setSurname(String surname);
+
+	/**
+	 * 
+	 * @return UID/JID
+	 */
+	String getUid();
 }

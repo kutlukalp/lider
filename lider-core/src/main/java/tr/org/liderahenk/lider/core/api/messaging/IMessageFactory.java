@@ -19,9 +19,10 @@ public interface IMessageFactory {
 	 * Create task execution message from provided task instance.
 	 * 
 	 * @param task
+	 * @param jid 
 	 * @return
 	 */
-	IExecuteTaskMessage createExecuteTaskMessage(ITask task);
+	IExecuteTaskMessage createExecuteTaskMessage(ITask task, String jid);
 
 	/**
 	 * Create script execution message from provided file path and recipient.

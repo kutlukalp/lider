@@ -1,4 +1,7 @@
-package tr.org.liderahenk.lider.core.api.enums;
+package tr.org.liderahenk.lider.core.api.messaging.enums;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Status code used throughout the system. These status codes can be used in
@@ -17,7 +20,9 @@ package tr.org.liderahenk.lider.core.api.enums;
  */
 public enum StatusCode {
 
-	REGISTERED(1), REGISTERED_WITHOUT_LDAP(2), ALREADY_EXISTS(3), REGISTRATION_ERROR(4);
+	REGISTERED(1), REGISTERED_WITHOUT_LDAP(2), ALREADY_EXISTS(3), REGISTRATION_ERROR(4), TASK_RECEIVED(5), 
+	TASK_PROCESSED(6), TASK_WARNING(7), TASK_ERROR(8), TASK_TIMEOUT(9), TASK_KILLED(10), POLICY_RECEIVED(11), 
+	POLICY_PROCESSED(12), POLICY_WARNING(13), POLICY_ERROR(14), POLICY_TIMEOUT(15), POLICY_KILLED(16);
 
 	private int id;
 
@@ -49,6 +54,14 @@ public enum StatusCode {
 			}
 		}
 		throw new IllegalArgumentException("No matching type for id: " + id);
+	}
+
+	public static List<StatusCode> getTaskEndingStates() {
+		return Arrays.asList(new StatusCode[] { TASK_PROCESSED, TASK_WARNING, TASK_ERROR, TASK_KILLED });
+	}
+
+	public static List<StatusCode> getPolicyEndingStates() {
+		return Arrays.asList(new StatusCode[] { POLICY_PROCESSED, POLICY_WARNING, POLICY_ERROR, POLICY_KILLED });
 	}
 
 }

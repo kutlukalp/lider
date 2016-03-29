@@ -17,7 +17,7 @@ import javax.persistence.TemporalType;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.ObjectMapper;
 
-import tr.org.liderahenk.lider.core.api.enums.StatusCode;
+import tr.org.liderahenk.lider.core.api.messaging.enums.StatusCode;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecutionResult;
 import tr.org.liderahenk.lider.core.api.persistence.enums.ContentType;
 
@@ -65,16 +65,12 @@ public class CommandExecutionResultImpl implements ICommandExecutionResult {
 	@Column(name = "CREATE_DATE", nullable = false)
 	private Date createDate;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "MODIFY_DATE")
-	private Date modifyDate;
-
 	public CommandExecutionResultImpl() {
 	}
 
 	public CommandExecutionResultImpl(Long id, CommandExecutionImpl commandExecution, Long agentId,
 			StatusCode responseCode, String responseMessage, byte[] responseData, ContentType contentType,
-			Date createDate, Date modifyDate) {
+			Date createDate) {
 		super();
 		this.id = id;
 		this.commandExecution = commandExecution;
@@ -84,7 +80,6 @@ public class CommandExecutionResultImpl implements ICommandExecutionResult {
 		this.responseData = responseData;
 		setContentType(contentType);
 		this.createDate = createDate;
-		this.modifyDate = modifyDate;
 	}
 
 	public CommandExecutionResultImpl(ICommandExecutionResult commandExecutionResult) {
@@ -95,7 +90,6 @@ public class CommandExecutionResultImpl implements ICommandExecutionResult {
 		this.responseData = commandExecutionResult.getResponseData();
 		setContentType(commandExecutionResult.getContentType());
 		this.createDate = commandExecutionResult.getCreateDate();
-		this.modifyDate = commandExecutionResult.getModifyDate();
 		if (commandExecutionResult.getCommandExecution() instanceof CommandExecutionImpl) {
 			this.commandExecution = (CommandExecutionImpl) commandExecutionResult.getCommandExecution();
 		}
@@ -179,15 +173,6 @@ public class CommandExecutionResultImpl implements ICommandExecutionResult {
 
 	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
-	}
-
-	@Override
-	public Date getModifyDate() {
-		return modifyDate;
-	}
-
-	public void setModifyDate(Date modifyDate) {
-		this.modifyDate = modifyDate;
 	}
 
 	@Override

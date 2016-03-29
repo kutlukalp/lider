@@ -19,12 +19,17 @@ public class GetPoliciesMessageImpl implements IGetPoliciesMessage {
 	private static final long serialVersionUID = -1867891171608060994L;
 
 	private AgentMessageType type;
+	
 	private String from;
+	
 	private String username;
+	
 	private String userPolicyVersion;
+	
 	private String machinePolicyVersion;
+	
 	private Date timestamp;
-
+	
 	@Override
 	public AgentMessageType getType() {
 		return type;

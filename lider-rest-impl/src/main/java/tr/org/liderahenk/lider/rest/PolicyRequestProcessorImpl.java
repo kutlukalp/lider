@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -32,6 +34,7 @@ import tr.org.liderahenk.lider.core.api.rest.processors.IPolicyRequestProcessor;
 import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyExecutionRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyRequest;
 import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
+import tr.org.liderahenk.lider.core.model.ldap.IUser;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
 /**
@@ -71,7 +74,7 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 			List<LdapEntry> targetEntries = ldapService.findTargetEntries(request.getDnList(), request.getDnType());
 
 			logger.debug("Creating ICommand object.");
-			ICommand command = createCommandFromRequest(request, policy);
+			ICommand command = createCommandFromRequest(request, policy, findCommandOwnerJid());
 			logger.debug("Target entry list size: " + targetEntries.size());
 			if (targetEntries != null && targetEntries.size() > 0) {
 				for (LdapEntry targetEntry : targetEntries) {
@@ -87,6 +90,23 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 			logger.error(e.getMessage(), e);
 			return responseFactory.createResponse(RestResponseStatus.ERROR, e.getMessage());
 		}
+	}
+
+	/**
+	 * This JID will be used to notify same user after task/policy execution.
+	 * 
+	 * @return JID of the user who sends the request
+	 */
+	private String findCommandOwnerJid() {
+		try {
+			Subject currentUser = SecurityUtils.getSubject();
+			String userDn = currentUser.getPrincipal().toString();
+			IUser user = ldapService.getUser(userDn);
+			return user.getUid();
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+		return null;
 	}
 
 	@Override
@@ -458,7 +478,8 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 		return commandExecution;
 	}
 
-	private ICommand createCommandFromRequest(final IPolicyExecutionRequest request, final IPolicy policy) {
+	private ICommand createCommandFromRequest(final IPolicyExecutionRequest request, final IPolicy policy,
+			final String commandOwnerJid) {
 
 		ICommand command = new ICommand() {
 
@@ -515,6 +536,11 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 			@Override
 			public Date getCreateDate() {
 				return new Date();
+			}
+
+			@Override
+			public String getCommandOwnerJid() {
+				return commandOwnerJid;
 			}
 		};
 

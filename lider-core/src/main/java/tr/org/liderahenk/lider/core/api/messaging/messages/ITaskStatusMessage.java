@@ -1,51 +1,46 @@
 package tr.org.liderahenk.lider.core.api.messaging.messages;
 
-import java.util.Date;
 import java.util.Map;
 
-import tr.org.liderahenk.lider.core.api.taskmanager.TaskState;
+import tr.org.liderahenk.lider.core.api.messaging.enums.StatusCode;
+import tr.org.liderahenk.lider.core.api.persistence.enums.ContentType;
 
 /**
- * Interface for task status update messages
+ * Interface for task status messages.
  * 
- * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  * 
  */
-public interface ITaskStatusMessage {
-	/**
-	 * 
-	 * @return
-	 */
-	TaskState getType();
+public interface ITaskStatusMessage extends IAgentMessage {
 
 	/**
 	 * 
 	 * @return
 	 */
-	String getFrom();
+	Long getTaskId();
 
 	/**
 	 * 
 	 * @return
 	 */
-	String getPlugin();
+	StatusCode getResponseCode();
 
 	/**
 	 * 
 	 * @return
 	 */
-	String getTask();
+	String getResponseMessage();
 
 	/**
 	 * 
 	 * @return
 	 */
-	Date getTimestamp();
+	Map<String, Object> getResponseData();
 
 	/**
-	 * @Deprecated
-	 * @return
+	 * 
+	 * @return indicate content type of response data.
 	 */
-	Map<String, Object> getPluginData();
+	ContentType getContentType();
+
 }

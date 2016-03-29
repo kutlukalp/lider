@@ -2,8 +2,8 @@ package tr.org.liderahenk.lider.messaging.messages;
 
 import java.util.Date;
 
-import tr.org.liderahenk.lider.core.api.enums.StatusCode;
 import tr.org.liderahenk.lider.core.api.messaging.enums.LiderMessageType;
+import tr.org.liderahenk.lider.core.api.messaging.enums.StatusCode;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IRegistrationResponseMessage;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IRegistrationSubscriber;
 

@@ -1,8 +1,6 @@
 package tr.org.liderahenk.lider.core.api.persistence.entities;
 
-import java.util.Date;
-
-import tr.org.liderahenk.lider.core.api.enums.StatusCode;
+import tr.org.liderahenk.lider.core.api.messaging.enums.StatusCode;
 import tr.org.liderahenk.lider.core.api.persistence.enums.ContentType;
 
 /**
@@ -55,11 +53,5 @@ public interface ICommandExecutionResult extends IEntity {
 	 * @return JSON string representation of this instance
 	 */
 	String toJson();
-
-	/**
-	 * 
-	 * @return record modification date
-	 */
-	Date getModifyDate();
 
 }

@@ -58,6 +58,9 @@ public class CommandImpl implements ICommand {
 	@Column(name = "DN_TYPE", length = 1)
 	private Integer dnType;
 
+	@Column(name = "COMMAND_OWNER_JID")
+	private String commandOwnerJid;
+
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "CREATE_DATE", nullable = false)
 	private Date createDate;
@@ -157,6 +160,15 @@ public class CommandImpl implements ICommand {
 		} else {
 			this.dnType = dnType.getId();
 		}
+	}
+
+	@Override
+	public String getCommandOwnerJid() {
+		return commandOwnerJid;
+	}
+
+	public void setCommandOwnerJid(String commandOwnerJid) {
+		this.commandOwnerJid = commandOwnerJid;
 	}
 
 	@Override

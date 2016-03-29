@@ -20,12 +20,19 @@ public class RegistrationMessageImpl implements IRegistrationMessage {
 	private static final long serialVersionUID = -7391747508878706457L;
 
 	private AgentMessageType type;
+
 	private String from;
+
 	private String password;
+
 	private String hostname;
+
 	private String ipAddresses;
+
 	private String macAddresses;
+
 	private Map<String, Object> data;
+
 	private Date timestamp;
 
 	@Override

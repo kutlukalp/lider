@@ -54,7 +54,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
-import tr.org.liderahenk.lider.core.api.enums.StatusCode;
+import tr.org.liderahenk.lider.core.api.messaging.enums.StatusCode;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecutePoliciesMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IRegistrationResponseMessage;
@@ -106,7 +106,7 @@ public class XMPPClientImpl {
 	private RosterListenerImpl rosterListener;
 	private AllPacketListener packetListener;
 	private IQPacketListener iqListener;
-	private TaskStatusUpdateListener taskStatusUpdateListener;
+	private TaskStatusListener taskStatusListener;
 	private RegistrationListener registrationListener;
 	private UserSessionListener userSessionListener;
 	private PolicyListener policyListener;
@@ -241,7 +241,7 @@ public class XMPPClientImpl {
 		rosterListener = new RosterListenerImpl();
 		packetListener = new AllPacketListener();
 		iqListener = new IQPacketListener();
-		taskStatusUpdateListener = new TaskStatusUpdateListener();
+		taskStatusListener = new TaskStatusListener();
 		registrationListener = new RegistrationListener();
 		policyListener = new PolicyListener();
 		userSessionListener = new UserSessionListener();
@@ -252,7 +252,7 @@ public class XMPPClientImpl {
 		connection.addAsyncStanzaListener(registrationListener, registrationListener);
 		connection.addAsyncStanzaListener(policyListener, policyListener);
 		connection.addAsyncStanzaListener(userSessionListener, userSessionListener);
-		connection.addAsyncStanzaListener(taskStatusUpdateListener, taskStatusUpdateListener);
+		connection.addAsyncStanzaListener(taskStatusListener, taskStatusListener);
 		connection.addAsyncStanzaListener(iqListener, iqListener);
 		Roster.getInstanceFor(connection).addRosterListener(rosterListener);
 		logger.debug("Successfully added listeners for connection: {}", connection.toString());
@@ -322,7 +322,7 @@ public class XMPPClientImpl {
 			ChatManager.getInstanceFor(connection).removeChatListener(chatManagerListener);
 			Roster.getInstanceFor(connection).removeRosterListener(rosterListener);
 			connection.removeAsyncStanzaListener(packetListener);
-			connection.removeAsyncStanzaListener(taskStatusUpdateListener);
+			connection.removeAsyncStanzaListener(taskStatusListener);
 			connection.removeAsyncStanzaListener(registrationListener);
 			connection.removeAsyncStanzaListener(userSessionListener);
 			connection.removeAsyncStanzaListener(policyListener);
@@ -363,10 +363,10 @@ public class XMPPClientImpl {
 	 */
 	public void sendMessage(ILiderMessage message)
 			throws NotConnectedException, JsonGenerationException, JsonMappingException, IOException {
-		
+
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.setDateFormat(new SimpleDateFormat("dd-MM-yyyy HH:mm"));
-		
+
 		String msgStr = mapper.writeValueAsString(message);
 		String jid = message.getRecipient();
 		sendMessage(msgStr, getFullJid(jid));
@@ -731,7 +731,11 @@ public class XMPPClientImpl {
 		}
 	}
 
-	class TaskStatusUpdateListener implements StanzaListener, StanzaFilter {
+	/**
+	 * Listens to task status messages
+	 *
+	 */
+	class TaskStatusListener implements StanzaListener, StanzaFilter {
 
 		@Override
 		public boolean accept(Stanza stanza) {
@@ -756,12 +760,10 @@ public class XMPPClientImpl {
 
 					ObjectMapper mapper = new ObjectMapper();
 					mapper.setDateFormat(new SimpleDateFormat("dd-MM-yyyy HH:mm"));
-					
+
 					TaskStatusMessageImpl message = mapper.readValue(msg.getBody(), TaskStatusMessageImpl.class);
 					message.setFrom(msg.getFrom());
 
-					// TODO improvement: trigger only related subscriber(s)
-					// by matching its plugin properties?
 					for (ITaskStatusSubscriber subscriber : taskStatusUpdateSubscribers) {
 						try {
 							subscriber.messageReceived(message);
@@ -913,10 +915,9 @@ public class XMPPClientImpl {
 
 					ObjectMapper mapper = new ObjectMapper();
 					mapper.setDateFormat(new SimpleDateFormat("dd-MM-yyyy HH:mm"));
-					
+
 					// Construct message
-					UserSessionMessageImpl message = mapper.readValue(msg.getBody(),
-							UserSessionMessageImpl.class);
+					UserSessionMessageImpl message = mapper.readValue(msg.getBody(), UserSessionMessageImpl.class);
 					message.setFrom(msg.getFrom());
 
 					if (userSessionSubscribers != null && !userSessionSubscribers.isEmpty()) {
@@ -976,13 +977,11 @@ public class XMPPClientImpl {
 					msg = (Message) packet;
 					logger.info("Policy message received from => {}, body => {}", msg.getFrom(), msg.getBody());
 
-					
 					ObjectMapper mapper = new ObjectMapper();
 					mapper.setDateFormat(new SimpleDateFormat("dd-MM-yyyy HH:mm"));
-					
+
 					// Construct message
-					GetPoliciesMessageImpl message = mapper.readValue(msg.getBody(),
-							GetPoliciesMessageImpl.class);
+					GetPoliciesMessageImpl message = mapper.readValue(msg.getBody(), GetPoliciesMessageImpl.class);
 					message.setFrom(msg.getFrom());
 
 					if (policySubscriber != null) {

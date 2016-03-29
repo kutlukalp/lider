@@ -2,6 +2,9 @@ package tr.org.liderahenk.lider.messaging;
 
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import tr.org.liderahenk.lider.core.api.messaging.IMessageFactory;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteScriptMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteTaskMessage;
@@ -20,19 +23,17 @@ import tr.org.liderahenk.lider.messaging.messages.RequestFileMessageImpl;
  */
 public class MessageFactoryImpl implements IMessageFactory {
 
+	private static Logger logger = LoggerFactory.getLogger(MessageFactoryImpl.class);
+
 	@Override
-	public IExecuteTaskMessage createExecuteTaskMessage(ITask task) {
-		// TODO
-		// taskJson: {pluginName: '', pluginVersion: '', parameterMap: ''}
-		
-		String recipient = "ahenk@localhost"; // get from agent table via dn
-		String taskJson = "";
-//		try {
-//			taskJson = task.getParameterMap()
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-		return new ExecuteTaskMessageImpl(taskJson, recipient, new Date());
+	public IExecuteTaskMessage createExecuteTaskMessage(ITask task, String jid) {
+		String taskJsonString = null;
+		try {
+			taskJsonString = task.toJson();
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+		return new ExecuteTaskMessageImpl(taskJsonString, jid, new Date());
 	}
 
 	@Override

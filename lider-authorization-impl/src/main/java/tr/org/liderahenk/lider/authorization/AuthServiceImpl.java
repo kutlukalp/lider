@@ -42,9 +42,6 @@ public class AuthServiceImpl implements IAuthService {
 			logger.debug("Authorization started for DN: {} and operation: {}",
 					new Object[] { userDn, targetOperation });
 
-			// TODO instead of two ldap queries, just use one to get both user
-			// DN and user privilege attributes!
-			// to do this, we need to change ldap service a little bit first!
 			IUser user = ldapService.getUser(userDn);
 			if (null == user) {
 				logger.warn("Authorization failed. User not found: {}", userDn);
