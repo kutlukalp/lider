@@ -74,7 +74,7 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 			List<LdapEntry> targetEntries = ldapService.findTargetEntries(request.getDnList(), request.getDnType());
 
 			logger.debug("Creating ICommand object.");
-			ICommand command = createCommandFromRequest(request, policy, findCommandOwnerJid());
+			ICommand command = createCommandFromRequest(request, policy, findCommandOwnerUid());
 			logger.debug("Target entry list size: " + targetEntries.size());
 			if (targetEntries != null && targetEntries.size() > 0) {
 				for (LdapEntry targetEntry : targetEntries) {
@@ -97,7 +97,7 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 	 * 
 	 * @return JID of the user who sends the request
 	 */
-	private String findCommandOwnerJid() {
+	private String findCommandOwnerUid() {
 		try {
 			Subject currentUser = SecurityUtils.getSubject();
 			String userDn = currentUser.getPrincipal().toString();
@@ -479,7 +479,7 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 	}
 
 	private ICommand createCommandFromRequest(final IPolicyExecutionRequest request, final IPolicy policy,
-			final String commandOwnerJid) {
+			final String commandOwnerUid) {
 
 		ICommand command = new ICommand() {
 
@@ -539,8 +539,8 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 			}
 
 			@Override
-			public String getCommandOwnerJid() {
-				return commandOwnerJid;
+			public String getCommandOwnerUid() {
+				return commandOwnerUid;
 			}
 		};
 

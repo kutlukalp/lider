@@ -76,7 +76,7 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 			List<LdapEntry> targetEntries = ldapService.findTargetEntries(request.getDnList(), request.getDnType());
 
 			logger.debug("Creating ICommand object.");
-			ICommand command = createCommandFromRequest(request, policy, findCommandOwnerJid());
+			ICommand command = createCommandFromRequest(request, policy, findCommandOwnerUid());
 			if (targetEntries != null && targetEntries.size() > 0) {
 				for (LdapEntry targetEntry : targetEntries) {
 					command.addCommandExecution(
@@ -98,7 +98,7 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 	 * 
 	 * @return JID of the user who sends the request
 	 */
-	private String findCommandOwnerJid() {
+	private String findCommandOwnerUid() {
 		try {
 			Subject currentUser = SecurityUtils.getSubject();
 			String userDn = currentUser.getPrincipal().toString();
@@ -524,7 +524,7 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 	}
 
 	private ICommand createCommandFromRequest(final IProfileExecutionRequest request, final IPolicy policy,
-			final String commandOwnerJid) {
+			final String commandOwnerUid) {
 
 		ICommand command = new ICommand() {
 
@@ -584,8 +584,8 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 			}
 
 			@Override
-			public String getCommandOwnerJid() {
-				return commandOwnerJid;
+			public String getCommandOwnerUid() {
+				return commandOwnerUid;
 			}
 		};
 

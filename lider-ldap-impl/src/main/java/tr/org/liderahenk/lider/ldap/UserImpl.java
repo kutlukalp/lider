@@ -71,4 +71,10 @@ public class UserImpl implements IUser {
 		this.uid = uid;
 	}
 
+	@Override
+	public String toString() {
+		return "UserImpl [name=" + name + ", surname=" + surname + ", uid=" + uid + ", targetDnPrivileges="
+				+ targetDnPrivileges + "]";
+	}
+
 }

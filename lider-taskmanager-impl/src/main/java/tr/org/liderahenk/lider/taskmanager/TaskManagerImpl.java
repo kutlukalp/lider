@@ -118,6 +118,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 						messagingService.sendMessage(message);
 					}
 
+					// TODO improvement. Use batch if possible!
 					commandDao.save(execution);
 				}
 
@@ -197,7 +198,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 		return ce;
 	}
 
-	private ICommand createCommand(final ITask task, final ITaskCommandRequest request, final String commandOwnerJid) {
+	private ICommand createCommand(final ITask task, final ITaskCommandRequest request, final String commandOwnerUid) {
 		ICommand command = new ICommand() {
 
 			private static final long serialVersionUID = 1L;
@@ -247,8 +248,8 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 			}
 
 			@Override
-			public String getCommandOwnerJid() {
-				return commandOwnerJid;
+			public String getCommandOwnerUid() {
+				return commandOwnerUid;
 			}
 		};
 
@@ -370,7 +371,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 							// Task status message
 							payload.put("message", message);
 							// Find who created the task
-							payload.put("messageJID", commandExecution.getCommand().getCommandOwnerJid());
+							payload.put("messageJID", commandExecution.getCommand().getCommandOwnerUid());
 							eventAdmin.postEvent(new Event(LiderConstants.EVENTS.TASK_UPDATE, payload));
 						}
 					} catch (Exception e) {

@@ -31,12 +31,12 @@ public interface ICommand extends IEntity {
 	List<String> getDnList();
 
 	/**
-	 * This JID is used to notify users after command (task or policy)
+	 * This UID/JID is used to notify users after command (task or policy)
 	 * execution.
 	 * 
-	 * @return JID of the user who executed this command
+	 * @return UID of the user who executed this command
 	 */
-	String getCommandOwnerJid();
+	String getCommandOwnerUid();
 
 	/**
 	 * 
