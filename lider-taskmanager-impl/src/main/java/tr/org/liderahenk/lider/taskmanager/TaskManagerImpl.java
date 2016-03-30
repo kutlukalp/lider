@@ -118,9 +118,9 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 						messagingService.sendMessage(message);
 					}
 
+					commandDao.save(execution);
 				}
 
-				commandDao.save(command);
 			}
 
 		} catch (Exception e) {
@@ -322,8 +322,8 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 	 */
 	private IPlugin findRelatedPlugin(String pluginName, String pluginVersion) {
 		Map<String, Object> propertiesMap = new HashMap<String, Object>();
-		propertiesMap.put("pluginName", pluginName);
-		propertiesMap.put("pluginVersion", pluginVersion);
+		propertiesMap.put("name", pluginName);
+		propertiesMap.put("version", pluginVersion);
 		List<? extends IPlugin> plugins = pluginDao.findByProperties(IPlugin.class, propertiesMap, null, 1);
 		if (plugins != null && !plugins.isEmpty()) {
 			return plugins.get(0);
@@ -353,15 +353,9 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 
 				IAgent agent = agents.get(0);
 				if (agent != null) {
-
-					// TODO
-					// TODO
-					// TODO
-					// TODO
-					// TODO
-					
 					// Find related command execution
-					ICommandExecution commandExecution = null; // TODO
+					ICommandExecution commandExecution = commandDao.findExecution(message.getTaskId(), agent.getDn(),
+							RestDNType.AHENK);
 
 					// Create new command execution result
 					ICommandExecutionResult result = createCommandExecutionResult(message, commandExecution, agent);

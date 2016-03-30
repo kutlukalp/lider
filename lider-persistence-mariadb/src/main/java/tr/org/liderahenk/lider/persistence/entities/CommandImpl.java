@@ -17,6 +17,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -35,7 +36,7 @@ import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
  *
  */
 @Entity
-@Table(name = "C_COMMAND")
+@Table(name = "C_COMMAND", uniqueConstraints = @UniqueConstraint(columnNames = { "POLICY_ID", "TASK_ID" }) )
 public class CommandImpl implements ICommand {
 
 	private static final long serialVersionUID = 5691035821804595271L;

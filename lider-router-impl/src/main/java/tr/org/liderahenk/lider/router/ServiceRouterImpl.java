@@ -85,6 +85,7 @@ public class ServiceRouterImpl implements IServiceRouter {
 			} else {
 				logger.debug("{} requires task, delegating request to task manager.", command);
 				try {
+					logger.info("Delegating request to task manager.");
 					taskManager.addTask(request, entries);
 				} catch (Exception e) {
 					logger.error("Could not add task for request: ", e);

@@ -21,6 +21,7 @@
 		<property name="messagingService" ref="messagingService" />
 		<property name="messageFactory" ref="messageFactory" />
 		<property name="eventAdmin" ref="eventAdmin" />
+		<property name="configurationService" ref="configurationService" />
 	</bean>
 
 	<service ref="taskStatusHandler" interface="org.osgi.service.event.EventHandler">
@@ -58,6 +59,8 @@
 	<reference-list id="taskAwareCommands"
 		interface="tr.org.liderahenk.lider.core.api.plugin.ITaskAwareCommand"
 		availability="optional" />
+	<reference id="configurationService"
+		interface="tr.org.liderahenk.lider.core.api.configuration.IConfigurationService" />
 	<reference id="eventAdmin" interface="org.osgi.service.event.EventAdmin" />
 
 </blueprint>
