@@ -25,6 +25,7 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecutionRe
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
+import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 import tr.org.liderahenk.lider.core.api.rest.IRequestFactory;
 import tr.org.liderahenk.lider.core.api.rest.IResponseFactory;
 import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
@@ -544,13 +545,13 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 			}
 
 			@Override
-			public Long getTaskId() {
+			public ITask getTask() {
 				return null;
 			}
 
 			@Override
-			public Long getPolicyId() {
-				return policy.getId();
+			public IPolicy getPolicy() {
+				return policy;
 			}
 
 			@Override

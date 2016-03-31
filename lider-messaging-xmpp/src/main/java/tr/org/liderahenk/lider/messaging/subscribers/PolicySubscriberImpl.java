@@ -10,10 +10,14 @@ import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
 import tr.org.liderahenk.lider.core.api.ldap.LdapSearchFilterAttribute;
 import tr.org.liderahenk.lider.core.api.ldap.enums.LdapSearchFilterEnum;
+import tr.org.liderahenk.lider.core.api.ldap.exception.LdapException;
+import tr.org.liderahenk.lider.core.api.messaging.IMessageFactory;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecutePoliciesMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IGetPoliciesMessage;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IPolicySubscriber;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IPolicyDao;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
 /**
@@ -33,8 +37,7 @@ public class PolicySubscriberImpl implements IPolicySubscriber {
 	private ILDAPService ldapService;
 	private IConfigurationService configurationService;
 	private IPolicyDao policyDao;
-
-	// TODO activation date!
+	private IMessageFactory messageFactory;
 
 	@Override
 	public IExecutePoliciesMessage messageReceived(IGetPoliciesMessage message) throws Exception {
@@ -45,11 +48,55 @@ public class PolicySubscriberImpl implements IPolicySubscriber {
 		String machinePolicyVersion = message.getMachinePolicyVersion();
 
 		// Find LDAP user entry
-		String userDn = ldapService.getDN(configurationService.getLdapRootDn(),
-				configurationService.getUserLdapUidAttribute(), userUid);
-
+		String userDn = findUserDn(userUid);
 		// Find LDAP group entries to which user belongs
+		List<LdapEntry> groupsOfUser = findGroups(userDn);
 
+		// Find user policy.
+		// (User policy can be related to either user entry or group entries
+		// which ever is the latest)
+		IPolicy userPolicy = policyDao.getLatestUserPolicy(userDn, groupsOfUser);
+		// If policy version is different than the policy version provided by
+		// user who is logged in, send its profiles to agent.
+		boolean sendUserPolicy = userPolicy != null && userPolicy.getPolicyVersion() != null
+				&& !userPolicy.getPolicyVersion().equalsIgnoreCase(userPolicyVersion);
+
+		// Find machine policy.
+		IPolicy machinePolicy = policyDao.getLatestMachinePolicy(findAgentDn(agentUid));
+		// If policy version is different than the policy version provided by
+		// agent, send its profiles to agent.
+		boolean sendMachinePolicy = machinePolicy != null && machinePolicy.getPolicyVersion() != null
+				&& !machinePolicy.getPolicyVersion().equalsIgnoreCase(machinePolicyVersion);
+
+		IExecutePoliciesMessage response = messageFactory.createExecutePoliciesMessage(null,
+				sendUserPolicy ? new ArrayList<IProfile>(userPolicy.getProfiles()) : null,
+				sendMachinePolicy ? new ArrayList<IProfile>(machinePolicy.getProfiles()) : null,
+				userPolicy != null ? userPolicy.getPolicyVersion() : null,
+				machinePolicy != null ? machinePolicy.getPolicyVersion() : null);
+		logger.debug("Execute policies message: {}", response);
+		return response;
+	}
+
+	/**
+	 * Find user DN by given UID
+	 * 
+	 * @param userUid
+	 * @return
+	 * @throws LdapException
+	 */
+	private String findUserDn(String userUid) throws LdapException {
+		return ldapService.getDN(configurationService.getLdapRootDn(), configurationService.getUserLdapUidAttribute(),
+				userUid);
+	}
+
+	/**
+	 * Find groups of a given user
+	 * 
+	 * @param userDn
+	 * @return
+	 * @throws LdapException
+	 */
+	private List<LdapEntry> findGroups(String userDn) throws LdapException {
 		List<LdapSearchFilterAttribute> filterAttributesList = new ArrayList<LdapSearchFilterAttribute>();
 		String[] groupLdapObjectClasses = configurationService.getGroupLdapObjectClasses().split(",");
 		for (String groupObjCls : groupLdapObjectClasses) {
@@ -57,31 +104,51 @@ public class PolicySubscriberImpl implements IPolicySubscriber {
 					.add(new LdapSearchFilterAttribute("objectClass", groupObjCls, LdapSearchFilterEnum.EQ));
 		}
 		filterAttributesList.add(new LdapSearchFilterAttribute("member", userDn, LdapSearchFilterEnum.EQ));
-
-		List<LdapEntry> groupsOfUser = ldapService.search(configurationService.getLdapRootDn(), filterAttributesList,
-				null);
-
-		// Find user policy related to either user entry or group entries which
-		// ever is the latest
-		IExecutePoliciesMessage executePoliciesMessage = policyDao.getLatestPolicy(userDn, groupsOfUser,
-				userPolicyVersion);
-
-		// Find machine policy
-		// TODO
-
-		return executePoliciesMessage;
+		return ldapService.search(configurationService.getLdapRootDn(), filterAttributesList, null);
 	}
 
+	/**
+	 * Find agent DN by given UID
+	 * 
+	 * @param agentUid
+	 * @return
+	 * @throws LdapException
+	 */
+	private String findAgentDn(String agentUid) throws LdapException {
+		return ldapService.getDN(configurationService.getLdapRootDn(), configurationService.getAgentLdapJidAttribute(),
+				agentUid);
+	}
+
+	/**
+	 * 
+	 * @param ldapService
+	 */
 	public void setLdapService(ILDAPService ldapService) {
 		this.ldapService = ldapService;
 	}
 
+	/**
+	 * 
+	 * @param configurationService
+	 */
 	public void setConfigurationService(IConfigurationService configurationService) {
 		this.configurationService = configurationService;
 	}
 
+	/**
+	 * 
+	 * @param policyDao
+	 */
 	public void setPolicyDao(IPolicyDao policyDao) {
 		this.policyDao = policyDao;
+	}
+
+	/**
+	 * 
+	 * @param messageFactory
+	 */
+	public void setMessageFactory(IMessageFactory messageFactory) {
+		this.messageFactory = messageFactory;
 	}
 
 }

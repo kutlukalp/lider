@@ -11,8 +11,10 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -26,6 +28,8 @@ import org.codehaus.jackson.type.TypeReference;
 
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecution;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
+import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
 
 /**
@@ -46,11 +50,13 @@ public class CommandImpl implements ICommand {
 	@Column(name = "COMMAND_ID", unique = true, nullable = false)
 	private Long id;
 
-	@Column(name = "POLICY_ID")
-	private Long policyId; // A command references to either a policy or task!
+	@OneToOne(optional = true, fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "POLICY_ID", referencedColumnName = "POLICY_ID", insertable = true, updatable = false, nullable = true, unique = false)
+	private PolicyImpl policy;
 
-	@Column(name = "TASK_ID")
-	private Long taskId; // A command references to either a policy or task!
+	@OneToOne(optional = true, fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+	@JoinColumn(name = "TASK_ID", referencedColumnName = "TASK_ID", insertable = true, updatable = false, nullable = true, unique = false)
+	private TaskImpl task;
 
 	@Lob
 	@Column(name = "DN_LIST")
@@ -72,12 +78,12 @@ public class CommandImpl implements ICommand {
 	public CommandImpl() {
 	}
 
-	public CommandImpl(Long id, Long policyId, Long taskId, List<String> dnList, RestDNType dnType,
+	public CommandImpl(Long id, IPolicy policy, ITask task, List<String> dnList, RestDNType dnType,
 			String commandOwnerUid, Date createDate, List<CommandExecutionImpl> commandExecutions)
 					throws JsonGenerationException, JsonMappingException, IOException {
 		this.id = id;
-		this.policyId = policyId;
-		this.taskId = taskId;
+		this.policy = (PolicyImpl) policy;
+		this.task = (TaskImpl) task;
 		this.dnListJsonString = new ObjectMapper().writeValueAsString(dnList);
 		setDnType(dnType);
 		this.commandOwnerUid = commandOwnerUid;
@@ -87,8 +93,8 @@ public class CommandImpl implements ICommand {
 
 	public CommandImpl(ICommand command) throws JsonGenerationException, JsonMappingException, IOException {
 		this.id = command.getId();
-		this.policyId = command.getPolicyId();
-		this.taskId = command.getTaskId();
+		this.policy = (PolicyImpl) command.getPolicy();
+		this.task = (TaskImpl) command.getTask();
 		this.dnListJsonString = new ObjectMapper().writeValueAsString(command.getDnList());
 		setDnType(command.getDnType());
 		this.commandOwnerUid = command.getCommandOwnerUid();
@@ -114,21 +120,21 @@ public class CommandImpl implements ICommand {
 	}
 
 	@Override
-	public Long getPolicyId() {
-		return policyId;
+	public PolicyImpl getPolicy() {
+		return policy;
 	}
 
-	public void setPolicyId(Long policyId) {
-		this.policyId = policyId;
+	public void setPolicy(PolicyImpl policy) {
+		this.policy = policy;
 	}
 
 	@Override
-	public Long getTaskId() {
-		return taskId;
+	public TaskImpl getTask() {
+		return task;
 	}
 
-	public void setTaskId(Long taskId) {
-		this.taskId = taskId;
+	public void setTask(TaskImpl task) {
+		this.task = task;
 	}
 
 	public String getDnListJsonString() {
@@ -222,9 +228,8 @@ public class CommandImpl implements ICommand {
 
 	@Override
 	public String toString() {
-		return "CommandImpl [id=" + id + ", policyId=" + policyId + ", taskId=" + taskId + ", dnListJsonString="
-				+ dnListJsonString + ", dnType=" + dnType + ", createDate=" + createDate + ", commandExecutions="
-				+ commandExecutions + "]";
+		return "CommandImpl [id=" + id + ", dnListJsonString=" + dnListJsonString + ", dnType=" + dnType
+				+ ", createDate=" + createDate + ", commandExecutions=" + commandExecutions + "]";
 	}
 
 }

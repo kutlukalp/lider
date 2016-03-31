@@ -14,15 +14,15 @@ public interface ICommand extends IEntity {
 
 	/**
 	 * 
-	 * @return related policy record ID (nullable)
+	 * @return related policy record (nullable)
 	 */
-	Long getPolicyId();
+	IPolicy getPolicy();
 
 	/**
 	 * 
-	 * @return related task record ID (nullable)
+	 * @return related task record (nullable)
 	 */
-	Long getTaskId();
+	ITask getTask();
 
 	/**
 	 * 

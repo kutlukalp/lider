@@ -3,7 +3,6 @@ package tr.org.liderahenk.lider.core.api.persistence.dao;
 import java.util.List;
 import java.util.Map;
 
-import tr.org.liderahenk.lider.core.api.messaging.messages.IExecutePoliciesMessage;
 import tr.org.liderahenk.lider.core.api.persistence.IBaseDao;
 import tr.org.liderahenk.lider.core.api.persistence.PropertyOrder;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
@@ -72,7 +71,9 @@ public interface IPolicyDao extends IBaseDao<IPolicy> {
 	@Override
 	List<? extends IPolicy> findByProperties(Class<? extends IPolicy> obj, Map<String, Object> propertiesMap,
 			List<PropertyOrder> orders, Integer maxResults);
-	
-	IExecutePoliciesMessage getLatestPolicy(String userDn, List<LdapEntry> groupsOfUser, String userPolicyVersion);
+
+	IPolicy getLatestUserPolicy(String userDn, List<LdapEntry> groupsOfUser);
+
+	IPolicy getLatestMachinePolicy(String agentDn);
 
 }

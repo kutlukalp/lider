@@ -36,6 +36,7 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecution;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecutionResult;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 import tr.org.liderahenk.lider.core.api.persistence.enums.ContentType;
 import tr.org.liderahenk.lider.core.api.plugin.ITaskAwareCommand;
@@ -209,12 +210,12 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 			}
 
 			@Override
-			public Long getTaskId() {
-				return task.getId();
+			public ITask getTask() {
+				return task;
 			}
 
 			@Override
-			public Long getPolicyId() {
+			public IPolicy getPolicy() {
 				return null;
 			}
 

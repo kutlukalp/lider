@@ -11,6 +11,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
@@ -186,11 +187,11 @@ public class CommandDaoImpl implements ICommandDao {
 
 	@Override
 	public ICommandExecution findExecution(Long taskId, String dn, RestDNType dnType) {
+		// TODO not tested throughly!
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-		CriteriaQuery<CommandExecutionImpl> criteriaQuery = (CriteriaQuery<CommandExecutionImpl>) criteriaBuilder
-				.createQuery(CommandExecutionImpl.class);
+		CriteriaQuery<CommandExecutionImpl> criteriaQuery = criteriaBuilder.createQuery(CommandExecutionImpl.class);
 		Root<CommandExecutionImpl> from = criteriaQuery.from(CommandExecutionImpl.class);
-		Path<Object> path = from.join("command").get("taskId");
+		Path<Object> path = from.join("command", JoinType.INNER).get("taskId");
 		from.fetch("command"); // Fetch command
 		CriteriaQuery<CommandExecutionImpl> select = criteriaQuery.select(from);
 		Predicate predicate1 = criteriaBuilder.equal(path, taskId);
