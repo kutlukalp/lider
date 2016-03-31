@@ -1,5 +1,6 @@
 package tr.org.liderahenk.lider.core.api.persistence.entities;
 
+import java.util.Date;
 import java.util.List;
 
 import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
@@ -43,6 +44,12 @@ public interface ICommand extends IEntity {
 	 * @return DN type which subject to command execution
 	 */
 	RestDNType getDnType();
+
+	/**
+	 * 
+	 * @return policy activation date
+	 */
+	Date getActivationDate();
 
 	/**
 	 * 

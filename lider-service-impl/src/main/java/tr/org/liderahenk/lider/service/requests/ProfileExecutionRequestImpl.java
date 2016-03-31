@@ -17,21 +17,20 @@ public class ProfileExecutionRequestImpl implements IProfileExecutionRequest {
 	private RestDNType dnType;
 
 	private Date timestamp;
-	
+
+	private Date activationDate;
+
 	public ProfileExecutionRequestImpl() {
 	}
 
-	public ProfileExecutionRequestImpl(Long id, List<String> dnList, RestDNType dnType, Date timestamp) {
+	public ProfileExecutionRequestImpl(Long id, List<String> dnList, RestDNType dnType, Date timestamp,
+			Date activationDate) {
 		super();
 		this.id = id;
 		this.dnList = dnList;
 		this.dnType = dnType;
 		this.timestamp = timestamp;
-	}
-
-	@Override
-	public Date getTimestamp() {
-		return timestamp;
+		this.activationDate = activationDate;
 	}
 
 	@Override
@@ -39,9 +38,17 @@ public class ProfileExecutionRequestImpl implements IProfileExecutionRequest {
 		return id;
 	}
 
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	@Override
 	public List<String> getDnList() {
 		return dnList;
+	}
+
+	public void setDnList(List<String> dnList) {
+		this.dnList = dnList;
 	}
 
 	@Override
@@ -49,20 +56,26 @@ public class ProfileExecutionRequestImpl implements IProfileExecutionRequest {
 		return dnType;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public void setDnList(List<String> dnList) {
-		this.dnList = dnList;
-	}
-
 	public void setDnType(RestDNType dnType) {
 		this.dnType = dnType;
 	}
 
+	@Override
+	public Date getTimestamp() {
+		return timestamp;
+	}
+
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
+	}
+
+	@Override
+	public Date getActivationDate() {
+		return activationDate;
+	}
+
+	public void setActivationDate(Date activationDate) {
+		this.activationDate = activationDate;
 	}
 
 }

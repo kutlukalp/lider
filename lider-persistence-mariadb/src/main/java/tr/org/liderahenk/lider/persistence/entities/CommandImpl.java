@@ -67,7 +67,7 @@ public class CommandImpl implements ICommand {
 
 	@Column(name = "COMMAND_OWNER_UID")
 	private String commandOwnerUid;
-	
+
 	@Temporal(TemporalType.DATE)
 	@Column(name = "ACTIVATION_DATE", nullable = true)
 	private Date activationDate;
@@ -83,7 +83,7 @@ public class CommandImpl implements ICommand {
 	}
 
 	public CommandImpl(Long id, IPolicy policy, ITask task, List<String> dnList, RestDNType dnType,
-			String commandOwnerUid, Date createDate, List<CommandExecutionImpl> commandExecutions)
+			String commandOwnerUid, Date activationDate, Date createDate, List<CommandExecutionImpl> commandExecutions)
 					throws JsonGenerationException, JsonMappingException, IOException {
 		this.id = id;
 		this.policy = (PolicyImpl) policy;
@@ -91,6 +91,7 @@ public class CommandImpl implements ICommand {
 		this.dnListJsonString = new ObjectMapper().writeValueAsString(dnList);
 		setDnType(dnType);
 		this.commandOwnerUid = commandOwnerUid;
+		this.activationDate = activationDate;
 		this.createDate = createDate;
 		this.commandExecutions = commandExecutions;
 	}
@@ -102,6 +103,7 @@ public class CommandImpl implements ICommand {
 		this.dnListJsonString = new ObjectMapper().writeValueAsString(command.getDnList());
 		setDnType(command.getDnType());
 		this.commandOwnerUid = command.getCommandOwnerUid();
+		this.activationDate = command.getActivationDate();
 		this.createDate = command.getCreateDate();
 
 		// Convert ICommandExecution to CommandExecutionImpl
@@ -191,6 +193,15 @@ public class CommandImpl implements ICommand {
 
 	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
+	}
+
+	@Override
+	public Date getActivationDate() {
+		return activationDate;
+	}
+
+	public void setActivationDate(Date activationDate) {
+		this.activationDate = activationDate;
 	}
 
 	@Override

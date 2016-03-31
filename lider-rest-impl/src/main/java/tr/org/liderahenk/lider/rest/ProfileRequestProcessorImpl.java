@@ -526,7 +526,6 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 
 	private ICommand createCommandFromRequest(final IProfileExecutionRequest request, final IPolicy policy,
 			final String commandOwnerUid) {
-
 		ICommand command = new ICommand() {
 
 			private static final long serialVersionUID = -4957864665202951511L;
@@ -587,6 +586,11 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 			@Override
 			public String getCommandOwnerUid() {
 				return commandOwnerUid;
+			}
+
+			@Override
+			public Date getActivationDate() {
+				return request.getActivationDate();
 			}
 		};
 

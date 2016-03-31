@@ -252,6 +252,11 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 			public String getCommandOwnerUid() {
 				return commandOwnerUid;
 			}
+
+			@Override
+			public Date getActivationDate() {
+				return null;
+			}
 		};
 
 		return command;

@@ -24,16 +24,20 @@ public class PolicyExecutionRequestImpl implements IPolicyExecutionRequest {
 
 	private RestDNType dnType;
 
+	private Date activationDate;
+
 	private Date timestamp;
 
 	public PolicyExecutionRequestImpl() {
 	}
 
-	public PolicyExecutionRequestImpl(Long id, List<String> dnList, RestDNType dnType, Date timestamp) {
+	public PolicyExecutionRequestImpl(Long id, List<String> dnList, RestDNType dnType, Date activationDate,
+			Date timestamp) {
 		super();
 		this.id = id;
 		this.dnList = dnList;
 		this.dnType = dnType;
+		this.activationDate = activationDate;
 		this.timestamp = timestamp;
 	}
 
@@ -42,9 +46,17 @@ public class PolicyExecutionRequestImpl implements IPolicyExecutionRequest {
 		return id;
 	}
 
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	@Override
 	public List<String> getDnList() {
 		return dnList;
+	}
+
+	public void setDnList(List<String> dnList) {
+		this.dnList = dnList;
 	}
 
 	@Override
@@ -52,24 +64,26 @@ public class PolicyExecutionRequestImpl implements IPolicyExecutionRequest {
 		return dnType;
 	}
 
+	public void setDnType(RestDNType dnType) {
+		this.dnType = dnType;
+	}
+
+	@Override
+	public Date getActivationDate() {
+		return activationDate;
+	}
+
+	public void setActivationDate(Date activationDate) {
+		this.activationDate = activationDate;
+	}
+
 	@Override
 	public Date getTimestamp() {
 		return timestamp;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public void setDnList(List<String> dnList) {
-		this.dnList = dnList;
-	}
-
-	public void setDnType(RestDNType dnType) {
-		this.dnType = dnType;
-	}
-
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
 	}
+
 }

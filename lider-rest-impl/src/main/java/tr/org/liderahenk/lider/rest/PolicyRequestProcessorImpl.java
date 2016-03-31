@@ -1,6 +1,5 @@
 package tr.org.liderahenk.lider.rest;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,8 +10,6 @@ import java.util.Set;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -477,7 +474,6 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 
 	private ICommand createCommandFromRequest(final IPolicyExecutionRequest request, final IPolicy policy,
 			final String commandOwnerUid) {
-
 		ICommand command = new ICommand() {
 
 			private static final long serialVersionUID = -4957864665202951511L;
@@ -538,6 +534,11 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 			@Override
 			public String getCommandOwnerUid() {
 				return commandOwnerUid;
+			}
+
+			@Override
+			public Date getActivationDate() {
+				return request.getActivationDate();
 			}
 		};
 
