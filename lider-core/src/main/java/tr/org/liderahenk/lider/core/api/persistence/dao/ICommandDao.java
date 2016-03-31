@@ -89,9 +89,9 @@ public interface ICommandDao extends IBaseDao<ICommand> {
 	 * 
 	 * @param taskId
 	 * @param dn
-	 * @param ahenk
+	 * @param dnType
 	 * @return
 	 */
-	ICommandExecution findExecution(Long taskId, String dn, RestDNType ahenk);
+	ICommandExecution findExecution(Long taskId, String dn, RestDNType dnType);
 
 }
