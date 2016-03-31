@@ -50,11 +50,11 @@ public class CommandImpl implements ICommand {
 	@Column(name = "COMMAND_ID", unique = true, nullable = false)
 	private Long id;
 
-	@OneToOne(optional = true, fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+	@OneToOne(optional = true, fetch = FetchType.LAZY)
 	@JoinColumn(name = "POLICY_ID", referencedColumnName = "POLICY_ID", insertable = true, updatable = false, nullable = true, unique = false)
 	private PolicyImpl policy;
 
-	@OneToOne(optional = true, fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+	@OneToOne(optional = true, fetch = FetchType.LAZY)
 	@JoinColumn(name = "TASK_ID", referencedColumnName = "TASK_ID", insertable = true, updatable = false, nullable = true, unique = false)
 	private TaskImpl task;
 
@@ -72,7 +72,7 @@ public class CommandImpl implements ICommand {
 	@Column(name = "CREATE_DATE", nullable = false)
 	private Date createDate;
 
-	@OneToMany(mappedBy = "command", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+	@OneToMany(mappedBy = "command", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = false)
 	private List<CommandExecutionImpl> commandExecutions = new ArrayList<CommandExecutionImpl>(); // bidirectional
 
 	public CommandImpl() {
