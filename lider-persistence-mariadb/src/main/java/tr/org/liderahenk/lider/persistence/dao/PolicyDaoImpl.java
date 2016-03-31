@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -44,8 +45,6 @@ public class PolicyDaoImpl implements IPolicyDao {
 	private static Logger logger = LoggerFactory.getLogger(PolicyDaoImpl.class);
 
 	private EntityManager entityManager;
-
-	private final static String GET_LATEST_POLICY_QUERY = "SELECT prof.PROFILE_ID, prof.ACTIVE, prof.CREATE_DATE, prof.DELETED, prof.DESCRIPTION, prof.LABEL, prof.MODIFY_DATE, prof.OVERRIDABLE, prof.PROFILE_DATA, prof.PLUGIN_ID, p.POLICY_VERSION, plugin.PLUGIN_NAME, plugin.PLUGIN_VERSION FROM C_PROFILE prof INNER JOIN C_POLICY_PROFILE pp ON (pp.PROFILE_ID = prof.PROFILE_ID) INNER JOIN C_POLICY p ON (p.POLICY_ID = pp.POLICY_ID) INNER JOIN C_PLUGIN plugin ON (plugin.PLUGIN_ID = prof.PLUGIN_ID) WHERE pp.POLICY_ID = (SELECT DISTINCT p.POLICY_ID FROM C_POLICY p INNER JOIN  C_COMMAND c ON (c.POLICY_ID = p.POLICY_ID) INNER JOIN C_COMMAND_EXECUTION ce ON (ce.COMMAND_ID = c.COMMAND_ID) WHERE (ce.DN_TYPE = ?1 AND ce.DN = ?2) OR (ce.DN_TYPE = ?3 AND ce.DN IN ({0})) ORDER BY ce.CREATE_DATE DESC LIMIT 1)";
 
 	public void init() {
 		logger.info("Initializing policy DAO.");
@@ -186,9 +185,7 @@ public class PolicyDaoImpl implements IPolicyDao {
 		return list;
 	}
 
-	public void setEntityManager(EntityManager entityManager) {
-		this.entityManager = entityManager;
-	}
+	private static final String LATEST_USER_POLICY = "SELECT DISTINCT pol FROM CommandImpl c INNER JOIN c.policy pol INNER JOIN c.commandExecutions ce WHERE ((ce.dnType = :sDnType AND ce.dn = :sDn) OR (ce.dnType = :gDnType AND ce.dn IN :gDnList)) AND (c.activationDate IS NULL OR c.activationDate < :today) ORDER BY ce.createDate DESC";
 
 	/**
 	 * Returns the latest policy with its version number and child profiles iff
@@ -197,56 +194,52 @@ public class PolicyDaoImpl implements IPolicyDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public IPolicy getLatestUserPolicy(String userDn, List<LdapEntry> groupDns) {
-
-		StringBuilder builder;
-
-		// FIXME setParameter method of JPA does not work properly for native
-		// queries while giving a List or array as parameter
-		// there may be some bug about this issue.
-		String groupDnParam;
-		if (!groupDns.isEmpty()) {
-			builder = new StringBuilder();
-			for (int i = 0; i < groupDns.size(); i++) {
-				LdapEntry entry = groupDns.get(i);
-
-				if (i != groupDns.size() - 1) {
-					builder.append("'" + entry.getDistinguishedName() + "',");
-				} else {
-					builder.append("'" + entry.getDistinguishedName() + "'");
-				}
-			}
-
-			groupDnParam = builder.toString();
-		} else {
-			groupDnParam = "null";
-		}
-		String sql = GET_LATEST_POLICY_QUERY.replace("{0}", groupDnParam);
-
-		logger.debug("Creating query.");
-		Query query = entityManager.createNativeQuery(sql).setParameter(1, RestDNType.USER.getId())
-				.setParameter(2, userDn).setParameter(3, RestDNType.GROUP.getId());
-
-		logger.debug("Executing query.");
-		final List<Object[]> resultList = query.getResultList();
-
-		logger.debug("Getting latest policy version.");
-		final String policyVersion = !resultList.isEmpty() ? (String) (resultList.get(0)[10]) : null;
-
-		// FIXME
-		// FIXME
-		// FIXME
-		return null;
+		Query query = entityManager.createQuery(LATEST_USER_POLICY);
+		query.setParameter("sDnType", RestDNType.USER.getId());
+		query.setParameter("sDn", userDn);
+		query.setParameter("gDnType", RestDNType.GROUP.getId());
+		query.setParameter("gDnList", convertStringList(groupDns));
+		query.setParameter("today", new Date(), TemporalType.DATE);
+		List<PolicyImpl> resultList = query.setMaxResults(1).getResultList();
+		logger.debug("User policy result list: {}", resultList);
+		return resultList.get(0);
 	}
 
-	private static final String LATEST_MACHINE_POLICY = "SELECT DISTINCT pol FROM CommandImpl c INNER JOIN c.policy pol INNER JOIN c.commandExecutions ce WHERE ce.dnType = :dnType AND ce.dn = :dn ORDER BY ce.createDate DESC";
+	private List<String> convertStringList(List<LdapEntry> entries) {
+		List<String> list = null;
+		if (entries != null) {
+			list = new ArrayList<String>();
+			for (LdapEntry entry : entries) {
+				list.add(entry.getDistinguishedName());
+			}
+		}
+		return list;
+	}
+
+	private static final String LATEST_MACHINE_POLICY = "SELECT DISTINCT pol FROM CommandImpl c INNER JOIN c.policy pol INNER JOIN c.commandExecutions ce WHERE ce.dnType = :dnType AND ce.dn = :dn AND (c.activationDate IS NULL OR c.activationDate < :today) ORDER BY ce.createDate DESC";
+
+	/**
+	 * Return the latest policy with its version number and child profiles iff
+	 * agent has at least one policy.
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public IPolicy getLatestMachinePolicy(String agentDn) {
 		Query query = entityManager.createQuery(LATEST_MACHINE_POLICY);
 		query.setParameter("dnType", RestDNType.AHENK.getId());
 		query.setParameter("dn", agentDn);
+		query.setParameter("today", new Date(), TemporalType.DATE);
 		List<PolicyImpl> resultList = query.setMaxResults(1).getResultList();
+		logger.debug("Machine policy result list: {}", resultList);
 		return resultList.get(0);
+	}
+
+	/**
+	 * 
+	 * @param entityManager
+	 */
+	public void setEntityManager(EntityManager entityManager) {
+		this.entityManager = entityManager;
 	}
 
 }
