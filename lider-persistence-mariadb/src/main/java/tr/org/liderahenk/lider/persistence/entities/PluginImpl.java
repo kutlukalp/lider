@@ -16,6 +16,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
 
@@ -26,6 +28,7 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
  * @see tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin
  *
  */
+@JsonIgnoreProperties({ "profiles" })
 @Entity
 @Table(name = "C_PLUGIN", uniqueConstraints = @UniqueConstraint(columnNames = { "PLUGIN_NAME", "PLUGIN_VERSION" }) )
 public class PluginImpl implements IPlugin {

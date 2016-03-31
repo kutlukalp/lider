@@ -275,12 +275,8 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			resultMap.put("policies", mapper.writeValueAsString(policies));
-		} catch (JsonGenerationException e) {
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
 		}
 
 		return responseFactory.createResponse(RestResponseStatus.OK, "Records listed.", resultMap);
@@ -443,7 +439,7 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 				try {
 					return mapper.writeValueAsString(this);
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error(e.getMessage(), e);
 				}
 				return null;
 			}
@@ -494,7 +490,7 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 				try {
 					return mapper.writeValueAsString(this);
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error(e.getMessage(), e);
 				}
 				return null;
 			}
