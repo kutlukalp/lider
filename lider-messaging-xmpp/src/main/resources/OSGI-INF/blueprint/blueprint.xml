@@ -61,6 +61,7 @@
 		<property name="ldapService" ref="ldapService" />
 		<property name="configurationService" ref="configurationService" />
 		<property name="policyDao" ref="policyDao" />
+		<property name="messageFactory" ref="messageFactory" />
 	</bean>
 
 	<reference-list id="presenceSubscribers"
