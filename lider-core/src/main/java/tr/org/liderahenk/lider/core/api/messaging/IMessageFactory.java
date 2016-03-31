@@ -1,9 +1,13 @@
 package tr.org.liderahenk.lider.core.api.messaging;
 
+import java.util.List;
+
+import tr.org.liderahenk.lider.core.api.messaging.messages.IExecutePoliciesMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteScriptMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteTaskMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IRequestFileMessage;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 
 /**
@@ -19,7 +23,7 @@ public interface IMessageFactory {
 	 * Create task execution message from provided task instance.
 	 * 
 	 * @param task
-	 * @param jid 
+	 * @param jid
 	 * @return
 	 */
 	IExecuteTaskMessage createExecuteTaskMessage(ITask task, String jid);
@@ -45,5 +49,19 @@ public interface IMessageFactory {
 	 * @return
 	 */
 	IRequestFileMessage createRequestFileMessage(String filePath, String recipient);
+
+	/**
+	 * Create execute policies message from provided (user and machine) profile
+	 * lists.
+	 * 
+	 * @param recipient
+	 * @param userPolicyProfiles
+	 * @param machinePolicyProfiles
+	 * @param userPolicyVersion
+	 * @param machinePolicyVersion
+	 * @return
+	 */
+	IExecutePoliciesMessage createExecutePoliciesMessage(String recipient, List<IProfile> userPolicyProfiles,
+			List<IProfile> machinePolicyProfiles, String userPolicyVersion, String machinePolicyVersion);
 
 }

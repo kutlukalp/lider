@@ -1,15 +1,19 @@
 package tr.org.liderahenk.lider.messaging;
 
 import java.util.Date;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.messaging.IMessageFactory;
+import tr.org.liderahenk.lider.core.api.messaging.messages.IExecutePoliciesMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteScriptMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteTaskMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IRequestFileMessage;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
+import tr.org.liderahenk.lider.messaging.messages.ExecutePoliciesMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.ExecuteScriptMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.ExecuteTaskMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.RequestFileMessageImpl;
@@ -44,6 +48,13 @@ public class MessageFactoryImpl implements IMessageFactory {
 	@Override
 	public IRequestFileMessage createRequestFileMessage(String filePath, String recipient) {
 		return new RequestFileMessageImpl(filePath, recipient, new Date());
+	}
+
+	@Override
+	public IExecutePoliciesMessage createExecutePoliciesMessage(String recipient, List<IProfile> userPolicyProfiles,
+			List<IProfile> machinePolicyProfiles, String userPolicyVersion, String machinePolicyVersion) {
+		return new ExecutePoliciesMessageImpl(recipient, userPolicyProfiles, machinePolicyProfiles, userPolicyVersion,
+				machinePolicyVersion, new Date());
 	}
 
 }
