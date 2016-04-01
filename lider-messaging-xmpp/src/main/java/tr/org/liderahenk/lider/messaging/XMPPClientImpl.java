@@ -58,12 +58,14 @@ import tr.org.liderahenk.lider.core.api.messaging.enums.StatusCode;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecutePoliciesMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IRegistrationResponseMessage;
+import tr.org.liderahenk.lider.core.api.messaging.subscribers.IPolicyStatusSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IPolicySubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IPresenceSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IRegistrationSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.ITaskStatusSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IUserSessionSubscriber;
 import tr.org.liderahenk.lider.messaging.messages.GetPoliciesMessageImpl;
+import tr.org.liderahenk.lider.messaging.messages.PolicyStatusMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.RegistrationMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.RegistrationResponseMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.TaskStatusMessageImpl;
@@ -107,6 +109,7 @@ public class XMPPClientImpl {
 	private AllPacketListener packetListener;
 	private IQPacketListener iqListener;
 	private TaskStatusListener taskStatusListener;
+	private PolicyStatusListener policyStatusListener;
 	private RegistrationListener registrationListener;
 	private UserSessionListener userSessionListener;
 	private PolicyListener policyListener;
@@ -114,7 +117,8 @@ public class XMPPClientImpl {
 	/**
 	 * Packet subscribers
 	 */
-	private List<ITaskStatusSubscriber> taskStatusUpdateSubscribers;
+	private List<ITaskStatusSubscriber> taskStatusSubscribers;
+	private List<IPolicyStatusSubscriber> policyStatusSubscribers;
 	private List<IPresenceSubscriber> presenceSubscribers;
 	private List<IRegistrationSubscriber> registrationSubscribers;
 	private List<IUserSessionSubscriber> userSessionSubscribers;
@@ -125,7 +129,10 @@ public class XMPPClientImpl {
 	private XMPPTCPConnectionConfiguration config;
 	private MultiUserChatManager mucManager;
 
-	private Pattern taskPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"TASK.*", Pattern.CASE_INSENSITIVE);
+	private Pattern taskStatusPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"TASK_STATUS",
+			Pattern.CASE_INSENSITIVE);
+	private Pattern policyStatusPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"POLICY_STATUS",
+			Pattern.CASE_INSENSITIVE);
 	private Pattern registerPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"(REGISTER|UNREGISTER)\\\".*",
 			Pattern.CASE_INSENSITIVE);
 	private Pattern userSessionPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"LOG(IN|OUT)\\\".*",
@@ -242,6 +249,7 @@ public class XMPPClientImpl {
 		packetListener = new AllPacketListener();
 		iqListener = new IQPacketListener();
 		taskStatusListener = new TaskStatusListener();
+		policyStatusListener = new PolicyStatusListener();
 		registrationListener = new RegistrationListener();
 		policyListener = new PolicyListener();
 		userSessionListener = new UserSessionListener();
@@ -253,6 +261,7 @@ public class XMPPClientImpl {
 		connection.addAsyncStanzaListener(policyListener, policyListener);
 		connection.addAsyncStanzaListener(userSessionListener, userSessionListener);
 		connection.addAsyncStanzaListener(taskStatusListener, taskStatusListener);
+		connection.addAsyncStanzaListener(policyStatusListener, policyStatusListener);
 		connection.addAsyncStanzaListener(iqListener, iqListener);
 		Roster.getInstanceFor(connection).addRosterListener(rosterListener);
 		logger.debug("Successfully added listeners for connection: {}", connection.toString());
@@ -323,6 +332,7 @@ public class XMPPClientImpl {
 			Roster.getInstanceFor(connection).removeRosterListener(rosterListener);
 			connection.removeAsyncStanzaListener(packetListener);
 			connection.removeAsyncStanzaListener(taskStatusListener);
+			connection.removeAsyncStanzaListener(policyStatusListener);
 			connection.removeAsyncStanzaListener(registrationListener);
 			connection.removeAsyncStanzaListener(userSessionListener);
 			connection.removeAsyncStanzaListener(policyListener);
@@ -742,7 +752,7 @@ public class XMPPClientImpl {
 			if (stanza instanceof Message) {
 				Message msg = (Message) stanza;
 				// All messages from agents are type normal
-				if (Message.Type.normal.equals(msg.getType()) && taskPattern.matcher(msg.getBody()).matches()) {
+				if (Message.Type.normal.equals(msg.getType()) && taskStatusPattern.matcher(msg.getBody()).matches()) {
 					return true;
 				}
 			}
@@ -764,7 +774,56 @@ public class XMPPClientImpl {
 					TaskStatusMessageImpl message = mapper.readValue(msg.getBody(), TaskStatusMessageImpl.class);
 					message.setFrom(msg.getFrom());
 
-					for (ITaskStatusSubscriber subscriber : taskStatusUpdateSubscribers) {
+					for (ITaskStatusSubscriber subscriber : taskStatusSubscribers) {
+						try {
+							subscriber.messageReceived(message);
+						} catch (Exception e) {
+							logger.error("Subscriber could not handle message: ", e);
+						}
+						logger.debug("Notified subscriber => {}", subscriber);
+					}
+				}
+			} catch (Exception e) {
+				logger.error(e.getMessage(), e);
+			}
+		}
+
+	}
+
+	/**
+	 * Listens to task status messages
+	 *
+	 */
+	class PolicyStatusListener implements StanzaListener, StanzaFilter {
+
+		@Override
+		public boolean accept(Stanza stanza) {
+			if (stanza instanceof Message) {
+				Message msg = (Message) stanza;
+				// All messages from agents are type normal
+				if (Message.Type.normal.equals(msg.getType()) && policyStatusPattern.matcher(msg.getBody()).matches()) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		@Override
+		public void processPacket(Stanza packet) throws NotConnectedException {
+			try {
+				if (packet instanceof Message) {
+
+					Message msg = (Message) packet;
+					logger.info("Policy status update message received from => {}, body => {}", msg.getFrom(),
+							msg.getBody());
+
+					ObjectMapper mapper = new ObjectMapper();
+					mapper.setDateFormat(new SimpleDateFormat("dd-MM-yyyy HH:mm"));
+
+					PolicyStatusMessageImpl message = mapper.readValue(msg.getBody(), PolicyStatusMessageImpl.class);
+					message.setFrom(msg.getFrom());
+
+					for (IPolicyStatusSubscriber subscriber : policyStatusSubscribers) {
 						try {
 							subscriber.messageReceived(message);
 						} catch (Exception e) {
@@ -1024,10 +1083,18 @@ public class XMPPClientImpl {
 
 	/**
 	 * 
-	 * @param taskStatusUpdateSubscribers
+	 * @param taskStatusSubscribers
 	 */
-	public void setTaskStatusUpdateSubscribers(List<ITaskStatusSubscriber> taskStatusUpdateSubscribers) {
-		this.taskStatusUpdateSubscribers = taskStatusUpdateSubscribers;
+	public void setTaskStatusSubscribers(List<ITaskStatusSubscriber> taskStatusSubscribers) {
+		this.taskStatusSubscribers = taskStatusSubscribers;
+	}
+
+	/**
+	 * 
+	 * @param policyStatusSubscribers
+	 */
+	public void setPolicyStatusSubscribers(List<IPolicyStatusSubscriber> policyStatusSubscribers) {
+		this.policyStatusSubscribers = policyStatusSubscribers;
 	}
 
 	/**

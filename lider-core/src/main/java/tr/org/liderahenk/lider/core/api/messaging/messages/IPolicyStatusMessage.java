@@ -6,19 +6,19 @@ import tr.org.liderahenk.lider.core.api.messaging.enums.StatusCode;
 import tr.org.liderahenk.lider.core.api.persistence.enums.ContentType;
 
 /**
- * Interface for task status messages. This kind of message is sent after task
- * execution.
+ * Interface for policy status messages. This kind of message is sent after
+ * policy execution.
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  * 
  */
-public interface ITaskStatusMessage extends IAgentMessage {
+public interface IPolicyStatusMessage extends IAgentMessage {
 
 	/**
 	 * 
 	 * @return
 	 */
-	Long getTaskId();
+	String getPolicyVersion();
 
 	/**
 	 * 
