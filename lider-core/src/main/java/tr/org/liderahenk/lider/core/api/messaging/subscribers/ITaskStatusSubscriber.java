@@ -15,7 +15,8 @@ public interface ITaskStatusSubscriber {
 	/**
 	 * 
 	 * @param message
+	 * @throws Exception 
 	 */
-	void messageReceived(ITaskStatusMessage message);
+	void messageReceived(ITaskStatusMessage message) throws Exception;
 
 }

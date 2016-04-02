@@ -60,9 +60,9 @@
 		<jpa:context property="entityManager" unitname="lider" />
 	</bean>
 
-	<service ref="operationLogFactory"
-		interface="tr.org.liderahenk.lider.core.api.persistence.factories.IOperationLogFactory" />
-	<bean id="operationLogFactory" class="tr.org.liderahenk.lider.persistence.factories.OperationLogFactoryImpl" />
+	<service ref="entityFactory"
+		interface="tr.org.liderahenk.lider.core.api.persistence.factories.IEntityFactory" />
+	<bean id="entityFactory" class="tr.org.liderahenk.lider.persistence.factories.EntityFactoryImpl" />
 
 	<service ref="pluginDbService"
 		interface="tr.org.liderahenk.lider.core.api.persistence.IPluginDbService" />

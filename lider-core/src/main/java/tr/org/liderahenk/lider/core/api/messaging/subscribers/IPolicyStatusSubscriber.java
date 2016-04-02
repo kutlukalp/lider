@@ -15,7 +15,8 @@ public interface IPolicyStatusSubscriber {
 	/**
 	 * 
 	 * @param message
+	 * @throws Exception 
 	 */
-	void messageReceived(IPolicyStatusMessage message);
+	void messageReceived(IPolicyStatusMessage message) throws Exception;
 
 }

@@ -1,25 +1,26 @@
 package tr.org.liderahenk.lider.log;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import tr.org.liderahenk.lider.core.api.log.IOperationLogService;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IOperationLogDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IOperationLog;
 import tr.org.liderahenk.lider.core.api.persistence.enums.CrudType;
-import tr.org.liderahenk.lider.core.api.persistence.factories.IOperationLogFactory;
+import tr.org.liderahenk.lider.core.api.persistence.factories.IEntityFactory;
 
+/**
+ * 
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ *
+ */
 public class OperationLogServiceImpl implements IOperationLogService {
 
-	private static Logger logger = LoggerFactory.getLogger(OperationLogServiceImpl.class);
-
 	private IOperationLogDao logDao;
-	private IOperationLogFactory logFactory;
+	private IEntityFactory entityFactory;
 
 	@Override
 	public IOperationLog saveLog(String userId, CrudType crudType, String message, byte[] requestData, String requestIp)
 			throws Exception {
-		IOperationLog log = logFactory.createLog(userId, crudType, null, null, null, message, requestData, requestIp);
+		IOperationLog log = entityFactory.createLog(userId, crudType, null, null, null, message, requestData,
+				requestIp);
 		log = logDao.save(log);
 		return log;
 	}
@@ -27,7 +28,8 @@ public class OperationLogServiceImpl implements IOperationLogService {
 	@Override
 	public IOperationLog saveTaskLog(String userId, CrudType crudType, Long taskId, String message, byte[] requestData,
 			String requestIp) throws Exception {
-		IOperationLog log = logFactory.createLog(userId, crudType, taskId, null, null, message, requestData, requestIp);
+		IOperationLog log = entityFactory.createLog(userId, crudType, taskId, null, null, message, requestData,
+				requestIp);
 		log = logDao.save(log);
 		return log;
 	}
@@ -35,7 +37,7 @@ public class OperationLogServiceImpl implements IOperationLogService {
 	@Override
 	public IOperationLog savePolicyLog(String userId, CrudType crudType, Long policyId, String message,
 			byte[] requestData, String requestIp) throws Exception {
-		IOperationLog log = logFactory.createLog(userId, crudType, null, policyId, null, message, requestData,
+		IOperationLog log = entityFactory.createLog(userId, crudType, null, policyId, null, message, requestData,
 				requestIp);
 		log = logDao.save(log);
 		return log;
@@ -44,11 +46,15 @@ public class OperationLogServiceImpl implements IOperationLogService {
 	@Override
 	public IOperationLog saveProfileLog(String userId, CrudType crudType, Long profileId, String message,
 			byte[] requestData, String requestIp) throws Exception {
-		IOperationLog log = logFactory.createLog(userId, crudType, null, null, profileId, message, requestData,
+		IOperationLog log = entityFactory.createLog(userId, crudType, null, null, profileId, message, requestData,
 				requestIp);
 		log = logDao.save(log);
 		return log;
 	}
+
+	/*
+	 * Service setters
+	 */
 
 	/**
 	 * 
@@ -60,10 +66,10 @@ public class OperationLogServiceImpl implements IOperationLogService {
 
 	/**
 	 * 
-	 * @param logFactory
+	 * @param entityFactory
 	 */
-	public void setLogFactory(IOperationLogFactory logFactory) {
-		this.logFactory = logFactory;
+	public void setEntityFactory(IEntityFactory entityFactory) {
+		this.entityFactory = entityFactory;
 	}
 
 }

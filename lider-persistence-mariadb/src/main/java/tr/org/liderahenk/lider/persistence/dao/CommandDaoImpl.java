@@ -197,6 +197,17 @@ public class CommandDaoImpl implements ICommandDao {
 		return resultList.get(0);
 	}
 
+	@Override
+	public ICommandExecution findExecution(Long id) {
+		CommandExecutionImpl executionImpl = entityManager.find(CommandExecutionImpl.class, id);
+		logger.debug("ICommandExecution object found: {}", executionImpl.toString());
+		return executionImpl;
+	}
+
+	/**
+	 * 
+	 * @param entityManager
+	 */
 	public void setEntityManager(EntityManager entityManager) {
 		this.entityManager = entityManager;
 	}

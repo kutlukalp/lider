@@ -29,6 +29,6 @@ public interface ITaskManager {
 	 *             on any failure during task creation
 	 * 
 	 */
-	void addTask(ITaskCommandRequest request, List<LdapEntry> entries) throws TaskSubmissionFailedException;
+	void executeTask(ITaskCommandRequest request, List<LdapEntry> entries) throws TaskSubmissionFailedException;
 
 }

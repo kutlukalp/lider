@@ -22,6 +22,8 @@
 		<property name="messageFactory" ref="messageFactory" />
 		<property name="eventAdmin" ref="eventAdmin" />
 		<property name="configurationService" ref="configurationService" />
+		<property name="agentDao" ref="agentDao" />
+		<property name="entityFactory" ref="entityFactory" />
 	</bean>
 
 	<service ref="taskStatusHandler" interface="org.osgi.service.event.EventHandler">
@@ -50,12 +52,16 @@
 		interface="tr.org.liderahenk.lider.core.api.persistence.dao.ITaskDao" />
 	<reference id="commandDao"
 		interface="tr.org.liderahenk.lider.core.api.persistence.dao.ICommandDao" />
+	<reference id="agentDao"
+		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IAgentDao" />
 	<reference id="ldapService"
 		interface="tr.org.liderahenk.lider.core.api.ldap.ILDAPService" />
 	<reference id="messagingService"
 		interface="tr.org.liderahenk.lider.core.api.messaging.IMessagingService" />
 	<reference id="messageFactory"
 		interface="tr.org.liderahenk.lider.core.api.messaging.IMessageFactory" />
+	<reference id="entityFactory"
+		interface="tr.org.liderahenk.lider.core.api.persistence.factories.IEntityFactory" />
 	<reference-list id="taskAwareCommands"
 		interface="tr.org.liderahenk.lider.core.api.plugin.ITaskAwareCommand"
 		availability="optional" />
