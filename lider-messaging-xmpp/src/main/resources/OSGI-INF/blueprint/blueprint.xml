@@ -32,8 +32,7 @@
 
 	<service ref="defaultRegistrationSubscriber">
 		<interfaces>
-			<value>tr.org.liderahenk.lider.core.api.messaging.subscribers.IRegistrationSubscriber
-			</value>
+			<value>tr.org.liderahenk.lider.core.api.messaging.subscribers.IRegistrationSubscriber</value>
 			<value>org.osgi.service.event.EventHandler</value>
 		</interfaces>
 		<service-properties>
