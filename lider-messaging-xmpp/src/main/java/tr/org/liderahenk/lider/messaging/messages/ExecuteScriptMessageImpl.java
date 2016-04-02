@@ -13,7 +13,7 @@ import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteScriptMessage
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  * 
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties(ignoreUnknown = true, value = { "recipient" })
 public class ExecuteScriptMessageImpl implements IExecuteScriptMessage {
 
 	private static final long serialVersionUID = -2825255461238352219L;

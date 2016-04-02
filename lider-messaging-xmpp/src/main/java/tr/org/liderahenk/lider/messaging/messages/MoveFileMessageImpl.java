@@ -13,7 +13,7 @@ import tr.org.liderahenk.lider.core.api.messaging.messages.IMoveFileMessage;
  * @author <a href="mailto:bm.volkansahin@gmail.com">Volkan Şahin</a>
  *
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties(ignoreUnknown = true, value = { "recipient" })
 public class MoveFileMessageImpl implements IMoveFileMessage {
 
 	private static final long serialVersionUID = -5907807902363422906L;

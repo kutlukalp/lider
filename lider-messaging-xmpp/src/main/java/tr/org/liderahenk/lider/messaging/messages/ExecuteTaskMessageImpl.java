@@ -13,7 +13,7 @@ import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteTaskMessage;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  * 
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties(ignoreUnknown = true, value = { "recipient" })
 public class ExecuteTaskMessageImpl implements IExecuteTaskMessage {
 
 	private static final long serialVersionUID = -8169781079859133876L;

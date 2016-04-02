@@ -2,6 +2,8 @@ package tr.org.liderahenk.lider.messaging.messages;
 
 import java.util.Date;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 import tr.org.liderahenk.lider.core.api.messaging.enums.LiderMessageType;
 import tr.org.liderahenk.lider.core.api.messaging.enums.StatusCode;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IRegistrationResponseMessage;
@@ -13,6 +15,7 @@ import tr.org.liderahenk.lider.core.api.messaging.subscribers.IRegistrationSubsc
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
+@JsonIgnoreProperties(ignoreUnknown = true, value = { "recipient" })
 public class RegistrationResponseMessageImpl implements IRegistrationResponseMessage {
 
 	private static final long serialVersionUID = -5856136607792194558L;

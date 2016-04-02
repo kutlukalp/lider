@@ -13,7 +13,7 @@ import tr.org.liderahenk.lider.core.api.messaging.messages.IRequestFileMessage;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  * 
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties(ignoreUnknown = true, value = { "recipient" })
 public class RequestFileMessageImpl implements IRequestFileMessage {
 
 	private static final long serialVersionUID = -6326655333278936177L;
