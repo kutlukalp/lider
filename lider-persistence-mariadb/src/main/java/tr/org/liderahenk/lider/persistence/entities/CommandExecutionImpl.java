@@ -16,6 +16,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.UniqueConstraint;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -33,7 +34,8 @@ import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
  */
 @JsonIgnoreProperties({ "command" })
 @Entity
-@Table(name = "C_COMMAND_EXECUTION")
+@Table(name = "C_COMMAND_EXECUTION", uniqueConstraints = @UniqueConstraint(columnNames = { "COMMAND_ID", "DN_TYPE",
+		"DN" }) )
 public class CommandExecutionImpl implements ICommandExecution {
 
 	private static final long serialVersionUID = 298103880409529933L;

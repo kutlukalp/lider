@@ -34,7 +34,7 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
  * @see tr.org.liderahenk.lider.core.api.persistence.entities.IProfile
  *
  */
-@JsonIgnoreProperties({ "plugin", "profileDataBlob" })
+@JsonIgnoreProperties({ "profileDataBlob" })
 @Entity
 @Table(name = "C_PROFILE")
 public class ProfileImpl implements IProfile {
@@ -268,9 +268,9 @@ public class ProfileImpl implements IProfile {
 
 	@Override
 	public String toString() {
-		return "ProfileImpl [id=" + id + ", label=" + label + ", description=" + description + ", overridable="
-				+ overridable + ", active=" + active + ", deleted=" + deleted + ", createDate=" + createDate
-				+ ", modifyDate=" + modifyDate + "]";
+		return "ProfileImpl [id=" + id + ", plugin=" + (plugin != null) + ", label=" + label + ", description="
+				+ description + ", overridable=" + overridable + ", active=" + active + ", deleted=" + deleted
+				+ ", profileData=" + profileData + ", createDate=" + createDate + ", modifyDate=" + modifyDate + "]";
 	}
 
 }

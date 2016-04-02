@@ -1,5 +1,6 @@
 package tr.org.liderahenk.lider.core.api.persistence.entities;
 
+import java.util.Date;
 import java.util.List;
 
 import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
@@ -14,15 +15,15 @@ public interface ICommand extends IEntity {
 
 	/**
 	 * 
-	 * @return related policy record ID (nullable)
+	 * @return related policy record (nullable)
 	 */
-	Long getPolicyId();
+	IPolicy getPolicy();
 
 	/**
 	 * 
-	 * @return related task record ID (nullable)
+	 * @return related task record (nullable)
 	 */
-	Long getTaskId();
+	ITask getTask();
 
 	/**
 	 * 
@@ -31,10 +32,24 @@ public interface ICommand extends IEntity {
 	List<String> getDnList();
 
 	/**
+	 * This UID/JID is used to notify users after command (task or policy)
+	 * execution.
+	 * 
+	 * @return UID of the user who executed this command
+	 */
+	String getCommandOwnerUid();
+
+	/**
 	 * 
 	 * @return DN type which subject to command execution
 	 */
 	RestDNType getDnType();
+
+	/**
+	 * 
+	 * @return policy activation date
+	 */
+	Date getActivationDate();
 
 	/**
 	 * 

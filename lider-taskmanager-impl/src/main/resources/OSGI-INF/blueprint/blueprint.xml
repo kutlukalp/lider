@@ -21,33 +21,27 @@
 		<property name="messagingService" ref="messagingService" />
 		<property name="messageFactory" ref="messageFactory" />
 		<property name="eventAdmin" ref="eventAdmin" />
+		<property name="configurationService" ref="configurationService" />
 	</bean>
 
-	<service ref="taskStatusUpdateHandler" interface="org.osgi.service.event.EventHandler">
+	<service ref="taskStatusHandler" interface="org.osgi.service.event.EventHandler">
 		<service-properties>
-			<entry key="event.topics" value="tr/org/pardus/mys/taskmanager/task/update" />
+			<entry key="event.topics" value="tr/org/liderahenk/task/update" />
 		</service-properties>
 	</service>
-	<bean id="taskStatusUpdateHandler"
-		class="tr.org.liderahenk.lider.taskmanager.TaskStatusUpdateEventHandler">
+	<bean id="taskStatusHandler"
+		class="tr.org.liderahenk.lider.taskmanager.TaskStatusEventHandler">
 		<property name="taskAwareCommands" ref="taskAwareCommands" />
 	</bean>
 
-	<service ref="lyaNotifyTaskStatusUpdateHandler" interface="org.osgi.service.event.EventHandler">
+	<service ref="consoleNotifyTaskStatusEventHandler" interface="org.osgi.service.event.EventHandler">
 		<service-properties>
-			<entry key="event.topics" value="tr/org/pardus/mys/taskmanager/task/update" />
+			<entry key="event.topics" value="tr/org/liderahenk/task/update" />
 		</service-properties>
 	</service>
-	<bean id="lyaNotifyTaskStatusUpdateHandler"
-		class="tr.org.liderahenk.lider.taskmanager.LyaNotifyTaskStatusUpdateEventHandler">
+	<bean id="consoleNotifyTaskStatusEventHandler"
+		class="tr.org.liderahenk.lider.taskmanager.ConsoleNotifyTaskStatusEventHandler">
 		<property name="messagingService" ref="messagingService" />
-	</bean>
-
-	<service ref="taskObserver" interface="tr.org.liderahenk.lider.core.api.plugin.ICommand" />
-	<bean id="taskObserver"
-		class="tr.org.liderahenk.lider.commands.TaskObserverListCommand">
-		<property name="resultFactory" ref="resultFactory" />
-		<property name="taskDao" ref="taskDao" />
 	</bean>
 
 	<reference id="pluginDao"
@@ -65,8 +59,8 @@
 	<reference-list id="taskAwareCommands"
 		interface="tr.org.liderahenk.lider.core.api.plugin.ITaskAwareCommand"
 		availability="optional" />
+	<reference id="configurationService"
+		interface="tr.org.liderahenk.lider.core.api.configuration.IConfigurationService" />
 	<reference id="eventAdmin" interface="org.osgi.service.event.EventAdmin" />
-	<reference id="resultFactory"
-		interface="tr.org.liderahenk.lider.core.api.service.ICommandResultFactory" />
 
 </blueprint>

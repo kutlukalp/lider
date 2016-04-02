@@ -7,23 +7,23 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import tr.org.liderahenk.lider.core.api.messaging.enums.AgentMessageType;
 import tr.org.liderahenk.lider.core.api.messaging.enums.StatusCode;
-import tr.org.liderahenk.lider.core.api.messaging.messages.ITaskStatusMessage;
+import tr.org.liderahenk.lider.core.api.messaging.messages.IPolicyStatusMessage;
 import tr.org.liderahenk.lider.core.api.persistence.enums.ContentType;
 
 /**
- * Default implementation for {@link ITaskStatusMessage}
+ * Default implementation for {@link IPolicyStatusMessage}
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class TaskStatusMessageImpl implements ITaskStatusMessage {
+public class PolicyStatusMessageImpl implements IPolicyStatusMessage {
 
-	private static final long serialVersionUID = 7536336154130565642L;
+	private static final long serialVersionUID = 8345802637309377501L;
 
 	private AgentMessageType type;
 
-	private Long taskId;
+	private String policyVersion;
 
 	private StatusCode responseCode;
 
@@ -47,12 +47,12 @@ public class TaskStatusMessageImpl implements ITaskStatusMessage {
 	}
 
 	@Override
-	public Long getTaskId() {
-		return taskId;
+	public String getPolicyVersion() {
+		return policyVersion;
 	}
 
-	public void setTaskId(Long taskId) {
-		this.taskId = taskId;
+	public void setPolicyVersion(String policyVersion) {
+		this.policyVersion = policyVersion;
 	}
 
 	@Override

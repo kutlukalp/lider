@@ -84,10 +84,9 @@ public class ServiceRouterImpl implements IServiceRouter {
 				return responseFactory.createResponse(commandResult);
 			} else {
 				logger.debug("{} requires task, delegating request to task manager.", command);
-				String[] taskIds = null; // TODO why do we need to send back
-											// task id array ?
 				try {
-					taskIds = taskManager.addTask(request, entries);
+					logger.info("Delegating request to task manager.");
+					taskManager.addTask(request, entries);
 				} catch (Exception e) {
 					logger.error("Could not add task for request: ", e);
 					List<String> messages = new ArrayList<String>();

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+	xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+                 http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+                 http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://svn.apache.org/repos/asf/aries/trunk/blueprint/blueprint-cm/src/main/resources/org/apache/aries/blueprint/compendium/cm/blueprint-cm-1.1.0.xsd
+         ">
+
+	<bean id="pluginManager" class="tr.org.liderahenk.lider.pluginmanager.PluginManagerImpl">
+		<property name="pluginDao" ref="pluginDao" />
+		<property name="pluginInfoList" ref="pluginInfoList" />
+	</bean>
+
+	<reference-list id="pluginInfoList" availability="optional"
+		interface="tr.org.liderahenk.lider.core.api.plugin.IPluginInfo" />
+	<reference id="pluginDao"
+		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IPluginDao" />
+
+</blueprint>

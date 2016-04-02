@@ -1,37 +1,50 @@
 package tr.org.liderahenk.lider.taskmanager;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
+import tr.org.liderahenk.lider.core.api.constants.LiderConstants;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
 import tr.org.liderahenk.lider.core.api.messaging.IMessageFactory;
 import tr.org.liderahenk.lider.core.api.messaging.IMessagingService;
+import tr.org.liderahenk.lider.core.api.messaging.enums.StatusCode;
 import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.ITaskStatusMessage;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.ITaskStatusSubscriber;
+import tr.org.liderahenk.lider.core.api.persistence.dao.IAgentDao;
 import tr.org.liderahenk.lider.core.api.persistence.dao.ICommandDao;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IPluginDao;
 import tr.org.liderahenk.lider.core.api.persistence.dao.ITaskDao;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IAgent;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecution;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecutionResult;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
+import tr.org.liderahenk.lider.core.api.persistence.enums.ContentType;
+import tr.org.liderahenk.lider.core.api.plugin.ITaskAwareCommand;
 import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
 import tr.org.liderahenk.lider.core.api.rest.requests.ITaskCommandRequest;
 import tr.org.liderahenk.lider.core.api.taskmanager.ITaskManager;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskSubmissionFailedException;
+import tr.org.liderahenk.lider.core.model.ldap.IUser;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
 /**
@@ -54,16 +67,16 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 	private IMessagingService messagingService;
 	private IMessageFactory messageFactory;
 	private EventAdmin eventAdmin;
+	private IConfigurationService configurationService;
+	private IAgentDao agentDao;
 
 	public void init() {
-		logger.info("Initializing Task Manager...");
+		logger.info("Initializing task manager.");
 	}
 
 	@Override
-	public String[] addTask(final ITaskCommandRequest request, List<LdapEntry> entries)
+	public void addTask(final ITaskCommandRequest request, List<LdapEntry> entries)
 			throws TaskSubmissionFailedException {
-
-		List<String> taskIds = new ArrayList<String>();
 
 		try {
 
@@ -75,7 +88,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 			task = taskDao.save(task);
 
 			// Create & persist related command
-			ICommand command = createCommand(task, request);
+			ICommand command = createCommand(task, request, findCommandOwnerJid());
 			command = commandDao.save(command);
 
 			// While persisting each command execution, send task message
@@ -87,22 +100,30 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 					boolean isAhenk = ldapService.isAhenk(entry);
 
 					// New command execution
-					ICommandExecution execution = createCommandExecution(entry.getDistinguishedName(), command);
+					ICommandExecution execution = createCommandExecution(entry, command);
 					command.addCommandExecution(execution);
 
 					// Task message
 					ILiderMessage message = null;
 					if (isAhenk) {
-						message = messageFactory.createExecuteTaskMessage(task);
+						// Set agent JID
+						String jid = entry.get(configurationService.getAgentLdapJidAttribute());
+						if (jid == null || jid.isEmpty()) {
+							logger.error("JID was null. Ignoring task: {} for agent: {}",
+									new Object[] { task.toJson(), entry.getDistinguishedName() });
+							continue;
+						}
+						message = messageFactory.createExecuteTaskMessage(task, jid);
+						// Send message to agent. Responses will be handled by
+						// TaskStatusUpdateListener in XMPPClientImpl class
 						messagingService.sendMessage(message);
 					}
 
+					// TODO improvement. Use batch if possible!
+					commandDao.save(execution);
 				}
 
-				commandDao.save(command);
 			}
-
-			return taskIds.toArray(new String[taskIds.size()]);
 
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -113,7 +134,24 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 		}
 	}
 
-	private ICommandExecution createCommandExecution(final String dn, final ICommand command) {
+	/**
+	 * This JID will be used to notify same user after task/policy execution.
+	 * 
+	 * @return JID of the user who sends the request
+	 */
+	private String findCommandOwnerJid() {
+		try {
+			Subject currentUser = SecurityUtils.getSubject();
+			String userDn = currentUser.getPrincipal().toString();
+			IUser user = ldapService.getUser(userDn);
+			return user.getUid();
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+		return null;
+	}
+
+	private ICommandExecution createCommandExecution(final LdapEntry entry, final ICommand command) {
 		ICommandExecution ce = new ICommandExecution() {
 
 			private static final long serialVersionUID = -8693337675888677300L;
@@ -130,14 +168,12 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 
 			@Override
 			public RestDNType getDnType() {
-				// TODO dn type!!!! retrieve dn type while
-				// calculating entries.
-				return RestDNType.AHENK;
+				return entry.getType();
 			}
 
 			@Override
 			public String getDn() {
-				return dn;
+				return entry.getDistinguishedName();
 			}
 
 			@Override
@@ -163,7 +199,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 		return ce;
 	}
 
-	private ICommand createCommand(final ITask task, final ITaskCommandRequest request) {
+	private ICommand createCommand(final ITask task, final ITaskCommandRequest request, final String commandOwnerUid) {
 		ICommand command = new ICommand() {
 
 			private static final long serialVersionUID = 1L;
@@ -174,12 +210,12 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 			}
 
 			@Override
-			public Long getTaskId() {
-				return task.getId();
+			public ITask getTask() {
+				return task;
 			}
 
 			@Override
-			public Long getPolicyId() {
+			public IPolicy getPolicy() {
 				return null;
 			}
 
@@ -205,14 +241,21 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 
 			@Override
 			public List<? extends ICommandExecution> getCommandExecutions() {
-				// TODO Auto-generated method stub
 				return null;
 			}
 
 			@Override
 			public void addCommandExecution(ICommandExecution commandExecution) {
-				// TODO Auto-generated method stub
+			}
 
+			@Override
+			public String getCommandOwnerUid() {
+				return commandOwnerUid;
+			}
+
+			@Override
+			public Date getActivationDate() {
+				return null;
 			}
 		};
 
@@ -277,12 +320,17 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 		return task;
 	}
 
+	/**
+	 * Find desired plugin record by provided plugin name and version
+	 * 
+	 * @param pluginName
+	 * @param pluginVersion
+	 * @return
+	 */
 	private IPlugin findRelatedPlugin(String pluginName, String pluginVersion) {
-
 		Map<String, Object> propertiesMap = new HashMap<String, Object>();
-		propertiesMap.put("pluginName", pluginName);
-		propertiesMap.put("pluginVersion", pluginVersion);
-
+		propertiesMap.put("name", pluginName);
+		propertiesMap.put("version", pluginVersion);
 		List<? extends IPlugin> plugins = pluginDao.findByProperties(IPlugin.class, propertiesMap, null, 1);
 		if (plugins != null && !plugins.isEmpty()) {
 			return plugins.get(0);
@@ -290,10 +338,115 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 		return null;
 	}
 
+	/**
+	 * Triggered when a task status message received. This method listens to
+	 * agent responses and creates new command execution results accordingly. It
+	 * also throws a task status event in order to notify plugin and Lider
+	 * Console about task result (Plugins may listen to this event by
+	 * implementing {@link ITaskAwareCommand} interface).
+	 * 
+	 * @see tr.org.liderahenk.lider.core.api.messaging.messages.
+	 *      ITaskStatusMessage
+	 * 
+	 */
 	@Override
 	public void messageReceived(ITaskStatusMessage message) {
-		// TODO Auto-generated method stub
+		if (message != null) {
+			logger.debug("Task manager received message from {}", message.getFrom());
 
+			// Find related agent
+			List<? extends IAgent> agents = agentDao.findByProperty(null, "jid", message.getFrom().split("@")[0], 1);
+			if (agents != null) {
+
+				IAgent agent = agents.get(0);
+				if (agent != null) {
+					// Find related command execution
+					ICommandExecution commandExecution = commandDao.findExecution(message.getTaskId(), agent.getDn(),
+							RestDNType.AHENK);
+
+					// Create new command execution result
+					ICommandExecutionResult result = createCommandExecutionResult(message, commandExecution, agent);
+					commandExecution.addCommandExecutionResult(result);
+
+					try {
+						// Save command execution with result
+						commandDao.save(commandExecution);
+						// Throw an event if the task processing finished
+						if (StatusCode.getTaskEndingStates().contains(message.getResponseCode())) {
+							Dictionary<String, Object> payload = new Hashtable<String, Object>();
+							// Task status message
+							payload.put("message", message);
+							// Find who created the task
+							payload.put("messageJID", commandExecution.getCommand().getCommandOwnerUid());
+							eventAdmin.postEvent(new Event(LiderConstants.EVENTS.TASK_UPDATE, payload));
+						}
+					} catch (Exception e) {
+						logger.error(e.getMessage(), e);
+					}
+				}
+			}
+		}
+	}
+
+	private ICommandExecutionResult createCommandExecutionResult(final ITaskStatusMessage message,
+			final ICommandExecution commandExecution, final IAgent agent) {
+		ICommandExecutionResult result = new ICommandExecutionResult() {
+
+			private static final long serialVersionUID = 4096255741935685777L;
+
+			@Override
+			public Long getId() {
+				return null;
+			}
+
+			@Override
+			public Date getCreateDate() {
+				return new Date();
+			}
+
+			@Override
+			public Long getAgentId() {
+				return agent.getId();
+			}
+
+			@Override
+			public ICommandExecution getCommandExecution() {
+				return commandExecution;
+			}
+
+			@Override
+			public StatusCode getResponseCode() {
+				return message.getResponseCode();
+			}
+
+			@Override
+			public String getResponseMessage() {
+				return message.getResponseMessage();
+			}
+
+			@Override
+			public byte[] getResponseData() {
+				try {
+					return new ObjectMapper().writeValueAsBytes(message.getResponseData());
+				} catch (Exception e) {
+					logger.error(e.getMessage(), e);
+				}
+				return null;
+			}
+
+			@Override
+			public ContentType getContentType() {
+				return message.getContentType();
+			}
+
+			@Override
+			public String toJson() {
+				return null;
+			}
+
+		};
+
+		return result;
 	}
 
 	public void setLdapService(ILDAPService ldapService) {
@@ -320,9 +473,12 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 		this.commandDao = commandDao;
 	}
 
-	// TODO fire event for tr/org/pardus/mys/taskmanager/task/update
 	public void setEventAdmin(EventAdmin eventAdmin) {
 		this.eventAdmin = eventAdmin;
+	}
+
+	public void setConfigurationService(IConfigurationService configurationService) {
+		this.configurationService = configurationService;
 	}
 
 }

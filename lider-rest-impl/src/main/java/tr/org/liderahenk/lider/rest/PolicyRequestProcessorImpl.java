@@ -1,6 +1,5 @@
 package tr.org.liderahenk.lider.rest;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -9,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +23,7 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecution;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecutionResult;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
+import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 import tr.org.liderahenk.lider.core.api.rest.IRequestFactory;
 import tr.org.liderahenk.lider.core.api.rest.IResponseFactory;
 import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
@@ -32,6 +32,7 @@ import tr.org.liderahenk.lider.core.api.rest.processors.IPolicyRequestProcessor;
 import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyExecutionRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyRequest;
 import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
+import tr.org.liderahenk.lider.core.model.ldap.IUser;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
 /**
@@ -71,7 +72,7 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 			List<LdapEntry> targetEntries = ldapService.findTargetEntries(request.getDnList(), request.getDnType());
 
 			logger.debug("Creating ICommand object.");
-			ICommand command = createCommandFromRequest(request, policy);
+			ICommand command = createCommandFromRequest(request, policy, findCommandOwnerUid());
 			logger.debug("Target entry list size: " + targetEntries.size());
 			if (targetEntries != null && targetEntries.size() > 0) {
 				for (LdapEntry targetEntry : targetEntries) {
@@ -87,6 +88,23 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 			logger.error(e.getMessage(), e);
 			return responseFactory.createResponse(RestResponseStatus.ERROR, e.getMessage());
 		}
+	}
+
+	/**
+	 * This JID will be used to notify same user after task/policy execution.
+	 * 
+	 * @return JID of the user who sends the request
+	 */
+	private String findCommandOwnerUid() {
+		try {
+			Subject currentUser = SecurityUtils.getSubject();
+			String userDn = currentUser.getPrincipal().toString();
+			IUser user = ldapService.getUser(userDn);
+			return user.getUid();
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+		return null;
 	}
 
 	@Override
@@ -254,12 +272,8 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			resultMap.put("policies", mapper.writeValueAsString(policies));
-		} catch (JsonGenerationException e) {
-			e.printStackTrace();
-		} catch (JsonMappingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
 		}
 
 		return responseFactory.createResponse(RestResponseStatus.OK, "Records listed.", resultMap);
@@ -422,7 +436,7 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 				try {
 					return mapper.writeValueAsString(this);
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error(e.getMessage(), e);
 				}
 				return null;
 			}
@@ -458,8 +472,8 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 		return commandExecution;
 	}
 
-	private ICommand createCommandFromRequest(final IPolicyExecutionRequest request, final IPolicy policy) {
-
+	private ICommand createCommandFromRequest(final IPolicyExecutionRequest request, final IPolicy policy,
+			final String commandOwnerUid) {
 		ICommand command = new ICommand() {
 
 			private static final long serialVersionUID = -4957864665202951511L;
@@ -472,19 +486,19 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 				try {
 					return mapper.writeValueAsString(this);
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error(e.getMessage(), e);
 				}
 				return null;
 			}
 
 			@Override
-			public Long getTaskId() {
+			public ITask getTask() {
 				return null;
 			}
 
 			@Override
-			public Long getPolicyId() {
-				return request.getId();
+			public IPolicy getPolicy() {
+				return policy;
 			}
 
 			@Override
@@ -515,6 +529,16 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 			@Override
 			public Date getCreateDate() {
 				return new Date();
+			}
+
+			@Override
+			public String getCommandOwnerUid() {
+				return commandOwnerUid;
+			}
+
+			@Override
+			public Date getActivationDate() {
+				return request.getActivationDate();
 			}
 		};
 

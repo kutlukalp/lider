@@ -19,8 +19,11 @@ public class UserSessionMessageImpl implements IUserSessionMessage {
 	private static final long serialVersionUID = -5432714879052699027L;
 
 	private AgentMessageType type;
+
 	private String from;
+
 	private String username;
+
 	private Date timestamp;
 
 	@Override

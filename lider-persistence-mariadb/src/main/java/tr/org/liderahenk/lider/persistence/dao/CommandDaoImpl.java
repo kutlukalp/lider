@@ -1,10 +1,22 @@
 package tr.org.liderahenk.lider.persistence.dao;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import javax.persistence.metamodel.EntityType;
+import javax.persistence.metamodel.Metamodel;
 
 import org.apache.directory.api.util.exception.NotImplementedException;
 import org.slf4j.Logger;
@@ -14,6 +26,8 @@ import tr.org.liderahenk.lider.core.api.persistence.PropertyOrder;
 import tr.org.liderahenk.lider.core.api.persistence.dao.ICommandDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecution;
+import tr.org.liderahenk.lider.core.api.persistence.enums.OrderType;
+import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
 import tr.org.liderahenk.lider.persistence.entities.CommandExecutionImpl;
 import tr.org.liderahenk.lider.persistence.entities.CommandImpl;
 
@@ -42,14 +56,16 @@ public class CommandDaoImpl implements ICommandDao {
 	@Override
 	public ICommand save(ICommand command) throws Exception {
 		CommandImpl commandImpl = new CommandImpl(command);
+		commandImpl.setCreateDate(new Date());
 		entityManager.persist(commandImpl);
 		logger.debug("ICommand object persisted: {}", commandImpl.toString());
 		return commandImpl;
 	}
-	
+
 	@Override
 	public ICommandExecution save(ICommandExecution commandExecution) throws Exception {
 		CommandExecutionImpl commandExecutionImpl = new CommandExecutionImpl(commandExecution);
+		commandExecutionImpl.setCreateDate(new Date());
 		entityManager.persist(commandExecutionImpl);
 		logger.debug("ICommandExecution object persisted: {}", commandExecutionImpl.toString());
 		return commandExecutionImpl;
@@ -115,8 +131,70 @@ public class CommandDaoImpl implements ICommandDao {
 	@Override
 	public List<? extends ICommand> findByProperties(Class<? extends ICommand> obj, Map<String, Object> propertiesMap,
 			List<PropertyOrder> orders, Integer maxResults) {
-		// TODO Auto-generated method stub
-		return null;
+		orders = new ArrayList<PropertyOrder>();
+		// TODO
+		// PropertyOrder ord = new PropertyOrder("name", OrderType.ASC);
+		// orders.add(ord);
+		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<CommandImpl> criteria = (CriteriaQuery<CommandImpl>) builder.createQuery(CommandImpl.class);
+		Metamodel metamodel = entityManager.getMetamodel();
+		EntityType<CommandImpl> entityType = metamodel.entity(CommandImpl.class);
+		Root<CommandImpl> from = (Root<CommandImpl>) criteria.from(entityType);
+		criteria.select(from);
+		Predicate predicate = null;
+
+		if (propertiesMap != null) {
+			Predicate pred = null;
+			for (Entry<String, Object> entry : propertiesMap.entrySet()) {
+				if (entry.getValue() != null && !entry.getValue().toString().isEmpty()) {
+					String[] key = entry.getKey().split("\\.");
+					if (key.length > 1) {
+						Join<Object, Object> join = null;
+						for (int i = 0; i < key.length - 1; i++) {
+							join = join != null ? join.join(key[i]) : from.join(key[i]);
+						}
+						pred = builder.equal(join.get(key[key.length - 1]), entry.getValue());
+					} else {
+						pred = builder.equal(from.get(entry.getKey()), entry.getValue());
+					}
+					predicate = predicate == null ? pred : builder.and(predicate, pred);
+				}
+			}
+			if (predicate != null) {
+				criteria.where(predicate);
+			}
+		}
+
+		if (orders != null && !orders.isEmpty()) {
+			List<Order> orderList = new ArrayList<Order>();
+			for (PropertyOrder order : orders) {
+				orderList.add(order.getOrderType() == OrderType.ASC ? builder.asc(from.get(order.getPropertyName()))
+						: builder.desc(from.get(order.getPropertyName())));
+			}
+			criteria.orderBy(orderList);
+		}
+
+		List<CommandImpl> list = null;
+		if (null != maxResults) {
+			list = entityManager.createQuery(criteria).setMaxResults(maxResults).getResultList();
+		} else {
+			list = entityManager.createQuery(criteria).getResultList();
+		}
+
+		return list;
+	}
+
+	private static final String FIND_EXECUTION = "SELECT DISTINCT ce FROM CommandImpl c INNER JOIN c.commandExecutions ce INNER JOIN c.task t WHERE ce.dnType = :dnType AND ce.dn = :dn AND t.id = :taskId";
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public ICommandExecution findExecution(Long taskId, String dn, RestDNType dnType) {
+		Query query = entityManager.createQuery(FIND_EXECUTION);
+		query.setParameter("dnType", dnType.getId());
+		query.setParameter("dn", dn);
+		query.setParameter("taskId", taskId);
+		List<CommandExecutionImpl> resultList = query.setMaxResults(1).getResultList();
+		return resultList.get(0);
 	}
 
 	public void setEntityManager(EntityManager entityManager) {
