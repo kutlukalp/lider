@@ -21,8 +21,8 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
 /**
- * Provides related machine and user policies according to specified username
- * and agent JID in received message.
+ * Provides related agent and user policies according to specified username and
+ * agent JID in received message.
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  * @author <a href="mailto:caner.feyzullahoglu@agem.com.tr">Caner
@@ -45,7 +45,7 @@ public class PolicySubscriberImpl implements IPolicySubscriber {
 		String agentUid = message.getFrom().split("@")[0];
 		String userUid = message.getUsername();
 		String userPolicyVersion = message.getUserPolicyVersion();
-		String machinePolicyVersion = message.getMachinePolicyVersion();
+		String agentPolicyVersion = message.getAgentPolicyVersion();
 
 		// Find LDAP user entry
 		String userDn = findUserDn(userUid);
@@ -55,24 +55,37 @@ public class PolicySubscriberImpl implements IPolicySubscriber {
 		// Find user policy.
 		// (User policy can be related to either user entry or group entries
 		// which ever is the latest)
-		IPolicy userPolicy = policyDao.getLatestUserPolicy(userDn, groupsOfUser);
+		List<Object[]> resultList = policyDao.getLatestUserPolicy(userDn, groupsOfUser);
+		IPolicy userPolicy = null;
+		Long userCommandExecutionId = null;
+		if (resultList != null && !resultList.isEmpty() && resultList.get(0) != null && resultList.get(0).length == 2) {
+			userPolicy = (IPolicy) resultList.get(0)[0];
+			userCommandExecutionId = (Long) resultList.get(0)[1];
+		}
 		// If policy version is different than the policy version provided by
 		// user who is logged in, send its profiles to agent.
 		boolean sendUserPolicy = userPolicy != null && userPolicy.getPolicyVersion() != null
 				&& !userPolicy.getPolicyVersion().equalsIgnoreCase(userPolicyVersion);
 
-		// Find machine policy.
-		IPolicy machinePolicy = policyDao.getLatestMachinePolicy(findAgentDn(agentUid));
+		// Find agent policy.
+		resultList = policyDao.getLatestAgentPolicy(findAgentDn(agentUid));
+		IPolicy agentPolicy = null;
+		Long agentCommandExecutionId = null;
+		if (resultList != null && !resultList.isEmpty() && resultList.get(0) != null && resultList.get(0).length == 2) {
+			agentPolicy = (IPolicy) resultList.get(0)[0];
+			agentCommandExecutionId = (Long) resultList.get(0)[1];
+		}
 		// If policy version is different than the policy version provided by
 		// agent, send its profiles to agent.
-		boolean sendMachinePolicy = machinePolicy != null && machinePolicy.getPolicyVersion() != null
-				&& !machinePolicy.getPolicyVersion().equalsIgnoreCase(machinePolicyVersion);
+		boolean sendAgentPolicy = agentPolicy != null && agentPolicy.getPolicyVersion() != null
+				&& !agentPolicy.getPolicyVersion().equalsIgnoreCase(agentPolicyVersion);
 
+		// Create message
 		IExecutePoliciesMessage response = messageFactory.createExecutePoliciesMessage(null,
 				sendUserPolicy ? new ArrayList<IProfile>(userPolicy.getProfiles()) : null,
-				sendMachinePolicy ? new ArrayList<IProfile>(machinePolicy.getProfiles()) : null,
-				userPolicy != null ? userPolicy.getPolicyVersion() : null,
-				machinePolicy != null ? machinePolicy.getPolicyVersion() : null);
+				userPolicy != null ? userPolicy.getPolicyVersion() : null, userCommandExecutionId,
+				sendAgentPolicy ? new ArrayList<IProfile>(agentPolicy.getProfiles()) : null,
+				agentPolicy != null ? agentPolicy.getPolicyVersion() : null, agentCommandExecutionId);
 		logger.debug("Execute policies message: {}", response);
 		return response;
 	}

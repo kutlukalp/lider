@@ -13,7 +13,6 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 /**
  * Factory interface to create {@link ILiderMessage}'s from various objects
  * 
- * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
@@ -56,12 +55,15 @@ public interface IMessageFactory {
 	 * 
 	 * @param recipient
 	 * @param userPolicyProfiles
-	 * @param machinePolicyProfiles
 	 * @param userPolicyVersion
-	 * @param machinePolicyVersion
+	 * @param userCommandExecutionId
+	 * @param agentPolicyProfiles
+	 * @param agentPolicyVersion
+	 * @param agentCommandExecutionId
 	 * @return
 	 */
 	IExecutePoliciesMessage createExecutePoliciesMessage(String recipient, List<IProfile> userPolicyProfiles,
-			List<IProfile> machinePolicyProfiles, String userPolicyVersion, String machinePolicyVersion);
+			String userPolicyVersion, Long userCommandExecutionId, List<IProfile> agentPolicyProfiles,
+			String agentPolicyVersion, Long agentCommandExecutionId);
 
 }

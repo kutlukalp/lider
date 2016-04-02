@@ -14,9 +14,14 @@ public interface IExecutePoliciesMessage extends ILiderMessage {
 
 	List<IProfile> getUserPolicyProfiles();
 
-	List<IProfile> getMachinePolicyProfiles();
-
 	String getUserPolicyVersion();
 
-	String getMachinePolicyVersion();
+	Long getUserCommandExecutionId();
+
+	List<IProfile> getAgentPolicyProfiles();
+
+	Long getAgentCommandExecutionId();
+
+	String getAgentPolicyVersion();
+
 }

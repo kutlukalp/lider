@@ -44,4 +44,12 @@ public interface IPolicyStatusMessage extends IAgentMessage {
 	 */
 	ContentType getContentType();
 
+	/**
+	 * This identifier will be used to match incoming message to recorded
+	 * command.
+	 * 
+	 * @return command execution ID
+	 */
+	Long getCommandExecutionId();
+
 }

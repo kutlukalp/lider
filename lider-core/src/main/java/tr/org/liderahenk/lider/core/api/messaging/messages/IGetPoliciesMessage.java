@@ -8,6 +8,7 @@ package tr.org.liderahenk.lider.core.api.messaging.messages;
  *
  */
 public interface IGetPoliciesMessage extends IAgentMessage {
+
 	/**
 	 * 
 	 * @return
@@ -19,10 +20,11 @@ public interface IGetPoliciesMessage extends IAgentMessage {
 	 * @return
 	 */
 	String getUserPolicyVersion();
-	
+
 	/**
 	 * 
 	 * @return
 	 */
-	String getMachinePolicyVersion();
+	String getAgentPolicyVersion();
+
 }

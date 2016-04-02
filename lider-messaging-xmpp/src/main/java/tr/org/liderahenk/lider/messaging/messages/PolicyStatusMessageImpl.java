@@ -11,9 +11,12 @@ import tr.org.liderahenk.lider.core.api.messaging.messages.IPolicyStatusMessage;
 import tr.org.liderahenk.lider.core.api.persistence.enums.ContentType;
 
 /**
- * Default implementation for {@link IPolicyStatusMessage}
+ * Default implementation for {@link IPolicyStatusMessage}. This message is sent
+ * <b>from agent to Lider</b> in order to notify Lider about policy
+ * result/status.
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ * @see tr.org.liderahenk.lider.messaging.messages.ExecutePoliciesMessageImpl
  *
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -24,6 +27,8 @@ public class PolicyStatusMessageImpl implements IPolicyStatusMessage {
 	private AgentMessageType type;
 
 	private String policyVersion;
+
+	private Long commandExecutionId;
 
 	private StatusCode responseCode;
 
@@ -53,6 +58,15 @@ public class PolicyStatusMessageImpl implements IPolicyStatusMessage {
 
 	public void setPolicyVersion(String policyVersion) {
 		this.policyVersion = policyVersion;
+	}
+
+	@Override
+	public Long getCommandExecutionId() {
+		return commandExecutionId;
+	}
+
+	public void setCommandExecutionId(Long commandExecutionId) {
+		this.commandExecutionId = commandExecutionId;
 	}
 
 	@Override

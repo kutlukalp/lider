@@ -360,7 +360,10 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 
 				IAgent agent = agents.get(0);
 				if (agent != null) {
-					// Find related command execution
+					// Find related command execution.
+					// Here we can use agent DN to find the execution record
+					// because (unlike policies) tasks can only be executed for
+					// agents on agents!
 					ICommandExecution commandExecution = commandDao.findExecution(message.getTaskId(), agent.getDn(),
 							RestDNType.AHENK);
 

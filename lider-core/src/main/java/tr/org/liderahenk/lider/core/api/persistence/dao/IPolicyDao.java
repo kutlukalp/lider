@@ -72,8 +72,19 @@ public interface IPolicyDao extends IBaseDao<IPolicy> {
 	List<? extends IPolicy> findByProperties(Class<? extends IPolicy> obj, Map<String, Object> propertiesMap,
 			List<PropertyOrder> orders, Integer maxResults);
 
-	IPolicy getLatestUserPolicy(String userDn, List<LdapEntry> groupsOfUser);
+	/**
+	 * 
+	 * @param userDn
+	 * @param groupsOfUser
+	 * @return latest executed user policy with execution command ID.
+	 */
+	List<Object[]> getLatestUserPolicy(String userDn, List<LdapEntry> groupsOfUser);
 
-	IPolicy getLatestMachinePolicy(String agentDn);
+	/**
+	 * 
+	 * @param agentDn
+	 * @return latest executed agent policy with execution command ID.
+	 */
+	List<Object[]> getLatestAgentPolicy(String agentDn);
 
 }

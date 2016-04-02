@@ -10,12 +10,15 @@ import tr.org.liderahenk.lider.core.api.messaging.messages.IExecutePoliciesMessa
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
 
 /**
- * Default implementation for {@link IExecutePoliciesMessage}
+ * Default implementation for {@link IExecutePoliciesMessage}. This message is
+ * sent <b>from Lider to agent</b> in order to execute specified policies. As a
+ * response {@link PolicyStatusMessageImpl} will be returned.
  *
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ * @see tr.org.liderahenk.lider.messaging.messages.PolicyStatusMessageImpl
  * 
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties(ignoreUnknown = true, value = { "recipient" })
 public class ExecutePoliciesMessageImpl implements IExecutePoliciesMessage {
 
 	private static final long serialVersionUID = 8283628510292186821L;
@@ -26,22 +29,29 @@ public class ExecutePoliciesMessageImpl implements IExecutePoliciesMessage {
 
 	private List<IProfile> userPolicyProfiles;
 
-	private List<IProfile> machinePolicyProfiles;
-
 	private String userPolicyVersion;
 
-	private String machinePolicyVersion;
+	private Long userCommandExecutionId;
+
+	private List<IProfile> agentPolicyProfiles;
+
+	private String agentPolicyVersion;
+
+	private Long agentCommandExecutionId;
 
 	private Date timestamp;
 
-	public ExecutePoliciesMessageImpl(String recipient, List<IProfile> userPolicyProfiles,
-			List<IProfile> machinePolicyProfiles, String userPolicyVersion, String machinePolicyVersion,
-			Date timestamp) {
+	public ExecutePoliciesMessageImpl(String recipient, List<IProfile> userPolicyProfiles, String userPolicyVersion,
+			Long userCommandExecutionId, List<IProfile> agentPolicyProfiles, String agentPolicyVersion,
+			Long agentCommandExecutionId, Date timestamp) {
+		super();
 		this.recipient = recipient;
 		this.userPolicyProfiles = userPolicyProfiles;
-		this.machinePolicyProfiles = machinePolicyProfiles;
 		this.userPolicyVersion = userPolicyVersion;
-		this.machinePolicyVersion = machinePolicyVersion;
+		this.userCommandExecutionId = userCommandExecutionId;
+		this.agentPolicyProfiles = agentPolicyProfiles;
+		this.agentPolicyVersion = agentPolicyVersion;
+		this.agentCommandExecutionId = agentCommandExecutionId;
 		this.timestamp = timestamp;
 	}
 
@@ -73,15 +83,6 @@ public class ExecutePoliciesMessageImpl implements IExecutePoliciesMessage {
 	}
 
 	@Override
-	public List<IProfile> getMachinePolicyProfiles() {
-		return machinePolicyProfiles;
-	}
-
-	public void setMachinePolicyProfiles(List<IProfile> machinePolicyProfiles) {
-		this.machinePolicyProfiles = machinePolicyProfiles;
-	}
-
-	@Override
 	public String getUserPolicyVersion() {
 		return userPolicyVersion;
 	}
@@ -91,12 +92,39 @@ public class ExecutePoliciesMessageImpl implements IExecutePoliciesMessage {
 	}
 
 	@Override
-	public String getMachinePolicyVersion() {
-		return machinePolicyVersion;
+	public Long getUserCommandExecutionId() {
+		return userCommandExecutionId;
 	}
 
-	public void setMachinePolicyVersion(String machinePolicyVersion) {
-		this.machinePolicyVersion = machinePolicyVersion;
+	public void setUserCommandExecutionId(Long userCommandExecutionId) {
+		this.userCommandExecutionId = userCommandExecutionId;
+	}
+
+	@Override
+	public List<IProfile> getAgentPolicyProfiles() {
+		return agentPolicyProfiles;
+	}
+
+	public void setAgentPolicyProfiles(List<IProfile> agentPolicyProfiles) {
+		this.agentPolicyProfiles = agentPolicyProfiles;
+	}
+
+	@Override
+	public Long getAgentCommandExecutionId() {
+		return agentCommandExecutionId;
+	}
+
+	public void setAgentCommandExecutionId(Long agentCommandExecutionId) {
+		this.agentCommandExecutionId = agentCommandExecutionId;
+	}
+
+	@Override
+	public String getAgentPolicyVersion() {
+		return agentPolicyVersion;
+	}
+
+	public void setAgentPolicyVersion(String agentPolicyVersion) {
+		this.agentPolicyVersion = agentPolicyVersion;
 	}
 
 	@Override
