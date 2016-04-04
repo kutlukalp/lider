@@ -12,6 +12,8 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
  */
 public interface IExecutePoliciesMessage extends ILiderMessage {
 
+	String getUsername();
+
 	List<IProfile> getUserPolicyProfiles();
 
 	String getUserPolicyVersion();

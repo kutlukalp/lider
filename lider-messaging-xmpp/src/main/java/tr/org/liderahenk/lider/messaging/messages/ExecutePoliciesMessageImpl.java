@@ -27,6 +27,8 @@ public class ExecutePoliciesMessageImpl implements IExecutePoliciesMessage {
 
 	private String recipient;
 
+	private String username;
+
 	private List<IProfile> userPolicyProfiles;
 
 	private String userPolicyVersion;
@@ -41,11 +43,11 @@ public class ExecutePoliciesMessageImpl implements IExecutePoliciesMessage {
 
 	private Date timestamp;
 
-	public ExecutePoliciesMessageImpl(String recipient, List<IProfile> userPolicyProfiles, String userPolicyVersion,
-			Long userCommandExecutionId, List<IProfile> agentPolicyProfiles, String agentPolicyVersion,
-			Long agentCommandExecutionId, Date timestamp) {
-		super();
+	public ExecutePoliciesMessageImpl(String recipient, String username, List<IProfile> userPolicyProfiles,
+			String userPolicyVersion, Long userCommandExecutionId, List<IProfile> agentPolicyProfiles,
+			String agentPolicyVersion, Long agentCommandExecutionId, Date timestamp) {
 		this.recipient = recipient;
+		this.username = username;
 		this.userPolicyProfiles = userPolicyProfiles;
 		this.userPolicyVersion = userPolicyVersion;
 		this.userCommandExecutionId = userCommandExecutionId;
@@ -71,6 +73,15 @@ public class ExecutePoliciesMessageImpl implements IExecutePoliciesMessage {
 
 	public void setRecipient(String recipient) {
 		this.recipient = recipient;
+	}
+
+	@Override
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	@Override

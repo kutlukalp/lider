@@ -51,11 +51,11 @@ public class MessageFactoryImpl implements IMessageFactory {
 	}
 
 	@Override
-	public IExecutePoliciesMessage createExecutePoliciesMessage(String recipient, List<IProfile> userPolicyProfiles,
-			String userPolicyVersion, Long userCommandExecutionId, List<IProfile> agentPolicyProfiles,
-			String agentPolicyVersion, Long agentCommandExecutionId) {
-		return new ExecutePoliciesMessageImpl(recipient, userPolicyProfiles, userPolicyVersion, userCommandExecutionId,
-				agentPolicyProfiles, agentPolicyVersion, agentCommandExecutionId, new Date());
+	public IExecutePoliciesMessage createExecutePoliciesMessage(String recipient, String username,
+			List<IProfile> userPolicyProfiles, String userPolicyVersion, Long userCommandExecutionId,
+			List<IProfile> agentPolicyProfiles, String agentPolicyVersion, Long agentCommandExecutionId) {
+		return new ExecutePoliciesMessageImpl(recipient, username, userPolicyProfiles, userPolicyVersion,
+				userCommandExecutionId, agentPolicyProfiles, agentPolicyVersion, agentCommandExecutionId, new Date());
 	}
 
 }

@@ -81,7 +81,7 @@ public class PolicySubscriberImpl implements IPolicySubscriber {
 				&& !agentPolicy.getPolicyVersion().equalsIgnoreCase(agentPolicyVersion);
 
 		// Create message
-		IExecutePoliciesMessage response = messageFactory.createExecutePoliciesMessage(null,
+		IExecutePoliciesMessage response = messageFactory.createExecutePoliciesMessage(null, userUid,
 				sendUserPolicy ? new ArrayList<IProfile>(userPolicy.getProfiles()) : null,
 				userPolicy != null ? userPolicy.getPolicyVersion() : null, userCommandExecutionId,
 				sendAgentPolicy ? new ArrayList<IProfile>(agentPolicy.getProfiles()) : null,

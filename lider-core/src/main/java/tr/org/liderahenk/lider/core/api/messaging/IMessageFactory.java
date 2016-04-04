@@ -54,6 +54,7 @@ public interface IMessageFactory {
 	 * lists.
 	 * 
 	 * @param recipient
+	 * @param username
 	 * @param userPolicyProfiles
 	 * @param userPolicyVersion
 	 * @param userCommandExecutionId
@@ -62,8 +63,8 @@ public interface IMessageFactory {
 	 * @param agentCommandExecutionId
 	 * @return
 	 */
-	IExecutePoliciesMessage createExecutePoliciesMessage(String recipient, List<IProfile> userPolicyProfiles,
-			String userPolicyVersion, Long userCommandExecutionId, List<IProfile> agentPolicyProfiles,
-			String agentPolicyVersion, Long agentCommandExecutionId);
+	IExecutePoliciesMessage createExecutePoliciesMessage(String recipient, String username,
+			List<IProfile> userPolicyProfiles, String userPolicyVersion, Long userCommandExecutionId,
+			List<IProfile> agentPolicyProfiles, String agentPolicyVersion, Long agentCommandExecutionId);
 
 }
