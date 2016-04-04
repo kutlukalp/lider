@@ -1,16 +1,24 @@
 package tr.org.liderahenk.lider.rest;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.authorization.IAuthService;
 import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
+import tr.org.liderahenk.lider.core.api.persistence.dao.ICommandDao;
+import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
+import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 import tr.org.liderahenk.lider.core.api.rest.IRequestFactory;
 import tr.org.liderahenk.lider.core.api.rest.IResponseFactory;
 import tr.org.liderahenk.lider.core.api.rest.enums.RestResponseStatus;
@@ -21,6 +29,7 @@ import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
 import tr.org.liderahenk.lider.core.api.router.IServiceRouter;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskSubmissionFailedException;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
+import tr.org.liderahenk.lider.rest.dto.ExecutedTask;
 
 /**
  * 
@@ -39,6 +48,7 @@ public class TaskRequestProcessorImpl implements ITaskRequestProcessor {
 	private IAuthService authService;
 	private IConfigurationService configService;
 	private ILDAPService ldapService;
+	private ICommandDao commandDao;
 
 	@Override
 	public IRestResponse execute(String json) {
@@ -113,6 +123,54 @@ public class TaskRequestProcessorImpl implements ITaskRequestProcessor {
 		}
 	}
 
+	@Override
+	public IRestResponse list(String pluginName, String pluginVersion, Date createDateRangeStart,
+			Date createDateRangeEnd, Integer status) {
+		// Try to find command results
+		List<Object[]> resultList = commandDao.findCommandWithDetails(pluginName, pluginVersion, createDateRangeStart,
+				createDateRangeEnd, status);
+		List<ExecutedTask> tasks = null;
+		// Convert SQL result to collection of tasks.
+		if (resultList != null) {
+			tasks = new ArrayList<ExecutedTask>();
+			for (Object[] arr : resultList) {
+				if (arr.length != 4) {
+					continue;
+				}
+				ExecutedTask task = new ExecutedTask((ITask) arr[0], (Integer) arr[1], (Integer) arr[2],
+						(Integer) arr[3]);
+				tasks.add(task);
+			}
+		}
+
+		// Construct result map
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			resultMap.put("tasks", mapper.writeValueAsString(tasks));
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+
+		return responseFactory.createResponse(RestResponseStatus.OK, "Records listed.", resultMap);
+	}
+
+	@Override
+	public IRestResponse get(Long id) {
+		if (id == null) {
+			throw new IllegalArgumentException("ID was null.");
+		}
+		Map<String, Object> propertiesMap = new HashMap<String, Object>();
+		propertiesMap.put("task.id", id);
+		List<? extends ICommand> commands = commandDao.findByProperties(ICommand.class, propertiesMap, null, 1);
+		ICommand command = commands.get(0);
+		// Explicitly write object as json string, it will handled by
+		// related rest utility class in Lider Console
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		resultMap.put("command", command.toJson());
+		return responseFactory.createResponse(RestResponseStatus.OK, "Record retrieved.", resultMap);
+	}
+
 	public void setServiceRouter(IServiceRouter serviceRouter) {
 		this.serviceRouter = serviceRouter;
 	}
@@ -135,6 +193,10 @@ public class TaskRequestProcessorImpl implements ITaskRequestProcessor {
 
 	public void setConfigService(IConfigurationService configService) {
 		this.configService = configService;
+	}
+
+	public void setCommandDao(ICommandDao commandDao) {
+		this.commandDao = commandDao;
 	}
 
 }

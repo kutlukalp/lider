@@ -22,6 +22,12 @@ import tr.org.liderahenk.lider.core.api.rest.enums.RestResponseStatus;
 import tr.org.liderahenk.lider.core.api.rest.processors.IProfileRequestProcessor;
 import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
 
+/**
+ * Controller for profile related operations.
+ * 
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ *
+ */
 @Controller
 @RequestMapping("/lider/profile")
 public class ProfileController {

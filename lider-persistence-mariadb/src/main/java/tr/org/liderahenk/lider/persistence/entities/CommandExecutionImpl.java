@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -60,6 +61,7 @@ public class CommandExecutionImpl implements ICommandExecution {
 	private Date createDate;
 
 	@OneToMany(mappedBy = "commandExecution", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = false)
+	@OrderBy("createDate DESC")
 	private List<CommandExecutionResultImpl> commandExecutionResults = new ArrayList<CommandExecutionResultImpl>(); // bidirectional
 
 	public CommandExecutionImpl() {

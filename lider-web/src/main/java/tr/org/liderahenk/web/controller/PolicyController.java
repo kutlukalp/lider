@@ -22,6 +22,12 @@ import tr.org.liderahenk.lider.core.api.rest.enums.RestResponseStatus;
 import tr.org.liderahenk.lider.core.api.rest.processors.IPolicyRequestProcessor;
 import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
 
+/**
+ * Controller for policy related operations.
+ * 
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ *
+ */
 @Controller
 @RequestMapping("/lider/policy")
 public class PolicyController {

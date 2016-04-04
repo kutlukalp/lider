@@ -1,5 +1,6 @@
 package tr.org.liderahenk.lider.core.api.persistence.dao;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -98,8 +99,22 @@ public interface ICommandDao extends IBaseDao<ICommand> {
 	 * Find command execution record by given ID.
 	 * 
 	 * @param commandExecutionId
-	 * @return 
+	 * @return
 	 */
 	ICommandExecution findExecution(Long id);
+
+	/**
+	 * Find command with its details (task, plugn, command execution, command
+	 * execution results)
+	 * 
+	 * @param pluginName
+	 * @param pluginVersion
+	 * @param createDateRangeStart
+	 * @param createDateRangeEnd
+	 * @param status
+	 * @return
+	 */
+	List<Object[]> findCommandWithDetails(String pluginName, String pluginVersion, Date createDateRangeStart,
+			Date createDateRangeEnd, Integer status);
 
 }

@@ -40,6 +40,7 @@
 		<property name="authService" ref="authService" />
 		<property name="configService" ref="configService" />
 		<property name="ldapService" ref="ldapService" />
+		<property name="commandDao" ref="commandDao" />
 	</bean>
 
 	<reference id="pluginDao"
