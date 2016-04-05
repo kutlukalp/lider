@@ -290,8 +290,6 @@ public class CommandDaoImpl implements ICommandDao {
 				resultList != null && !resultList.isEmpty() && resultList.get(0) != null && resultList.get(0).length > 0
 						? (ITask) resultList.get(0)[0] : null);
 		
-		logger.error("RESULT: {} - {} - {}", new Object[]{ resultList.get(0)[1].getClass(), resultList.get(0)[2].getClass(), resultList.get(0)[3].getClass() });
-		
 		return resultList;
 	}
 
