@@ -157,6 +157,7 @@ public class CommandDaoImpl implements ICommandDao {
 						Join<Object, Object> join = null;
 						for (int i = 0; i < key.length - 1; i++) {
 							join = join != null ? join.join(key[i]) : from.join(key[i]);
+							from.fetch(key[i]);
 						}
 						pred = builder.equal(join.get(key[key.length - 1]), entry.getValue());
 					} else {
@@ -226,11 +227,11 @@ public class CommandDaoImpl implements ICommandDao {
 		List<String> whereConditions = new ArrayList<String>();
 		Map<String, Object> params = new HashMap<String, Object>();
 		if (pluginName != null && !pluginName.isEmpty()) {
-			whereConditions.add("p.name LIKE :pluginName");
+			whereConditions.add("p.name LIKE CONCAT(:pluginName, '%')");
 			params.put("pluginName", pluginName);
 		}
 		if (pluginVersion != null && !pluginVersion.isEmpty()) {
-			whereConditions.add("p.version LIKE :pluginVersion");
+			whereConditions.add("p.version LIKE CONCAT(:pluginVersion, '%')");
 			params.put("pluginVersion", pluginVersion);
 		}
 		if (createDateRangeStart != null && createDateRangeEnd != null) {
@@ -248,26 +249,26 @@ public class CommandDaoImpl implements ICommandDao {
 		}
 		// Append also status condition as 'HAVING' statement
 		StatusCode code = StatusCode.getType(status);
-		if (code != null) {
-			switch (code) {
-			case TASK_PROCESSED:
-				sql += " HAVING COUNT(CASE WHEN cer.responseCode = :resp_success THEN 1 ELSE NULL END) > 0 ";
-				break;
-			case TASK_ERROR:
-				sql += " HAVING COUNT(CASE WHEN cer.responseCode = :resp_error THEN 1 ELSE NULL END) > 0 ";
-				break;
-			case TASK_RECEIVED:
-				sql += " HAVING COUNT(CASE WHEN cer.responseCode = :resp_received THEN 1 ELSE NULL END) > 0 ";
-				break;
-			default:
-			}
-		}
+		// FIXME openjpa bug prevents using 'HAVING' statement right now!
+//		if (code != null) {
+//			switch (code) {
+//			case TASK_PROCESSED:
+//				sql += " HAVING COUNT(CASE WHEN cer.responseCode = :resp_success THEN 1 ELSE NULL END) > 0 ";
+//				break;
+//			case TASK_ERROR:
+//				sql += " HAVING COUNT(CASE WHEN cer.responseCode = :resp_error THEN 1 ELSE NULL END) > 0 ";
+//				break;
+//			case TASK_RECEIVED:
+//				sql += " HAVING COUNT(CASE WHEN cer.responseCode = :resp_received THEN 1 ELSE NULL END) > 0 ";
+//				break;
+//			default:
+//			}
+//		}
 		// Add parameter values for 'CASE WHEN' statements
 		params.put("resp_success", StatusCode.TASK_PROCESSED.getId());
 		params.put("resp_error", StatusCode.TASK_ERROR.getId());
 		params.put("resp_received", StatusCode.TASK_RECEIVED.getId());
 		
-		logger.error("SQL: {}", sql);
 		Query query = entityManager.createQuery(sql);
 		// Iterate over map and set query parameters
 		Iterator<Entry<String, Object>> iterator = params.entrySet().iterator();
