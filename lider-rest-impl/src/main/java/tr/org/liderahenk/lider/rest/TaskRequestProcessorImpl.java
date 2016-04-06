@@ -24,7 +24,7 @@ import tr.org.liderahenk.lider.core.api.rest.IResponseFactory;
 import tr.org.liderahenk.lider.core.api.rest.enums.RestResponseStatus;
 import tr.org.liderahenk.lider.core.api.rest.exceptions.InvalidRequestException;
 import tr.org.liderahenk.lider.core.api.rest.processors.ITaskRequestProcessor;
-import tr.org.liderahenk.lider.core.api.rest.requests.ITaskCommandRequest;
+import tr.org.liderahenk.lider.core.api.rest.requests.ITaskRequest;
 import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
 import tr.org.liderahenk.lider.core.api.router.IServiceRouter;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskSubmissionFailedException;
@@ -32,6 +32,7 @@ import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 import tr.org.liderahenk.lider.rest.dto.ExecutedTask;
 
 /**
+ * Processor class for handling/processing task data.
  * 
  * @author <a href="mailto:caner.feyzullahoglu@agem.com.tr">Caner
  *         Feyzullahoğlu</a>
@@ -53,7 +54,7 @@ public class TaskRequestProcessorImpl implements ITaskRequestProcessor {
 	@Override
 	public IRestResponse execute(String json) {
 
-		ITaskCommandRequest request = null;
+		ITaskRequest request = null;
 		List<LdapEntry> targetEntries = null;
 
 		try {

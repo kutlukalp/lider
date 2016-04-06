@@ -1,12 +1,8 @@
 package tr.org.liderahenk.lider.rest;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -19,14 +15,11 @@ import tr.org.liderahenk.lider.core.api.persistence.dao.ICommandDao;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IPolicyDao;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IProfileDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
-import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecution;
-import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecutionResult;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
-import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
+import tr.org.liderahenk.lider.core.api.persistence.factories.IEntityFactory;
 import tr.org.liderahenk.lider.core.api.rest.IRequestFactory;
 import tr.org.liderahenk.lider.core.api.rest.IResponseFactory;
-import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
 import tr.org.liderahenk.lider.core.api.rest.enums.RestResponseStatus;
 import tr.org.liderahenk.lider.core.api.rest.processors.IPolicyRequestProcessor;
 import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyExecutionRequest;
@@ -36,6 +29,7 @@ import tr.org.liderahenk.lider.core.model.ldap.IUser;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
 /**
+ * Processor class for handling/processing policy data.
  * 
  * @author <a href="mailto:caner.feyzullahoglu@agem.com.tr">Caner
  *         Feyzullahoğlu</a>
@@ -52,6 +46,7 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 	private IRequestFactory requestFactory;
 	private IResponseFactory responseFactory;
 	private ILDAPService ldapService;
+	private IEntityFactory entityFactory;
 
 	@Override
 	public IRestResponse execute(String json) {
@@ -72,12 +67,11 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 			List<LdapEntry> targetEntries = ldapService.findTargetEntries(request.getDnList(), request.getDnType());
 
 			logger.debug("Creating ICommand object.");
-			ICommand command = createCommandFromRequest(request, policy, findCommandOwnerUid());
+			ICommand command = entityFactory.createCommand(policy, request, findCommandOwnerUid());
 			logger.debug("Target entry list size: " + targetEntries.size());
 			if (targetEntries != null && targetEntries.size() > 0) {
 				for (LdapEntry targetEntry : targetEntries) {
-					command.addCommandExecution(
-							createCommandExecution(command, targetEntry.getType(), targetEntry.getDistinguishedName()));
+					command.addCommandExecution(entityFactory.createCommandExecution(targetEntry, command));
 				}
 			}
 
@@ -112,7 +106,13 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 		try {
 			IPolicyRequest request = requestFactory.createPolicyRequest(json);
 
-			IPolicy policy = createFromRequest(request);
+			IPolicy policy = entityFactory.createPolicy(request);
+			if (request.getProfileIdList() != null) {
+				for (Long profileId : request.getProfileIdList()) {
+					IProfile profile = profileDao.find(profileId);
+					policy.addProfile(profile);
+				}
+			}
 			policy = policyDao.save(policy);
 
 			Map<String, Object> resultMap = new HashMap<String, Object>();
@@ -133,7 +133,15 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 
 			incrementPolicyVersion(policy);
 
-			policy = mergeValues(policy, request);
+			policy = entityFactory.createPolicy(policy, request);
+			// TODO IMPROVEMENT: instead of simply querying & adding profiles,
+			// merge them with policy.getProfiles() first!
+			if (request.getProfileIdList() != null) {
+				for (Long profileId : request.getProfileIdList()) {
+					IProfile profile = profileDao.find(profileId);
+					policy.addProfile(profile);
+				}
+			}
 			policy = policyDao.saveOrUpdate(policy);
 
 			Map<String, Object> resultMap = new HashMap<String, Object>();
@@ -159,97 +167,6 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 			logger.debug(
 					"Version of policy: " + policy.getId() + " is increased from " + oldVersion + " to " + newVersion);
 		}
-	}
-
-	/**
-	 * Create new IPolicy instance by merging the provided IPolicy instance and
-	 * values retrieved from the provided request.
-	 * 
-	 * @param profile
-	 * @param request
-	 * @return
-	 */
-	private IPolicy mergeValues(final IPolicy policy, final IPolicyRequest request) {
-		IPolicy mergedPolicy = new IPolicy() {
-
-			private static final long serialVersionUID = 2617531228166961570L;
-
-			Set<IProfile> profiles = null;
-
-			@Override
-			public Long getId() {
-				return policy.getId();
-			}
-
-			@Override
-			public String getLabel() {
-				return request.getLabel();
-			}
-
-			@Override
-			public String getDescription() {
-				return request.getDescription();
-			}
-
-			@Override
-			public boolean isActive() {
-				return request.isActive();
-			}
-
-			@Override
-			public boolean isDeleted() {
-				return policy.isDeleted();
-			}
-
-			@Override
-			public Set<? extends IProfile> getProfiles() {
-				return this.profiles;
-			}
-
-			@Override
-			public Date getCreateDate() {
-				return null;
-			}
-
-			@Override
-			public Date getModifyDate() {
-				return null;
-			}
-
-			@Override
-			public void addProfile(IProfile profile) {
-				if (profiles == null) {
-					profiles = new HashSet<IProfile>();
-				}
-				profiles.add(profile);
-			}
-
-			@Override
-			public String toJson() {
-				return null;
-			}
-
-			@Override
-			public String getPolicyVersion() {
-				return policy.getPolicyVersion();
-			}
-
-			@Override
-			public void setPolicyVersion(String policyVersion) {
-			}
-
-		};
-
-		// TODO IMPROVEMENT: instead of simply querying & adding profiles,
-		// merge them with policy.getProfiles() first!
-		if (request.getProfileIdList() != null) {
-			for (Long profileId : request.getProfileIdList()) {
-				IProfile profile = profileDao.find(profileId);
-				mergedPolicy.addProfile(profile);
-			}
-		}
-
-		return mergedPolicy;
 	}
 
 	@Override
@@ -324,225 +241,8 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 		this.commandDao = commandDao;
 	}
 
-	/**
-	 * Create new IPolicy instance from values retrieved from the provided
-	 * request.
-	 * 
-	 * @param request
-	 * @return
-	 */
-	private IPolicy createFromRequest(final IPolicyRequest request) {
-
-		IPolicy policy = new IPolicy() {
-
-			private static final long serialVersionUID = 2617531228166961570L;
-
-			Set<IProfile> profiles = null;
-
-			@Override
-			public Long getId() {
-				return null;
-			}
-
-			@Override
-			public String getLabel() {
-				return request.getLabel();
-			}
-
-			@Override
-			public String getDescription() {
-				return request.getDescription();
-			}
-
-			@Override
-			public boolean isActive() {
-				return request.isActive();
-			}
-
-			@Override
-			public boolean isDeleted() {
-				return false;
-			}
-
-			@Override
-			public Set<? extends IProfile> getProfiles() {
-				return this.profiles;
-			}
-
-			@Override
-			public Date getCreateDate() {
-				return null;
-			}
-
-			@Override
-			public Date getModifyDate() {
-				return null;
-			}
-
-			@Override
-			public void addProfile(IProfile profile) {
-				if (profiles == null) {
-					profiles = new HashSet<IProfile>();
-				}
-				profiles.add(profile);
-			}
-
-			@Override
-			public String toJson() {
-				return null;
-			}
-
-			@Override
-			public String getPolicyVersion() {
-				return null;
-			}
-
-			@Override
-			public void setPolicyVersion(String policyVersion) {
-			}
-
-		};
-
-		if (request.getProfileIdList() != null) {
-			for (Long profileId : request.getProfileIdList()) {
-				IProfile profile = profileDao.find(profileId);
-				policy.addProfile(profile);
-			}
-		}
-
-		return policy;
-	}
-
-	private ICommandExecution createCommandExecution(final ICommand command, final RestDNType dnType,
-			final String distinguishedName) {
-
-		ICommandExecution commandExecution = new ICommandExecution() {
-
-			private static final long serialVersionUID = -308895485597688635L;
-
-			@Override
-			public Long getId() {
-				return null;
-			}
-
-			@Override
-			public Date getCreateDate() {
-				return new Date();
-			}
-
-			@Override
-			public String toJson() {
-				ObjectMapper mapper = new ObjectMapper();
-				try {
-					return mapper.writeValueAsString(this);
-				} catch (Exception e) {
-					logger.error(e.getMessage(), e);
-				}
-				return null;
-			}
-
-			@Override
-			public RestDNType getDnType() {
-				return dnType;
-			}
-
-			@Override
-			public String getDn() {
-				return distinguishedName;
-			}
-
-			@Override
-			public List<? extends ICommandExecutionResult> getCommandExecutionResults() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			@Override
-			public ICommand getCommand() {
-				return command;
-			}
-
-			@Override
-			public void addCommandExecutionResult(ICommandExecutionResult commandExecutionResult) {
-				// TODO Auto-generated method stub
-
-			}
-		};
-
-		return commandExecution;
-	}
-
-	private ICommand createCommandFromRequest(final IPolicyExecutionRequest request, final IPolicy policy,
-			final String commandOwnerUid) {
-		ICommand command = new ICommand() {
-
-			private static final long serialVersionUID = -4957864665202951511L;
-
-			List<ICommandExecution> commandExecutions = new ArrayList<ICommandExecution>();
-
-			@Override
-			public String toJson() {
-				ObjectMapper mapper = new ObjectMapper();
-				try {
-					return mapper.writeValueAsString(this);
-				} catch (Exception e) {
-					logger.error(e.getMessage(), e);
-				}
-				return null;
-			}
-
-			@Override
-			public ITask getTask() {
-				return null;
-			}
-
-			@Override
-			public IPolicy getPolicy() {
-				return policy;
-			}
-
-			@Override
-			public RestDNType getDnType() {
-				return request.getDnType();
-			}
-
-			@Override
-			public List<String> getDnList() {
-				return request.getDnList();
-			}
-
-			@Override
-			public List<? extends ICommandExecution> getCommandExecutions() {
-				return commandExecutions;
-			}
-
-			@Override
-			public void addCommandExecution(ICommandExecution commandExecution) {
-				commandExecutions.add(commandExecution);
-			}
-
-			@Override
-			public Long getId() {
-				return null;
-			}
-
-			@Override
-			public Date getCreateDate() {
-				return new Date();
-			}
-
-			@Override
-			public String getCommandOwnerUid() {
-				return commandOwnerUid;
-			}
-
-			@Override
-			public Date getActivationDate() {
-				return request.getActivationDate();
-			}
-		};
-
-		return command;
+	public void setEntityFactory(IEntityFactory entityFactory) {
+		this.entityFactory = entityFactory;
 	}
 
 }
