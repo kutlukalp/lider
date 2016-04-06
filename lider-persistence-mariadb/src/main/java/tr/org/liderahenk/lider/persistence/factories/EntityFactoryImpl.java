@@ -11,16 +11,23 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecution;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecutionResult;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IOperationLog;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 import tr.org.liderahenk.lider.core.api.persistence.enums.CrudType;
 import tr.org.liderahenk.lider.core.api.persistence.factories.IEntityFactory;
-import tr.org.liderahenk.lider.core.api.rest.requests.ITaskCommandRequest;
+import tr.org.liderahenk.lider.core.api.rest.requests.ICommandRequest;
+import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyRequest;
+import tr.org.liderahenk.lider.core.api.rest.requests.IProfileRequest;
+import tr.org.liderahenk.lider.core.api.rest.requests.ITaskRequest;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 import tr.org.liderahenk.lider.persistence.entities.CommandExecutionImpl;
 import tr.org.liderahenk.lider.persistence.entities.CommandExecutionResultImpl;
 import tr.org.liderahenk.lider.persistence.entities.CommandImpl;
 import tr.org.liderahenk.lider.persistence.entities.OperationLogImpl;
 import tr.org.liderahenk.lider.persistence.entities.PluginImpl;
+import tr.org.liderahenk.lider.persistence.entities.PolicyImpl;
+import tr.org.liderahenk.lider.persistence.entities.ProfileImpl;
 import tr.org.liderahenk.lider.persistence.entities.TaskImpl;
 
 /**
@@ -55,7 +62,7 @@ public class EntityFactoryImpl implements IEntityFactory {
 	}
 
 	@Override
-	public ITask createTask(IPlugin plugin, ITaskCommandRequest request) throws Exception {
+	public ITask createTask(IPlugin plugin, ITaskRequest request) throws Exception {
 		byte[] data = new ObjectMapper().writeValueAsBytes(request.getParameterMap());
 		return new TaskImpl(null, (PluginImpl) plugin, request.getCommandId(), data, false, new Date(), null);
 	}
@@ -67,9 +74,40 @@ public class EntityFactoryImpl implements IEntityFactory {
 	}
 
 	@Override
-	public ICommand createCommand(ITask task, ITaskCommandRequest request, String commandOwnerJid) throws Exception {
+	public ICommand createCommand(ITask task, ICommandRequest request, String commandOwnerJid) throws Exception {
 		return new CommandImpl(null, null, (TaskImpl) task, request.getDnList(), request.getDnType(), commandOwnerJid,
 				null, new Date(), null);
+	}
+
+	@Override
+	public ICommand createCommand(IPolicy policy, ICommandRequest request, String commandOwnerJid) throws Exception {
+		return new CommandImpl(null, (PolicyImpl) policy, null, request.getDnList(), request.getDnType(),
+				commandOwnerJid, null, new Date(), null);
+	}
+
+	@Override
+	public IProfile createProfile(IPlugin plugin, IProfileRequest request) throws Exception {
+		return new ProfileImpl(null, (PluginImpl) plugin, request.getLabel(), request.getDescription(),
+				request.isOverridable(), request.isActive(), false, request.getProfileData(), new Date(), null);
+	}
+
+	@Override
+	public IProfile createProfile(IProfile profile, IProfileRequest request) throws Exception {
+		return new ProfileImpl(profile.getId(), (PluginImpl) profile.getPlugin(), request.getLabel(),
+				request.getDescription(), request.isOverridable(), request.isActive(), profile.isDeleted(),
+				request.getProfileData(), profile.getCreateDate(), new Date());
+	}
+
+	@Override
+	public IPolicy createPolicy(IPolicyRequest request) throws Exception {
+		return new PolicyImpl(null, request.getLabel(), request.getDescription(), request.isActive(), false, null,
+				new Date(), null, null);
+	}
+
+	@Override
+	public IPolicy createPolicy(IPolicy policy, IPolicyRequest request) throws Exception {
+		return new PolicyImpl(policy.getId(), request.getLabel(), request.getDescription(), request.isActive(),
+				policy.isDeleted(), null, policy.getCreateDate(), new Date(), policy.getPolicyVersion());
 	}
 
 }
