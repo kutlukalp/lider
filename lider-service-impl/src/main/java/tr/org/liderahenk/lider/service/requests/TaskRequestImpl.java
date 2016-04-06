@@ -7,10 +7,10 @@ import java.util.Map;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
-import tr.org.liderahenk.lider.core.api.rest.requests.ITaskCommandRequest;
+import tr.org.liderahenk.lider.core.api.rest.requests.ITaskRequest;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class TaskRequestImpl implements ITaskCommandRequest {
+public class TaskRequestImpl implements ITaskRequest {
 
 	private static final long serialVersionUID = -4476822298585494125L;
 

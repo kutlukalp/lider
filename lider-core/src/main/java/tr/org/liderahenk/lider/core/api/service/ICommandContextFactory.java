@@ -1,6 +1,6 @@
 package tr.org.liderahenk.lider.core.api.service;
 
-import tr.org.liderahenk.lider.core.api.rest.requests.ITaskCommandRequest;
+import tr.org.liderahenk.lider.core.api.rest.requests.ITaskRequest;
 
 /**
  * 
@@ -16,6 +16,6 @@ public interface ICommandContextFactory {
 	 * @param request
 	 * @return new command context from this request
 	 */
-	ICommandContext create(ITaskCommandRequest request);
+	ICommandContext create(ITaskRequest request);
 
 }

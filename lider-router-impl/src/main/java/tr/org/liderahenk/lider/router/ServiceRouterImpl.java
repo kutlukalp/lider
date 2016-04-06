@@ -10,7 +10,7 @@ import tr.org.liderahenk.lider.core.api.plugin.ICommand;
 import tr.org.liderahenk.lider.core.api.rest.IResponseFactory;
 import tr.org.liderahenk.lider.core.api.rest.enums.RestResponseStatus;
 import tr.org.liderahenk.lider.core.api.rest.exceptions.InvalidRequestException;
-import tr.org.liderahenk.lider.core.api.rest.requests.ITaskCommandRequest;
+import tr.org.liderahenk.lider.core.api.rest.requests.ITaskRequest;
 import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
 import tr.org.liderahenk.lider.core.api.router.IServiceRegistry;
 import tr.org.liderahenk.lider.core.api.router.IServiceRouter;
@@ -41,7 +41,7 @@ public class ServiceRouterImpl implements IServiceRouter {
 	private ITaskManager taskManager;
 
 	@Override
-	public IRestResponse delegateRequest(ITaskCommandRequest request, List<LdapEntry> entries)
+	public IRestResponse delegateRequest(ITaskRequest request, List<LdapEntry> entries)
 			throws InvalidRequestException, TaskSubmissionFailedException {
 
 		// Try to find related ICommand instance.

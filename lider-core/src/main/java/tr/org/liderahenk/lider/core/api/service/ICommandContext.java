@@ -2,7 +2,7 @@ package tr.org.liderahenk.lider.core.api.service;
 
 import tr.org.liderahenk.lider.core.api.plugin.ICommand;
 import tr.org.liderahenk.lider.core.api.rest.requests.ICommandRequest;
-import tr.org.liderahenk.lider.core.api.rest.requests.ITaskCommandRequest;
+import tr.org.liderahenk.lider.core.api.rest.requests.ITaskRequest;
 
 /**
  * 
@@ -16,6 +16,6 @@ public interface ICommandContext {
 	/**
 	 * @return {@link ICommandRequest} that fired this command
 	 */
-	ITaskCommandRequest getRequest();
+	ITaskRequest getRequest();
 
 }

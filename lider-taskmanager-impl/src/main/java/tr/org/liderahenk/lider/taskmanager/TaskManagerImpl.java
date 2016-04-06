@@ -35,7 +35,7 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 import tr.org.liderahenk.lider.core.api.persistence.factories.IEntityFactory;
 import tr.org.liderahenk.lider.core.api.plugin.ITaskAwareCommand;
 import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
-import tr.org.liderahenk.lider.core.api.rest.requests.ITaskCommandRequest;
+import tr.org.liderahenk.lider.core.api.rest.requests.ITaskRequest;
 import tr.org.liderahenk.lider.core.api.taskmanager.ITaskManager;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskSubmissionFailedException;
 import tr.org.liderahenk.lider.core.model.ldap.IUser;
@@ -68,7 +68,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 	}
 
 	@Override
-	public void executeTask(final ITaskCommandRequest request, List<LdapEntry> entries)
+	public void executeTask(final ITaskRequest request, List<LdapEntry> entries)
 			throws TaskSubmissionFailedException {
 
 		try {

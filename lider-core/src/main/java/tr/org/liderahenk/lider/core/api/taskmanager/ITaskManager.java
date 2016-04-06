@@ -3,7 +3,7 @@ package tr.org.liderahenk.lider.core.api.taskmanager;
 import java.util.List;
 
 import tr.org.liderahenk.lider.core.api.rest.requests.IRequest;
-import tr.org.liderahenk.lider.core.api.rest.requests.ITaskCommandRequest;
+import tr.org.liderahenk.lider.core.api.rest.requests.ITaskRequest;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
 /**
@@ -29,6 +29,6 @@ public interface ITaskManager {
 	 *             on any failure during task creation
 	 * 
 	 */
-	void executeTask(ITaskCommandRequest request, List<LdapEntry> entries) throws TaskSubmissionFailedException;
+	void executeTask(ITaskRequest request, List<LdapEntry> entries) throws TaskSubmissionFailedException;
 
 }

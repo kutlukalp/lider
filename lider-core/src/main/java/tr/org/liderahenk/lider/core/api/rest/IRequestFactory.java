@@ -2,9 +2,8 @@ package tr.org.liderahenk.lider.core.api.rest;
 
 import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyExecutionRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyRequest;
-import tr.org.liderahenk.lider.core.api.rest.requests.IProfileExecutionRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IProfileRequest;
-import tr.org.liderahenk.lider.core.api.rest.requests.ITaskCommandRequest;
+import tr.org.liderahenk.lider.core.api.rest.requests.ITaskRequest;
 
 public interface IRequestFactory {
 
@@ -12,10 +11,8 @@ public interface IRequestFactory {
 
 	IPolicyRequest createPolicyRequest(String json) throws Exception;
 
-	ITaskCommandRequest createTaskCommandRequest(String json) throws Exception;
+	ITaskRequest createTaskCommandRequest(String json) throws Exception;
 
 	IPolicyExecutionRequest createPolicyExecutionRequest(String json) throws Exception;
-
-	IProfileExecutionRequest createProfileExecutionRequest(String json) throws Exception;
 
 }

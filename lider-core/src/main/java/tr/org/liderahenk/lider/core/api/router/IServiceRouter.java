@@ -5,7 +5,7 @@ import java.util.List;
 import tr.org.liderahenk.lider.core.api.plugin.ICommand;
 import tr.org.liderahenk.lider.core.api.rest.exceptions.InvalidRequestException;
 import tr.org.liderahenk.lider.core.api.rest.requests.IRequest;
-import tr.org.liderahenk.lider.core.api.rest.requests.ITaskCommandRequest;
+import tr.org.liderahenk.lider.core.api.rest.requests.ITaskRequest;
 import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskSubmissionFailedException;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
@@ -34,7 +34,7 @@ public interface IServiceRouter {
 	 *             if sth goes wrong during task creation wrt
 	 *             {@link IRequest}
 	 */
-	IRestResponse delegateRequest(ITaskCommandRequest request, List<LdapEntry> entries)
+	IRestResponse delegateRequest(ITaskRequest request, List<LdapEntry> entries)
 			throws InvalidRequestException, TaskSubmissionFailedException;
 
 }

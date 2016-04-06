@@ -1,18 +1,18 @@
 package tr.org.liderahenk.lider.service;
 
-import tr.org.liderahenk.lider.core.api.rest.requests.ITaskCommandRequest;
+import tr.org.liderahenk.lider.core.api.rest.requests.ITaskRequest;
 import tr.org.liderahenk.lider.core.api.service.ICommandContext;
 
 public class CommandContextImpl implements ICommandContext {
 
-	private ITaskCommandRequest request;
+	private ITaskRequest request;
 
-	public CommandContextImpl(ITaskCommandRequest request) {
+	public CommandContextImpl(ITaskRequest request) {
 		this.request = request;
 	}
 
 	@Override
-	public ITaskCommandRequest getRequest() {
+	public ITaskRequest getRequest() {
 		return this.request;
 	}
 

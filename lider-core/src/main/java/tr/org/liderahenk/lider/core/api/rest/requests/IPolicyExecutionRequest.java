@@ -1,17 +1,16 @@
 package tr.org.liderahenk.lider.core.api.rest.requests;
 
 import java.util.Date;
-import java.util.List;
 
-import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
+/**
+ * Request class used for policy execution.
+ * 
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ *
+ */
+public interface IPolicyExecutionRequest extends ICommandRequest {
 
-public interface IPolicyExecutionRequest extends IRequest {
-	
 	Long getId();
-	
-	List<String> getDnList();
-	
-	RestDNType getDnType();
 
 	Date getActivationDate();
 }
