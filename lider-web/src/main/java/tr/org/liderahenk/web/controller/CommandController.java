@@ -54,15 +54,16 @@ public class CommandController {
 	@ResponseBody
 	public IRestResponse listExecutedTasks(@RequestParam(value = "pluginName", required = false) String pluginName,
 			@RequestParam(value = "pluginVersion", required = false) String pluginVersion,
-			@RequestParam(value = "createDateRangeStart", required = false) Date createDateRangeStart,
-			@RequestParam(value = "createDateRangeEnd", required = false) Date createDateRangeEnd,
+			@RequestParam(value = "createDateRangeStart", required = false) Long createDateRangeStart,
+			@RequestParam(value = "createDateRangeEnd", required = false) Long createDateRangeEnd,
 			@RequestParam(value = "status", required = false) Integer status, HttpServletRequest request)
 					throws UnsupportedEncodingException {
 		logger.info(
 				"Request received. URL: '/lider/command/task/list?pluginName={}&pluginVersion={}&createDateRangeStart={}&createDateRangeEnd={}&status={}'",
 				new Object[] { pluginName, pluginVersion, createDateRangeStart, createDateRangeEnd, status });
-		IRestResponse restResponse = commandProcessor.listExecutedTasks(pluginName, pluginVersion, createDateRangeStart,
-				createDateRangeEnd, status);
+		IRestResponse restResponse = commandProcessor.listExecutedTasks(pluginName, pluginVersion,
+				createDateRangeStart != null ? new Date(createDateRangeStart) : null,
+				createDateRangeEnd != null ? new Date(createDateRangeEnd) : null, status);
 		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
@@ -100,15 +101,16 @@ public class CommandController {
 	@RequestMapping(value = "/policy/list", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public IRestResponse listExecutedPolicies(@RequestParam(value = "label", required = false) String label,
-			@RequestParam(value = "createDateRangeStart", required = false) Date createDateRangeStart,
-			@RequestParam(value = "createDateRangeEnd", required = false) Date createDateRangeEnd,
+			@RequestParam(value = "createDateRangeStart", required = false) Long createDateRangeStart,
+			@RequestParam(value = "createDateRangeEnd", required = false) Long createDateRangeEnd,
 			@RequestParam(value = "status", required = false) Integer status, HttpServletRequest request)
 					throws UnsupportedEncodingException {
 		logger.info(
 				"Request received. URL: '/lider/command/policy/list?label={}&createDateRangeStart={}&createDateRangeEnd={}&status={}'",
 				new Object[] { label, createDateRangeStart, createDateRangeEnd, status });
-		IRestResponse restResponse = commandProcessor.listExecutedPolicies(label, createDateRangeStart,
-				createDateRangeEnd, status);
+		IRestResponse restResponse = commandProcessor.listExecutedPolicies(label,
+				createDateRangeStart != null ? new Date(createDateRangeStart) : null,
+				createDateRangeEnd != null ? new Date(createDateRangeEnd) : null, status);
 		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}

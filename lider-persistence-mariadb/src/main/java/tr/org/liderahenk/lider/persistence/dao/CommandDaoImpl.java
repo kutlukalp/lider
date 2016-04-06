@@ -254,13 +254,13 @@ public class CommandDaoImpl implements ICommandDao {
 //		if (code != null) {
 //			switch (code) {
 //			case TASK_PROCESSED:
-//				sql += " HAVING COUNT(CASE WHEN cer.responseCode = :resp_success THEN 1 ELSE NULL END) > 0 ";
+//				sql += " HAVING SUM(CASE WHEN cer.responseCode = :resp_success THEN 1 ELSE 0 END) > 0 ";
 //				break;
 //			case TASK_ERROR:
-//				sql += " HAVING COUNT(CASE WHEN cer.responseCode = :resp_error THEN 1 ELSE NULL END) > 0 ";
+//				sql += " HAVING SUM(CASE WHEN cer.responseCode = :resp_error THEN 1 ELSE 0 END) > 0 ";
 //				break;
 //			case TASK_RECEIVED:
-//				sql += " HAVING COUNT(CASE WHEN cer.responseCode = :resp_received THEN 1 ELSE NULL END) > 0 ";
+//				sql += " HAVING SUM(CASE WHEN cer.responseCode = :resp_received THEN 1 ELSE 0 END) > 0 ";
 //				break;
 //			default:
 //			}
@@ -332,13 +332,13 @@ public class CommandDaoImpl implements ICommandDao {
 //		if (code != null) {
 //			switch (code) {
 //			case TASK_PROCESSED:
-//				sql += " HAVING COUNT(CASE WHEN cer.responseCode = :resp_success THEN 1 ELSE NULL END) > 0 ";
+//				sql += " HAVING SUM(CASE WHEN cer.responseCode = :resp_success THEN 1 ELSE 0 END) > 0 ";
 //				break;
 //			case TASK_ERROR:
-//				sql += " HAVING COUNT(CASE WHEN cer.responseCode = :resp_error THEN 1 ELSE NULL END) > 0 ";
+//				sql += " HAVING SUM(CASE WHEN cer.responseCode = :resp_error THEN 1 ELSE 0 END) > 0 ";
 //				break;
 //			case TASK_RECEIVED:
-//				sql += " HAVING COUNT(CASE WHEN cer.responseCode = :resp_received THEN 1 ELSE NULL END) > 0 ";
+//				sql += " HAVING SUM(CASE WHEN cer.responseCode = :resp_received THEN 1 ELSE 0 END) > 0 ";
 //				break;
 //			default:
 //			}
