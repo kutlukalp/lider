@@ -87,7 +87,8 @@ public class CommandRequestProcessorImpl implements ICommandRequestProcessor {
 	public IRestResponse listExecutedPolicies(String label, Date createDateRangeStart, Date createDateRangeEnd,
 			Integer status) {
 		// Try to find command results
-		List<Object[]> resultList = commandDao.findPolicyCommand(label, createDateRangeStart, createDateRangeEnd, status);
+		List<Object[]> resultList = commandDao.findPolicyCommand(label, createDateRangeStart, createDateRangeEnd,
+				status);
 		List<ExecutedPolicy> policies = null;
 		// Convert SQL result to collection of tasks.
 		if (resultList != null) {
@@ -128,6 +129,14 @@ public class CommandRequestProcessorImpl implements ICommandRequestProcessor {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap.put("command", command.toJson());
 		return responseFactory.createResponse(RestResponseStatus.OK, "Record retrieved.", resultMap);
+	}
+
+	public void setResponseFactory(IResponseFactory responseFactory) {
+		this.responseFactory = responseFactory;
+	}
+
+	public void setCommandDao(ICommandDao commandDao) {
+		this.commandDao = commandDao;
 	}
 
 }

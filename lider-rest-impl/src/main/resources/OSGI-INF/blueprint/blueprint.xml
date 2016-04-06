@@ -16,6 +16,7 @@
 		<property name="profileDao" ref="profileDao" />
 		<property name="commandDao" ref="commandDao" />
 		<property name="ldapService" ref="ldapService" />
+		<property name="entityFactory" ref="entityFactory" />
 	</bean>
 
 	<service ref="profileRequestProcessor"
@@ -27,6 +28,7 @@
 		<property name="pluginDao" ref="pluginDao" />
 		<property name="profileDao" ref="profileDao" />
 		<property name="policyDao" ref="policyDao" />
+		<property name="entityFactory" ref="entityFactory" />
 	</bean>
 
 	<service ref="taskRequestProcessor"
@@ -38,6 +40,13 @@
 		<property name="authService" ref="authService" />
 		<property name="configService" ref="configService" />
 		<property name="ldapService" ref="ldapService" />
+	</bean>
+	
+	<service ref="commandRequestProcessor"
+		interface="tr.org.liderahenk.lider.core.api.rest.processors.ICommandRequestProcessor" />
+	<bean id="commandRequestProcessor"
+		class="tr.org.liderahenk.lider.rest.CommandRequestProcessorImpl">
+		<property name="responseFactory" ref="responseFactory" />
 		<property name="commandDao" ref="commandDao" />
 	</bean>
 
@@ -61,5 +70,7 @@
 		interface="tr.org.liderahenk.lider.core.api.authorization.IAuthService" />
 	<reference id="ldapService"
 		interface="tr.org.liderahenk.lider.core.api.ldap.ILDAPService" />
+	<reference id="entityFactory"
+		interface="tr.org.liderahenk.lider.core.api.persistence.factories.IEntityFactory" />
 
 </blueprint>

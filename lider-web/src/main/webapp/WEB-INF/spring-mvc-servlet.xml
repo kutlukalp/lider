@@ -71,6 +71,12 @@
 
 	<osgi:reference id="commandProcessor"
 		interface="tr.org.liderahenk.lider.core.api.rest.processors.ICommandRequestProcessor" />
+		
+	<osgi:reference id="configurationService"
+		interface="tr.org.liderahenk.lider.core.api.configuration.IConfigurationService" />
+		
+	<osgi:reference id="operationLogService"
+		interface="tr.org.liderahenk.lider.core.api.log.IOperationLogService" />
 
 	<osgi:reference id="responseFactory"
 		interface="tr.org.liderahenk.lider.core.api.rest.IResponseFactory" />

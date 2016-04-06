@@ -50,6 +50,9 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 
 	@Override
 	public IRestResponse execute(String json) {
+		
+		// TODO delegate request to policy manager!
+		
 		try {
 			logger.debug("Creating IPolicyExecutionRequest object.");
 			IPolicyExecutionRequest request = requestFactory.createPolicyExecutionRequest(json);
