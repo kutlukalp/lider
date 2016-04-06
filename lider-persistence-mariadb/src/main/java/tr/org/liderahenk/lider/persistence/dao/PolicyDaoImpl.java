@@ -185,7 +185,14 @@ public class PolicyDaoImpl implements IPolicyDao {
 		return list;
 	}
 
-	private static final String LATEST_USER_POLICY = "SELECT DISTINCT pol, ce.id FROM CommandImpl c INNER JOIN c.policy pol INNER JOIN c.commandExecutions ce WHERE ((ce.dnType = :sDnType AND ce.dn = :sDn) OR (ce.dnType = :gDnType AND ce.dn IN :gDnList)) AND (c.activationDate IS NULL OR c.activationDate < :today) ORDER BY ce.createDate DESC";
+	private static final String LATEST_USER_POLICY = 
+			"SELECT DISTINCT pol, ce.id "
+			+ "FROM CommandImpl c "
+			+ "INNER JOIN c.policy pol "
+			+ "INNER JOIN c.commandExecutions ce "
+			+ "WHERE ((ce.dnType = :sDnType AND ce.dn = :sDn)##WHERE##) AND (c.activationDate IS NULL OR c.activationDate < :today) "
+			+ "ORDER BY ce.createDate DESC";
+	private static final String GROUP_CONDITION = " OR (ce.dnType = :gDnType AND ce.dn IN :gDnList)";
 
 	/**
 	 * Returns the latest policy with its version number and child profiles iff
@@ -194,11 +201,21 @@ public class PolicyDaoImpl implements IPolicyDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Object[]> getLatestUserPolicy(String userDn, List<LdapEntry> groupDns) {
-		Query query = entityManager.createQuery(LATEST_USER_POLICY);
+		List<String> list = convertStringList(groupDns);
+		String sql = LATEST_USER_POLICY;
+		// User may or may not have groups! Handle 'WHERE' clause here
+		if (list != null && !list.isEmpty()) {
+			sql = sql.replaceFirst("##WHERE##", GROUP_CONDITION);
+		} else {
+			sql = sql.replaceFirst("##WHERE##", "");
+		}
+		Query query = entityManager.createQuery(sql);
 		query.setParameter("sDnType", RestDNType.USER.getId());
 		query.setParameter("sDn", userDn);
-		query.setParameter("gDnType", RestDNType.GROUP.getId());
-		query.setParameter("gDnList", convertStringList(groupDns));
+		if (list != null && !list.isEmpty()) {
+			query.setParameter("gDnType", RestDNType.GROUP.getId());
+			query.setParameter("gDnList", list);
+		}
 		query.setParameter("today", new Date(), TemporalType.DATE);
 		List<Object[]> resultList = query.setMaxResults(1).getResultList();
 		logger.debug("User policy result list: {}",
