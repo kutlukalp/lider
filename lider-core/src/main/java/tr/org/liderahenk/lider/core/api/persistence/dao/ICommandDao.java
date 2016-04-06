@@ -104,8 +104,8 @@ public interface ICommandDao extends IBaseDao<ICommand> {
 	ICommandExecution findExecution(Long id);
 
 	/**
-	 * Find command with its details (task, plugn, command execution, command
-	 * execution results)
+	 * Find command with its details (task, plugin, command execution, command
+	 * execution results).
 	 * 
 	 * @param pluginName
 	 * @param pluginVersion
@@ -114,7 +114,19 @@ public interface ICommandDao extends IBaseDao<ICommand> {
 	 * @param status
 	 * @return
 	 */
-	List<Object[]> findCommandWithDetails(String pluginName, String pluginVersion, Date createDateRangeStart,
+	List<Object[]> findTaskCommand(String pluginName, String pluginVersion, Date createDateRangeStart,
 			Date createDateRangeEnd, Integer status);
+
+	/**
+	 * Find command with its details (policy, command execution, command
+	 * execution results).
+	 * 
+	 * @param label
+	 * @param createDateRangeStart
+	 * @param createDateRangeEnd
+	 * @param status
+	 * @return
+	 */
+	List<Object[]> findPolicyCommand(String label, Date createDateRangeStart, Date createDateRangeEnd, Integer status);
 
 }

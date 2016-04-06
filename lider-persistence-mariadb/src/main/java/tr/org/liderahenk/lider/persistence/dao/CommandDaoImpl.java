@@ -30,6 +30,7 @@ import tr.org.liderahenk.lider.core.api.persistence.PropertyOrder;
 import tr.org.liderahenk.lider.core.api.persistence.dao.ICommandDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecution;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 import tr.org.liderahenk.lider.core.api.persistence.enums.OrderType;
 import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
@@ -210,7 +211,7 @@ public class CommandDaoImpl implements ICommandDao {
 		return executionImpl;
 	}
 
-	private static final String FIND_COMMAND_WITH_DETAILS = 
+	private static final String FIND_TASK_COMMAND_WITH_DETAILS = 
 			"SELECT t, "
 			+ "SUM(CASE WHEN cer.responseCode = :resp_success then 1 ELSE 0 END) as success, "
 			+ "SUM(CASE WHEN cer.responseCode = :resp_received THEN 1 ELSE 0 END) as received, "
@@ -220,9 +221,9 @@ public class CommandDaoImpl implements ICommandDao {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Object[]> findCommandWithDetails(String pluginName, String pluginVersion, Date createDateRangeStart,
+	public List<Object[]> findTaskCommand(String pluginName, String pluginVersion, Date createDateRangeStart,
 			Date createDateRangeEnd, Integer status) {
-		String sql = FIND_COMMAND_WITH_DETAILS;
+		String sql = FIND_TASK_COMMAND_WITH_DETAILS;
 		// Collect query conditions/parameters
 		List<String> whereConditions = new ArrayList<String>();
 		Map<String, Object> params = new HashMap<String, Object>();
@@ -292,7 +293,91 @@ public class CommandDaoImpl implements ICommandDao {
 		
 		return resultList;
 	}
+	
+	private static final String FIND_POLICY_COMMAND_WITH_DETAILS = 
+			"SELECT p, "
+			+ "SUM(CASE WHEN cer.responseCode = :resp_success then 1 ELSE 0 END) as success, "
+			+ "SUM(CASE WHEN cer.responseCode = :resp_received THEN 1 ELSE 0 END) as received, "
+			+ "SUM(CASE WHEN cer.responseCode = :resp_error then 1 ELSE 0 END) as error "
+			+ "FROM CommandImpl c LEFT JOIN c.commandExecutions ce LEFT JOIN ce.commandExecutionResults cer INNER JOIN c.policy p "
+			+ "##WHERE## GROUP BY p";
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Object[]> findPolicyCommand(String label, Date createDateRangeStart, Date createDateRangeEnd, Integer status) {
+		String sql = FIND_POLICY_COMMAND_WITH_DETAILS;
+		// Collect query conditions/parameters
+		List<String> whereConditions = new ArrayList<String>();
+		Map<String, Object> params = new HashMap<String, Object>();
+		if (label != null && !label.isEmpty()) {
+			whereConditions.add("p.label LIKE CONCAT(:label, '%')");
+			params.put("label", label);
+		}
+		if (createDateRangeStart != null && createDateRangeEnd != null) {
+			whereConditions.add("p.createDate BETWEEN :startDate AND :endDate");
+			params.put("startDate", createDateRangeStart);
+			params.put("endDate", createDateRangeEnd);
+		}
+		// Dynamically generate where condition according to collected
+		// parameters
+		if (whereConditions.size() > 0) {
+			String where = join(whereConditions, " AND ");
+			sql = sql.replaceFirst("##WHERE##", " WHERE " + where);
+		} else {
+			sql = sql.replaceFirst("##WHERE##", "");
+		}
+		// Append also status condition as 'HAVING' clause
+		StatusCode code = StatusCode.getType(status);
+		// FIXME openjpa bug prevents using 'HAVING' clause right now!
+//		if (code != null) {
+//			switch (code) {
+//			case TASK_PROCESSED:
+//				sql += " HAVING COUNT(CASE WHEN cer.responseCode = :resp_success THEN 1 ELSE NULL END) > 0 ";
+//				break;
+//			case TASK_ERROR:
+//				sql += " HAVING COUNT(CASE WHEN cer.responseCode = :resp_error THEN 1 ELSE NULL END) > 0 ";
+//				break;
+//			case TASK_RECEIVED:
+//				sql += " HAVING COUNT(CASE WHEN cer.responseCode = :resp_received THEN 1 ELSE NULL END) > 0 ";
+//				break;
+//			default:
+//			}
+//		}
+		// Add parameter values for 'CASE WHEN' statements
+		params.put("resp_success", StatusCode.TASK_PROCESSED.getId());
+		params.put("resp_error", StatusCode.TASK_ERROR.getId());
+		params.put("resp_received", StatusCode.TASK_RECEIVED.getId());
+		
+		Query query = entityManager.createQuery(sql);
+		// Iterate over map and set query parameters
+		Iterator<Entry<String, Object>> iterator = params.entrySet().iterator();
+		while (iterator.hasNext()) {
+			Entry<String, Object> entry = iterator.next();
+			if (entry.getValue() == null) {
+				continue;
+			}
+			// Handle special date params.
+			if (entry.getValue() instanceof Date) {
+				query.setParameter(entry.getKey(), (Date) entry.getValue(), TemporalType.TIMESTAMP);
+			} else {
+				query.setParameter(entry.getKey(), entry.getValue());
+			}
+		}
+		// Execute query
+		List<Object[]> resultList = query.getResultList();
+		logger.debug("Command with details result list: {}",
+				resultList != null && !resultList.isEmpty() && resultList.get(0) != null && resultList.get(0).length > 0
+						? (IPolicy) resultList.get(0)[0] : null);
+		
+		return resultList;
+	}
 
+	/**
+	 * 
+	 * @param tokens
+	 * @param separator
+	 * @return
+	 */
 	private String join(List<String> tokens, String separator) {
 		if (tokens != null) {
 			StringBuilder sb = new StringBuilder();
