@@ -8,7 +8,7 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 
 /**
- * This is a specialized class which is used to list executed task with some
+ * This is a specialized class which is used to list executed tasks with some
  * additional info.
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
