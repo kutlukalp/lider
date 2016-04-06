@@ -247,9 +247,9 @@ public class CommandDaoImpl implements ICommandDao {
 		} else {
 			sql = sql.replaceFirst("##WHERE##", "");
 		}
-		// Append also status condition as 'HAVING' statement
+		// Append also status condition as 'HAVING' clause
 		StatusCode code = StatusCode.getType(status);
-		// FIXME openjpa bug prevents using 'HAVING' statement right now!
+		// FIXME openjpa bug prevents using 'HAVING' clause right now!
 //		if (code != null) {
 //			switch (code) {
 //			case TASK_PROCESSED:

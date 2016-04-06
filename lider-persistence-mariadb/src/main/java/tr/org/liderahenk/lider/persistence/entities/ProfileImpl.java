@@ -3,7 +3,6 @@ package tr.org.liderahenk.lider.persistence.entities;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
-import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -84,8 +83,7 @@ public class ProfileImpl implements IProfile {
 	}
 
 	public ProfileImpl(Long id, PluginImpl plugin, String label, String description, boolean overridable,
-			boolean active, boolean deleted, Map<String, Object> profileData, Set<PolicyImpl> policies, Date createDate,
-			Date modifyDate) {
+			boolean active, boolean deleted, Map<String, Object> profileData, Date createDate, Date modifyDate) {
 		this.id = id;
 		this.plugin = plugin;
 		this.label = label;
