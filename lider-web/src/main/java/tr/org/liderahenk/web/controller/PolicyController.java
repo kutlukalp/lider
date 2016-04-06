@@ -1,7 +1,6 @@
 package tr.org.liderahenk.web.controller;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import tr.org.liderahenk.lider.core.api.rest.IResponseFactory;
-import tr.org.liderahenk.lider.core.api.rest.enums.RestResponseStatus;
 import tr.org.liderahenk.lider.core.api.rest.processors.IPolicyRequestProcessor;
 import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
+import tr.org.liderahenk.web.controller.utils.ControllerUtils;
 
 /**
  * Controller for policy related operations.
@@ -39,39 +38,73 @@ public class PolicyController {
 	@Autowired
 	private IPolicyRequestProcessor policyProcessor;
 
+	/**
+	 * Execute policy. 'Execution' means saving policy as command which can be
+	 * then queried by agents on user login.
+	 * 
+	 * @param requestBody
+	 * @param request
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
 	@RequestMapping(value = "/execute", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public IRestResponse executePolicy(@RequestBody String requestBody, HttpServletRequest request)
 			throws UnsupportedEncodingException {
-		String requestBodyDecoded = decodeRequestBody(requestBody);
+		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
 		logger.info("Request received. URL: '/lider/policy/execute' Body: {}", requestBodyDecoded);
 		IRestResponse restResponse = policyProcessor.execute(requestBodyDecoded);
 		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
+	/**
+	 * Create new policy.
+	 * 
+	 * @param requestBody
+	 * @param request
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
 	@RequestMapping(value = "/add", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public IRestResponse addPolicy(@RequestBody String requestBody, HttpServletRequest request)
 			throws UnsupportedEncodingException {
-		String requestBodyDecoded = decodeRequestBody(requestBody);
+		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
 		logger.info("Request received. URL: '/lider/policy/add' Body: {}", requestBodyDecoded);
 		IRestResponse restResponse = policyProcessor.add(requestBodyDecoded);
 		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
+	/**
+	 * Update given policy.
+	 * 
+	 * @param requestBody
+	 * @param request
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
 	@RequestMapping(value = "/update", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public IRestResponse updatePolicy(@RequestBody String requestBody, HttpServletRequest request)
 			throws UnsupportedEncodingException {
-		String requestBodyDecoded = decodeRequestBody(requestBody);
+		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
 		logger.info("Request received. URL: '/lider/policy/update' Body: {}", requestBodyDecoded);
 		IRestResponse restResponse = policyProcessor.update(requestBodyDecoded);
 		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
+	/**
+	 * List policies according to given parameters.
+	 * 
+	 * @param label
+	 * @param active
+	 * @param request
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
 	@RequestMapping(value = "/list", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public IRestResponse listPolicies(@RequestParam(value = "label", required = false) String label,
@@ -83,6 +116,14 @@ public class PolicyController {
 		return restResponse;
 	}
 
+	/**
+	 * Retrieve policy specified by id
+	 * 
+	 * @param id
+	 * @param request
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
 	@RequestMapping(value = "/{id:[\\d]+}/get", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public IRestResponse getPolicy(@PathVariable final long id, HttpServletRequest request)
@@ -93,6 +134,14 @@ public class PolicyController {
 		return restResponse;
 	}
 
+	/**
+	 * Delete policy specified by id.
+	 * 
+	 * @param id
+	 * @param request
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
 	@RequestMapping(value = "/{id:[\\d]+}/delete", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public IRestResponse deletePolicy(@PathVariable final long id, HttpServletRequest request)
@@ -112,21 +161,7 @@ public class PolicyController {
 	 */
 	@ExceptionHandler(Exception.class)
 	public IRestResponse handleAllException(Exception e) {
-		logger.error(e.getMessage(), e);
-		IRestResponse restResponse = responseFactory.createResponse(RestResponseStatus.ERROR,
-				"Error: " + e.getMessage());
-		return restResponse;
-	}
-
-	/**
-	 * Decode given request body as UTF-8 string.
-	 * 
-	 * @param requestBody
-	 * @return
-	 * @throws UnsupportedEncodingException
-	 */
-	private String decodeRequestBody(String requestBody) throws UnsupportedEncodingException {
-		return URLDecoder.decode(requestBody, "UTF-8");
+		return ControllerUtils.handleAllException(e, responseFactory);
 	}
 
 }

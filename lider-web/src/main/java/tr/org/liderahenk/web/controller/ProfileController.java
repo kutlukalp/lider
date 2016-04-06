@@ -1,7 +1,6 @@
 package tr.org.liderahenk.web.controller;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import tr.org.liderahenk.lider.core.api.rest.IResponseFactory;
-import tr.org.liderahenk.lider.core.api.rest.enums.RestResponseStatus;
 import tr.org.liderahenk.lider.core.api.rest.processors.IProfileRequestProcessor;
 import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
+import tr.org.liderahenk.web.controller.utils.ControllerUtils;
 
 /**
  * Controller for profile related operations.
@@ -39,38 +38,55 @@ public class ProfileController {
 	@Autowired
 	private IProfileRequestProcessor profileProcessor;
 
-	@RequestMapping(value = "/execute", method = { RequestMethod.GET, RequestMethod.POST })
-	@ResponseBody
-	public IRestResponse executeProfile(@RequestBody String requestBody, HttpServletRequest request)
-			throws UnsupportedEncodingException {
-		logger.info("Request received. URL: '/lider/profile/execute' Body: {}", requestBody);
-		IRestResponse restResponse = profileProcessor.execute(requestBody);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
-		return restResponse;
-	}
-
+	/**
+	 * Create new profile.
+	 * 
+	 * @param requestBody
+	 * @param request
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
 	@RequestMapping(value = "/add", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public IRestResponse addProfile(@RequestBody String requestBody, HttpServletRequest request)
 			throws UnsupportedEncodingException {
-		String requestBodyDecoded = decodeRequestBody(requestBody);
+		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
 		logger.info("Request received. URL: '/lider/profile/add' Body: {}", requestBodyDecoded);
 		IRestResponse restResponse = profileProcessor.add(requestBodyDecoded);
 		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
+	/**
+	 * Update given profile.
+	 * 
+	 * @param requestBody
+	 * @param request
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
 	@RequestMapping(value = "/update", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public IRestResponse updateProfile(@RequestBody String requestBody, HttpServletRequest request)
 			throws UnsupportedEncodingException {
-		String requestBodyDecoded = decodeRequestBody(requestBody);
+		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
 		logger.info("Request received. URL: '/lider/profile/update' Body: {}", requestBodyDecoded);
 		IRestResponse restResponse = profileProcessor.update(requestBodyDecoded);
 		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
+	/**
+	 * List profiles according to given parameters.
+	 * 
+	 * @param pluginName
+	 * @param pluginVersion
+	 * @param label
+	 * @param active
+	 * @param request
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
 	@RequestMapping(value = "/list", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public IRestResponse listProfiles(@RequestParam(value = "pluginName", required = true) String pluginName,
@@ -85,6 +101,14 @@ public class ProfileController {
 		return restResponse;
 	}
 
+	/**
+	 * Retrieve profile specified by id.
+	 * 
+	 * @param id
+	 * @param request
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
 	@RequestMapping(value = "/{id:[\\d]+}/get", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public IRestResponse getProfile(@PathVariable final long id, HttpServletRequest request)
@@ -95,6 +119,14 @@ public class ProfileController {
 		return restResponse;
 	}
 
+	/**
+	 * Delete profile specified by id.
+	 * 
+	 * @param id
+	 * @param request
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
 	@RequestMapping(value = "/{id:[\\d]+}/delete", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public IRestResponse deleteProfile(@PathVariable final long id, HttpServletRequest request)
@@ -114,21 +146,7 @@ public class ProfileController {
 	 */
 	@ExceptionHandler(Exception.class)
 	public IRestResponse handleAllException(Exception e) {
-		logger.error(e.getMessage(), e);
-		IRestResponse restResponse = responseFactory.createResponse(RestResponseStatus.ERROR,
-				"Error: " + e.getMessage());
-		return restResponse;
-	}
-
-	/**
-	 * Decode given request body as UTF-8 string.
-	 * 
-	 * @param requestBody
-	 * @return
-	 * @throws UnsupportedEncodingException
-	 */
-	private String decodeRequestBody(String requestBody) throws UnsupportedEncodingException {
-		return URLDecoder.decode(requestBody, "UTF-8");
+		return ControllerUtils.handleAllException(e, responseFactory);
 	}
 
 }
