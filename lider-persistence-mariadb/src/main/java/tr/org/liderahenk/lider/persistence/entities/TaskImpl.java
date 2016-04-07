@@ -44,6 +44,9 @@ public class TaskImpl implements ITask {
 	@Column(name = "DELETED")
 	private boolean deleted = false;
 
+	@Column(name = "CRON_EXPRESSION")
+	private String cronExpression;
+
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "CREATE_DATE", nullable = false)
 	private Date createDate;
@@ -56,12 +59,13 @@ public class TaskImpl implements ITask {
 	}
 
 	public TaskImpl(Long id, PluginImpl plugin, String commandClsId, byte[] parameterMap, boolean deleted,
-			Date createDate, Date modifyDate) {
+			String cronExpression, Date createDate, Date modifyDate) {
 		this.id = id;
 		this.plugin = plugin;
 		this.commandClsId = commandClsId;
 		this.parameterMap = parameterMap;
 		this.deleted = deleted;
+		this.cronExpression = cronExpression;
 		this.createDate = createDate;
 		this.modifyDate = modifyDate;
 	}
@@ -71,6 +75,7 @@ public class TaskImpl implements ITask {
 		this.commandClsId = task.getCommandClsId();
 		this.parameterMap = task.getParameterMap();
 		this.deleted = task.isDeleted();
+		this.cronExpression = task.getCronExpression();
 		this.createDate = task.getCreateDate();
 		this.modifyDate = task.getModifyDate();
 		if (task.getPlugin() instanceof PluginImpl) {
@@ -121,6 +126,15 @@ public class TaskImpl implements ITask {
 
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
+	}
+
+	@Override
+	public String getCronExpression() {
+		return cronExpression;
+	}
+
+	public void setCronExpression(String cronExpression) {
+		this.cronExpression = cronExpression;
 	}
 
 	@Override

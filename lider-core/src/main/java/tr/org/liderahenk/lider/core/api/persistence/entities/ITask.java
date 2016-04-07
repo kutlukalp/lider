@@ -36,6 +36,12 @@ public interface ITask extends IEntity {
 
 	/**
 	 * 
+	 * @return cron expression if the task is scheduled, null otherwise
+	 */
+	String getCronExpression();
+
+	/**
+	 * 
 	 * @return JSON string representation of this instance
 	 */
 	String toJson();
