@@ -11,6 +11,7 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 import tr.org.liderahenk.lider.core.api.persistence.enums.CrudType;
+import tr.org.liderahenk.lider.core.api.plugin.IPluginInfo;
 import tr.org.liderahenk.lider.core.api.rest.requests.ICommandRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IProfileRequest;
@@ -133,5 +134,22 @@ public interface IEntityFactory {
 	 * @throws Exception
 	 */
 	IPolicy createPolicy(IPolicy policy, IPolicyRequest request) throws Exception;
+
+	/**
+	 * 
+	 * @param info
+	 * @return
+	 * @throws Exception
+	 */
+	IPlugin createPlugin(IPluginInfo info) throws Exception;
+
+	/**
+	 * 
+	 * @param plugin
+	 * @param info
+	 * @return
+	 * @throws Exception
+	 */
+	IPlugin createPlugin(IPlugin plugin, IPluginInfo info) throws Exception;
 
 }

@@ -43,7 +43,8 @@ public interface IPlugin extends IEntity {
 
 	/**
 	 * 
-	 * @return true if this plugin can be executed on a machine DN, false otherwise
+	 * @return true if this plugin can be executed on a machine DN, false
+	 *         otherwise
 	 */
 	boolean isMachineOriented();
 
@@ -58,6 +59,12 @@ public interface IPlugin extends IEntity {
 	 * @return true if this plugin can be used in a policy, false otherwise
 	 */
 	boolean isPolicyPlugin();
+
+	/**
+	 * 
+	 * @return true if this plugin uses/needs X
+	 */
+	boolean isxBased();
 
 	/**
 	 * 

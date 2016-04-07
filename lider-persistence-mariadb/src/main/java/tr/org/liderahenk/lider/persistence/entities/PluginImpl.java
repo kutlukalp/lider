@@ -62,7 +62,10 @@ public class PluginImpl implements IPlugin {
 	private boolean userOriented;
 
 	@Column(name = "POLICY_PLUGIN")
-	private boolean policyPlugin;
+	private boolean policyPlugin; // TODO can be removed
+
+	@Column(name = "X_BASED")
+	private boolean xBased;
 
 	@OneToMany(mappedBy = "plugin", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = false)
 	private List<ProfileImpl> profiles = new ArrayList<ProfileImpl>(); // bidirectional
@@ -79,8 +82,8 @@ public class PluginImpl implements IPlugin {
 	}
 
 	public PluginImpl(Long id, String name, String version, String description, boolean active, boolean deleted,
-			boolean machineOriented, boolean userOriented, boolean policyPlugin, List<ProfileImpl> profiles,
-			Date createDate, Date modifyDate) {
+			boolean machineOriented, boolean userOriented, boolean policyPlugin, boolean xBased,
+			List<ProfileImpl> profiles, Date createDate, Date modifyDate) {
 		this.id = id;
 		this.name = name;
 		this.version = version;
@@ -90,6 +93,7 @@ public class PluginImpl implements IPlugin {
 		this.machineOriented = machineOriented;
 		this.userOriented = userOriented;
 		this.policyPlugin = policyPlugin;
+		this.xBased = xBased;
 		this.profiles = profiles;
 		this.createDate = createDate;
 		this.modifyDate = modifyDate;
@@ -105,6 +109,7 @@ public class PluginImpl implements IPlugin {
 		this.machineOriented = plugin.isMachineOriented();
 		this.userOriented = plugin.isUserOriented();
 		this.policyPlugin = plugin.isPolicyPlugin();
+		this.xBased = plugin.isxBased();
 		this.createDate = plugin.getCreateDate();
 		this.modifyDate = plugin.getModifyDate();
 
@@ -205,6 +210,15 @@ public class PluginImpl implements IPlugin {
 
 	public void setPolicyPlugin(boolean policyPlugin) {
 		this.policyPlugin = policyPlugin;
+	}
+
+	@Override
+	public boolean isxBased() {
+		return xBased;
+	}
+
+	public void setxBased(boolean xBased) {
+		this.xBased = xBased;
 	}
 
 	@Override

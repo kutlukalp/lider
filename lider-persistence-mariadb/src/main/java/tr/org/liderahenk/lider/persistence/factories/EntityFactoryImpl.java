@@ -16,6 +16,7 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 import tr.org.liderahenk.lider.core.api.persistence.enums.CrudType;
 import tr.org.liderahenk.lider.core.api.persistence.factories.IEntityFactory;
+import tr.org.liderahenk.lider.core.api.plugin.IPluginInfo;
 import tr.org.liderahenk.lider.core.api.rest.requests.ICommandRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IProfileRequest;
@@ -108,6 +109,20 @@ public class EntityFactoryImpl implements IEntityFactory {
 	public IPolicy createPolicy(IPolicy policy, IPolicyRequest request) throws Exception {
 		return new PolicyImpl(policy.getId(), request.getLabel(), request.getDescription(), request.isActive(),
 				policy.isDeleted(), null, policy.getCreateDate(), new Date(), policy.getPolicyVersion());
+	}
+
+	@Override
+	public IPlugin createPlugin(IPluginInfo info) throws Exception {
+		return new PluginImpl(null, info.getPluginName(), info.getPluginVersion(), info.getDescription(), true, false,
+				info.isMachineOriented(), info.isUserOriented(), info.isPolicyPlugin(), info.isxBased(), null,
+				new Date(), null);
+	}
+
+	@Override
+	public IPlugin createPlugin(IPlugin plugin, IPluginInfo info) throws Exception {
+		return new PluginImpl(plugin.getId(), plugin.getName(), plugin.getVersion(), info.getDescription(), true, false,
+				info.isMachineOriented(), info.isUserOriented(), info.isPolicyPlugin(), info.isxBased(), null,
+				plugin.getCreateDate(), new Date());
 	}
 
 }

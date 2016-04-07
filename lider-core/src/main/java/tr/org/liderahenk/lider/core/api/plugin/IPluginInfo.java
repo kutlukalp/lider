@@ -44,4 +44,10 @@ public interface IPluginInfo {
 	 */
 	boolean isPolicyPlugin();
 
+	/**
+	 * 
+	 * @return true if the plugin needs/uses X
+	 */
+	boolean isxBased();
+
 }

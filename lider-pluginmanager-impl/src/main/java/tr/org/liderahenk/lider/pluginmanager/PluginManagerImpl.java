@@ -1,7 +1,6 @@
 package tr.org.liderahenk.lider.pluginmanager;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -16,6 +15,7 @@ import tr.org.liderahenk.lider.core.api.persistence.dao.IPluginDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
 import tr.org.liderahenk.lider.core.api.persistence.enums.CriteriaOperator;
+import tr.org.liderahenk.lider.core.api.persistence.factories.IEntityFactory;
 import tr.org.liderahenk.lider.core.api.plugin.IPluginInfo;
 
 /**
@@ -31,6 +31,7 @@ public class PluginManagerImpl {
 
 	private List<IPluginInfo> pluginInfoList;
 	private IPluginDao pluginDao;
+	private IEntityFactory entityFactory;
 
 	/**
 	 * Register plugins which provided by plugin info list.<br/>
@@ -56,23 +57,35 @@ public class PluginManagerImpl {
 					continue;
 				}
 
-				// Check if the plugin already exists
-				Map<String, Object> propertiesMap = new HashMap<String, Object>();
-				propertiesMap.put("name", pluginInfo.getPluginName());
-				propertiesMap.put("version", pluginInfo.getPluginVersion());
-				List<? extends IPlugin> plugins = pluginDao.findByProperties(IPlugin.class, propertiesMap, null, 1);
+				try {
+					// Check if the plugin already exists
+					Map<String, Object> propertiesMap = new HashMap<String, Object>();
+					propertiesMap.put("name", pluginInfo.getPluginName());
+					propertiesMap.put("version", pluginInfo.getPluginVersion());
+					List<? extends IPlugin> plugins = pluginDao.findByProperties(IPlugin.class, propertiesMap, null, 1);
 
-				if (plugins != null && !plugins.isEmpty()) {
-					plugin = plugins.get(0);
-					plugin = mergeValues(plugin, pluginInfo);
-					plugin = pluginDao.update(plugin);
-				} else {
-					// If not, create new plugin record
-					plugin = createPlugin(pluginInfo);
-					plugin = pluginDao.save(plugin);
+					if (plugins != null && !plugins.isEmpty()) {
+						plugin = plugins.get(0);
+						List<? extends IProfile> profiles = plugin.getProfiles();
+						plugin = entityFactory.createPlugin(plugin, pluginInfo);
+						if (profiles != null) {
+							for (IProfile profile : profiles) {
+								plugin.addProfile(profile);
+							}
+						}
+						plugin = pluginDao.update(plugin);
+					} else {
+						// If not, create new plugin record
+						plugin = entityFactory.createPlugin(pluginInfo);
+						plugin = pluginDao.save(plugin);
+					}
+
+					pluginIdList.add(plugin.getId());
+
+				} catch (Exception e) {
+					logger.error(e.getMessage(), e);
 				}
 
-				pluginIdList.add(plugin.getId());
 			}
 
 		}
@@ -116,164 +129,6 @@ public class PluginManagerImpl {
 
 	}
 
-	private IPlugin mergeValues(final IPlugin existingPlugin, final IPluginInfo pluginInfo) {
-
-		IPlugin plugin = new IPlugin() {
-
-			private static final long serialVersionUID = -1075027113484768317L;
-
-			List<IProfile> profiles = new ArrayList<IProfile>();
-
-			@Override
-			public Long getId() {
-				return existingPlugin.getId();
-			}
-
-			@Override
-			public Date getCreateDate() {
-				return existingPlugin.getCreateDate();
-			}
-
-			@Override
-			public String getName() {
-				return existingPlugin.getName();
-			}
-
-			@Override
-			public String getVersion() {
-				return existingPlugin.getVersion();
-			}
-
-			@Override
-			public String getDescription() {
-				return pluginInfo.getDescription();
-			}
-
-			@Override
-			public boolean isActive() {
-				return true;
-			}
-
-			@Override
-			public boolean isDeleted() {
-				return false;
-			}
-
-			@Override
-			public boolean isMachineOriented() {
-				return pluginInfo.isMachineOriented();
-			}
-
-			@Override
-			public boolean isUserOriented() {
-				return pluginInfo.isUserOriented();
-			}
-
-			@Override
-			public boolean isPolicyPlugin() {
-				return pluginInfo.isPolicyPlugin();
-			}
-
-			@Override
-			public List<? extends IProfile> getProfiles() {
-				return this.profiles;
-			}
-
-			@Override
-			public void addProfile(IProfile profile) {
-				profiles.add(profile);
-			}
-
-			@Override
-			public Date getModifyDate() {
-				return new Date();
-			}
-
-		};
-
-		if (existingPlugin.getProfiles() != null) {
-			for (IProfile profile : existingPlugin.getProfiles()) {
-				plugin.addProfile(profile);
-			}
-		}
-
-		return plugin;
-	}
-
-	private IPlugin createPlugin(final IPluginInfo pluginInfo) {
-		IPlugin plugin = new IPlugin() {
-
-			private static final long serialVersionUID = -1075027113484768317L;
-
-			@Override
-			public Long getId() {
-				return null;
-			}
-
-			@Override
-			public Date getCreateDate() {
-				return new Date();
-			}
-
-			@Override
-			public String getName() {
-				return pluginInfo.getPluginName();
-			}
-
-			@Override
-			public String getVersion() {
-				return pluginInfo.getPluginVersion();
-			}
-
-			@Override
-			public String getDescription() {
-				return pluginInfo.getDescription();
-			}
-
-			@Override
-			public boolean isActive() {
-				return true;
-			}
-
-			@Override
-			public boolean isDeleted() {
-				return false;
-			}
-
-			@Override
-			public boolean isMachineOriented() {
-				return pluginInfo.isMachineOriented();
-			}
-
-			@Override
-			public boolean isUserOriented() {
-				return pluginInfo.isUserOriented();
-			}
-
-			@Override
-			public boolean isPolicyPlugin() {
-				return pluginInfo.isPolicyPlugin();
-			}
-
-			@Override
-			public List<? extends IProfile> getProfiles() {
-				return null;
-			}
-
-			@Override
-			public void addProfile(IProfile profile) {
-			}
-
-			@Override
-			public Date getModifyDate() {
-				return new Date();
-			}
-
-		};
-
-		return plugin;
-	}
-
 	/**
 	 * 
 	 * @param pluginInfoList
@@ -291,6 +146,14 @@ public class PluginManagerImpl {
 	 */
 	public void setPluginDao(IPluginDao pluginDao) {
 		this.pluginDao = pluginDao;
+	}
+
+	/**
+	 * 
+	 * @param entityFactory
+	 */
+	public void setEntityFactory(IEntityFactory entityFactory) {
+		this.entityFactory = entityFactory;
 	}
 
 }
