@@ -129,9 +129,9 @@ public class XMPPClientImpl {
 	private XMPPTCPConnectionConfiguration config;
 	private MultiUserChatManager mucManager;
 
-	private Pattern taskStatusPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"TASK_STATUS",
+	private Pattern taskStatusPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"TASK_STATUS\\\".*",
 			Pattern.CASE_INSENSITIVE);
-	private Pattern policyStatusPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"POLICY_STATUS",
+	private Pattern policyStatusPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"POLICY_STATUS\\\".*",
 			Pattern.CASE_INSENSITIVE);
 	private Pattern registerPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"(REGISTER|UNREGISTER)\\\".*",
 			Pattern.CASE_INSENSITIVE);
@@ -800,6 +800,7 @@ public class XMPPClientImpl {
 		public boolean accept(Stanza stanza) {
 			if (stanza instanceof Message) {
 				Message msg = (Message) stanza;
+				logger.error("--->"+msg.getBody());
 				// All messages from agents are type normal
 				if (Message.Type.normal.equals(msg.getType()) && policyStatusPattern.matcher(msg.getBody()).matches()) {
 					return true;

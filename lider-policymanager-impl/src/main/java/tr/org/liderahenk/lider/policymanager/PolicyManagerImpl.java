@@ -55,7 +55,7 @@ public class PolicyManagerImpl implements IPolicyStatusSubscriber {
 	@Override
 	public void messageReceived(IPolicyStatusMessage message) throws Exception {
 		if (message != null) {
-			logger.debug("Policy manager received message from {}", message.getFrom());
+			logger.info("Policy manager received message from {}", message.getFrom());
 
 			// Find related agent
 			List<? extends IAgent> agents = agentDao.findByProperty(null, "jid", message.getFrom().split("@")[0], 1);
