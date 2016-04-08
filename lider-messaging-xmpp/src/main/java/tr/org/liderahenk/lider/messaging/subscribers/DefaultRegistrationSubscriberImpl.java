@@ -88,30 +88,46 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 
 		// Register agent
 		if (AgentMessageType.REGISTER == message.getType()) {
-
+			
 			// Check if agent LDAP entry already exists
 			final List<LdapEntry> entry = ldapService.search(configurationService.getAgentLdapJidAttribute(), uid,
 					new String[] { configurationService.getAgentLdapJidAttribute() });
-
 			if (entry != null && !entry.isEmpty()) {
-
 				// Update agent LDAP entry.
 				ldapService.updateEntry(entry.get(0).getDistinguishedName(), "userPassword", message.getPassword());
 
 				// Find related agent database record.
+				
 				List<? extends IAgent> agentList = agentDao.findByProperty(IAgent.class, "jid", uid, 1);
-				IAgent agent = agentList.get(0);
-
-				// Add new properties
-				List<? extends IAgentProperty> properties = createProperties(message);
-				if (properties != null) {
-					for (IAgentProperty property : properties) {
-						agent.addProperty(property);
+				
+				if(agentList != null && ! agentList.isEmpty()){
+					IAgent agent = agentList.get(0);
+					// Add new properties
+					List<? extends IAgentProperty> properties = createProperties(message);
+					if (properties != null) {
+						for (IAgentProperty property : properties) {
+							agent.addProperty(property);
+						}
 					}
+					
+					// Merge records
+					agentDao.update(agent);
 				}
+				else{
+					String entryDN = createEntryDN(message);
+					IAgent agent = createAgent(message, entryDN, uid);
 
-				// Merge records
-				agentDao.update(agent);
+					// Add new properties
+					List<? extends IAgentProperty> properties = createProperties(message);
+					if (properties != null) {
+						for (IAgentProperty property : properties) {
+							agent.addProperty(property);
+						}
+					}
+					// Persist record
+					agentDao.save(agent);
+				}
+				
 
 				logger.error(
 						"Agent DN {} already exists! Updated its password and database properties with the values submitted.",
@@ -121,14 +137,13 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 								+ " already exists! Updated its password and database properties with the values submitted.",
 						entry.get(0).getDistinguishedName(), null, new Date());
 			} else {
-
 				logger.error("Creating account: {} with password: {}",
 						new Object[] { message.getFrom(), message.getPassword() });
 
 				// Create new XMPP account
-				messagingService.createAccount(message.getFrom(), message.getPassword());
+				//messagingService.createAccount(message.getFrom(), message.getPassword());
 
-				logger.error("Created account!");
+				//logger.error("Created account!");
 
 				// Create new agent LDAP entry.
 				Map<String, String[]> attributes = new HashMap<String, String[]>();
@@ -157,31 +172,29 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 						agent.addProperty(property);
 					}
 				}
-
 				// Persist record
 				agentDao.save(agent);
-
 				logger.error("Creating DB records!");
 
-				logger.error("Sending file to agent");
+				//logger.error("Sending file to agent");
 
 				// Send script file to agent to gather more system info
 				// messagingService.sendFile(getFileAsByteArray(),
 				// message.getFrom());
 
-				logger.error("Sent file to agent");
-				logger.error("Instruct agent to execute script");
+				//logger.error("Sent file to agent");
+				//logger.error("Instruct agent to execute script");
 
 				// Force agent to execute script and return result
-				messagingService.executeScript("/opt/ahenk/received-files/lider/test.sh", message.getFrom());
+				//messagingService.executeScript("/opt/ahenk/received-files/lider/test.sh", message.getFrom());
 
-				logger.error("Script executed");
-				logger.error("Requesting script result");
+				//logger.error("Script executed");
+				//logger.error("Requesting script result");
 
 				// Request script result
-				messagingService.requestFile("/tmp/hosts", message.getFrom());
+				//messagingService.requestFile("/tmp/hosts", message.getFrom());
 
-				logger.error("Script result file requested");
+				//logger.error("Script result file requested");
 
 				logger.error("{} and its related database record created successfully!", entryDN);
 				return new RegistrationResponseMessageImpl(StatusCode.REGISTERED,
@@ -190,28 +203,28 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 
 		} else if (AgentMessageType.UNREGISTER == message.getType()) {
 			// TEST//TEST//TEST//TEST//TEST//TEST//TEST//TEST
-			logger.error("------->Send 1");
-			messagingService.sendFile(getFileAsByteArray(), message.getFrom());
-			String md5 = getMD5ofFile(getFileAsByteArray());
-			logger.error("------->move 2");
-			messagingService.moveFile(md5, "/tmp/", message.getFrom());
-			logger.error("------->execute 3");
-			messagingService.executeScript("/tmp/" + md5, message.getFrom());
-			logger.error("------->request 4");
-			messagingService.requestFile("/tmp/test.out", message.getFrom());
-			logger.error("------->finish 5");
+			//logger.error("------->UNREGISTER");
+			//messagingService.sendFile(getFileAsByteArray(), message.getFrom());
+			//String md5 = getMD5ofFile(getFileAsByteArray());
+			//logger.error("------->move 2");
+			//messagingService.moveFile(md5, "/tmp/", message.getFrom());
+			//logger.error("------->execute 3");
+			//messagingService.executeScript("/tmp/" + md5, message.getFrom());
+			//logger.error("------->request 4");
+			//messagingService.requestFile("/tmp/test.out", message.getFrom());
+			//logger.error("------->finish 5");
 			// TEST//TEST//TEST//TEST//TEST//TEST//TEST//TEST
 
 			return null;
 		} else if (AgentMessageType.REGISTER_LDAP == message.getType()) {
-
+			logger.info("REGISTER_LDAP");
 			return null;
 		}
 		//
 		// Unregister agent
 		//
 		else {
-
+			logger.error("UNKNOWN MSG TYPE");
 			// Check if agent LDAP entry already exists
 			final List<LdapEntry> entry = ldapService.search(configurationService.getAgentLdapJidAttribute(), uid,
 					new String[] { configurationService.getAgentLdapJidAttribute() });
