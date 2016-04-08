@@ -8,6 +8,11 @@ import tr.org.liderahenk.lider.core.api.service.ICommandResult;
 import tr.org.liderahenk.lider.core.api.service.ICommandResultFactory;
 import tr.org.liderahenk.lider.core.api.service.enums.CommandResultStatus;
 
+/**
+ * 
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ *
+ */
 public class CommandResultFactoryImpl implements ICommandResultFactory {
 
 	@Override
@@ -20,4 +25,5 @@ public class CommandResultFactoryImpl implements ICommandResultFactory {
 			Map<String, Object> resultMap) {
 		return new CommandResultImpl(status, messages, command, resultMap);
 	}
+
 }
