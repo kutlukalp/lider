@@ -40,7 +40,7 @@ public class PluginManagerImpl {
 	 * the end of registration, if there is any plugins left in the database
 	 * which is not newly-created or updated, then it is marked as deleted.
 	 */
-	private void registerPlugins() {
+	public void registerPlugins() {
 
 		final List<Long> pluginIdList = new ArrayList<Long>();
 
@@ -50,7 +50,7 @@ public class PluginManagerImpl {
 
 			for (IPluginInfo pluginInfo : pluginInfoList) {
 
-				if (pluginInfo.getPluginName() == null || pluginInfo.getPluginName().isEmpty()
+				if (pluginInfo == null || pluginInfo.getPluginName() == null || pluginInfo.getPluginName().isEmpty()
 						|| pluginInfo.getPluginVersion() == null || pluginInfo.getPluginVersion().isEmpty()) {
 					logger.warn("Plugin name and version can't be empty or null. Passing registration of plugin: {}"
 							+ pluginInfo.toString());
@@ -76,6 +76,9 @@ public class PluginManagerImpl {
 						plugin = pluginDao.update(plugin);
 					} else {
 						// If not, create new plugin record
+						if (entityFactory == null) {
+							logger.error("Entity fucktory null");
+						}
 						plugin = entityFactory.createPlugin(pluginInfo);
 						plugin = pluginDao.save(plugin);
 					}

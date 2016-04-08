@@ -62,7 +62,7 @@ public class PluginImpl implements IPlugin {
 	private boolean userOriented;
 
 	@Column(name = "POLICY_PLUGIN")
-	private boolean policyPlugin; // TODO can be removed
+	private boolean policyPlugin;
 
 	@Column(name = "X_BASED")
 	private boolean xBased;
