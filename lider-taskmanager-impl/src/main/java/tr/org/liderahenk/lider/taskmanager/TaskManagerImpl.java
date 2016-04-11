@@ -179,7 +179,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 
 					try {
 						// Save command execution with result
-						commandDao.save(commandExecution);
+						commandDao.save(result);
 						// Throw an event if the task processing finished
 						if (StatusCode.getTaskEndingStates().contains(message.getResponseCode())) {
 							Dictionary<String, Object> payload = new Hashtable<String, Object>();
