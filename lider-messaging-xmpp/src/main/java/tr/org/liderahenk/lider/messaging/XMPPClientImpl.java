@@ -355,7 +355,7 @@ public class XMPPClientImpl {
 	}
 
 	/**
-	 * Send provided message to provided JID.
+	 * Send provided message to provided JID. Message type is always NORMAL.
 	 * 
 	 * @param message
 	 * @param jid
@@ -364,8 +364,9 @@ public class XMPPClientImpl {
 	public void sendMessage(String message, String jid) throws NotConnectedException {
 		String jidFinal = getFullJid(jid);
 		logger.debug("Sending message: {} to user: {}", new Object[] { message, jidFinal });
-		Chat chat = ChatManager.getInstanceFor(connection).createChat(jidFinal, null);
-		chat.sendMessage(message);
+		Message msg = new Message(jidFinal, Message.Type.normal);
+		msg.setBody(message);
+		connection.sendStanza(msg);
 		logger.debug("Successfully sent message to user: {}", jidFinal);
 	}
 
