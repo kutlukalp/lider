@@ -116,10 +116,8 @@
 						<feature>ssh</feature>
 						<feature>management</feature>
 						<feature>wrap</feature>
-					</bootFeatures>
-					<installedFeatures>
 						<feature>lider</feature>
-					</installedFeatures>
+					</bootFeatures>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -1,6 +1,5 @@
 package tr.org.liderahenk.lider.messaging;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
@@ -50,6 +49,7 @@ import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptManager.AutoReceiptMode;
 import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.xdata.packet.DataForm;
+import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,6 +64,7 @@ import tr.org.liderahenk.lider.core.api.messaging.subscribers.IPresenceSubscribe
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IRegistrationSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.ITaskStatusSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IUserSessionSubscriber;
+import tr.org.liderahenk.lider.messaging.listeners.FileListener;
 import tr.org.liderahenk.lider.messaging.messages.GetPoliciesMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.PolicyStatusMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.RegistrationMessageImpl;
@@ -113,6 +114,7 @@ public class XMPPClientImpl {
 	private RegistrationListener registrationListener;
 	private UserSessionListener userSessionListener;
 	private PolicyListener policyListener;
+	private FileListener fileListener;
 
 	/**
 	 * Packet subscribers
@@ -141,6 +143,7 @@ public class XMPPClientImpl {
 			Pattern.CASE_INSENSITIVE);
 
 	private IConfigurationService configurationService;
+	private EventAdmin eventAdmin;
 
 	public void init() {
 		logger.info("XMPP service initialization is started");
@@ -254,6 +257,9 @@ public class XMPPClientImpl {
 		policyListener = new PolicyListener();
 		userSessionListener = new UserSessionListener();
 		connection.addConnectionListener(connectionListener);
+		fileListener = new FileListener(configurationService, eventAdmin);
+		Socks5BytestreamManager bytestreamManager = Socks5BytestreamManager.getBytestreamManager(connection);
+		bytestreamManager.addIncomingBytestreamListener(fileListener);
 		PingManager.getInstanceFor(connection).registerPingFailedListener(pingFailedListener);
 		ChatManager.getInstanceFor(connection).addChatListener(chatManagerListener);
 		connection.addAsyncStanzaListener(packetListener, packetListener);
@@ -338,6 +344,8 @@ public class XMPPClientImpl {
 			connection.removeAsyncStanzaListener(policyListener);
 			connection.removeAsyncStanzaListener(iqListener);
 			connection.removeConnectionListener(connectionListener);
+			Socks5BytestreamManager bytestreamManager = Socks5BytestreamManager.getBytestreamManager(connection);
+			bytestreamManager.removeIncomingBytestreamListener(fileListener);
 			logger.debug("Listeners are removed.");
 			PingManager.getInstanceFor(connection).setPingInterval(-1);
 			logger.debug("Disabled ping manager");
@@ -347,7 +355,7 @@ public class XMPPClientImpl {
 	}
 
 	/**
-	 * Send provided message to provided JID.
+	 * Send provided message to provided JID. Message type is always NORMAL.
 	 * 
 	 * @param message
 	 * @param jid
@@ -356,8 +364,9 @@ public class XMPPClientImpl {
 	public void sendMessage(String message, String jid) throws NotConnectedException {
 		String jidFinal = getFullJid(jid);
 		logger.debug("Sending message: {} to user: {}", new Object[] { message, jidFinal });
-		Chat chat = ChatManager.getInstanceFor(connection).createChat(jidFinal, null);
-		chat.sendMessage(message);
+		Message msg = new Message(jidFinal, Message.Type.normal);
+		msg.setBody(message);
+		connection.sendStanza(msg);
 		logger.debug("Successfully sent message to user: {}", jidFinal);
 	}
 
@@ -533,23 +542,6 @@ public class XMPPClientImpl {
 			jidFinal = jid + "@" + serviceName;
 		}
 		return jidFinal;
-	}
-
-	/**
-	 * Get file path from ${xmpp.file.path}/${jid}/${filename}
-	 * 
-	 * @param jid
-	 * @param filename
-	 * @return full file path built from jid and filename.
-	 * @see tr.org.liderahenk.lider.core.api.configuration.IConfigurationService#getXmppFilePath()
-	 */
-	public String getFileReceivePath(String jid, String filename) {
-		String path = configurationService.getXmppFilePath();
-		if (!path.endsWith(File.separator)) {
-			path += File.separator;
-		}
-		path += jid + File.separator + filename;
-		return path;
 	}
 
 	/**
@@ -800,7 +792,7 @@ public class XMPPClientImpl {
 		public boolean accept(Stanza stanza) {
 			if (stanza instanceof Message) {
 				Message msg = (Message) stanza;
-				logger.error("--->"+msg.getBody());
+				logger.error("--->" + msg.getBody());
 				// All messages from agents are type normal
 				if (Message.Type.normal.equals(msg.getType()) && policyStatusPattern.matcher(msg.getBody()).matches()) {
 					return true;
@@ -1136,6 +1128,14 @@ public class XMPPClientImpl {
 	 */
 	public XMPPTCPConnection getConnection() {
 		return connection;
+	}
+
+	/**
+	 * 
+	 * @param eventAdmin
+	 */
+	public void setEventAdmin(EventAdmin eventAdmin) {
+		this.eventAdmin = eventAdmin;
 	}
 
 	@Override

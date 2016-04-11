@@ -30,11 +30,13 @@ import tr.org.liderahenk.lider.core.api.persistence.PropertyOrder;
 import tr.org.liderahenk.lider.core.api.persistence.dao.ICommandDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecution;
+import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecutionResult;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 import tr.org.liderahenk.lider.core.api.persistence.enums.OrderType;
 import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
 import tr.org.liderahenk.lider.persistence.entities.CommandExecutionImpl;
+import tr.org.liderahenk.lider.persistence.entities.CommandExecutionResultImpl;
 import tr.org.liderahenk.lider.persistence.entities.CommandImpl;
 
 /**
@@ -47,7 +49,8 @@ import tr.org.liderahenk.lider.persistence.entities.CommandImpl;
  */
 public class CommandDaoImpl implements ICommandDao {
 
-	private static Logger logger = LoggerFactory.getLogger(CommandDaoImpl.class);
+	private static Logger logger = LoggerFactory
+			.getLogger(CommandDaoImpl.class);
 
 	private EntityManager entityManager;
 
@@ -69,11 +72,14 @@ public class CommandDaoImpl implements ICommandDao {
 	}
 
 	@Override
-	public ICommandExecution save(ICommandExecution commandExecution) throws Exception {
-		CommandExecutionImpl commandExecutionImpl = new CommandExecutionImpl(commandExecution);
+	public ICommandExecution save(ICommandExecution commandExecution)
+			throws Exception {
+		CommandExecutionImpl commandExecutionImpl = new CommandExecutionImpl(
+				commandExecution);
 		commandExecutionImpl.setCreateDate(new Date());
 		entityManager.persist(commandExecutionImpl);
-		logger.debug("ICommandExecution object persisted: {}", commandExecutionImpl.toString());
+		logger.debug("ICommandExecution object persisted: {}",
+				commandExecutionImpl.toString());
 		return commandExecutionImpl;
 	}
 
@@ -106,26 +112,30 @@ public class CommandDaoImpl implements ICommandDao {
 
 	@Override
 	public CommandImpl find(Long commandId) {
-		CommandImpl commandImpl = entityManager.find(CommandImpl.class, commandId);
+		CommandImpl commandImpl = entityManager.find(CommandImpl.class,
+				commandId);
 		logger.debug("ICommand object found: {}", commandImpl.toString());
 		return commandImpl;
 	}
 
 	@Override
-	public List<? extends ICommand> findAll(Class<? extends ICommand> obj, Integer maxResults) {
-		List<CommandImpl> commandList = entityManager
-				.createQuery("select t from " + CommandImpl.class.getSimpleName() + " t", CommandImpl.class)
-				.getResultList();
+	public List<? extends ICommand> findAll(Class<? extends ICommand> obj,
+			Integer maxResults) {
+		List<CommandImpl> commandList = entityManager.createQuery(
+				"select t from " + CommandImpl.class.getSimpleName() + " t",
+				CommandImpl.class).getResultList();
 		logger.debug("ICommand objects found: {}", commandList);
 		return commandList;
 	}
 
 	@Override
-	public List<? extends ICommand> findByProperty(Class<? extends ICommand> obj, String propertyName,
+	public List<? extends ICommand> findByProperty(
+			Class<? extends ICommand> obj, String propertyName,
 			Object propertyValue, Integer maxResults) {
-		TypedQuery<CommandImpl> query = entityManager.createQuery("select t from " + CommandImpl.class.getSimpleName()
-				+ " t where t." + propertyName + "= :propertyValue", CommandImpl.class)
-				.setParameter("propertyValue", propertyValue);
+		TypedQuery<CommandImpl> query = entityManager.createQuery(
+				"select t from " + CommandImpl.class.getSimpleName()
+						+ " t where t." + propertyName + "= :propertyValue",
+				CommandImpl.class).setParameter("propertyValue", propertyValue);
 		if (maxResults > 0) {
 			query = query.setMaxResults(maxResults);
 		}
@@ -135,16 +145,19 @@ public class CommandDaoImpl implements ICommandDao {
 	}
 
 	@Override
-	public List<? extends ICommand> findByProperties(Class<? extends ICommand> obj, Map<String, Object> propertiesMap,
+	public List<? extends ICommand> findByProperties(
+			Class<? extends ICommand> obj, Map<String, Object> propertiesMap,
 			List<PropertyOrder> orders, Integer maxResults) {
 		orders = new ArrayList<PropertyOrder>();
 		// TODO
 		// PropertyOrder ord = new PropertyOrder("name", OrderType.ASC);
 		// orders.add(ord);
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-		CriteriaQuery<CommandImpl> criteria = (CriteriaQuery<CommandImpl>) builder.createQuery(CommandImpl.class);
+		CriteriaQuery<CommandImpl> criteria = (CriteriaQuery<CommandImpl>) builder
+				.createQuery(CommandImpl.class);
 		Metamodel metamodel = entityManager.getMetamodel();
-		EntityType<CommandImpl> entityType = metamodel.entity(CommandImpl.class);
+		EntityType<CommandImpl> entityType = metamodel
+				.entity(CommandImpl.class);
 		Root<CommandImpl> from = (Root<CommandImpl>) criteria.from(entityType);
 		criteria.select(from);
 		Predicate predicate = null;
@@ -152,19 +165,24 @@ public class CommandDaoImpl implements ICommandDao {
 		if (propertiesMap != null) {
 			Predicate pred = null;
 			for (Entry<String, Object> entry : propertiesMap.entrySet()) {
-				if (entry.getValue() != null && !entry.getValue().toString().isEmpty()) {
+				if (entry.getValue() != null
+						&& !entry.getValue().toString().isEmpty()) {
 					String[] key = entry.getKey().split("\\.");
 					if (key.length > 1) {
 						Join<Object, Object> join = null;
 						for (int i = 0; i < key.length - 1; i++) {
-							join = join != null ? join.join(key[i]) : from.join(key[i]);
+							join = join != null ? join.join(key[i]) : from
+									.join(key[i]);
 							from.fetch(key[i]);
 						}
-						pred = builder.equal(join.get(key[key.length - 1]), entry.getValue());
+						pred = builder.equal(join.get(key[key.length - 1]),
+								entry.getValue());
 					} else {
-						pred = builder.equal(from.get(entry.getKey()), entry.getValue());
+						pred = builder.equal(from.get(entry.getKey()),
+								entry.getValue());
 					}
-					predicate = predicate == null ? pred : builder.and(predicate, pred);
+					predicate = predicate == null ? pred : builder.and(
+							predicate, pred);
 				}
 			}
 			if (predicate != null) {
@@ -175,15 +193,17 @@ public class CommandDaoImpl implements ICommandDao {
 		if (orders != null && !orders.isEmpty()) {
 			List<Order> orderList = new ArrayList<Order>();
 			for (PropertyOrder order : orders) {
-				orderList.add(order.getOrderType() == OrderType.ASC ? builder.asc(from.get(order.getPropertyName()))
-						: builder.desc(from.get(order.getPropertyName())));
+				orderList.add(order.getOrderType() == OrderType.ASC ? builder
+						.asc(from.get(order.getPropertyName())) : builder
+						.desc(from.get(order.getPropertyName())));
 			}
 			criteria.orderBy(orderList);
 		}
 
 		List<CommandImpl> list = null;
 		if (null != maxResults) {
-			list = entityManager.createQuery(criteria).setMaxResults(maxResults).getResultList();
+			list = entityManager.createQuery(criteria)
+					.setMaxResults(maxResults).getResultList();
 		} else {
 			list = entityManager.createQuery(criteria).getResultList();
 		}
@@ -195,24 +215,27 @@ public class CommandDaoImpl implements ICommandDao {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public ICommandExecution findExecution(Long taskId, String dn, RestDNType dnType) {
+	public ICommandExecution findExecution(Long taskId, String dn,
+			RestDNType dnType) {
 		Query query = entityManager.createQuery(FIND_EXECUTION);
 		query.setParameter("dnType", dnType.getId());
 		query.setParameter("dn", dn);
 		query.setParameter("taskId", taskId);
-		List<CommandExecutionImpl> resultList = query.setMaxResults(1).getResultList();
+		List<CommandExecutionImpl> resultList = query.setMaxResults(1)
+				.getResultList();
 		return resultList.get(0);
 	}
 
 	@Override
 	public ICommandExecution findExecution(Long id) {
-		CommandExecutionImpl executionImpl = entityManager.find(CommandExecutionImpl.class, id);
-		logger.debug("ICommandExecution object found: {}", executionImpl.toString());
+		CommandExecutionImpl executionImpl = entityManager.find(
+				CommandExecutionImpl.class, id);
+		logger.debug("ICommandExecution object found: {}",
+				executionImpl.toString());
 		return executionImpl;
 	}
 
-	private static final String FIND_TASK_COMMAND_WITH_DETAILS = 
-			"SELECT t, "
+	private static final String FIND_TASK_COMMAND_WITH_DETAILS = "SELECT t, "
 			+ "SUM(CASE WHEN cer.responseCode = :resp_success then 1 ELSE 0 END) as success, "
 			+ "SUM(CASE WHEN cer.responseCode = :resp_received THEN 1 ELSE 0 END) as received, "
 			+ "SUM(CASE WHEN cer.responseCode = :resp_error then 1 ELSE 0 END) as error "
@@ -221,7 +244,8 @@ public class CommandDaoImpl implements ICommandDao {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Object[]> findTaskCommand(String pluginName, String pluginVersion, Date createDateRangeStart,
+	public List<Object[]> findTaskCommand(String pluginName,
+			String pluginVersion, Date createDateRangeStart,
 			Date createDateRangeEnd, Integer status) {
 		String sql = FIND_TASK_COMMAND_WITH_DETAILS;
 		// Collect query conditions/parameters
@@ -251,25 +275,28 @@ public class CommandDaoImpl implements ICommandDao {
 		// Append also status condition as 'HAVING' clause
 		StatusCode code = StatusCode.getType(status);
 		// FIXME openjpa bug prevents using 'HAVING' clause right now!
-//		if (code != null) {
-//			switch (code) {
-//			case TASK_PROCESSED:
-//				sql += " HAVING SUM(CASE WHEN cer.responseCode = :resp_success THEN 1 ELSE 0 END) > 0 ";
-//				break;
-//			case TASK_ERROR:
-//				sql += " HAVING SUM(CASE WHEN cer.responseCode = :resp_error THEN 1 ELSE 0 END) > 0 ";
-//				break;
-//			case TASK_RECEIVED:
-//				sql += " HAVING SUM(CASE WHEN cer.responseCode = :resp_received THEN 1 ELSE 0 END) > 0 ";
-//				break;
-//			default:
-//			}
-//		}
+		// if (code != null) {
+		// switch (code) {
+		// case TASK_PROCESSED:
+		// sql +=
+		// " HAVING SUM(CASE WHEN cer.responseCode = :resp_success THEN 1 ELSE 0 END) > 0 ";
+		// break;
+		// case TASK_ERROR:
+		// sql +=
+		// " HAVING SUM(CASE WHEN cer.responseCode = :resp_error THEN 1 ELSE 0 END) > 0 ";
+		// break;
+		// case TASK_RECEIVED:
+		// sql +=
+		// " HAVING SUM(CASE WHEN cer.responseCode = :resp_received THEN 1 ELSE 0 END) > 0 ";
+		// break;
+		// default:
+		// }
+		// }
 		// Add parameter values for 'CASE WHEN' statements
 		params.put("resp_success", StatusCode.TASK_PROCESSED.getId());
 		params.put("resp_error", StatusCode.TASK_ERROR.getId());
 		params.put("resp_received", StatusCode.TASK_RECEIVED.getId());
-		
+
 		Query query = entityManager.createQuery(sql);
 		// Iterate over map and set query parameters
 		Iterator<Entry<String, Object>> iterator = params.entrySet().iterator();
@@ -280,31 +307,33 @@ public class CommandDaoImpl implements ICommandDao {
 			}
 			// Handle special date params.
 			if (entry.getValue() instanceof Date) {
-				query.setParameter(entry.getKey(), (Date) entry.getValue(), TemporalType.TIMESTAMP);
+				query.setParameter(entry.getKey(), (Date) entry.getValue(),
+						TemporalType.TIMESTAMP);
 			} else {
 				query.setParameter(entry.getKey(), entry.getValue());
 			}
 		}
 		// Execute query
 		List<Object[]> resultList = query.getResultList();
-		logger.debug("Command with details result list: {}",
-				resultList != null && !resultList.isEmpty() && resultList.get(0) != null && resultList.get(0).length > 0
-						? (ITask) resultList.get(0)[0] : null);
-		
+		logger.debug("Command with details result list: {}", resultList != null
+				&& !resultList.isEmpty() && resultList.get(0) != null
+				&& resultList.get(0).length > 0 ? (ITask) resultList.get(0)[0]
+				: null);
+
 		return resultList;
 	}
-	
-	private static final String FIND_POLICY_COMMAND_WITH_DETAILS = 
-			"SELECT p, "
+
+	private static final String FIND_POLICY_COMMAND_WITH_DETAILS = "SELECT p, "
 			+ "SUM(CASE WHEN cer.responseCode = :resp_success then 1 ELSE 0 END) as success, "
 			+ "SUM(CASE WHEN cer.responseCode = :resp_received THEN 1 ELSE 0 END) as received, "
 			+ "SUM(CASE WHEN cer.responseCode = :resp_error then 1 ELSE 0 END) as error "
 			+ "FROM CommandImpl c LEFT JOIN c.commandExecutions ce LEFT JOIN ce.commandExecutionResults cer INNER JOIN c.policy p "
 			+ "##WHERE## GROUP BY p";
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Object[]> findPolicyCommand(String label, Date createDateRangeStart, Date createDateRangeEnd, Integer status) {
+	public List<Object[]> findPolicyCommand(String label,
+			Date createDateRangeStart, Date createDateRangeEnd, Integer status) {
 		String sql = FIND_POLICY_COMMAND_WITH_DETAILS;
 		// Collect query conditions/parameters
 		List<String> whereConditions = new ArrayList<String>();
@@ -329,25 +358,28 @@ public class CommandDaoImpl implements ICommandDao {
 		// Append also status condition as 'HAVING' clause
 		StatusCode code = StatusCode.getType(status);
 		// FIXME openjpa bug prevents using 'HAVING' clause right now!
-//		if (code != null) {
-//			switch (code) {
-//			case TASK_PROCESSED:
-//				sql += " HAVING SUM(CASE WHEN cer.responseCode = :resp_success THEN 1 ELSE 0 END) > 0 ";
-//				break;
-//			case TASK_ERROR:
-//				sql += " HAVING SUM(CASE WHEN cer.responseCode = :resp_error THEN 1 ELSE 0 END) > 0 ";
-//				break;
-//			case TASK_RECEIVED:
-//				sql += " HAVING SUM(CASE WHEN cer.responseCode = :resp_received THEN 1 ELSE 0 END) > 0 ";
-//				break;
-//			default:
-//			}
-//		}
+		// if (code != null) {
+		// switch (code) {
+		// case TASK_PROCESSED:
+		// sql +=
+		// " HAVING SUM(CASE WHEN cer.responseCode = :resp_success THEN 1 ELSE 0 END) > 0 ";
+		// break;
+		// case TASK_ERROR:
+		// sql +=
+		// " HAVING SUM(CASE WHEN cer.responseCode = :resp_error THEN 1 ELSE 0 END) > 0 ";
+		// break;
+		// case TASK_RECEIVED:
+		// sql +=
+		// " HAVING SUM(CASE WHEN cer.responseCode = :resp_received THEN 1 ELSE 0 END) > 0 ";
+		// break;
+		// default:
+		// }
+		// }
 		// Add parameter values for 'CASE WHEN' statements
 		params.put("resp_success", StatusCode.TASK_PROCESSED.getId());
 		params.put("resp_error", StatusCode.TASK_ERROR.getId());
 		params.put("resp_received", StatusCode.TASK_RECEIVED.getId());
-		
+
 		Query query = entityManager.createQuery(sql);
 		// Iterate over map and set query parameters
 		Iterator<Entry<String, Object>> iterator = params.entrySet().iterator();
@@ -358,17 +390,21 @@ public class CommandDaoImpl implements ICommandDao {
 			}
 			// Handle special date params.
 			if (entry.getValue() instanceof Date) {
-				query.setParameter(entry.getKey(), (Date) entry.getValue(), TemporalType.TIMESTAMP);
+				query.setParameter(entry.getKey(), (Date) entry.getValue(),
+						TemporalType.TIMESTAMP);
 			} else {
 				query.setParameter(entry.getKey(), entry.getValue());
 			}
 		}
 		// Execute query
 		List<Object[]> resultList = query.getResultList();
-		logger.debug("Command with details result list: {}",
-				resultList != null && !resultList.isEmpty() && resultList.get(0) != null && resultList.get(0).length > 0
-						? (IPolicy) resultList.get(0)[0] : null);
-		
+		logger.debug(
+				"Command with details result list: {}",
+				resultList != null && !resultList.isEmpty()
+						&& resultList.get(0) != null
+						&& resultList.get(0).length > 0 ? (IPolicy) resultList
+						.get(0)[0] : null);
+
 		return resultList;
 	}
 
@@ -397,6 +433,17 @@ public class CommandDaoImpl implements ICommandDao {
 	 */
 	public void setEntityManager(EntityManager entityManager) {
 		this.entityManager = entityManager;
+	}
+
+	@Override
+	public ICommandExecutionResult save(ICommandExecutionResult result)
+			throws Exception {
+		CommandExecutionResultImpl resultImpl = new CommandExecutionResultImpl(
+				result);
+		entityManager.persist(resultImpl);
+		logger.debug("ICommandExecutionResult object persisted: {}",
+				resultImpl.toString());
+		return resultImpl;
 	}
 
 }

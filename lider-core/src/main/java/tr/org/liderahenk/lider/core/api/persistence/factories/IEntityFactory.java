@@ -41,12 +41,23 @@ public interface IEntityFactory {
 	 * 
 	 * @param message
 	 * @param commandExecution
-	 * @param id
+	 * @param agentId
 	 * @return
 	 * @throws Exception
 	 */
 	ICommandExecutionResult createCommandExecutionResult(ITaskStatusMessage message, ICommandExecution commandExecution,
 			Long agentId) throws Exception;
+
+	/**
+	 * 
+	 * @param message
+	 * @param data
+	 * @param commandExecution
+	 * @param agentId
+	 * @return
+	 */
+	ICommandExecutionResult createCommandExecutionResult(ITaskStatusMessage message, byte[] data,
+			ICommandExecution commandExecution, Long agentId);
 
 	/**
 	 * 

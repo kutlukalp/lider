@@ -30,23 +30,17 @@ public class ConsoleNotifyTaskStatusEventHandler implements EventHandler {
 
 		ITaskStatusMessage message = (ITaskStatusMessage) event.getProperty("message");
 		String jid = (String) event.getProperty("messageJID");
-		logger.info("Received task status message. Task: {} Status: {}", new Object[] {});
+		logger.info("Sending task status message to Lider Console. Task: {} Status: {} JID: {}",
+				new Object[] { message.getTaskId(), message.getResponseCode(), jid });
 
 		try {
-
 			String messageJson = new ObjectMapper().writeValueAsString(message);
-
-			try {
-				messagingService.sendMessage(messageJson, jid);
-			} catch (Exception e) {
-				logger.error(e.getMessage(), e);
-			}
-
-			logger.debug("Successfully handled task status.");
+			messagingService.sendMessage(messageJson, jid);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
 
+		logger.info("Handled task status.");
 	}
 
 	/**

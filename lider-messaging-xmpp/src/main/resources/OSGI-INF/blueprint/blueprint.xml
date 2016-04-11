@@ -11,7 +11,6 @@
 		interface="tr.org.liderahenk.lider.core.api.messaging.IMessagingService" />
 	<bean id="messagingServiceImpl" class="tr.org.liderahenk.lider.messaging.MessagingServiceImpl">
 		<property name="xmppClient" ref="xmppClient" />
-		<property name="eventAdmin" ref="eventAdmin" />
 	</bean>
 
 	<service ref="messageFactory"
@@ -22,6 +21,7 @@
 	<bean id="xmppClient" class="tr.org.liderahenk.lider.messaging.XMPPClientImpl"
 		init-method="init" destroy-method="destroy">
 		<property name="configurationService" ref="configurationService" />
+		<property name="eventAdmin" ref="eventAdmin" />
 		<property name="presenceSubscribers" ref="presenceSubscribers" />
 		<property name="taskStatusSubscribers" ref="taskStatusSubscribers" />
 		<property name="policyStatusSubscribers" ref="policyStatusSubscribers" />

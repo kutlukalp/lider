@@ -8,6 +8,7 @@ import tr.org.liderahenk.lider.core.api.persistence.IBaseDao;
 import tr.org.liderahenk.lider.core.api.persistence.PropertyOrder;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecution;
+import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecutionResult;
 import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
 
 /**
@@ -65,14 +66,7 @@ public interface ICommandDao extends IBaseDao<ICommand> {
 	 * @return
 	 */
 	@Override
-	List<? extends ICommand> findAll(Class<? extends ICommand> obj, Integer maxResults);
-
-	/**
-	 * 
-	 * @return
-	 */
-	@Override
-	List<? extends ICommand> findByProperty(Class<? extends ICommand> obj, String propertyName, Object propertyValue,
+	List<? extends ICommand> findAll(Class<? extends ICommand> obj,
 			Integer maxResults);
 
 	/**
@@ -80,10 +74,32 @@ public interface ICommandDao extends IBaseDao<ICommand> {
 	 * @return
 	 */
 	@Override
-	List<? extends ICommand> findByProperties(Class<? extends ICommand> obj, Map<String, Object> propertiesMap,
-			List<PropertyOrder> orders, Integer maxResults);
+	List<? extends ICommand> findByProperty(Class<? extends ICommand> obj,
+			String propertyName, Object propertyValue, Integer maxResults);
 
+	/**
+	 * 
+	 * @return
+	 */
+	@Override
+	List<? extends ICommand> findByProperties(Class<? extends ICommand> obj,
+			Map<String, Object> propertiesMap, List<PropertyOrder> orders,
+			Integer maxResults);
+
+	/**
+	 * 
+	 * @param commandExecution
+	 * @return
+	 * @throws Exception
+	 */
 	ICommandExecution save(ICommandExecution commandExecution) throws Exception;
+
+	/**
+	 * 
+	 * @param result
+	 */
+	ICommandExecutionResult save(ICommandExecutionResult result)
+			throws Exception;
 
 	/**
 	 * Find command execution record by given task ID and DN
@@ -114,8 +130,8 @@ public interface ICommandDao extends IBaseDao<ICommand> {
 	 * @param status
 	 * @return
 	 */
-	List<Object[]> findTaskCommand(String pluginName, String pluginVersion, Date createDateRangeStart,
-			Date createDateRangeEnd, Integer status);
+	List<Object[]> findTaskCommand(String pluginName, String pluginVersion,
+			Date createDateRangeStart, Date createDateRangeEnd, Integer status);
 
 	/**
 	 * Find command with its details (policy, command execution, command
@@ -127,6 +143,7 @@ public interface ICommandDao extends IBaseDao<ICommand> {
 	 * @param status
 	 * @return
 	 */
-	List<Object[]> findPolicyCommand(String label, Date createDateRangeStart, Date createDateRangeEnd, Integer status);
+	List<Object[]> findPolicyCommand(String label, Date createDateRangeStart,
+			Date createDateRangeEnd, Integer status);
 
 }
