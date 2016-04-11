@@ -40,19 +40,19 @@ public class TaskStatusEventHandler implements EventHandler {
 		logger.debug("Started handling task status.");
 
 		ITaskStatusMessage message = (ITaskStatusMessage) event.getProperty("message");
-		logger.info("Received task status message. Task: {} Status: {}", new Object[] {});
+		logger.info("Sending task status message to plugins. Task: {} Status: {}",
+				new Object[] { message.getTaskId(), message.getResponseCode() });
 
 		for (ITaskAwareCommand command : taskAwareCommands) {
 			try {
 				command.onTaskUpdate(message);
-				logger.debug("Notified subscriber: {} command with task status: {}",
-						new Object[] { command, message });
+				logger.debug("Notified subscriber: {} command with task status: {}", new Object[] { command, message });
 			} catch (Exception e) {
 				logger.error(e.getMessage(), e);
 			}
 		}
 
-		logger.debug("Successfully handled task status.");
+		logger.debug("Handled task status.");
 	}
 
 	/**
