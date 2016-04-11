@@ -1,5 +1,9 @@
 package tr.org.liderahenk.lider.taskmanager;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -32,6 +36,7 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecution;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecutionResult;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
+import tr.org.liderahenk.lider.core.api.persistence.enums.ContentType;
 import tr.org.liderahenk.lider.core.api.persistence.factories.IEntityFactory;
 import tr.org.liderahenk.lider.core.api.plugin.ITaskAwareCommand;
 import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
@@ -68,8 +73,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 	}
 
 	@Override
-	public void executeTask(final ITaskRequest request, List<LdapEntry> entries)
-			throws TaskSubmissionFailedException {
+	public void executeTask(final ITaskRequest request, List<LdapEntry> entries) throws TaskSubmissionFailedException {
 
 		try {
 
@@ -157,9 +161,20 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 					ICommandExecution commandExecution = commandDao.findExecution(message.getTaskId(), agent.getDn(),
 							RestDNType.AHENK);
 
-					// Create new command execution result
-					ICommandExecutionResult result = entityFactory.createCommandExecutionResult(message,
-							commandExecution, agent.getId());
+					ICommandExecutionResult result = null;
+					if (ContentType.getFileContentTypes().contains(message.getContentType())) {
+						// Agent must have sent a file before this message! Find
+						// the file by its MD5 digest.
+						String path = getFileReceivePath(message.getFrom(),
+								message.getResponseData().get("md5").toString());
+						File file = new File(path);
+						byte[] data = read(file);
+						result = entityFactory.createCommandExecutionResult(message, data, commandExecution,
+								agent.getId());
+					} else {
+						// Create new command execution result
+						result = entityFactory.createCommandExecutionResult(message, commandExecution, agent.getId());
+					}
 					commandExecution.addCommandExecutionResult(result);
 
 					try {
@@ -180,6 +195,24 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 				}
 			}
 		}
+	}
+
+	private byte[] read(File file) throws Exception {
+		byte[] buffer = new byte[(int) file.length()];
+		InputStream ios = null;
+		try {
+			ios = new FileInputStream(file);
+			if (ios.read(buffer) == -1) {
+				throw new IOException("EOF reached while trying to read the whole file");
+			}
+		} finally {
+			try {
+				if (ios != null)
+					ios.close();
+			} catch (IOException e) {
+			}
+		}
+		return buffer;
 	}
 
 	/**
@@ -215,6 +248,23 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 			return plugins.get(0);
 		}
 		return null;
+	}
+
+	/**
+	 * Get file path from ${xmpp.file.path}/${jid}/${filename}
+	 * 
+	 * @param jid
+	 * @param filename
+	 * @return full file path built from jid and filename.
+	 * @see tr.org.liderahenk.lider.core.api.configuration.IConfigurationService#getXmppFilePath()
+	 */
+	private String getFileReceivePath(String jid, String filename) {
+		String path = configurationService.getXmppFilePath();
+		if (!path.endsWith(File.separator)) {
+			path += File.separator;
+		}
+		path += jid + File.separator + filename;
+		return path;
 	}
 
 	/*

@@ -1,5 +1,8 @@
 package tr.org.liderahenk.lider.core.api.persistence.enums;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Common content types used to indicate type of the stored content in the
  * database.
@@ -42,6 +45,11 @@ public enum ContentType {
 			}
 		}
 		throw new IllegalArgumentException("No matching type for id: " + id);
+	}
+
+	public static List<ContentType> getFileContentTypes() {
+		return Arrays.asList(new ContentType[] { APPLICATION_PDF, APPLICATION_VND_MS_EXCEL, APPLICATION_MS_WORD,
+				IMAGE_PNG, IMAGE_JPEG });
 	}
 
 }
