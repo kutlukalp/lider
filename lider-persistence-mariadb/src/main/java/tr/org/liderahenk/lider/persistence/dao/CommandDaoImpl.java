@@ -376,9 +376,9 @@ public class CommandDaoImpl implements ICommandDao {
 		// }
 		// }
 		// Add parameter values for 'CASE WHEN' statements
-		params.put("resp_success", StatusCode.TASK_PROCESSED.getId());
-		params.put("resp_error", StatusCode.TASK_ERROR.getId());
-		params.put("resp_received", StatusCode.TASK_RECEIVED.getId());
+		params.put("resp_success", StatusCode.POLICY_PROCESSED.getId());
+		params.put("resp_error", StatusCode.POLICY_ERROR.getId());
+		params.put("resp_received", StatusCode.POLICY_RECEIVED.getId());
 
 		Query query = entityManager.createQuery(sql);
 		// Iterate over map and set query parameters
