@@ -12,9 +12,10 @@ lider is the business layer of [Lider Ahenk](http://liderahenk.org/) project run
 
 ## Documentation
 
-* See how to [setup development environment](https://github.com/Pardus-Kurumsal/lider/wiki/Setup-Development-Environment)
-* Learn how to [build & run](https://github.com/Pardus-Kurumsal/lider/wiki/Building-&-Running) lider.
-* Create [Lider distribution](https://github.com/Pardus-Kurumsal/lider/wiki/Lider-Distribution) as custom Karaf container.
+* See [Lider wiki](https://github.com/Pardus-Kurumsal/lider/wiki) to get started!
+* See how to [setup development environment](https://github.com/Pardus-Kurumsal/lider/wiki/01.-Setup-Development-Environment)
+* Learn how to [build & run](https://github.com/Pardus-Kurumsal/lider/wiki/02.-Building-&-Running) lider.
+* Create [Lider distribution](https://github.com/Pardus-Kurumsal/lider/wiki/03.-Lider-Distribution) as custom Karaf container.
 
 ## Contribution
 
