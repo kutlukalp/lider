@@ -1,66 +1,62 @@
 # lider
 
-lider is the business layer of Lider Ahenk project running on Karaf container. It contains core functionalities (such as LDAP client, task manager, XMPP client) and core services (such as plugin DB service, log service) and provides an API for other plug-ins/bundles.
+**Lider Ahenk** is an open source project which provides solutions to manage, monitor and audit unlimited number of different systems and users on a network.
 
-## Prerequisites
+lider is the business layer of [Lider Ahenk](http://liderahenk.org/) project running on [Karaf](http://karaf.apache.org/) container. It contains core functionalities (such as LDAP client, task manager, XMPP client), core services (such as plugin DB service, log service) and provides an API for other plug-ins/bundles.
 
-### JDK7
+## Features
 
-- Download and install [JDK7](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html)
+* Scalability
+* Adaptability
+* Integrability
 
-### Git
+## Documentation
 
-- Documentation about installing and configuring git can be found [here](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) and [here](https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup)
-- Git [home](http://git-scm.com/) (download, docs)
+* See how to [setup development environment](https://github.com/Pardus-Kurumsal/lider/wiki/Setup-Development-Environment)
+* Learn how to [build & run](https://github.com/Pardus-Kurumsal/lider/wiki/Building-&-Running) lider.
+* Create [Lider distribution](https://github.com/Pardus-Kurumsal/lider/wiki/Lider-Distribution) as custom Karaf container.
 
-### Maven 3
+## Contribution
 
-- Get [Maven 3](http://maven.apache.org/install.html) (Specifically, at least **version 3.1.1** is needed to use static code analyzers and maven-tycho plugin!).
-- Maven [home](https://maven.apache.org/) (download, docs)
+We encourage contributions to the project. To contribute:
 
-### Karaf 4
+* Fork the project and create a new bug or feature branch.
+* Make your commits with clean, understandable comments
+* Perform a pull request
 
-- Download and extract [Karaf 4](https://karaf.apache.org/index/community/download.html)
+## Other Lider Ahenk Projects
 
-## Project Directory Layout
+* [Lider Console](https://github.com/Pardus-Kurumsal/lider-console): Administration console built as Eclipse RCP project.
+* [Ahenk](https://github.com/Pardus-Kurumsal/ahenk): Agent service running on remote machines.
+* [Lider Ahenk Installer](https://github.com/Pardus-Kurumsal/lider-ahenk-installer): Installation wizard for Ahenk and Lider (and also its LDAP, database, XMPP servers).
+* [Lider Ahenk Archetype](https://github.com/Pardus-Kurumsal/lider-ahenk-archetype): Maven archetype for easy plugin development.
 
-    lider/
-      lider-core/                     --> Provides core functionalities and API for other plug-ins
-      lider-authorization-impl/       --> Shiro-based authorization implementation
-      lider-cache-impl/               --> Provides cache mechanism
-      lider-config/                   --> Contains configuration manager and default config files.
-      lider-datasource-mariadb/       --> MariaDB datasource definition for Karaf
-      lider-karaf/                    --> Contains Karaf features definition file
-      lider-ldap-impl/                --> Provides LDAP client and search functionalities
-      lider-log-impl/                 --> Provides system-wide logging mechanism
-      lider-messaging-xmpp/           --> XMMP client implementation
-      lider-persistence-mariadb/      --> MariaDB persistence layer
-      lider-rest-impl/                --> Processes incoming requests for auth and LDAP operations
-      lider-router-impl/              --> Responsible for bridging incoming requests to related plugin
-      lider-service-impl/             --> Provides factory methods and command context for plugins
-      lider-taskmanager-impl/         --> Task manager implementation manages agent tasks
-      lider-web/                      --> Provides REST web services
+## Changelog
 
-## How to Setup Development Environment
+See [changelog](https://github.com/Pardus-Kurumsal/lider/wiki/Changelog) to learn what we have been up to.
 
-1. Install [Eclipse](https://eclipse.org/downloads/) version >=4.4 (Luna or Mars).
-2. Clone Lider project by running `git clone https://github.com/Pardus-Kurumsal/lider.git`.
-3. Navigate to project directory and run `mvn clean install -DskipTests`.
-4. Finally, import the project into Eclipse as 'Existing Maven Projects'.
+## Roadmap
 
-## How to Import Lider Into Karaf
+#### Today
 
-1. Navigate to project directory and run `mvn clean install`.
-2. Start Karaf and add project repository via `feature:repo-add  mvn:tr.org.liderahenk/lider-features/1.0.0-SNAPSHOT/xml/features`.
-3. Again, in Karaf shell, install project via `feature:install lider`.
+* 30+ plugins
+* Linux agent service written in Python
+* Administration console built as Eclipse RCP
+* Open sourced, easy to access and setup, stable Lider Ahenk v1.0.0
 
-## How to Export Lider as Custom Karaf Distribution?
+#### 2016
 
-TODO
+* Scalable infrastructure suitable for million+ users & systems
+* 10+ new plugins (such as file distribution via torrent, remote installation)
+* New reporting module & dashboard
 
-## Static Analyzers
+#### 2017
 
-We also use checkstyle and findbugs plugins to do static analyzing on the changes. Run the following commands to analyze your code to check if it is compatible.
+* Agents for Windows and mobile platforms
+* Platform-independent administration console
+* Inventory scan & management
+* Printer management
 
-`mvn clean compile -P findbugs`
-`mvn clean validate -P checkstyle`
+## License
+
+Lider Ahenk and its sub projects are licensed under the [LGPL v3](https://github.com/Pardus-Kurumsal/lider/blob/master/LICENSE).
