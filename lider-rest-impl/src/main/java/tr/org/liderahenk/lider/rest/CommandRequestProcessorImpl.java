@@ -122,7 +122,7 @@ public class CommandRequestProcessorImpl implements ICommandRequestProcessor {
 		}
 		Map<String, Object> propertiesMap = new HashMap<String, Object>();
 		propertiesMap.put("policy.id", id);
-		List<? extends ICommand> commands = commandDao.findByProperties(ICommand.class, propertiesMap, null, 1);
+		List<? extends ICommand> commands = commandDao.findByProperties(ICommand.class, propertiesMap, null, null);
 		// Explicitly write object as json string, it will handled by
 		// related rest utility class in Lider Console
 		Map<String, Object> resultMap = new HashMap<String, Object>();
