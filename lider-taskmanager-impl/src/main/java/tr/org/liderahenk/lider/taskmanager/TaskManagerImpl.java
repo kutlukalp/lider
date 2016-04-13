@@ -253,17 +253,17 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 	/**
 	 * Get file path from ${xmpp.file.path}/${jid}/${filename}
 	 * 
-	 * @param jid
+	 * @param fullJid
 	 * @param filename
 	 * @return full file path built from jid and filename.
 	 * @see tr.org.liderahenk.lider.core.api.configuration.IConfigurationService#getXmppFilePath()
 	 */
-	private String getFileReceivePath(String jid, String filename) {
+	private String getFileReceivePath(String fullJid, String filename) {
 		String path = configurationService.getXmppFilePath();
 		if (!path.endsWith(File.separator)) {
 			path += File.separator;
 		}
-		path += jid + File.separator + filename;
+		path += fullJid.split("@")[0] + File.separator + filename;
 		return path;
 	}
 
