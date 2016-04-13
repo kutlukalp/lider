@@ -252,11 +252,11 @@ public class CommandDaoImpl implements ICommandDao {
 		List<String> whereConditions = new ArrayList<String>();
 		Map<String, Object> params = new HashMap<String, Object>();
 		if (pluginName != null && !pluginName.isEmpty()) {
-			whereConditions.add("p.name LIKE CONCAT(:pluginName, '%')");
+			whereConditions.add("p.name LIKE :pluginName");
 			params.put("pluginName", pluginName);
 		}
 		if (pluginVersion != null && !pluginVersion.isEmpty()) {
-			whereConditions.add("p.version LIKE CONCAT(:pluginVersion, '%')");
+			whereConditions.add("p.version LIKE :pluginVersion");
 			params.put("pluginVersion", pluginVersion);
 		}
 		if (createDateRangeStart != null && createDateRangeEnd != null) {
@@ -339,7 +339,7 @@ public class CommandDaoImpl implements ICommandDao {
 		List<String> whereConditions = new ArrayList<String>();
 		Map<String, Object> params = new HashMap<String, Object>();
 		if (label != null && !label.isEmpty()) {
-			whereConditions.add("p.label LIKE CONCAT(:label, '%')");
+			whereConditions.add("p.label LIKE :label");
 			params.put("label", label);
 		}
 		if (createDateRangeStart != null && createDateRangeEnd != null) {
