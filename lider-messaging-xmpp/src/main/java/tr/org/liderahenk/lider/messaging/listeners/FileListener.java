@@ -40,7 +40,8 @@ public class FileListener implements BytestreamListener {
 	private IConfigurationService configurationService;
 	private EventAdmin eventAdmin;
 
-	public FileListener(IConfigurationService configurationService, EventAdmin eventAdmin) {
+	public FileListener(IConfigurationService configurationService,
+			EventAdmin eventAdmin) {
 		this.configurationService = configurationService;
 		this.eventAdmin = eventAdmin;
 	}
@@ -59,7 +60,8 @@ public class FileListener implements BytestreamListener {
 			if (filter(request)) {
 				// Find target path and file name.
 				String filename = generateUniqueFileName();
-				String path = getFileReceivePath(request.getFrom(), filename);
+				String jid = getJid(request.getFrom());
+				String path = getFileReceivePath(jid, filename);
 				File file = new File(path);
 
 				File parent = file.getParentFile();
@@ -68,7 +70,8 @@ public class FileListener implements BytestreamListener {
 				}
 
 				MessageDigest md = MessageDigest.getInstance("MD5");
-				inputStream = new DigestInputStream(request.accept().getInputStream(), md);
+				inputStream = new DigestInputStream(request.accept()
+						.getInputStream(), md);
 				outputStream = new FileOutputStream(file);
 
 				// Write incoming file to temporary file.
@@ -80,10 +83,15 @@ public class FileListener implements BytestreamListener {
 					outputStream.write(receivedData, 0, read);
 				}
 				outputStream.flush();
-				String digest = new String(md.digest());
+				
+				final StringBuilder builder = new StringBuilder();
+				for (byte b : md.digest()) {
+					builder.append(String.format("%02x", b));
+				}
+				String digest = builder.toString();
 
 				// Rename file to 'digest'
-				file.renameTo(new File(getFileReceivePath(request.getFrom(), digest)));
+				file.renameTo(new File(getFileReceivePath(jid, digest)));
 
 				// Fire an event to notify requested file received
 				// successfully.
@@ -120,6 +128,10 @@ public class FileListener implements BytestreamListener {
 				}
 			}
 		}
+	}
+
+	private String getJid(String fullJid) {
+		return fullJid.split("@")[0];
 	}
 
 	/**
@@ -161,7 +173,7 @@ public class FileListener implements BytestreamListener {
 		datetime = datetime.replace(" ", "").replace(":", "");
 		String rndchars = RandomStringUtils.randomAlphanumeric(16);
 		filename = rndchars + "_" + datetime + "_" + millis;
-		return filename;
+		return filename.replace("/", "");
 	}
 
 	/**
@@ -173,7 +185,8 @@ public class FileListener implements BytestreamListener {
 		Dictionary<String, String> dict = new Hashtable<String, String>();
 		dict.put("filepath", path);
 		dict.put("from", from);
-		eventAdmin.postEvent(new Event(LiderConstants.EVENTS.FILE_RECEIVED, dict));
+		eventAdmin.postEvent(new Event(LiderConstants.EVENTS.FILE_RECEIVED,
+				dict));
 	}
 
 }
