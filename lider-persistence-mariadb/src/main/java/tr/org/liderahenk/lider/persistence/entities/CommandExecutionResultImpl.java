@@ -55,7 +55,7 @@ public class CommandExecutionResultImpl implements ICommandExecutionResult {
 	private String responseMessage;
 
 	@Lob
-	@Column(name = "RESPONSE_DATA")
+	@Column(name = "RESPONSE_DATA", length=4*1024*1024*1024)
 	private byte[] responseData;
 
 	@Column(name = "CONTENT_TYPE", length = 3)

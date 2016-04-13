@@ -1,10 +1,11 @@
 package tr.org.liderahenk.lider.messaging.listeners;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -54,7 +55,7 @@ public class FileListener implements BytestreamListener {
 	 */
 	@Override
 	public void incomingBytestreamRequest(BytestreamRequest request) {
-		DigestInputStream inputStream = null;
+		InputStream inputStream = null;
 		OutputStream outputStream = null;
 		try {
 			if (filter(request)) {
@@ -63,33 +64,44 @@ public class FileListener implements BytestreamListener {
 				String jid = getJid(request.getFrom());
 				String path = getFileReceivePath(jid, filename);
 				File file = new File(path);
+				logger.error("------>path:" + path);
 
 				File parent = file.getParentFile();
 				if (!parent.exists() && !parent.mkdirs()) {
 					logger.error("Couldn't create dir: " + parent);
 				}
 
-				MessageDigest md = MessageDigest.getInstance("MD5");
-				inputStream = new DigestInputStream(request.accept()
-						.getInputStream(), md);
+				inputStream = request.accept().getInputStream();
 				outputStream = new FileOutputStream(file);
 
 				// Write incoming file to temporary file.
 				// Also calculate MD5 digest while doing so.
-				int dataSize = 1024;
+				int dataSize = 128;
 				byte[] receivedData = new byte[dataSize];
 				int read = 0;
+				int i=0;
 				while ((read = inputStream.read(receivedData)) != -1) {
 					outputStream.write(receivedData, 0, read);
+					int x = 0;
+					while (inputStream.available() < dataSize) {
+						x++;
+						if (x > 10) {
+							break;
+						}
+						Thread.sleep(10);
+					}
+					i++;
+					logger.error(i+" :READ:"+read);
+					if (i%100==0) {
+						outputStream.flush();
+					}
 				}
 				outputStream.flush();
+				logger.error("---------->FILE OK");
+				outputStream.close();
 				
-				final StringBuilder builder = new StringBuilder();
-				for (byte b : md.digest()) {
-					builder.append(String.format("%02x", b));
-				}
-				String digest = builder.toString();
-
+				String digest = getMD5Checksum(path);
+				logger.error("------>MD5SUM:" + digest);
 				// Rename file to 'digest'
 				file.renameTo(new File(getFileReceivePath(jid, digest)));
 
@@ -112,6 +124,8 @@ public class FileListener implements BytestreamListener {
 			logger.error(e.getMessage(), e);
 		} catch (NoSuchAlgorithmException e) {
 			logger.error(e.getMessage(), e);
+		} catch (Exception e) {
+			logger.error("-------->EXCEPTION" + e.getMessage());
 		} finally {
 			if (inputStream != null) {
 				try {
@@ -129,6 +143,37 @@ public class FileListener implements BytestreamListener {
 			}
 		}
 	}
+	
+	public static byte[] createChecksum(String filename) throws Exception {
+	       InputStream fis =  new FileInputStream(filename);
+
+	       byte[] buffer = new byte[1024];
+	       MessageDigest complete = MessageDigest.getInstance("MD5");
+	       int numRead;
+
+	       do {
+	           numRead = fis.read(buffer);
+	           if (numRead > 0) {
+	               complete.update(buffer, 0, numRead);
+	           }
+	       } while (numRead != -1);
+
+	       fis.close();
+	       return complete.digest();
+	   }
+
+	   // see this How-to for a faster way to convert
+	   // a byte array to a HEX string
+	   public static String getMD5Checksum(String filename) throws Exception {
+	       byte[] b = createChecksum(filename);
+	       String result = "";
+
+	       for (int i=0; i < b.length; i++) {
+	           result += Integer.toString( ( b[i] & 0xff ) + 0x100, 16).substring( 1 );
+	       }
+	       return result;
+	   }
+
 
 	private String getJid(String fullJid) {
 		return fullJid.split("@")[0];
