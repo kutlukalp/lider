@@ -168,6 +168,14 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 						String path = getFileReceivePath(message.getFrom(),
 								message.getResponseData().get("md5").toString());
 						File file = new File(path);
+						int i = 0;
+						while (!file.exists()) {
+							Thread.sleep(100);
+							if (i > 1000) {
+								throw new RuntimeException("XMPP File transfer error. File="+file.getAbsolutePath());
+							}
+							i++;
+						}
 						byte[] data = read(file);
 						result = entityFactory.createCommandExecutionResult(message, data, commandExecution,
 								agent.getId());
