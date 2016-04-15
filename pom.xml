@@ -161,6 +161,7 @@
 		<module>lider-messaging-xmpp</module>
 		<module>lider-web</module>
 		<module>lider-karaf</module>
+		<module>lider-karaf-console</module>
 		<module>lider-rest-impl</module>
 		<module>lider-log-impl</module>
 		<module>lider-router-impl</module>

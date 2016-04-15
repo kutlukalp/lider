@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+	<command-bundle xmlns="http://karaf.apache.org/xmlns/shell/v1.0.0">
+		<command name="profile/list">
+			<action
+				class="tr.org.liderahenk.lider.karafconsole.commands.ProfileCommand">
+				<property name="profileDao" ref="profileDao" />
+			</action>
+		</command>
+	</command-bundle>
+
+	<reference id="profileDao"
+		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IProfileDao" />
+</blueprint>
