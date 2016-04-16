@@ -23,8 +23,6 @@
 -->
 <features name="${project.artifactId}-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.3.0">
 
-	<repository>mvn:org.apache.karaf.cellar/apache-karaf-cellar/4.0.0/xml/features</repository>
-
 	<feature name="lider" description="${project.name}" version="${project.version}">
         <details>Lider Ahenk Client Management System</details>
         <feature>lider-dependent-bundles</feature>
@@ -65,7 +63,6 @@
         <feature>config</feature>
         <feature>wrapper</feature>
         <feature>eventadmin</feature>
-        <feature>cellar</feature>
         <feature>lider-deps-ldap</feature>
        	<bundle start-level="50">mvn:org.codehaus.jackson/jackson-core-asl/1.9.13</bundle>
         <bundle start-level="50">mvn:org.codehaus.jackson/jackson-mapper-asl/1.9.13</bundle>
