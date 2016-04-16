@@ -12,14 +12,17 @@ import org.apache.karaf.shell.support.table.ShellTable;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IProfileDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
 
+/**
+ * Custom Karaf console command to list profiles. Type <code>profile:list</code>
+ * to execute command.
+ * 
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ *
+ */
 @Command(scope = "profile", name = "list", description = "Lists profile records")
-public class ProfileCommand implements Action {
+public class ProfileListCommand implements Action {
 
 	private IProfileDao profileDao;
-
-	public void setProfileDao(IProfileDao profileDao) {
-		this.profileDao = profileDao;
-	}
 
 	@Override
 	public Object execute(CommandSession session) throws Exception {
@@ -34,7 +37,7 @@ public class ProfileCommand implements Action {
 		column = table.column("Related Plugin");
 		column.alignCenter();
 		// Create Date
-		column = table.column("Creation");
+		column = table.column("Create Date");
 		column.alignCenter();
 		// Deleted
 		column = table.column("Deleted");
@@ -52,6 +55,10 @@ public class ProfileCommand implements Action {
 		table.print(System.out);
 
 		return null;
+	}
+
+	public void setProfileDao(IProfileDao profileDao) {
+		this.profileDao = profileDao;
 	}
 
 }
