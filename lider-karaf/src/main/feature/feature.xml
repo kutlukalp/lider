@@ -23,6 +23,8 @@
 -->
 <features name="${project.artifactId}-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.3.0">
 
+	<repository>mvn:org.apache.karaf.cellar/apache-karaf-cellar/LATEST/xml/features</repository>
+
 	<feature name="lider" description="${project.name}" version="${project.version}">
         <details>Lider Ahenk Client Management System</details>
         <feature>lider-dependent-bundles</feature>
@@ -54,11 +56,7 @@
     
     <feature name="lider-dependent-bundles" description="${project.name}" version="${project.version}">
     	<feature>lider-deps-persistence</feature>
-    	<!-- <feature>jpa</feature>
-        <feature>transaction</feature>
-        <feature>jndi</feature> -->
         <feature>war</feature>
-       <!--  <feature>hibernate</feature> -->
         <feature>webconsole</feature>
         <feature>spring-web</feature>
         <feature>spring</feature>
@@ -67,6 +65,7 @@
         <feature>config</feature>
         <feature>wrapper</feature>
         <feature>eventadmin</feature>
+        <feature>cellar</feature>
         <feature>lider-deps-ldap</feature>
        	<bundle start-level="50">mvn:org.codehaus.jackson/jackson-core-asl/1.9.13</bundle>
         <bundle start-level="50">mvn:org.codehaus.jackson/jackson-mapper-asl/1.9.13</bundle>
@@ -174,16 +173,4 @@
         <bundle start-level="30">mvn:org.apache.aries.jpa/org.apache.aries.jpa.container.context/1.0.4</bundle>
     </feature>
     
-    <!-- <feature name="lider-jndi" description="OSGi Service Registry JNDI access" version="${aries.jndi.version}" resolver="(obr)">
-        <details>JNDI support provided by Apache Aries JNDI ${aries.jndi.version}</details>
-        <bundle start-level="30">mvn:org.apache.xbean/xbean-naming/${xbean.version}</bundle>
-        <bundle start-level="30">mvn:org.apache.karaf.jndi/org.apache.karaf.jndi.core/${project.version}</bundle>
-        <bundle start-level="30">mvn:org.apache.aries.jndi/org.apache.aries.jndi.api/${aries.jndi.api.version}</bundle>
-        <bundle start-level="30">mvn:org.apache.aries.jndi/org.apache.aries.jndi.core/${aries.jndi.version}</bundle>
-        <bundle start-level="30">mvn:org.apache.aries.jndi/org.apache.aries.jndi.rmi/${aries.jndi.version}</bundle>
-        <bundle start-level="30">mvn:org.apache.aries.jndi/org.apache.aries.jndi.url/${aries.jndi.version}</bundle>
-        <bundle start-level="30">mvn:org.apache.aries.jndi/org.apache.aries.jndi.legacy.support/${aries.jndi.version}</bundle>
-        <bundle>mvn:org.apache.karaf.jndi/org.apache.karaf.jndi.command/4.0.4</bundle>
-    </feature> -->
-
 </features>
