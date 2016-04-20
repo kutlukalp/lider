@@ -24,7 +24,7 @@ package tr.org.liderahenk.lider.core.api.messaging.enums;
  */
 public enum AgentMessageType {
 	TASK_STATUS(1), REGISTER(2), UNREGISTER(3), REGISTER_LDAP(4), GET_POLICIES(5), LOGIN(6), LOGOUT(7), POLICY_STATUS(
-			8);
+			8), MISSING_PLUGIN(9);
 
 	private int id;
 

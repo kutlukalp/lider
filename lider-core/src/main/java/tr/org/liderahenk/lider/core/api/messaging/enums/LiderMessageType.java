@@ -11,13 +11,14 @@ package tr.org.liderahenk.lider.core.api.messaging.enums;
  * <b>REQUEST_FILE</b>: Commands agent to send a desired file back to Lider.
  * <br/>
  * <b>MOVE_FILE</b>: Commands agent to move file in Ahenk file system. <br/>
+ * <b>INSTALL_PLUGIN</b>: Commands agent to install new plugin according to provided parameters. <br/>
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  * @author <a href="mailto:bm.volkansahin@gmail.com">Volkan Şahin</a>
  * 
  */
 public enum LiderMessageType {
-	EXECUTE_TASK(1), EXECUTE_SCRIPT(2), EXECUTE_POLICY(3), REQUEST_FILE(4), MOVE_FILE(5), REGISTRATION_RESPONSE(6);
+	EXECUTE_TASK(1), EXECUTE_SCRIPT(2), EXECUTE_POLICY(3), REQUEST_FILE(4), MOVE_FILE(5), REGISTRATION_RESPONSE(6), INSTALL_PLUGIN(7);
 
 	private int id;
 
