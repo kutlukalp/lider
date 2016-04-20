@@ -64,6 +64,7 @@
         <feature>wrapper</feature>
         <feature>eventadmin</feature>
         <feature>lider-deps-ldap</feature>
+        <feature>obr</feature>
        	<bundle start-level="50">mvn:org.codehaus.jackson/jackson-core-asl/1.9.13</bundle>
         <bundle start-level="50">mvn:org.codehaus.jackson/jackson-mapper-asl/1.9.13</bundle>
         <bundle start-level="50">mvn:commons-lang/commons-lang/2.6</bundle>
