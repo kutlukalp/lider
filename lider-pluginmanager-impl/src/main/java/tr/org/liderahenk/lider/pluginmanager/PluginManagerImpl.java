@@ -75,10 +75,6 @@ public class PluginManagerImpl {
 						}
 						plugin = pluginDao.update(plugin);
 					} else {
-						// If not, create new plugin record
-						if (entityFactory == null) {
-							logger.error("Entity fucktory null");
-						}
 						plugin = entityFactory.createPlugin(pluginInfo);
 						plugin = pluginDao.save(plugin);
 					}

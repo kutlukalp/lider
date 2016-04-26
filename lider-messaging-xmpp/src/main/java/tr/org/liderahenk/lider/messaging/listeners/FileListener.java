@@ -28,8 +28,8 @@ import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.constants.LiderConstants;
 
 /**
- * Listen to incoming file transfers. Accept file transfer only if the sender is
- * an agent.
+ * Listens to incoming file transfers. Accept file transfer only if the sender
+ * is an agent.
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
@@ -41,8 +41,7 @@ public class FileListener implements BytestreamListener {
 	private IConfigurationService configurationService;
 	private EventAdmin eventAdmin;
 
-	public FileListener(IConfigurationService configurationService,
-			EventAdmin eventAdmin) {
+	public FileListener(IConfigurationService configurationService, EventAdmin eventAdmin) {
 		this.configurationService = configurationService;
 		this.eventAdmin = eventAdmin;
 	}
@@ -79,7 +78,7 @@ public class FileListener implements BytestreamListener {
 				int dataSize = 128;
 				byte[] receivedData = new byte[dataSize];
 				int read = 0;
-				int i=0;
+				int i = 0;
 				while ((read = inputStream.read(receivedData)) != -1) {
 					outputStream.write(receivedData, 0, read);
 					int x = 0;
@@ -91,15 +90,15 @@ public class FileListener implements BytestreamListener {
 						Thread.sleep(10);
 					}
 					i++;
-					logger.error(i+" :READ:"+read);
-					if (i%100==0) {
+					logger.error(i + " :READ:" + read);
+					if (i % 100 == 0) {
 						outputStream.flush();
 					}
 				}
 				outputStream.flush();
 				logger.error("---------->FILE OK");
 				outputStream.close();
-				
+
 				String digest = getMD5Checksum(path);
 				logger.error("------>MD5SUM:" + digest);
 				// Rename file to 'digest'
@@ -143,37 +142,36 @@ public class FileListener implements BytestreamListener {
 			}
 		}
 	}
-	
+
 	public static byte[] createChecksum(String filename) throws Exception {
-	       InputStream fis =  new FileInputStream(filename);
+		InputStream fis = new FileInputStream(filename);
 
-	       byte[] buffer = new byte[1024];
-	       MessageDigest complete = MessageDigest.getInstance("MD5");
-	       int numRead;
+		byte[] buffer = new byte[1024];
+		MessageDigest complete = MessageDigest.getInstance("MD5");
+		int numRead;
 
-	       do {
-	           numRead = fis.read(buffer);
-	           if (numRead > 0) {
-	               complete.update(buffer, 0, numRead);
-	           }
-	       } while (numRead != -1);
+		do {
+			numRead = fis.read(buffer);
+			if (numRead > 0) {
+				complete.update(buffer, 0, numRead);
+			}
+		} while (numRead != -1);
 
-	       fis.close();
-	       return complete.digest();
-	   }
+		fis.close();
+		return complete.digest();
+	}
 
-	   // see this How-to for a faster way to convert
-	   // a byte array to a HEX string
-	   public static String getMD5Checksum(String filename) throws Exception {
-	       byte[] b = createChecksum(filename);
-	       String result = "";
+	// see this How-to for a faster way to convert
+	// a byte array to a HEX string
+	public static String getMD5Checksum(String filename) throws Exception {
+		byte[] b = createChecksum(filename);
+		String result = "";
 
-	       for (int i=0; i < b.length; i++) {
-	           result += Integer.toString( ( b[i] & 0xff ) + 0x100, 16).substring( 1 );
-	       }
-	       return result;
-	   }
-
+		for (int i = 0; i < b.length; i++) {
+			result += Integer.toString((b[i] & 0xff) + 0x100, 16).substring(1);
+		}
+		return result;
+	}
 
 	private String getJid(String fullJid) {
 		return fullJid.split("@")[0];
@@ -230,8 +228,7 @@ public class FileListener implements BytestreamListener {
 		Dictionary<String, String> dict = new Hashtable<String, String>();
 		dict.put("filepath", path);
 		dict.put("from", from);
-		eventAdmin.postEvent(new Event(LiderConstants.EVENTS.FILE_RECEIVED,
-				dict));
+		eventAdmin.postEvent(new Event(LiderConstants.EVENTS.FILE_RECEIVED, dict));
 	}
 
 }

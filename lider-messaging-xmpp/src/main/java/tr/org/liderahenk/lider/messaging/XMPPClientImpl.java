@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -13,29 +12,18 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
-import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.StanzaListener;
-import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.XMPPException.XMPPErrorException;
-import org.jivesoftware.smack.chat.Chat;
-import org.jivesoftware.smack.chat.ChatManager;
-import org.jivesoftware.smack.chat.ChatManagerListener;
-import org.jivesoftware.smack.chat.ChatMessageListener;
 import org.jivesoftware.smack.filter.StanzaFilter;
-import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.Presence.Type;
 import org.jivesoftware.smack.packet.Stanza;
-import org.jivesoftware.smack.packet.XMPPError;
 import org.jivesoftware.smack.roster.Roster;
-import org.jivesoftware.smack.roster.RosterEntry;
-import org.jivesoftware.smack.roster.RosterListener;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smackx.bytestreams.socks5.Socks5BytestreamManager;
@@ -43,7 +31,6 @@ import org.jivesoftware.smackx.bytestreams.socks5.Socks5BytestreamSession;
 import org.jivesoftware.smackx.iqregister.AccountManager;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
-import org.jivesoftware.smackx.ping.PingFailedListener;
 import org.jivesoftware.smackx.ping.PingManager;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptManager.AutoReceiptMode;
@@ -65,6 +52,9 @@ import tr.org.liderahenk.lider.core.api.messaging.subscribers.IRegistrationSubsc
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.ITaskStatusSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IUserSessionSubscriber;
 import tr.org.liderahenk.lider.messaging.listeners.FileListener;
+import tr.org.liderahenk.lider.messaging.listeners.OnlineRosterListener;
+import tr.org.liderahenk.lider.messaging.listeners.PacketListener;
+import tr.org.liderahenk.lider.messaging.listeners.XMPPConnectionListener;
 import tr.org.liderahenk.lider.messaging.messages.GetPoliciesMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.PolicyStatusMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.RegistrationMessageImpl;
@@ -94,9 +84,7 @@ public class XMPPClientImpl {
 	private String host; // Host name / Server name
 	private Integer port; // Default 5222
 	private int maxRetryConnectionCount;
-	private int maxPingTimeoutCount;
 	private int retryCount = 0;
-	private int pingTimeoutCount = 0;
 	private int packetReplyTimeout; // milliseconds
 	private int pingTimeout; // milliseconds
 
@@ -104,42 +92,39 @@ public class XMPPClientImpl {
 	 * Connection & packet listeners/filters
 	 */
 	private XMPPConnectionListener connectionListener;
-	private ChatManagerListenerImpl chatManagerListener;
-	private XMPPPingFailedListener pingFailedListener;
-	private RosterListenerImpl rosterListener;
-	private AllPacketListener packetListener;
-	private IQPacketListener iqListener;
+	private OnlineRosterListener onlineRosterListener;
+	private PacketListener packetListener;
+	private FileListener fileListener;
+	
 	private TaskStatusListener taskStatusListener;
 	private PolicyStatusListener policyStatusListener;
 	private RegistrationListener registrationListener;
 	private UserSessionListener userSessionListener;
 	private PolicyListener policyListener;
-	private FileListener fileListener;
 
 	/**
 	 * Packet subscribers
 	 */
 	private List<ITaskStatusSubscriber> taskStatusSubscribers;
 	private List<IPolicyStatusSubscriber> policyStatusSubscribers;
-	private List<IPresenceSubscriber> presenceSubscribers;
 	private List<IRegistrationSubscriber> registrationSubscribers;
 	private List<IUserSessionSubscriber> userSessionSubscribers;
+	private List<IPresenceSubscriber> presenceSubscribers;
 	private IPolicySubscriber policySubscriber;
 
-	private List<String> onlineUsers = new ArrayList<String>();
 	private XMPPTCPConnection connection;
 	private XMPPTCPConnectionConfiguration config;
 	private MultiUserChatManager mucManager;
 
-	private Pattern taskStatusPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"TASK_STATUS\\\".*",
+	private static final Pattern taskStatusPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"TASK_STATUS\\\".*",
 			Pattern.CASE_INSENSITIVE);
-	private Pattern policyStatusPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"POLICY_STATUS\\\".*",
+	private static final Pattern policyStatusPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"POLICY_STATUS\\\".*",
 			Pattern.CASE_INSENSITIVE);
-	private Pattern registerPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"(REGISTER|UNREGISTER)\\\".*",
+	private static final Pattern registerPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"(REGISTER|UNREGISTER)\\\".*",
 			Pattern.CASE_INSENSITIVE);
-	private Pattern userSessionPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"LOG(IN|OUT)\\\".*",
+	private static final Pattern userSessionPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"LOG(IN|OUT)\\\".*",
 			Pattern.CASE_INSENSITIVE);
-	private Pattern policyPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"GET_POLICIES\\\".*",
+	private static final Pattern policyPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"GET_POLICIES\\\".*",
 			Pattern.CASE_INSENSITIVE);
 
 	private IConfigurationService configurationService;
@@ -153,7 +138,6 @@ public class XMPPClientImpl {
 		login();
 		setServerSettings();
 		addListeners();
-		getInitialOnlineUsers();
 		logger.info("XMPP service initialized");
 	}
 
@@ -167,7 +151,6 @@ public class XMPPClientImpl {
 		this.host = configurationService.getXmppHost();
 		this.port = configurationService.getXmppPort();
 		this.maxRetryConnectionCount = configurationService.getXmppMaxRetryConnectionCount();
-		this.maxPingTimeoutCount = configurationService.getXmppPingTimeout();
 		this.packetReplyTimeout = configurationService.getXmppPacketReplayTimeout();
 		this.pingTimeout = configurationService.getXmppPingTimeout();
 		logger.debug(this.toString());
@@ -246,12 +229,10 @@ public class XMPPClientImpl {
 	 * Hook packet and connection listeners
 	 */
 	private void addListeners() {
-		connectionListener = new XMPPConnectionListener();
-		chatManagerListener = new ChatManagerListenerImpl();
-		pingFailedListener = new XMPPPingFailedListener();
-		rosterListener = new RosterListenerImpl();
-		packetListener = new AllPacketListener();
-		iqListener = new IQPacketListener();
+		connectionListener = new XMPPConnectionListener(configurationService);
+		onlineRosterListener = new OnlineRosterListener(connection);
+		onlineRosterListener.setPresenceSubscribers(presenceSubscribers);
+		packetListener = new PacketListener();
 		taskStatusListener = new TaskStatusListener();
 		policyStatusListener = new PolicyStatusListener();
 		registrationListener = new RegistrationListener();
@@ -261,16 +242,15 @@ public class XMPPClientImpl {
 		fileListener = new FileListener(configurationService, eventAdmin);
 		Socks5BytestreamManager bytestreamManager = Socks5BytestreamManager.getBytestreamManager(connection);
 		bytestreamManager.addIncomingBytestreamListener(fileListener);
-		PingManager.getInstanceFor(connection).registerPingFailedListener(pingFailedListener);
-		ChatManager.getInstanceFor(connection).addChatListener(chatManagerListener);
+		PingManager.getInstanceFor(connection).registerPingFailedListener(connectionListener);
 		connection.addAsyncStanzaListener(packetListener, packetListener);
 		connection.addAsyncStanzaListener(registrationListener, registrationListener);
 		connection.addAsyncStanzaListener(policyListener, policyListener);
 		connection.addAsyncStanzaListener(userSessionListener, userSessionListener);
 		connection.addAsyncStanzaListener(taskStatusListener, taskStatusListener);
 		connection.addAsyncStanzaListener(policyStatusListener, policyStatusListener);
-		connection.addAsyncStanzaListener(iqListener, iqListener);
-		Roster.getInstanceFor(connection).addRosterListener(rosterListener);
+		connection.addAsyncStanzaListener(connectionListener, connectionListener);
+		Roster.getInstanceFor(connection).addRosterListener(onlineRosterListener);
 		logger.debug("Successfully added listeners for connection: {}", connection.toString());
 	}
 
@@ -294,37 +274,6 @@ public class XMPPClientImpl {
 		tempConnection.disconnect();
 	}
 
-	/**
-	 * Get online users from roster and store in onlineUsers
-	 */
-	private void getInitialOnlineUsers() {
-		Roster roster = Roster.getInstanceFor(connection);
-		Collection<RosterEntry> entries = roster.getEntries();
-		if (entries != null && !entries.isEmpty()) {
-			for (RosterEntry entry : entries) {
-				String jid = entry.getUser();
-				Presence presence = roster.getPresence(jid);
-				if (presence != null) {
-					XMPPError xmppError = presence.getError();
-					if (xmppError != null) {
-						logger.error(xmppError.getDescriptiveText());
-					} else {
-						try {
-							if (presence.getType() == Type.available) {
-								onlineUsers.add(jid.substring(0, jid.indexOf('@')));
-							} else if (presence.getType() == Type.unavailable) {
-								onlineUsers.remove(jid.substring(0, jid.indexOf('@')));
-							}
-						} catch (Exception e) {
-							logger.error(e.getMessage(), e);
-						}
-					}
-				}
-			}
-		}
-		logger.debug("Online users: {}", onlineUsers.toString());
-	}
-
 	public void destroy() {
 		this.disconnect();
 	}
@@ -335,15 +284,14 @@ public class XMPPClientImpl {
 	public void disconnect() {
 		if (null != connection && connection.isConnected()) {
 			// Remove listeners
-			ChatManager.getInstanceFor(connection).removeChatListener(chatManagerListener);
-			Roster.getInstanceFor(connection).removeRosterListener(rosterListener);
+			Roster.getInstanceFor(connection).removeRosterListener(onlineRosterListener);
 			connection.removeAsyncStanzaListener(packetListener);
 			connection.removeAsyncStanzaListener(taskStatusListener);
 			connection.removeAsyncStanzaListener(policyStatusListener);
 			connection.removeAsyncStanzaListener(registrationListener);
 			connection.removeAsyncStanzaListener(userSessionListener);
 			connection.removeAsyncStanzaListener(policyListener);
-			connection.removeAsyncStanzaListener(iqListener);
+			connection.removeAsyncStanzaListener(connectionListener);
 			connection.removeConnectionListener(connectionListener);
 			Socks5BytestreamManager bytestreamManager = Socks5BytestreamManager.getBytestreamManager(connection);
 			bytestreamManager.removeIncomingBytestreamListener(fileListener);
@@ -543,195 +491,6 @@ public class XMPPClientImpl {
 			jidFinal = jid + "@" + serviceName;
 		}
 		return jidFinal;
-	}
-
-	/**
-	 * Listens to connection status changes.
-	 *
-	 */
-	class XMPPConnectionListener implements ConnectionListener {
-
-		@Override
-		public void connectionClosed() {
-			logger.info("XMPP connection was closed.");
-		}
-
-		@Override
-		public void connectionClosedOnError(Exception e) {
-			logger.error("XMPP connection closed with an error", e.getMessage());
-		}
-
-		@Override
-		public void reconnectingIn(int seconds) {
-			logger.info("Reconnecting in {} seconds.", seconds);
-		}
-
-		@Override
-		public void reconnectionFailed(Exception e) {
-			logger.error("Failed to reconnect to the XMPP server.", e.getMessage());
-		}
-
-		@Override
-		public void reconnectionSuccessful() {
-			pingTimeoutCount = 0;
-			logger.info("Successfully reconnected to the XMPP server.");
-		}
-
-		@Override
-		public void connected(XMPPConnection connection) {
-			logger.info("User: {} connected to XMPP Server {} via port {}",
-					new Object[] { connection.getUser(), connection.getHost(), connection.getPort() });
-		}
-
-		@Override
-		public void authenticated(XMPPConnection connection, boolean resumed) {
-			logger.info("Connection successfully authenticated.");
-			if (resumed) {
-				logger.info("A previous XMPP session's stream was resumed");
-			}
-		}
-	}
-
-	class XMPPPingFailedListener implements PingFailedListener {
-		@Override
-		public void pingFailed() {
-			pingTimeoutCount++;
-			logger.warn("XMPP ping failed: {}", pingTimeoutCount);
-			if (pingTimeoutCount > maxPingTimeoutCount) {
-				logger.error(
-						"Too many consecutive pings failed! This doesn't necessarily mean that the connection is lost.");
-				pingTimeoutCount = 0;
-			}
-		}
-	}
-
-	class ChatManagerListenerImpl implements ChatManagerListener {
-		@Override
-		public void chatCreated(Chat chat, boolean createdLocally) {
-			if (createdLocally) {
-				logger.info("The chat was created by the local user.");
-			}
-			chat.addMessageListener(new ChatMessageListener() {
-				@Override
-				public void processMessage(Chat chat, Message message) {
-					// All messages from agents are type normal
-					if (!Message.Type.normal.equals(message.getType())) {
-						logger.debug("Not a chat message type, will not notify subscribers:  {}", message.getBody());
-						return;
-					}
-
-					String from = message.getFrom();
-					String body = message.getBody();
-					logger.debug("from: {}", from);
-					logger.debug("message body : {}", message.getBody());
-
-					if (null != body && !body.isEmpty()) {
-						// TODO looks like we do not need this listener at the
-						// moment, plugins should listen to messages via
-						// notification or task update listeners.
-					}
-				}
-			});
-		}
-	}
-
-	/**
-	 * Listens to roster presence changes.
-	 *
-	 */
-	class RosterListenerImpl implements RosterListener {
-
-		@Override
-		public void entriesAdded(Collection<String> addresses) {
-		}
-
-		@Override
-		public void entriesUpdated(Collection<String> addresses) {
-		}
-
-		@Override
-		public void entriesDeleted(Collection<String> addresses) {
-		}
-
-		@Override
-		public void presenceChanged(Presence presence) {
-			Type presenceType = presence.getType();
-			String jid = presence.getFrom();
-			logger.info("Presence of the user {} changed to {}.", jid, presenceType);
-
-			if (presenceType.equals(Presence.Type.available)) {
-				logger.info("User {} is online.", jid);
-				for (IPresenceSubscriber subscriber : presenceSubscribers) {
-					subscriber.onAgentOnline(jid);
-				}
-				try {
-					onlineUsers.add(jid.split("@")[0]);
-				} catch (Exception e) {
-					logger.error(e.getMessage(), e);
-				}
-			} else if (presenceType.equals(Presence.Type.unavailable)) {
-				logger.info("User {} is offline.", jid);
-				for (IPresenceSubscriber subscriber : presenceSubscribers) {
-					subscriber.onAgentOffline(jid);
-				}
-				try {
-					onlineUsers.remove(jid.split("@")[0]);
-				} catch (Exception e) {
-					logger.error(e.getMessage(), e);
-				}
-			}
-
-			Roster roster = Roster.getInstanceFor(connection);
-			logger.warn("Actual roster presence for {} => {}", roster.getPresence(jid).getFrom(),
-					roster.getPresence(jid).toString());
-		}
-	}
-
-	/**
-	 * Listens to all packets for debug purposes.
-	 * 
-	 */
-	class AllPacketListener implements StanzaListener, StanzaFilter {
-		@Override
-		public void processPacket(Stanza packet) throws NotConnectedException {
-			try {
-				logger.debug("Packet received: {}", packet.toXML());
-			} catch (Exception e) {
-				logger.error(e.getMessage(), e);
-			}
-		}
-
-		@Override
-		public boolean accept(Stanza stanza) {
-			return true;
-		}
-	}
-
-	/**
-	 * Listens to all IQ packets for debug purposes.
-	 *
-	 */
-	class IQPacketListener implements StanzaListener, StanzaFilter {
-
-		@Override
-		public void processPacket(Stanza packet) throws NotConnectedException {
-			try {
-				if (packet instanceof IQ) {
-					IQ iq = (IQ) packet;
-					if (iq.getType().equals(IQ.Type.result)) {
-						pingTimeoutCount = 0;
-					}
-					logger.debug("IQ packet received: {}.", iq.toXML());
-				}
-			} catch (Exception e) {
-				logger.error(e.getMessage(), e);
-			}
-		}
-
-		@Override
-		public boolean accept(Stanza stanza) {
-			return stanza instanceof IQ;
-		}
 	}
 
 	/**
@@ -1073,6 +832,7 @@ public class XMPPClientImpl {
 	 */
 	public void setPresenceSubscribers(List<IPresenceSubscriber> presenceSubscribers) {
 		this.presenceSubscribers = presenceSubscribers;
+		if (onlineRosterListener != null) onlineRosterListener.setPresenceSubscribers(presenceSubscribers) ;
 	}
 
 	/**
@@ -1120,7 +880,7 @@ public class XMPPClientImpl {
 	 * @return
 	 */
 	public List<String> getOnlineUsers() {
-		return onlineUsers;
+		return onlineRosterListener.getOnlineUsers();
 	}
 
 	/**
@@ -1137,15 +897,6 @@ public class XMPPClientImpl {
 	 */
 	public void setEventAdmin(EventAdmin eventAdmin) {
 		this.eventAdmin = eventAdmin;
-	}
-
-	@Override
-	public String toString() {
-		return "XMPPClientImpl [username=" + username + ", password=" + password + ", serviceName=" + serviceName
-				+ ", host=" + host + ", port=" + port + ", maxRetryConnectionCount=" + maxRetryConnectionCount
-				+ ", retryCount=" + retryCount + ", maxPingTimeoutCount=" + maxPingTimeoutCount + ", pingTimeoutCount="
-				+ pingTimeoutCount + ", packetReplyTimeout=" + packetReplyTimeout + ", pingTimeout=" + pingTimeout
-				+ "]";
 	}
 
 }
