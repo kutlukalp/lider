@@ -53,6 +53,7 @@
 			<value>
 				/lider/policy/** = myAuthcAuth
 				/lider/profile/** = myAuthcAuth
+				/lider/plugin/** = myAuthcAuth
 				/lider/task/** = myAuthcAuth
 				/lider/command/** = myAuthcAuth
 				/** = myAuthcAuth
@@ -65,6 +66,9 @@
 
 	<osgi:reference id="profileProcessor"
 		interface="tr.org.liderahenk.lider.core.api.rest.processors.IProfileRequestProcessor" />
+
+	<osgi:reference id="pluginProcessor"
+		interface="tr.org.liderahenk.lider.core.api.rest.processors.IPluginRequestProcessor" />
 
 	<osgi:reference id="taskProcessor"
 		interface="tr.org.liderahenk.lider.core.api.rest.processors.ITaskRequestProcessor" />
