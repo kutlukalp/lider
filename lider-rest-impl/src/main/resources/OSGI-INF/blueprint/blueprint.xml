@@ -31,6 +31,14 @@
 		<property name="entityFactory" ref="entityFactory" />
 	</bean>
 
+	<service ref="pluginRequestProcessor"
+		interface="tr.org.liderahenk.lider.core.api.rest.processors.IPluginRequestProcessor" />
+	<bean id="pluginRequestProcessor"
+		class="tr.org.liderahenk.lider.rest.PluginRequestProcessorImpl">
+		<property name="pluginDao" ref="pluginDao" />
+		<property name="responseFactory" ref="responseFactory" />
+	</bean>
+
 	<service ref="taskRequestProcessor"
 		interface="tr.org.liderahenk.lider.core.api.rest.processors.ITaskRequestProcessor" />
 	<bean id="taskRequestProcessor" class="tr.org.liderahenk.lider.rest.TaskRequestProcessorImpl">
