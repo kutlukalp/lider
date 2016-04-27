@@ -1,7 +1,8 @@
 package tr.org.liderahenk.lider.persistence.entities;
 
-import java.util.Arrays;
+import java.io.IOException;
 import java.util.Date;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,11 +15,18 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 
+@JsonIgnoreProperties({ "parameterMapBlob" })
 @Entity
 @Table(name = "C_TASK")
 public class TaskImpl implements ITask {
@@ -39,7 +47,10 @@ public class TaskImpl implements ITask {
 
 	@Lob
 	@Column(name = "PARAMETER_MAP")
-	private byte[] parameterMap;
+	private byte[] parameterMapBlob;
+
+	@Transient
+	private Map<String, Object> parameterMap;
 
 	@Column(name = "DELETED")
 	private boolean deleted = false;
@@ -58,12 +69,12 @@ public class TaskImpl implements ITask {
 	public TaskImpl() {
 	}
 
-	public TaskImpl(Long id, PluginImpl plugin, String commandClsId, byte[] parameterMap, boolean deleted,
+	public TaskImpl(Long id, PluginImpl plugin, String commandClsId, Map<String, Object> parameterMap, boolean deleted,
 			String cronExpression, Date createDate, Date modifyDate) {
 		this.id = id;
 		this.plugin = plugin;
 		this.commandClsId = commandClsId;
-		this.parameterMap = parameterMap;
+		setParameterMap(parameterMap);
 		this.deleted = deleted;
 		this.cronExpression = cronExpression;
 		this.createDate = createDate;
@@ -73,7 +84,7 @@ public class TaskImpl implements ITask {
 	public TaskImpl(ITask task) {
 		this.id = task.getId();
 		this.commandClsId = task.getCommandClsId();
-		this.parameterMap = task.getParameterMap();
+		setParameterMap(task.getParameterMap());
 		this.deleted = task.isDeleted();
 		this.cronExpression = task.getCronExpression();
 		this.createDate = task.getCreateDate();
@@ -111,12 +122,65 @@ public class TaskImpl implements ITask {
 	}
 
 	@Override
-	public byte[] getParameterMap() {
+	public byte[] getParameterMapBlob() {
+		if (parameterMapBlob == null && parameterMap != null) {
+			try {
+				this.parameterMapBlob = new ObjectMapper().writeValueAsBytes(parameterMap);
+			} catch (JsonGenerationException e) {
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return parameterMapBlob;
+	}
+
+	public void setParameterMapBlob(byte[] parameterMapBlob) {
+		this.parameterMapBlob = parameterMapBlob;
+		try {
+			this.parameterMap = new ObjectMapper().readValue(parameterMapBlob,
+					new TypeReference<Map<String, Object>>() {
+					});
+		} catch (JsonParseException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public Map<String, Object> getParameterMap() {
+		if (parameterMap == null && parameterMapBlob != null) {
+			try {
+				this.parameterMap = new ObjectMapper().readValue(parameterMapBlob,
+						new TypeReference<Map<String, Object>>() {
+						});
+			} catch (JsonParseException e) {
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		return parameterMap;
 	}
 
-	public void setParameterMap(byte[] parameterMap) {
+	public void setParameterMap(Map<String, Object> parameterMap) {
 		this.parameterMap = parameterMap;
+		try {
+			this.parameterMapBlob = new ObjectMapper().writeValueAsBytes(parameterMap);
+		} catch (JsonGenerationException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -169,7 +233,7 @@ public class TaskImpl implements ITask {
 	@Override
 	public String toString() {
 		return "TaskImpl [id=" + id + ", plugin=" + plugin + ", commandClsId=" + commandClsId + ", parameterMap="
-				+ Arrays.toString(parameterMap) + "]";
+				+ parameterMap + "]";
 	}
 
 }

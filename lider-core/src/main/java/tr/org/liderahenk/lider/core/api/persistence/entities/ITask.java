@@ -1,6 +1,7 @@
 package tr.org.liderahenk.lider.core.api.persistence.entities;
 
 import java.util.Date;
+import java.util.Map;
 
 /**
  * ITask entity class is responsible for storing task records.
@@ -21,12 +22,6 @@ public interface ITask extends IEntity {
 	 * @return Command ID
 	 */
 	String getCommandClsId();
-
-	/**
-	 * 
-	 * @return parameter map sent from Lider Console
-	 */
-	byte[] getParameterMap();
 
 	/**
 	 * 
@@ -51,5 +46,9 @@ public interface ITask extends IEntity {
 	 * @return record modification date
 	 */
 	Date getModifyDate();
+
+	byte[] getParameterMapBlob();
+
+	Map<String, Object> getParameterMap();
 
 }
