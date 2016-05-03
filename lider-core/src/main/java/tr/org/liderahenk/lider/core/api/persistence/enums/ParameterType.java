@@ -1,17 +1,11 @@
 package tr.org.liderahenk.lider.core.api.persistence.enums;
 
-/**
- * CRUD types used in database operations.
- * 
- * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
- *
- */
-public enum CrudType {
-	CREATE(1), READ(2), UPDATE(3), DELETE(4), LOGIN(5);
+public enum ParameterType {
+	STRING(1), DATE(2), NUMBER(3);
 
 	private int id;
 
-	private CrudType(int id) {
+	private ParameterType(int id) {
 		this.id = id;
 	}
 
@@ -29,13 +23,13 @@ public enum CrudType {
 	 *      -jpa.html
 	 * 
 	 */
-	public static CrudType getType(Integer id) {
+	public static ParameterType getType(Integer id) {
 		if (id == null) {
 			return null;
 		}
-		for (CrudType crudType : CrudType.values()) {
-			if (id.equals(crudType.getId())) {
-				return crudType;
+		for (ParameterType paramType : ParameterType.values()) {
+			if (id.equals(paramType.getId())) {
+				return paramType;
 			}
 		}
 		throw new IllegalArgumentException("No matching type for id: " + id);
