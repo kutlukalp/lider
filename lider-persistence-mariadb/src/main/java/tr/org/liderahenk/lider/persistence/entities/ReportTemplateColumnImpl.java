@@ -6,7 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import tr.org.liderahenk.lider.core.api.reporting.IReportTemplateColumn;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateColumn;
 
 /**
  * This class represents a report column defined in a report template.

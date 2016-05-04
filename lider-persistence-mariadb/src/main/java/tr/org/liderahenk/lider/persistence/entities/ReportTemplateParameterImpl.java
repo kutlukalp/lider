@@ -6,8 +6,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateParameter;
 import tr.org.liderahenk.lider.core.api.persistence.enums.ParameterType;
-import tr.org.liderahenk.lider.core.api.reporting.IReportTemplateParameter;
 
 /**
  * This class represents a report parameter defined in a report template.

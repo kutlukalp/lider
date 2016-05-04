@@ -12,7 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import tr.org.liderahenk.lider.core.api.reporting.IReportTemplate;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate;
 
 /**
  * Entity class for IReportTemplate objects.
