@@ -1,17 +1,18 @@
 package tr.org.liderahenk.lider.messaging.subscribers;
 
-import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tr.org.liderahenk.lider.core.api.messaging.enums.AgentMessageType;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IUserSessionMessage;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IUserSessionSubscriber;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IAgentDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IAgent;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IUserSession;
 import tr.org.liderahenk.lider.core.api.persistence.enums.SessionEvent;
+import tr.org.liderahenk.lider.core.api.persistence.factories.IEntityFactory;
 
 /**
  * <p>
@@ -29,6 +30,7 @@ public class UserSessionSubscriberImpl implements IUserSessionSubscriber {
 	private static Logger logger = LoggerFactory.getLogger(UserSessionSubscriberImpl.class);
 
 	private IAgentDao agentDao;
+	private IEntityFactory entityFactory;
 
 	@Override
 	public void messageReceived(IUserSessionMessage message) throws Exception {
@@ -40,60 +42,46 @@ public class UserSessionSubscriberImpl implements IUserSessionSubscriber {
 		IAgent agent = agentList.get(0);
 
 		// Add new user session info
-		IUserSession userSession = createUserSession(message);
+		IUserSession userSession = entityFactory.createUserSession(message.getUsername(),
+				getSessionEvent(message.getType()));
 		agent.addUserSession(userSession);
 
 		// Merge records
 		agentDao.update(agent);
 
-		logger.info("Added new user session detail to agent: {}", agent);
+		logger.info("Added user session detail to agent: {}", agent);
 	}
 
-	private IUserSession createUserSession(final IUserSessionMessage message) {
-		IUserSession userSession = new IUserSession() {
-
-			private static final long serialVersionUID = -5042342747639817160L;
-
-			@Override
-			public Long getId() {
-				return null;
-			}
-
-			@Override
-			public IAgent getAgent() {
-				return null;
-			}
-
-			@Override
-			public String getUsername() {
-				return message.getUsername();
-			}
-
-			@Override
-			public SessionEvent getSessionEvent() {
-				// Session event must be LOGIN or LOGOUT
-				switch (message.getType()) {
-				case LOGIN:
-					return SessionEvent.LOGIN;
-				case LOGOUT:
-					return SessionEvent.LOGOUT;
-				default:
-					return null;
-				}
-			}
-
-			@Override
-			public Date getCreateDate() {
-				return message.getTimestamp();
-			}
-
-		};
-
-		return userSession;
+	/**
+	 * 
+	 * @param type
+	 * @return
+	 */
+	private SessionEvent getSessionEvent(AgentMessageType type) {
+		switch (type) {
+		case LOGIN:
+			return SessionEvent.LOGIN;
+		case LOGOUT:
+			return SessionEvent.LOGOUT;
+		default:
+			return null;
+		}
 	}
 
+	/**
+	 * 
+	 * @param agentDao
+	 */
 	public void setAgentDao(IAgentDao agentDao) {
 		this.agentDao = agentDao;
+	}
+
+	/**
+	 * 
+	 * @param entityFactory
+	 */
+	public void setEntityFactory(IEntityFactory entityFactory) {
+		this.entityFactory = entityFactory;
 	}
 
 }

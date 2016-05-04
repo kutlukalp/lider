@@ -10,7 +10,9 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IUserSession;
 import tr.org.liderahenk.lider.core.api.persistence.enums.CrudType;
+import tr.org.liderahenk.lider.core.api.persistence.enums.SessionEvent;
 import tr.org.liderahenk.lider.core.api.plugin.IPluginInfo;
 import tr.org.liderahenk.lider.core.api.rest.requests.ICommandRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyRequest;
@@ -162,5 +164,13 @@ public interface IEntityFactory {
 	 * @throws Exception
 	 */
 	IPlugin createPlugin(IPlugin plugin, IPluginInfo info) throws Exception;
+
+	/**
+	 * 
+	 * @param username
+	 * @param sessionEvent
+	 * @return
+	 */
+	IUserSession createUserSession(String username, SessionEvent sessionEvent);
 
 }

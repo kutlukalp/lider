@@ -14,7 +14,9 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IUserSession;
 import tr.org.liderahenk.lider.core.api.persistence.enums.CrudType;
+import tr.org.liderahenk.lider.core.api.persistence.enums.SessionEvent;
 import tr.org.liderahenk.lider.core.api.persistence.factories.IEntityFactory;
 import tr.org.liderahenk.lider.core.api.plugin.IPluginInfo;
 import tr.org.liderahenk.lider.core.api.rest.requests.ICommandRequest;
@@ -30,6 +32,7 @@ import tr.org.liderahenk.lider.persistence.entities.PluginImpl;
 import tr.org.liderahenk.lider.persistence.entities.PolicyImpl;
 import tr.org.liderahenk.lider.persistence.entities.ProfileImpl;
 import tr.org.liderahenk.lider.persistence.entities.TaskImpl;
+import tr.org.liderahenk.lider.persistence.entities.UserSessionImpl;
 
 /**
  * Default implementation for {@link IEntityFactory}.
@@ -130,6 +133,11 @@ public class EntityFactoryImpl implements IEntityFactory {
 		return new PluginImpl(plugin.getId(), plugin.getName(), plugin.getVersion(), info.getDescription(), true, false,
 				info.isMachineOriented(), info.isUserOriented(), info.isPolicyPlugin(), info.isxBased(),
 				info.getDistro().getProtocol(), info.getDistro().getParams(), null, plugin.getCreateDate(), new Date());
+	}
+
+	@Override
+	public IUserSession createUserSession(String username, SessionEvent sessionEvent) {
+		return new UserSessionImpl(null, null, username, sessionEvent, new Date());
 	}
 
 }
