@@ -2,14 +2,17 @@ package tr.org.liderahenk.lider.messaging;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.messaging.IMessageFactory;
+import tr.org.liderahenk.lider.core.api.messaging.enums.Protocol;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecutePoliciesMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteScriptMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteTaskMessage;
+import tr.org.liderahenk.lider.core.api.messaging.messages.IInstallPluginMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IPluginNotFoundMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IRequestFileMessage;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
@@ -17,6 +20,7 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 import tr.org.liderahenk.lider.messaging.messages.ExecutePoliciesMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.ExecuteScriptMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.ExecuteTaskMessageImpl;
+import tr.org.liderahenk.lider.messaging.messages.InstallPluginMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.PluginNotFoundMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.RequestFileMessageImpl;
 
@@ -63,6 +67,11 @@ public class MessageFactoryImpl implements IMessageFactory {
 	@Override
 	public IPluginNotFoundMessage createPluginNotFoundMessage(String recipient, String pluginName, String pluginVersion) {
 		return new PluginNotFoundMessageImpl(recipient, pluginName, pluginVersion, new Date());
+	}
+	
+	@Override
+	public IInstallPluginMessage createInstallPluginMessage(String recipient, String pluginName, String pluginVersion, Map<String, Object> parameterMap, Protocol protocol) {
+		return new InstallPluginMessageImpl(recipient, pluginName, pluginVersion, parameterMap, protocol, new Date());
 	}
 
 }

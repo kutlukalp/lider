@@ -1,10 +1,13 @@
 package tr.org.liderahenk.lider.core.api.messaging;
 
 import java.util.List;
+import java.util.Map;
 
+import tr.org.liderahenk.lider.core.api.messaging.enums.Protocol;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecutePoliciesMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteScriptMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteTaskMessage;
+import tr.org.liderahenk.lider.core.api.messaging.messages.IInstallPluginMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IPluginNotFoundMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IRequestFileMessage;
@@ -77,5 +80,18 @@ public interface IMessageFactory {
 	 * @return
 	 */
 	IPluginNotFoundMessage createPluginNotFoundMessage(String recipient, String pluginName, String pluginVersion);
+
+	/**
+	 * Create install plugin message for specified plugin name-version
+	 * 
+	 * @param recipient
+	 * @param pluginName
+	 * @param pluginVersion
+	 * @param parameterMap
+	 * @param protocol
+	 * @return
+	 */
+	IInstallPluginMessage createInstallPluginMessage(String recipient, String pluginName, String pluginVersion,
+			Map<String, Object> parameterMap, Protocol protocol);
 
 }

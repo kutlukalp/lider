@@ -34,6 +34,16 @@ public class InstallPluginMessageImpl implements IInstallPluginMessage {
 
 	private Date timestamp;
 
+	public InstallPluginMessageImpl(String recipient, String pluginName, String pluginVersion,
+			Map<String, Object> parameterMap, Protocol protocol, Date timestamp) {
+		this.recipient = recipient;
+		this.pluginName = pluginName;
+		this.pluginVersion = pluginVersion;
+		this.parameterMap = parameterMap;
+		this.protocol = protocol;
+		this.timestamp = timestamp;
+	}
+
 	@Override
 	public LiderMessageType getType() {
 		return type;
