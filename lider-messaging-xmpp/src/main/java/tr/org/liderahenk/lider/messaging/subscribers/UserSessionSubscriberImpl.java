@@ -24,9 +24,9 @@ import tr.org.liderahenk.lider.core.api.persistence.enums.SessionEvent;
  * @see tr.org.liderahenk.lider.core.api.messaging.IUserSessionMessage
  *
  */
-public class DefaultUserSessionSubscriberImpl implements IUserSessionSubscriber {
+public class UserSessionSubscriberImpl implements IUserSessionSubscriber {
 
-	private static Logger logger = LoggerFactory.getLogger(DefaultUserSessionSubscriberImpl.class);
+	private static Logger logger = LoggerFactory.getLogger(UserSessionSubscriberImpl.class);
 
 	private IAgentDao agentDao;
 
