@@ -48,10 +48,10 @@
 		<property name="context" ref="blueprintBundleContext" />
 	</bean>
 
-	<service ref="defaultUserSessionSubscriber"
+	<service ref="userSessionSubscriber"
 		interface="tr.org.liderahenk.lider.core.api.messaging.subscribers.IUserSessionSubscriber" />
-	<bean id="defaultUserSessionSubscriber"
-		class="tr.org.liderahenk.lider.messaging.subscribers.DefaultUserSessionSubscriberImpl">
+	<bean id="userSessionSubscriber"
+		class="tr.org.liderahenk.lider.messaging.subscribers.UserSessionSubscriberImpl">
 		<property name="agentDao" ref="agentDao" />
 	</bean>
 
