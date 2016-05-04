@@ -1,5 +1,8 @@
 package tr.org.liderahenk.lider.core.api.pluginmanager;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import tr.org.liderahenk.lider.core.api.messaging.enums.Protocol;
 
 /**
@@ -14,6 +17,17 @@ public abstract class PluginDistroSSH implements IPluginDistro {
 
 	public Protocol getProtocol() {
 		return Protocol.SSH;
+	}
+
+	public Map<String, Object> getParams() {
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("host", getHost());
+		params.put("username", getUsername());
+		params.put("password", getPassword());
+		params.put("path", getPath());
+		params.put("port", getPort());
+		params.put("publicKey", getPublicKey());
+		return params;
 	}
 
 	/**

@@ -55,9 +55,9 @@ public interface IPluginInfo {
 	/**
 	 * Indicates how this plugin can be distributed to agents.
 	 * 
-	 * @return info about plugin distro
 	 * @see tr.org.liderahenk.lider.core.api.pluginmanager.PluginDistroHTTP
 	 * @see tr.org.liderahenk.lider.core.api.pluginmanager.PluginDistroSSH
+	 * @return info about plugin distro
 	 */
 	IPluginDistro getDistro();
 

@@ -1,8 +1,10 @@
 package tr.org.liderahenk.lider.persistence.entities;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -10,15 +12,22 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 
+import tr.org.liderahenk.lider.core.api.messaging.enums.Protocol;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
 
@@ -29,7 +38,7 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
  * @see tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin
  *
  */
-@JsonIgnoreProperties({ "profiles" })
+@JsonIgnoreProperties({ "profiles", "distroParamsBlob" })
 @Entity
 @Table(name = "C_PLUGIN", uniqueConstraints = @UniqueConstraint(columnNames = { "PLUGIN_NAME", "PLUGIN_VERSION" }) )
 public class PluginImpl implements IPlugin {
@@ -68,6 +77,16 @@ public class PluginImpl implements IPlugin {
 	@Column(name = "X_BASED")
 	private boolean xBased;
 
+	@Column(name = "DISTRO_PROTOCOL", length = 1)
+	private Integer distroProtocol;
+
+	@Lob
+	@Column(name = "DISTRO_PARAMS")
+	private byte[] distroParamsBlob;
+
+	@Transient
+	private Map<String, Object> distroParams;
+
 	@OneToMany(mappedBy = "plugin", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = false)
 	private List<ProfileImpl> profiles = new ArrayList<ProfileImpl>(); // bidirectional
 
@@ -84,7 +103,8 @@ public class PluginImpl implements IPlugin {
 
 	public PluginImpl(Long id, String name, String version, String description, boolean active, boolean deleted,
 			boolean machineOriented, boolean userOriented, boolean policyPlugin, boolean xBased,
-			List<ProfileImpl> profiles, Date createDate, Date modifyDate) {
+			Protocol distroProtocol, Map<String, Object> distroParams, List<ProfileImpl> profiles, Date createDate,
+			Date modifyDate) {
 		this.id = id;
 		this.name = name;
 		this.version = version;
@@ -95,6 +115,8 @@ public class PluginImpl implements IPlugin {
 		this.userOriented = userOriented;
 		this.policyPlugin = policyPlugin;
 		this.xBased = xBased;
+		setDistroProtocol(distroProtocol);
+		setDistroParams(distroParams);
 		this.profiles = profiles;
 		this.createDate = createDate;
 		this.modifyDate = modifyDate;
@@ -111,6 +133,8 @@ public class PluginImpl implements IPlugin {
 		this.userOriented = plugin.isUserOriented();
 		this.policyPlugin = plugin.isPolicyPlugin();
 		this.xBased = plugin.isxBased();
+		setDistroProtocol(plugin.getDistroProtocol());
+		setDistroParams(plugin.getDistroParams());
 		this.createDate = plugin.getCreateDate();
 		this.modifyDate = plugin.getModifyDate();
 
@@ -223,6 +247,81 @@ public class PluginImpl implements IPlugin {
 	}
 
 	@Override
+	public Protocol getDistroProtocol() {
+		return Protocol.getType(distroProtocol);
+	}
+
+	public void setDistroProtocol(Protocol distroProtocol) {
+		if (distroProtocol == null) {
+			this.distroProtocol = null;
+		} else {
+			this.distroProtocol = distroProtocol.getId();
+		}
+	}
+
+	@Override
+	public byte[] getDistroParamsBlob() {
+		if (distroParamsBlob == null && distroParams != null) {
+			try {
+				this.distroParamsBlob = new ObjectMapper().writeValueAsBytes(distroParams);
+			} catch (JsonGenerationException e) {
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return distroParamsBlob;
+	}
+
+	public void setDistroParamsBlob(byte[] distroParamsBlob) {
+		this.distroParamsBlob = distroParamsBlob;
+		try {
+			this.distroParams = new ObjectMapper().readValue(distroParamsBlob,
+					new TypeReference<Map<String, Object>>() {
+					});
+		} catch (JsonParseException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public Map<String, Object> getDistroParams() {
+		if (distroParams == null && distroParamsBlob != null) {
+			try {
+				this.distroParams = new ObjectMapper().readValue(distroParamsBlob,
+						new TypeReference<Map<String, Object>>() {
+						});
+			} catch (JsonParseException e) {
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return distroParams;
+	}
+
+	public void setDistroParams(Map<String, Object> distroParams) {
+		this.distroParams = distroParams;
+		try {
+			this.distroParamsBlob = new ObjectMapper().writeValueAsBytes(distroParams);
+		} catch (JsonGenerationException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
 	public void addProfile(IProfile profile) {
 		if (profiles == null) {
 			profiles = new ArrayList<ProfileImpl>();
@@ -256,7 +355,7 @@ public class PluginImpl implements IPlugin {
 	public void setModifyDate(Date modifyDate) {
 		this.modifyDate = modifyDate;
 	}
-	
+
 	@Override
 	public String toJson() {
 		ObjectMapper mapper = new ObjectMapper();

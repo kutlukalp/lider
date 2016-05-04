@@ -121,15 +121,15 @@ public class EntityFactoryImpl implements IEntityFactory {
 	@Override
 	public IPlugin createPlugin(IPluginInfo info) throws Exception {
 		return new PluginImpl(null, info.getPluginName(), info.getPluginVersion(), info.getDescription(), true, false,
-				info.isMachineOriented(), info.isUserOriented(), info.isPolicyPlugin(), info.isxBased(), null,
-				new Date(), null);
+				info.isMachineOriented(), info.isUserOriented(), info.isPolicyPlugin(), info.isxBased(),
+				info.getDistro().getProtocol(), info.getDistro().getParams(), null, new Date(), null);
 	}
 
 	@Override
 	public IPlugin createPlugin(IPlugin plugin, IPluginInfo info) throws Exception {
 		return new PluginImpl(plugin.getId(), plugin.getName(), plugin.getVersion(), info.getDescription(), true, false,
-				info.isMachineOriented(), info.isUserOriented(), info.isPolicyPlugin(), info.isxBased(), null,
-				plugin.getCreateDate(), new Date());
+				info.isMachineOriented(), info.isUserOriented(), info.isPolicyPlugin(), info.isxBased(),
+				info.getDistro().getProtocol(), info.getDistro().getParams(), null, plugin.getCreateDate(), new Date());
 	}
 
 }
