@@ -13,36 +13,38 @@ import org.jivesoftware.smack.packet.Stanza;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tr.org.liderahenk.lider.core.api.messaging.subscribers.IMissingPluginSubscriber;
-import tr.org.liderahenk.lider.messaging.messages.MissingPluginMessageImpl;
+import tr.org.liderahenk.lider.core.api.messaging.subscribers.IUserSessionSubscriber;
+import tr.org.liderahenk.lider.messaging.messages.UserSessionMessageImpl;
 
 /**
- * Listens to missing plugin messages and notifies related subscribers.
+ * User session listener is responsible for logging user login and logout
+ * events.
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
-public class MissingPluginListener implements StanzaListener, StanzaFilter {
+public class UserSessionListener implements StanzaListener, StanzaFilter {
 
-	private static Logger logger = LoggerFactory.getLogger(MissingPluginListener.class);
+	private static Logger logger = LoggerFactory.getLogger(UserSessionListener.class);
 
 	/**
 	 * Pattern used to filter messages
 	 */
-	private static final Pattern messagePattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"MISSING_PLUGIN\\\".*",
+	private static final Pattern messagePattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"LOG(IN|OUT)\\\".*",
 			Pattern.CASE_INSENSITIVE);
 
 	/**
 	 * Message subscribers
 	 */
-	private List<IMissingPluginSubscriber> subscribers;
+	private List<IUserSessionSubscriber> subscribers;
 
 	@Override
 	public boolean accept(Stanza stanza) {
 		if (stanza instanceof Message) {
 			Message msg = (Message) stanza;
 			// All messages from agents are type normal
-			// Message body must contain => "type": "MISSING_PLUGIN"
+			// Message body must contain one of these strings => "type":
+			// "LOGIN" or "type": "LOGOUT"
 			if (Message.Type.normal.equals(msg.getType()) && messagePattern.matcher(msg.getBody()).matches()) {
 				return true;
 			}
@@ -57,18 +59,18 @@ public class MissingPluginListener implements StanzaListener, StanzaFilter {
 			if (packet instanceof Message) {
 
 				msg = (Message) packet;
-				logger.info("Missing plugin message received from => {}, body => {}", msg.getFrom(), msg.getBody());
+				logger.info("Register message received from => {}, body => {}", msg.getFrom(), msg.getBody());
 
 				ObjectMapper mapper = new ObjectMapper();
 				mapper.setDateFormat(new SimpleDateFormat("dd-MM-yyyy HH:mm"));
 
 				// Construct message
-				MissingPluginMessageImpl message = mapper.readValue(msg.getBody(), MissingPluginMessageImpl.class);
+				UserSessionMessageImpl message = mapper.readValue(msg.getBody(), UserSessionMessageImpl.class);
 				message.setFrom(msg.getFrom());
 
 				if (subscribers != null && !subscribers.isEmpty()) {
 					// Notify each subscriber
-					for (IMissingPluginSubscriber subscriber : subscribers) {
+					for (IUserSessionSubscriber subscriber : subscribers) {
 						try {
 							subscriber.messageReceived(message);
 						} catch (Exception e) {
@@ -79,6 +81,7 @@ public class MissingPluginListener implements StanzaListener, StanzaFilter {
 				}
 
 			}
+
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -88,7 +91,7 @@ public class MissingPluginListener implements StanzaListener, StanzaFilter {
 	 * 
 	 * @param subscribers
 	 */
-	public void setSubscribers(List<IMissingPluginSubscriber> subscribers) {
+	public void setSubscribers(List<IUserSessionSubscriber> subscribers) {
 		this.subscribers = subscribers;
 	}
 

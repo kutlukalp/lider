@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -16,13 +14,10 @@ import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.SmackException.NoResponseException;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
-import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.XMPPException.XMPPErrorException;
-import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
@@ -41,10 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
-import tr.org.liderahenk.lider.core.api.messaging.enums.StatusCode;
-import tr.org.liderahenk.lider.core.api.messaging.messages.IExecutePoliciesMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
-import tr.org.liderahenk.lider.core.api.messaging.messages.IRegistrationResponseMessage;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IMissingPluginSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IPolicyStatusSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IPolicySubscriber;
@@ -56,14 +48,12 @@ import tr.org.liderahenk.lider.messaging.listeners.FileListener;
 import tr.org.liderahenk.lider.messaging.listeners.MissingPluginListener;
 import tr.org.liderahenk.lider.messaging.listeners.OnlineRosterListener;
 import tr.org.liderahenk.lider.messaging.listeners.PacketListener;
+import tr.org.liderahenk.lider.messaging.listeners.PolicyListener;
+import tr.org.liderahenk.lider.messaging.listeners.PolicyStatusListener;
+import tr.org.liderahenk.lider.messaging.listeners.RegistrationListener;
+import tr.org.liderahenk.lider.messaging.listeners.TaskStatusListener;
+import tr.org.liderahenk.lider.messaging.listeners.UserSessionListener;
 import tr.org.liderahenk.lider.messaging.listeners.XMPPConnectionListener;
-import tr.org.liderahenk.lider.messaging.messages.GetPoliciesMessageImpl;
-import tr.org.liderahenk.lider.messaging.messages.PolicyStatusMessageImpl;
-import tr.org.liderahenk.lider.messaging.messages.RegistrationMessageImpl;
-import tr.org.liderahenk.lider.messaging.messages.RegistrationResponseMessageImpl;
-import tr.org.liderahenk.lider.messaging.messages.TaskStatusMessageImpl;
-import tr.org.liderahenk.lider.messaging.messages.UserSessionMessageImpl;
-import tr.org.liderahenk.lider.messaging.subscribers.DefaultRegistrationSubscriberImpl;
 
 /**
  * This class works as an XMPP client which listens to incoming packets and
@@ -97,7 +87,6 @@ public class XMPPClientImpl {
 	private OnlineRosterListener onlineRosterListener;
 	private PacketListener packetListener;
 	private FileListener fileListener;
-
 	private TaskStatusListener taskStatusListener;
 	private PolicyStatusListener policyStatusListener;
 	private RegistrationListener registrationListener;
@@ -116,23 +105,15 @@ public class XMPPClientImpl {
 	private List<IMissingPluginSubscriber> missingPluginSubscribers;
 	private IPolicySubscriber policySubscriber;
 
+	/**
+	 * Lider services
+	 */
+	private IConfigurationService configurationService;
+	private EventAdmin eventAdmin;
+
 	private XMPPTCPConnection connection;
 	private XMPPTCPConnectionConfiguration config;
 	private MultiUserChatManager mucManager;
-
-	private static final Pattern taskStatusPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"TASK_STATUS\\\".*",
-			Pattern.CASE_INSENSITIVE);
-	private static final Pattern policyStatusPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"POLICY_STATUS\\\".*",
-			Pattern.CASE_INSENSITIVE);
-	private static final Pattern registerPattern = Pattern
-			.compile(".*\\\"type\\\"\\s*:\\s*\\\"(REGISTER|UNREGISTER)\\\".*", Pattern.CASE_INSENSITIVE);
-	private static final Pattern userSessionPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"LOG(IN|OUT)\\\".*",
-			Pattern.CASE_INSENSITIVE);
-	private static final Pattern policyPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"GET_POLICIES\\\".*",
-			Pattern.CASE_INSENSITIVE);
-
-	private IConfigurationService configurationService;
-	private EventAdmin eventAdmin;
 
 	public void init() {
 		logger.info("XMPP service initialization is started");
@@ -245,19 +226,24 @@ public class XMPPClientImpl {
 		packetListener = new PacketListener();
 		connection.addAsyncStanzaListener(packetListener, packetListener);
 		// Hook listener for get-policy messages
-		policyListener = new PolicyListener();
+		policyListener = new PolicyListener(this);
+		policyListener.setSubscriber(policySubscriber);
 		connection.addAsyncStanzaListener(policyListener, policyListener);
 		// Hook listener for task status messages
 		taskStatusListener = new TaskStatusListener();
+		taskStatusListener.setSubscribers(taskStatusSubscribers);
 		connection.addAsyncStanzaListener(taskStatusListener, taskStatusListener);
 		// Hook listener for policy status messages
 		policyStatusListener = new PolicyStatusListener();
+		policyStatusListener.setSubscribers(policyStatusSubscribers);
 		connection.addAsyncStanzaListener(policyStatusListener, policyStatusListener);
 		// Hook listener for registration messages
-		registrationListener = new RegistrationListener();
+		registrationListener = new RegistrationListener(this);
+		registrationListener.setSubscribers(registrationSubscribers);
 		connection.addAsyncStanzaListener(registrationListener, registrationListener);
 		// Hook listener for user session messages
 		userSessionListener = new UserSessionListener();
+		userSessionListener.setSubscribers(userSessionSubscribers);
 		connection.addAsyncStanzaListener(userSessionListener, userSessionListener);
 		// Hook listener for file transfers
 		fileListener = new FileListener(configurationService, eventAdmin);
@@ -512,331 +498,6 @@ public class XMPPClientImpl {
 	}
 
 	/**
-	 * Listens to task status messages
-	 *
-	 */
-	class TaskStatusListener implements StanzaListener, StanzaFilter {
-
-		@Override
-		public boolean accept(Stanza stanza) {
-			if (stanza instanceof Message) {
-				Message msg = (Message) stanza;
-				// All messages from agents are type normal
-				if (Message.Type.normal.equals(msg.getType()) && taskStatusPattern.matcher(msg.getBody()).matches()) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		@Override
-		public void processPacket(Stanza packet) throws NotConnectedException {
-			try {
-				if (packet instanceof Message) {
-
-					Message msg = (Message) packet;
-					logger.info("Task status update message received from => {}, body => {}", msg.getFrom(),
-							msg.getBody());
-
-					ObjectMapper mapper = new ObjectMapper();
-					mapper.setDateFormat(new SimpleDateFormat("dd-MM-yyyy HH:mm"));
-
-					TaskStatusMessageImpl message = mapper.readValue(msg.getBody(), TaskStatusMessageImpl.class);
-					message.setFrom(msg.getFrom());
-
-					for (ITaskStatusSubscriber subscriber : taskStatusSubscribers) {
-						try {
-							subscriber.messageReceived(message);
-						} catch (Exception e) {
-							logger.error("Subscriber could not handle message: ", e);
-						}
-						logger.debug("Notified subscriber => {}", subscriber);
-					}
-				}
-			} catch (Exception e) {
-				logger.error(e.getMessage(), e);
-			}
-		}
-
-	}
-
-	/**
-	 * Listens to task status messages
-	 *
-	 */
-	class PolicyStatusListener implements StanzaListener, StanzaFilter {
-
-		@Override
-		public boolean accept(Stanza stanza) {
-			if (stanza instanceof Message) {
-				Message msg = (Message) stanza;
-				logger.error("--->" + msg.getBody());
-				// All messages from agents are type normal
-				if (Message.Type.normal.equals(msg.getType()) && policyStatusPattern.matcher(msg.getBody()).matches()) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		@Override
-		public void processPacket(Stanza packet) throws NotConnectedException {
-			try {
-				if (packet instanceof Message) {
-
-					Message msg = (Message) packet;
-					logger.info("Policy status update message received from => {}, body => {}", msg.getFrom(),
-							msg.getBody());
-
-					ObjectMapper mapper = new ObjectMapper();
-					mapper.setDateFormat(new SimpleDateFormat("dd-MM-yyyy HH:mm"));
-
-					PolicyStatusMessageImpl message = mapper.readValue(msg.getBody(), PolicyStatusMessageImpl.class);
-					message.setFrom(msg.getFrom());
-
-					for (IPolicyStatusSubscriber subscriber : policyStatusSubscribers) {
-						try {
-							subscriber.messageReceived(message);
-						} catch (Exception e) {
-							logger.error("Subscriber could not handle message: ", e);
-						}
-						logger.debug("Notified subscriber => {}", subscriber);
-					}
-				}
-			} catch (Exception e) {
-				logger.error(e.getMessage(), e);
-			}
-		}
-
-	}
-
-	/**
-	 * RegistrationListener is responsible for listening to agent register
-	 * messages. It triggers {@link IRegistrationSubscriber} instance upon
-	 * incoming register messages. If there is no subscriber, it falls back to
-	 * the default subscriber to handle registration.
-	 * 
-	 * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
-	 * @see tr.org.liderahenk.lider.DefaultRegistrationSubscriberImpl.
-	 *      registration. DefaultRegistrationSubscriber
-	 *
-	 */
-	class RegistrationListener implements StanzaListener, StanzaFilter {
-
-		@Override
-		public boolean accept(Stanza stanza) {
-			if (stanza instanceof Message) {
-				Message msg = (Message) stanza;
-				// All messages from agents are type normal
-				// Message body must contain this string => "type": "REGISTER"
-				if (Message.Type.normal.equals(msg.getType()) && registerPattern.matcher(msg.getBody()).matches()) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		@Override
-		public void processPacket(Stanza packet) throws NotConnectedException {
-
-			IRegistrationResponseMessage responseMessage = null;
-			Message msg = null;
-
-			try {
-				if (packet instanceof Message) {
-
-					msg = (Message) packet;
-					logger.info("Register message received from => {}, body => {}", msg.getFrom(), msg.getBody());
-
-					// Construct message
-					ObjectMapper mapper = new ObjectMapper();
-					mapper.setDateFormat(new SimpleDateFormat("dd-MM-yyyy HH:mm"));
-
-					RegistrationMessageImpl message = mapper.readValue(msg.getBody(), RegistrationMessageImpl.class);
-
-					// Fall back to default register subscriber if reference
-					// list is empty.
-					if (registrationSubscribers == null || registrationSubscribers.isEmpty()) {
-						responseMessage = triggerDefaultSubscriber(message);
-					} else {
-						// Try to find subscriber other than the default one.
-						IRegistrationSubscriber subscriber = null;
-						for (IRegistrationSubscriber temp : registrationSubscribers) {
-							if (!(temp instanceof DefaultRegistrationSubscriberImpl)) {
-								subscriber = temp;
-								break;
-							}
-						}
-						// Found another subscriber, notify it.
-						if (subscriber != null) {
-							responseMessage = subscriber.messageReceived(message);
-							logger.debug("Notified subscriber => {}", subscriber);
-						} else {
-							// We cannot find another subscriber, trigger the
-							// default.
-							responseMessage = triggerDefaultSubscriber(message);
-						}
-					}
-				}
-			} catch (Exception e) {
-				logger.error(e.getMessage(), e);
-				responseMessage = new RegistrationResponseMessageImpl(StatusCode.REGISTRATION_ERROR,
-						"Unexpected error occurred while registring agent, see Lider logs for more info.", null,
-						msg.getFrom(), new Date());
-			}
-
-			// Send registration info back to agent
-			try {
-				sendMessage(new ObjectMapper().writeValueAsString(responseMessage), msg.getFrom());
-			} catch (JsonGenerationException e) {
-				logger.error(e.getMessage(), e);
-			} catch (JsonMappingException e) {
-				logger.error(e.getMessage(), e);
-			} catch (IOException e) {
-				logger.error(e.getMessage(), e);
-			}
-
-		}
-
-		private IRegistrationResponseMessage triggerDefaultSubscriber(RegistrationMessageImpl message)
-				throws Exception {
-			logger.info("Triggering default register subscriber.");
-			IRegistrationSubscriber subscriber = new DefaultRegistrationSubscriberImpl();
-			IRegistrationResponseMessage registrationInfo = subscriber.messageReceived(message);
-			logger.debug("Notified subscriber => {}", subscriber);
-			return registrationInfo;
-		}
-
-	}
-
-	/**
-	 * User session listener is responsible for logging user login and logout
-	 * events.
-	 * 
-	 * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
-	 *
-	 */
-	class UserSessionListener implements StanzaListener, StanzaFilter {
-
-		@Override
-		public boolean accept(Stanza stanza) {
-			if (stanza instanceof Message) {
-				Message msg = (Message) stanza;
-				// All messages from agents are type normal
-				// Message body must contain one of these strings => "type":
-				// "LOGIN" or "type": "LOGOUT"
-				if (Message.Type.normal.equals(msg.getType()) && userSessionPattern.matcher(msg.getBody()).matches()) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		@Override
-		public void processPacket(Stanza packet) throws NotConnectedException {
-
-			Message msg = null;
-
-			try {
-				if (packet instanceof Message) {
-
-					msg = (Message) packet;
-					logger.info("Register message received from => {}, body => {}", msg.getFrom(), msg.getBody());
-
-					ObjectMapper mapper = new ObjectMapper();
-					mapper.setDateFormat(new SimpleDateFormat("dd-MM-yyyy HH:mm"));
-
-					// Construct message
-					UserSessionMessageImpl message = mapper.readValue(msg.getBody(), UserSessionMessageImpl.class);
-					message.setFrom(msg.getFrom());
-
-					if (userSessionSubscribers != null && !userSessionSubscribers.isEmpty()) {
-						// Notify each subscriber
-						for (IUserSessionSubscriber subscriber : userSessionSubscribers) {
-							try {
-								subscriber.messageReceived(message);
-							} catch (Exception e) {
-								logger.error("Subscriber could not handle message: ", e);
-							}
-							logger.debug("Notified subscriber => {}", subscriber);
-						}
-					}
-
-				}
-
-			} catch (Exception e) {
-				logger.error(e.getMessage(), e);
-			}
-
-		}
-
-	}
-
-	/**
-	 * Policy listener is responsible for sending (machine and user) policies to
-	 * agent.
-	 * 
-	 * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
-	 *
-	 */
-	class PolicyListener implements StanzaListener, StanzaFilter {
-
-		@Override
-		public boolean accept(Stanza stanza) {
-			if (stanza instanceof Message) {
-				Message msg = (Message) stanza;
-				// All messages from agents are type normal
-				// Message body must contain one of these strings => "type":
-				// "GET_POLICIES"
-				if (Message.Type.normal.equals(msg.getType()) && policyPattern.matcher(msg.getBody()).matches()) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		@Override
-		public void processPacket(Stanza packet) throws NotConnectedException {
-
-			IExecutePoliciesMessage responseMessage = null;
-			Message msg = null;
-
-			try {
-				if (packet instanceof Message) {
-
-					msg = (Message) packet;
-					logger.info("Policy message received from => {}, body => {}", msg.getFrom(), msg.getBody());
-
-					ObjectMapper mapper = new ObjectMapper();
-					mapper.setDateFormat(new SimpleDateFormat("dd-MM-yyyy HH:mm"));
-
-					// Construct message
-					GetPoliciesMessageImpl message = mapper.readValue(msg.getBody(), GetPoliciesMessageImpl.class);
-					message.setFrom(msg.getFrom());
-
-					if (policySubscriber != null) {
-						responseMessage = policySubscriber.messageReceived(message);
-					}
-				}
-			} catch (Exception e) {
-				logger.error(e.getMessage(), e);
-			}
-
-			// Send registration info back to agent
-			try {
-				sendMessage(new ObjectMapper().writeValueAsString(responseMessage), msg.getFrom());
-			} catch (JsonGenerationException e) {
-				logger.error(e.getMessage(), e);
-			} catch (JsonMappingException e) {
-				logger.error(e.getMessage(), e);
-			} catch (IOException e) {
-				logger.error(e.getMessage(), e);
-			}
-		}
-
-	}
-
-	/**
 	 * 
 	 * @param configurationService
 	 */
@@ -861,6 +522,9 @@ public class XMPPClientImpl {
 	 */
 	public void setTaskStatusSubscribers(List<ITaskStatusSubscriber> taskStatusSubscribers) {
 		this.taskStatusSubscribers = taskStatusSubscribers;
+		if (taskStatusListener != null) {
+			taskStatusListener.setSubscribers(taskStatusSubscribers);
+		}
 	}
 
 	/**
@@ -869,6 +533,9 @@ public class XMPPClientImpl {
 	 */
 	public void setPolicyStatusSubscribers(List<IPolicyStatusSubscriber> policyStatusSubscribers) {
 		this.policyStatusSubscribers = policyStatusSubscribers;
+		if (policyStatusListener != null) {
+			policyStatusListener.setSubscribers(policyStatusSubscribers);
+		}
 	}
 
 	/**
@@ -877,6 +544,9 @@ public class XMPPClientImpl {
 	 */
 	public void setRegistrationSubscribers(List<IRegistrationSubscriber> registrationSubscribers) {
 		this.registrationSubscribers = registrationSubscribers;
+		if (registrationListener != null) {
+			registrationListener.setSubscribers(registrationSubscribers);
+		}
 	}
 
 	/**
@@ -885,6 +555,9 @@ public class XMPPClientImpl {
 	 */
 	public void setUserSessionSubscribers(List<IUserSessionSubscriber> userSessionSubscribers) {
 		this.userSessionSubscribers = userSessionSubscribers;
+		if (userSessionListener != null) {
+			userSessionListener.setSubscribers(userSessionSubscribers);
+		}
 	}
 
 	/**
@@ -893,6 +566,9 @@ public class XMPPClientImpl {
 	 */
 	public void setPolicySubscriber(IPolicySubscriber policySubscriber) {
 		this.policySubscriber = policySubscriber;
+		if (policyListener != null) {
+			policyListener.setSubscriber(policySubscriber);
+		}
 	}
 
 	/**
