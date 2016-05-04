@@ -1,4 +1,4 @@
-package tr.org.liderahenk.lider.core.api.reporting;
+package tr.org.liderahenk.lider.core.api.persistence.entities;
 
 import java.io.Serializable;
 
