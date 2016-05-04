@@ -7,7 +7,7 @@ package tr.org.liderahenk.lider.core.api.messaging.enums;
  *
  */
 public enum Protocol {
-	WGET(1), RSYNC(2), TORRENT(3);
+	HTTP(1), SSH(2), TORRENT(3);
 
 	private int id;
 
