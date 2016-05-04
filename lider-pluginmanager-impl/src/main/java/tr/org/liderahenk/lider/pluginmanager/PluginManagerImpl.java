@@ -1,9 +1,7 @@
 package tr.org.liderahenk.lider.pluginmanager;
 
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -46,8 +44,6 @@ public class PluginManagerImpl {
 
 		if (pluginInfoList != null && !pluginInfoList.isEmpty()) {
 
-			IPlugin plugin = null;
-
 			for (IPluginInfo pluginInfo : pluginInfoList) {
 
 				if (pluginInfo == null || pluginInfo.getPluginName() == null || pluginInfo.getPluginName().isEmpty()
@@ -64,6 +60,7 @@ public class PluginManagerImpl {
 					propertiesMap.put("version", pluginInfo.getPluginVersion());
 					List<? extends IPlugin> plugins = pluginDao.findByProperties(IPlugin.class, propertiesMap, null, 1);
 
+					IPlugin plugin = null;
 					if (plugins != null && !plugins.isEmpty()) {
 						plugin = plugins.get(0);
 						List<? extends IProfile> profiles = plugin.getProfiles();
@@ -121,9 +118,6 @@ public class PluginManagerImpl {
 
 			pluginDao.updateByProperties(propertiesMap, criterias);
 
-			// Fire an event to notify plugins registered successfully.
-			Dictionary<String, Object> dict = new Hashtable<String, Object>();
-			dict.put("pluginIdList", pluginIdList);
 		}
 
 	}

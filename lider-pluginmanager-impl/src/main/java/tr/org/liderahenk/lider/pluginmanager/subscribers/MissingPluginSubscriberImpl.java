@@ -24,9 +24,9 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
-public class MissingPluginSubscriber implements IMissingPluginSubscriber {
+public class MissingPluginSubscriberImpl implements IMissingPluginSubscriber {
 
-	private static Logger logger = LoggerFactory.getLogger(MissingPluginSubscriber.class);
+	private static Logger logger = LoggerFactory.getLogger(MissingPluginSubscriberImpl.class);
 
 	private IMessagingService messagingService;
 	private IMessageFactory messageFactory;
@@ -59,14 +59,26 @@ public class MissingPluginSubscriber implements IMissingPluginSubscriber {
 		messagingService.sendMessage(reply);
 	}
 
+	/**
+	 * 
+	 * @param messagingService
+	 */
 	public void setMessagingService(IMessagingService messagingService) {
 		this.messagingService = messagingService;
 	}
 
+	/**
+	 * 
+	 * @param messageFactory
+	 */
 	public void setMessageFactory(IMessageFactory messageFactory) {
 		this.messageFactory = messageFactory;
 	}
 
+	/**
+	 * 
+	 * @param pluginDao
+	 */
 	public void setPluginDao(IPluginDao pluginDao) {
 		this.pluginDao = pluginDao;
 	}
