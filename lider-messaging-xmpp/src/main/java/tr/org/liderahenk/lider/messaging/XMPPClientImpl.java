@@ -45,6 +45,7 @@ import tr.org.liderahenk.lider.core.api.messaging.enums.StatusCode;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecutePoliciesMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IRegistrationResponseMessage;
+import tr.org.liderahenk.lider.core.api.messaging.subscribers.IMissingPluginSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IPolicyStatusSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IPolicySubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IPresenceSubscriber;
@@ -52,6 +53,7 @@ import tr.org.liderahenk.lider.core.api.messaging.subscribers.IRegistrationSubsc
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.ITaskStatusSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IUserSessionSubscriber;
 import tr.org.liderahenk.lider.messaging.listeners.FileListener;
+import tr.org.liderahenk.lider.messaging.listeners.MissingPluginListener;
 import tr.org.liderahenk.lider.messaging.listeners.OnlineRosterListener;
 import tr.org.liderahenk.lider.messaging.listeners.PacketListener;
 import tr.org.liderahenk.lider.messaging.listeners.XMPPConnectionListener;
@@ -95,11 +97,12 @@ public class XMPPClientImpl {
 	private OnlineRosterListener onlineRosterListener;
 	private PacketListener packetListener;
 	private FileListener fileListener;
-	
+
 	private TaskStatusListener taskStatusListener;
 	private PolicyStatusListener policyStatusListener;
 	private RegistrationListener registrationListener;
 	private UserSessionListener userSessionListener;
+	private MissingPluginListener missingPluginListener;
 	private PolicyListener policyListener;
 
 	/**
@@ -110,6 +113,7 @@ public class XMPPClientImpl {
 	private List<IRegistrationSubscriber> registrationSubscribers;
 	private List<IUserSessionSubscriber> userSessionSubscribers;
 	private List<IPresenceSubscriber> presenceSubscribers;
+	private List<IMissingPluginSubscriber> missingPluginSubscribers;
 	private IPolicySubscriber policySubscriber;
 
 	private XMPPTCPConnection connection;
@@ -120,8 +124,8 @@ public class XMPPClientImpl {
 			Pattern.CASE_INSENSITIVE);
 	private static final Pattern policyStatusPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"POLICY_STATUS\\\".*",
 			Pattern.CASE_INSENSITIVE);
-	private static final Pattern registerPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"(REGISTER|UNREGISTER)\\\".*",
-			Pattern.CASE_INSENSITIVE);
+	private static final Pattern registerPattern = Pattern
+			.compile(".*\\\"type\\\"\\s*:\\s*\\\"(REGISTER|UNREGISTER)\\\".*", Pattern.CASE_INSENSITIVE);
 	private static final Pattern userSessionPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"LOG(IN|OUT)\\\".*",
 			Pattern.CASE_INSENSITIVE);
 	private static final Pattern policyPattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"GET_POLICIES\\\".*",
@@ -162,8 +166,7 @@ public class XMPPClientImpl {
 	private void createXmppTcpConfiguration() {
 		config = XMPPTCPConnectionConfiguration.builder().setServiceName(serviceName).setHost(host).setPort(port)
 				.setSecurityMode(configurationService.getXmppUseSsl() ? SecurityMode.required : SecurityMode.disabled)
-				.setDebuggerEnabled(logger.isDebugEnabled())
-				.build();
+				.setDebuggerEnabled(logger.isDebugEnabled()).build();
 		logger.debug("XMPP configuration finished: {}", config.toString());
 	}
 
@@ -229,28 +232,42 @@ public class XMPPClientImpl {
 	 * Hook packet and connection listeners
 	 */
 	private void addListeners() {
+		// Hook listener for connection
 		connectionListener = new XMPPConnectionListener(configurationService);
+		connection.addConnectionListener(connectionListener);
+		PingManager.getInstanceFor(connection).registerPingFailedListener(connectionListener);
+		connection.addAsyncStanzaListener(connectionListener, connectionListener);
+		// Hook listener for roster changes
 		onlineRosterListener = new OnlineRosterListener(connection);
 		onlineRosterListener.setPresenceSubscribers(presenceSubscribers);
+		Roster.getInstanceFor(connection).addRosterListener(onlineRosterListener);
+		// Hook listener for incoming packets
 		packetListener = new PacketListener();
-		taskStatusListener = new TaskStatusListener();
-		policyStatusListener = new PolicyStatusListener();
-		registrationListener = new RegistrationListener();
+		connection.addAsyncStanzaListener(packetListener, packetListener);
+		// Hook listener for get-policy messages
 		policyListener = new PolicyListener();
+		connection.addAsyncStanzaListener(policyListener, policyListener);
+		// Hook listener for task status messages
+		taskStatusListener = new TaskStatusListener();
+		connection.addAsyncStanzaListener(taskStatusListener, taskStatusListener);
+		// Hook listener for policy status messages
+		policyStatusListener = new PolicyStatusListener();
+		connection.addAsyncStanzaListener(policyStatusListener, policyStatusListener);
+		// Hook listener for registration messages
+		registrationListener = new RegistrationListener();
+		connection.addAsyncStanzaListener(registrationListener, registrationListener);
+		// Hook listener for user session messages
 		userSessionListener = new UserSessionListener();
-		connection.addConnectionListener(connectionListener);
+		connection.addAsyncStanzaListener(userSessionListener, userSessionListener);
+		// Hook listener for file transfers
 		fileListener = new FileListener(configurationService, eventAdmin);
 		Socks5BytestreamManager bytestreamManager = Socks5BytestreamManager.getBytestreamManager(connection);
 		bytestreamManager.addIncomingBytestreamListener(fileListener);
-		PingManager.getInstanceFor(connection).registerPingFailedListener(connectionListener);
-		connection.addAsyncStanzaListener(packetListener, packetListener);
-		connection.addAsyncStanzaListener(registrationListener, registrationListener);
-		connection.addAsyncStanzaListener(policyListener, policyListener);
-		connection.addAsyncStanzaListener(userSessionListener, userSessionListener);
-		connection.addAsyncStanzaListener(taskStatusListener, taskStatusListener);
-		connection.addAsyncStanzaListener(policyStatusListener, policyStatusListener);
-		connection.addAsyncStanzaListener(connectionListener, connectionListener);
-		Roster.getInstanceFor(connection).addRosterListener(onlineRosterListener);
+		// Hook listener for missing plugin messages
+		missingPluginListener = new MissingPluginListener();
+		missingPluginListener.setSubscribers(missingPluginSubscribers);
+		connection.addAsyncStanzaListener(missingPluginListener, missingPluginListener);
+
 		logger.debug("Successfully added listeners for connection: {}", connection.toString());
 	}
 
@@ -290,6 +307,7 @@ public class XMPPClientImpl {
 			connection.removeAsyncStanzaListener(policyStatusListener);
 			connection.removeAsyncStanzaListener(registrationListener);
 			connection.removeAsyncStanzaListener(userSessionListener);
+			connection.removeAsyncStanzaListener(missingPluginListener);
 			connection.removeAsyncStanzaListener(policyListener);
 			connection.removeAsyncStanzaListener(connectionListener);
 			connection.removeConnectionListener(connectionListener);
@@ -832,7 +850,9 @@ public class XMPPClientImpl {
 	 */
 	public void setPresenceSubscribers(List<IPresenceSubscriber> presenceSubscribers) {
 		this.presenceSubscribers = presenceSubscribers;
-		if (onlineRosterListener != null) onlineRosterListener.setPresenceSubscribers(presenceSubscribers) ;
+		if (onlineRosterListener != null) {
+			onlineRosterListener.setPresenceSubscribers(presenceSubscribers);
+		}
 	}
 
 	/**
@@ -873,6 +893,17 @@ public class XMPPClientImpl {
 	 */
 	public void setPolicySubscriber(IPolicySubscriber policySubscriber) {
 		this.policySubscriber = policySubscriber;
+	}
+
+	/**
+	 * 
+	 * @param missingPluginSubscribers
+	 */
+	public void setMissingPluginSubscribers(List<IMissingPluginSubscriber> missingPluginSubscribers) {
+		this.missingPluginSubscribers = missingPluginSubscribers;
+		if (missingPluginListener != null) {
+			missingPluginListener.setSubscribers(missingPluginSubscribers);
+		}
 	}
 
 	/**
