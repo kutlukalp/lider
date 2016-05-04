@@ -53,6 +53,7 @@
 	<bean id="userSessionSubscriber"
 		class="tr.org.liderahenk.lider.messaging.subscribers.UserSessionSubscriberImpl">
 		<property name="agentDao" ref="agentDao" />
+		<property name="entityFactory" ref="entityFactory" />
 	</bean>
 
 	<bean id="policySubscriber"
@@ -86,6 +87,8 @@
 		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IAgentDao" />
 	<reference id="policyDao"
 		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IPolicyDao" />
+	<reference id="entityFactory"
+		interface="tr.org.liderahenk.lider.core.api.persistence.factories.IEntityFactory" />
 	<reference id="eventAdmin" interface="org.osgi.service.event.EventAdmin" />
 
 </blueprint>
