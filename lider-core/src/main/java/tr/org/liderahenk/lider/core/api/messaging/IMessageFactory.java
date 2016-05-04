@@ -6,6 +6,7 @@ import tr.org.liderahenk.lider.core.api.messaging.messages.IExecutePoliciesMessa
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteScriptMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteTaskMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
+import tr.org.liderahenk.lider.core.api.messaging.messages.IPluginNotFoundMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IRequestFileMessage;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
@@ -66,5 +67,15 @@ public interface IMessageFactory {
 	IExecutePoliciesMessage createExecutePoliciesMessage(String recipient, String username,
 			List<IProfile> userPolicyProfiles, String userPolicyVersion, Long userCommandExecutionId,
 			List<IProfile> agentPolicyProfiles, String agentPolicyVersion, Long agentCommandExecutionId);
+
+	/**
+	 * Create plugin not found message for specified plugin name-version
+	 * 
+	 * @param recipient
+	 * @param pluginName
+	 * @param pluginVersion
+	 * @return
+	 */
+	IPluginNotFoundMessage createPluginNotFoundMessage(String recipient, String pluginName, String pluginVersion);
 
 }
