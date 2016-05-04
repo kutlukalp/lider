@@ -28,6 +28,13 @@ public class PluginNotFoundMessageImpl implements IPluginNotFoundMessage {
 
 	private Date timestamp;
 
+	public PluginNotFoundMessageImpl(String recipient, String pluginName, String pluginVersion, Date timestamp) {
+		this.recipient = recipient;
+		this.pluginName = pluginName;
+		this.pluginVersion = pluginVersion;
+		this.timestamp = timestamp;
+	}
+
 	@Override
 	public LiderMessageType getType() {
 		return type;

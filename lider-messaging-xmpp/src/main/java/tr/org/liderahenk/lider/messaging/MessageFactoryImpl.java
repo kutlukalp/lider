@@ -10,12 +10,14 @@ import tr.org.liderahenk.lider.core.api.messaging.IMessageFactory;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecutePoliciesMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteScriptMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteTaskMessage;
+import tr.org.liderahenk.lider.core.api.messaging.messages.IPluginNotFoundMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IRequestFileMessage;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 import tr.org.liderahenk.lider.messaging.messages.ExecutePoliciesMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.ExecuteScriptMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.ExecuteTaskMessageImpl;
+import tr.org.liderahenk.lider.messaging.messages.PluginNotFoundMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.RequestFileMessageImpl;
 
 /**
@@ -56,6 +58,11 @@ public class MessageFactoryImpl implements IMessageFactory {
 			List<IProfile> agentPolicyProfiles, String agentPolicyVersion, Long agentCommandExecutionId) {
 		return new ExecutePoliciesMessageImpl(recipient, username, userPolicyProfiles, userPolicyVersion,
 				userCommandExecutionId, agentPolicyProfiles, agentPolicyVersion, agentCommandExecutionId, new Date());
+	}
+	
+	@Override
+	public IPluginNotFoundMessage createPluginNotFoundMessage(String recipient, String pluginName, String pluginVersion) {
+		return new PluginNotFoundMessageImpl(recipient, pluginName, pluginVersion, new Date());
 	}
 
 }
