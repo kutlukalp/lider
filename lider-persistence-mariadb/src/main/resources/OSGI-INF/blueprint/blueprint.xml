@@ -60,6 +60,13 @@
 		<jpa:context property="entityManager" unitname="lider" />
 	</bean>
 
+	<service ref="reportDao"
+		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IReportDao" />
+	<bean id="reportDao" class="tr.org.liderahenk.lider.persistence.dao.ReportDaoImpl">
+		<tx:transaction method="*" value="Required" />
+		<jpa:context property="entityManager" unitname="lider" />
+	</bean>
+
 	<service ref="entityFactory"
 		interface="tr.org.liderahenk.lider.core.api.persistence.factories.IEntityFactory" />
 	<bean id="entityFactory" class="tr.org.liderahenk.lider.persistence.factories.EntityFactoryImpl" />
