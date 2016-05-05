@@ -32,25 +32,25 @@ public interface IPluginInfo {
 	 * 
 	 * @return true if profiles of this plugin can be executed for machines.
 	 */
-	boolean isMachineOriented();
+	Boolean getMachineOriented();
 
 	/**
 	 * 
 	 * @return true if profiles of this plugin can be executed for users.
 	 */
-	boolean isUserOriented();
+	Boolean getUserOriented();
 
 	/**
 	 * 
 	 * @return true if profiles of this plugin can be used in a policy.
 	 */
-	boolean isPolicyPlugin();
+	Boolean getPolicyPlugin();
 
 	/**
 	 * 
 	 * @return true if the plugin needs/uses X
 	 */
-	boolean isxBased();
+	Boolean getXbased();
 
 	/**
 	 * Indicates how this plugin can be distributed to agents.

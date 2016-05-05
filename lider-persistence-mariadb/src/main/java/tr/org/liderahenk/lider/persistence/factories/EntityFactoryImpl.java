@@ -1,6 +1,7 @@
 package tr.org.liderahenk.lider.persistence.factories;
 
 import java.util.Date;
+import java.util.List;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -13,6 +14,9 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IOperationLog;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateColumn;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateParameter;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IUserSession;
 import tr.org.liderahenk.lider.core.api.persistence.enums.CrudType;
@@ -31,6 +35,7 @@ import tr.org.liderahenk.lider.persistence.entities.OperationLogImpl;
 import tr.org.liderahenk.lider.persistence.entities.PluginImpl;
 import tr.org.liderahenk.lider.persistence.entities.PolicyImpl;
 import tr.org.liderahenk.lider.persistence.entities.ProfileImpl;
+import tr.org.liderahenk.lider.persistence.entities.ReportTemplateImpl;
 import tr.org.liderahenk.lider.persistence.entities.TaskImpl;
 import tr.org.liderahenk.lider.persistence.entities.UserSessionImpl;
 
@@ -124,20 +129,45 @@ public class EntityFactoryImpl implements IEntityFactory {
 	@Override
 	public IPlugin createPlugin(IPluginInfo info) throws Exception {
 		return new PluginImpl(null, info.getPluginName(), info.getPluginVersion(), info.getDescription(), true, false,
-				info.isMachineOriented(), info.isUserOriented(), info.isPolicyPlugin(), info.isxBased(),
+				info.getMachineOriented(), info.getUserOriented(), info.getPolicyPlugin(), info.getXbased(),
 				info.getDistro().getProtocol(), info.getDistro().getParams(), null, new Date(), null);
 	}
 
 	@Override
 	public IPlugin createPlugin(IPlugin plugin, IPluginInfo info) throws Exception {
 		return new PluginImpl(plugin.getId(), plugin.getName(), plugin.getVersion(), info.getDescription(), true, false,
-				info.isMachineOriented(), info.isUserOriented(), info.isPolicyPlugin(), info.isxBased(),
+				info.getMachineOriented(), info.getUserOriented(), info.getPolicyPlugin(), info.getXbased(),
 				info.getDistro().getProtocol(), info.getDistro().getParams(), null, plugin.getCreateDate(), new Date());
 	}
 
 	@Override
 	public IUserSession createUserSession(String username, SessionEvent sessionEvent) {
 		return new UserSessionImpl(null, null, username, sessionEvent, new Date());
+	}
+
+	@Override
+	public IReportTemplate createReportTemplate(IReportTemplate temp, IReportTemplate template) {
+		ReportTemplateImpl templateImpl = new ReportTemplateImpl(temp.getId(), temp.getName(),
+				template.getDescription(), template.getQuery(), null, null, template.getReportHeader(),
+				template.getReportFooter(), temp.getCreateDate(), new Date());
+		List<? extends IReportTemplateParameter> params = template.getTemplateParams();
+		if (params != null) {
+			for (IReportTemplateParameter param : params) {
+				templateImpl.addTemplateParameter(param);
+			}
+		}
+		List<? extends IReportTemplateColumn> columns = template.getTemplateColumns();
+		if (columns != null) {
+			for (IReportTemplateColumn column : columns) {
+				templateImpl.addTemplateColumn(column);
+			}
+		}
+		return templateImpl;
+	}
+
+	@Override
+	public IReportTemplate createReportTemplate(IReportTemplate template) {
+		return new ReportTemplateImpl(template);
 	}
 
 }

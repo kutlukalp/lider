@@ -48,6 +48,14 @@ public class ReportTemplateColumnImpl implements IReportTemplateColumn {
 		this.columnOrder = columnOrder;
 	}
 
+	public ReportTemplateColumnImpl(IReportTemplateColumn column) {
+		this.id = column.getId();
+		this.name = column.getName();
+		this.visible = column.isVisible();
+		this.width = column.getWidth();
+		this.columnOrder = column.getColumnOrder();
+	}
+
 	@Override
 	public Long getId() {
 		return id;

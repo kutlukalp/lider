@@ -60,7 +60,7 @@ public class PluginDaoImpl implements IPluginDao {
 	}
 
 	@Override
-	public PluginImpl update(IPlugin plugin) {
+	public IPlugin update(IPlugin plugin) {
 		PluginImpl pluginImpl = new PluginImpl(plugin);
 		pluginImpl.setModifyDate(new Date());
 		pluginImpl = entityManager.merge(pluginImpl);
@@ -69,7 +69,7 @@ public class PluginDaoImpl implements IPluginDao {
 	}
 
 	@Override
-	public PluginImpl saveOrUpdate(IPlugin plugin) {
+	public IPlugin saveOrUpdate(IPlugin plugin) {
 		PluginImpl pluginImpl = new PluginImpl(plugin);
 		pluginImpl.setModifyDate(new Date());
 		pluginImpl = entityManager.merge(pluginImpl);

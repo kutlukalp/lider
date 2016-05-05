@@ -45,6 +45,13 @@ public class ReportTemplateParameterImpl implements IReportTemplateParameter {
 		setType(type);
 	}
 
+	public ReportTemplateParameterImpl(IReportTemplateParameter param) {
+		this.id = param.getId();
+		this.key = param.getKey();
+		this.label = param.getLabel();
+		setType(param.getType());
+	}
+
 	@Override
 	public Long getId() {
 		return id;
