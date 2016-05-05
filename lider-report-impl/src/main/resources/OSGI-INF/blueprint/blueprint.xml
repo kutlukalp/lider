@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+	<bean id="templateManager" class="tr.org.liderahenk.lider.report.TemplateManager">
+		<property name="reportDao" ref="reportDao" />
+		<property name="entityFactory" ref="entityFactory" />
+		<property name="templateList" ref="templateList" />
+	</bean>
+
+	<reference-list id="templateList" availability="optional"
+		interface="tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate" />
+	<reference id="reportDao"
+		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IReportDao" />
+	<reference id="entityFactory"
+		interface="tr.org.liderahenk.lider.core.api.persistence.factories.IEntityFactory" />
+</blueprint>

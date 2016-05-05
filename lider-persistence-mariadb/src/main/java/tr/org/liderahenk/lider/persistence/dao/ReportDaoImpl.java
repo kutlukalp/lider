@@ -26,6 +26,14 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate;
 import tr.org.liderahenk.lider.core.api.persistence.enums.OrderType;
 import tr.org.liderahenk.lider.persistence.entities.ReportTemplateImpl;
 
+/**
+ * Provides database access for reports and report templates. CRUD operations
+ * for reports and their related records should be handled via this service
+ * only.
+ * 
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ *
+ */
 public class ReportDaoImpl implements IReportDao {
 
 	private static Logger logger = LoggerFactory.getLogger(ReportDaoImpl.class);
