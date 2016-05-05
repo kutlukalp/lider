@@ -9,6 +9,7 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IOperationLog;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IUserSession;
 import tr.org.liderahenk.lider.core.api.persistence.enums.CrudType;
@@ -172,5 +173,20 @@ public interface IEntityFactory {
 	 * @return
 	 */
 	IUserSession createUserSession(String username, SessionEvent sessionEvent);
+
+	/**
+	 * 
+	 * @param temp
+	 * @param template
+	 * @return
+	 */
+	IReportTemplate createReportTemplate(IReportTemplate temp, IReportTemplate template);
+
+	/**
+	 * 
+	 * @param template
+	 * @return
+	 */
+	IReportTemplate createReportTemplate(IReportTemplate template);
 
 }

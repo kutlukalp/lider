@@ -1,6 +1,7 @@
 package tr.org.liderahenk.lider.core.api.persistence.entities;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -26,5 +27,13 @@ public interface IReportTemplate extends Serializable {
 	String getReportHeader();
 
 	String getReportFooter();
+
+	Date getCreateDate();
+
+	Date getModifyDate();
+
+	void addTemplateParameter(IReportTemplateParameter param);
+
+	void addTemplateColumn(IReportTemplateColumn column);
 
 }

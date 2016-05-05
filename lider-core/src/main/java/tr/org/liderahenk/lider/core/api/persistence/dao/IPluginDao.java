@@ -22,7 +22,6 @@ public interface IPluginDao extends IBaseDao<IPlugin> {
 	 * @param plugin
 	 * @return
 	 */
-	@Override
 	IPlugin update(IPlugin plugin);
 
 	/**
