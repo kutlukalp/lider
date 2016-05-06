@@ -1,5 +1,6 @@
 package tr.org.liderahenk.lider.core.api.messaging.subscribers;
 
+import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IMissingPluginMessage;
 
 /**
@@ -19,6 +20,6 @@ public interface IMissingPluginSubscriber {
 	 * @throws Exception
 	 * 
 	 */
-	void messageReceived(IMissingPluginMessage message) throws Exception;
+	ILiderMessage messageReceived(IMissingPluginMessage message) throws Exception;
 
 }

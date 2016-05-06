@@ -7,9 +7,9 @@
                  http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://svn.apache.org/repos/asf/aries/trunk/blueprint/blueprint-cm/src/main/resources/org/apache/aries/blueprint/compendium/cm/blueprint-cm-1.1.0.xsd
          ">
 
-	<service ref="messagingServiceImpl"
+	<service ref="messagingService"
 		interface="tr.org.liderahenk.lider.core.api.messaging.IMessagingService" />
-	<bean id="messagingServiceImpl" class="tr.org.liderahenk.lider.messaging.MessagingServiceImpl">
+	<bean id="messagingService" class="tr.org.liderahenk.lider.messaging.MessagingServiceImpl">
 		<property name="xmppClient" ref="xmppClient" />
 	</bean>
 
@@ -26,7 +26,8 @@
 		<property name="taskStatusSubscribers" ref="taskStatusSubscribers" />
 		<property name="policyStatusSubscribers" ref="policyStatusSubscribers" />
 		<property name="registrationSubscribers" ref="registrationSubscribers" />
-		<property name="userSessionSubscribers" ref="userSessionSubscribers" />
+		<property name="userSessionSubscriber" ref="userSessionSubscriber" />
+		<property name="missingPluginSubscriber" ref="missingPluginSubscriber" />
 		<property name="policySubscriber" ref="policySubscriber" />
 	</bean>
 
@@ -44,12 +45,10 @@
 		<property name="ldapService" ref="ldapService" />
 		<property name="configurationService" ref="configurationService" />
 		<property name="agentDao" ref="agentDao" />
-		<property name="messagingService" ref="messagingServiceImpl" />
+		<property name="messagingService" ref="messagingService" />
 		<property name="context" ref="blueprintBundleContext" />
 	</bean>
 
-	<service ref="userSessionSubscriber"
-		interface="tr.org.liderahenk.lider.core.api.messaging.subscribers.IUserSessionSubscriber" />
 	<bean id="userSessionSubscriber"
 		class="tr.org.liderahenk.lider.messaging.subscribers.UserSessionSubscriberImpl">
 		<property name="agentDao" ref="agentDao" />
@@ -62,6 +61,12 @@
 		<property name="configurationService" ref="configurationService" />
 		<property name="policyDao" ref="policyDao" />
 		<property name="messageFactory" ref="messageFactory" />
+	</bean>
+	
+	<bean id="missingPluginSubscriber"
+		class="tr.org.liderahenk.lider.messaging.subscribers.MissingPluginSubscriberImpl">
+		<property name="messageFactory" ref="messageFactory" />
+		<property name="pluginDao" ref="pluginDao" />
 	</bean>
 
 	<reference-list id="presenceSubscribers"
@@ -76,9 +81,6 @@
 	<reference-list id="registrationSubscribers"
 		interface="tr.org.liderahenk.lider.core.api.messaging.subscribers.IRegistrationSubscriber"
 		availability="optional" />
-	<reference-list id="userSessionSubscribers"
-		interface="tr.org.liderahenk.lider.core.api.messaging.subscribers.IUserSessionSubscriber"
-		availability="optional" />
 	<reference id="configurationService"
 		interface="tr.org.liderahenk.lider.core.api.configuration.IConfigurationService" />
 	<reference id="ldapService"
@@ -89,6 +91,8 @@
 		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IPolicyDao" />
 	<reference id="entityFactory"
 		interface="tr.org.liderahenk.lider.core.api.persistence.factories.IEntityFactory" />
+	<reference id="pluginDao"
+		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IPluginDao" />
 	<reference id="eventAdmin" interface="org.osgi.service.event.EventAdmin" />
 
 </blueprint>

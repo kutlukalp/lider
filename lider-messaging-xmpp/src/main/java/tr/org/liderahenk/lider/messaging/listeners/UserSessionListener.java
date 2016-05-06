@@ -1,7 +1,6 @@
 package tr.org.liderahenk.lider.messaging.listeners;
 
 import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.regex.Pattern;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -34,9 +33,9 @@ public class UserSessionListener implements StanzaListener, StanzaFilter {
 			Pattern.CASE_INSENSITIVE);
 
 	/**
-	 * Message subscribers
+	 * Message subscriber
 	 */
-	private List<IUserSessionSubscriber> subscribers;
+	private IUserSessionSubscriber subscriber;
 
 	@Override
 	public boolean accept(Stanza stanza) {
@@ -54,11 +53,10 @@ public class UserSessionListener implements StanzaListener, StanzaFilter {
 
 	@Override
 	public void processPacket(Stanza packet) throws NotConnectedException {
-		Message msg = null;
 		try {
 			if (packet instanceof Message) {
 
-				msg = (Message) packet;
+				Message msg = (Message) packet;
 				logger.info("Register message received from => {}, body => {}", msg.getFrom(), msg.getBody());
 
 				ObjectMapper mapper = new ObjectMapper();
@@ -68,20 +66,12 @@ public class UserSessionListener implements StanzaListener, StanzaFilter {
 				UserSessionMessageImpl message = mapper.readValue(msg.getBody(), UserSessionMessageImpl.class);
 				message.setFrom(msg.getFrom());
 
-				if (subscribers != null && !subscribers.isEmpty()) {
-					// Notify each subscriber
-					for (IUserSessionSubscriber subscriber : subscribers) {
-						try {
-							subscriber.messageReceived(message);
-						} catch (Exception e) {
-							logger.error("Subscriber could not handle message: ", e);
-						}
-						logger.debug("Notified subscriber => {}", subscriber);
-					}
+				if (subscriber != null) {
+					subscriber.messageReceived(message);
+					logger.debug("Notified subscriber => {}", subscriber);
 				}
 
 			}
-
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -89,10 +79,10 @@ public class UserSessionListener implements StanzaListener, StanzaFilter {
 
 	/**
 	 * 
-	 * @param subscribers
+	 * @param subscriber
 	 */
-	public void setSubscribers(List<IUserSessionSubscriber> subscribers) {
-		this.subscribers = subscribers;
+	public void setSubscriber(IUserSessionSubscriber subscriber) {
+		this.subscriber = subscriber;
 	}
 
 }

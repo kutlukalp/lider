@@ -12,7 +12,7 @@ import org.jivesoftware.smack.packet.Stanza;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tr.org.liderahenk.lider.core.api.messaging.messages.IExecutePoliciesMessage;
+import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IPolicySubscriber;
 import tr.org.liderahenk.lider.messaging.XMPPClientImpl;
 import tr.org.liderahenk.lider.messaging.messages.GetPoliciesMessageImpl;
@@ -63,12 +63,10 @@ public class PolicyListener implements StanzaListener, StanzaFilter {
 
 	@Override
 	public void processPacket(Stanza packet) throws NotConnectedException {
-		IExecutePoliciesMessage responseMessage = null;
-		Message msg = null;
 		try {
 			if (packet instanceof Message) {
 
-				msg = (Message) packet;
+				Message msg = (Message) packet;
 				logger.info("Policy message received from => {}, body => {}", msg.getFrom(), msg.getBody());
 
 				ObjectMapper mapper = new ObjectMapper();
@@ -79,8 +77,9 @@ public class PolicyListener implements StanzaListener, StanzaFilter {
 				message.setFrom(msg.getFrom());
 
 				if (subscriber != null) {
-					responseMessage = subscriber.messageReceived(message);
-					client.sendMessage(new ObjectMapper().writeValueAsString(responseMessage), msg.getFrom());
+					ILiderMessage response = subscriber.messageReceived(message);
+					logger.debug("Notified subscriber => {}", subscriber);
+					client.sendMessage(new ObjectMapper().writeValueAsString(response), msg.getFrom());
 				}
 			}
 		} catch (Exception e) {

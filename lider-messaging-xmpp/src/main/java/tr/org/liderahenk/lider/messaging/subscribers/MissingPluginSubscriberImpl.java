@@ -1,4 +1,4 @@
-package tr.org.liderahenk.lider.pluginmanager.subscribers;
+package tr.org.liderahenk.lider.messaging.subscribers;
 
 import java.util.HashMap;
 import java.util.List;
@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.messaging.IMessageFactory;
-import tr.org.liderahenk.lider.core.api.messaging.IMessagingService;
 import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IMissingPluginMessage;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IMissingPluginSubscriber;
@@ -28,12 +27,11 @@ public class MissingPluginSubscriberImpl implements IMissingPluginSubscriber {
 
 	private static Logger logger = LoggerFactory.getLogger(MissingPluginSubscriberImpl.class);
 
-	private IMessagingService messagingService;
 	private IMessageFactory messageFactory;
 	private IPluginDao pluginDao;
 
 	@Override
-	public void messageReceived(IMissingPluginMessage message) throws Exception {
+	public ILiderMessage messageReceived(IMissingPluginMessage message) throws Exception {
 
 		IPlugin plugin = null;
 
@@ -44,27 +42,19 @@ public class MissingPluginSubscriberImpl implements IMissingPluginSubscriber {
 		List<? extends IPlugin> plugins = pluginDao.findByProperties(IPlugin.class, propertiesMap, null, 1);
 		plugin = plugins != null && !plugins.isEmpty() ? plugins.get(0) : null;
 
-		ILiderMessage reply = null;
+		ILiderMessage response = null;
 		if (plugin == null) {
-			reply = messageFactory.createPluginNotFoundMessage(message.getFrom(), message.getPluginName(),
+			response = messageFactory.createPluginNotFoundMessage(message.getFrom(), message.getPluginName(),
 					message.getPluginVersion());
 			logger.warn("Missing plugin not found. Plugin name: {} version: {}", message.getPluginName(),
 					message.getPluginVersion());
 		} else {
-			reply = messageFactory.createInstallPluginMessage(message.getFrom(), message.getPluginName(),
+			response = messageFactory.createInstallPluginMessage(message.getFrom(), message.getPluginName(),
 					message.getPluginVersion(), plugin.getDistroParams(), plugin.getDistroProtocol());
-			logger.info("Missing plugin found. Sending plugin installation info: {}", reply);
+			logger.info("Missing plugin found. Sending plugin installation info: {}", response);
 		}
 
-		messagingService.sendMessage(reply);
-	}
-
-	/**
-	 * 
-	 * @param messagingService
-	 */
-	public void setMessagingService(IMessagingService messagingService) {
-		this.messagingService = messagingService;
+		return response;
 	}
 
 	/**

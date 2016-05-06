@@ -100,9 +100,9 @@ public class XMPPClientImpl {
 	private List<ITaskStatusSubscriber> taskStatusSubscribers;
 	private List<IPolicyStatusSubscriber> policyStatusSubscribers;
 	private List<IRegistrationSubscriber> registrationSubscribers;
-	private List<IUserSessionSubscriber> userSessionSubscribers;
 	private List<IPresenceSubscriber> presenceSubscribers;
-	private List<IMissingPluginSubscriber> missingPluginSubscribers;
+	private IUserSessionSubscriber userSessionSubscriber;
+	private IMissingPluginSubscriber missingPluginSubscriber;
 	private IPolicySubscriber policySubscriber;
 
 	/**
@@ -243,15 +243,15 @@ public class XMPPClientImpl {
 		connection.addAsyncStanzaListener(registrationListener, registrationListener);
 		// Hook listener for user session messages
 		userSessionListener = new UserSessionListener();
-		userSessionListener.setSubscribers(userSessionSubscribers);
+		userSessionListener.setSubscriber(userSessionSubscriber);
 		connection.addAsyncStanzaListener(userSessionListener, userSessionListener);
 		// Hook listener for file transfers
 		fileListener = new FileListener(configurationService, eventAdmin);
 		Socks5BytestreamManager bytestreamManager = Socks5BytestreamManager.getBytestreamManager(connection);
 		bytestreamManager.addIncomingBytestreamListener(fileListener);
 		// Hook listener for missing plugin messages
-		missingPluginListener = new MissingPluginListener();
-		missingPluginListener.setSubscribers(missingPluginSubscribers);
+		missingPluginListener = new MissingPluginListener(this);
+		missingPluginListener.setSubscriber(missingPluginSubscriber);
 		connection.addAsyncStanzaListener(missingPluginListener, missingPluginListener);
 
 		logger.debug("Successfully added listeners for connection: {}", connection.toString());
@@ -511,6 +511,7 @@ public class XMPPClientImpl {
 	 */
 	public void setPresenceSubscribers(List<IPresenceSubscriber> presenceSubscribers) {
 		this.presenceSubscribers = presenceSubscribers;
+		logger.info("Presence subscribers updated: {}", presenceSubscribers != null ? presenceSubscribers.size() : "empty");
 		if (onlineRosterListener != null) {
 			onlineRosterListener.setPresenceSubscribers(presenceSubscribers);
 		}
@@ -522,6 +523,7 @@ public class XMPPClientImpl {
 	 */
 	public void setTaskStatusSubscribers(List<ITaskStatusSubscriber> taskStatusSubscribers) {
 		this.taskStatusSubscribers = taskStatusSubscribers;
+		logger.info("Task status subscribers updated: {}", taskStatusSubscribers != null ? taskStatusSubscribers.size() : "empty");
 		if (taskStatusListener != null) {
 			taskStatusListener.setSubscribers(taskStatusSubscribers);
 		}
@@ -533,6 +535,7 @@ public class XMPPClientImpl {
 	 */
 	public void setPolicyStatusSubscribers(List<IPolicyStatusSubscriber> policyStatusSubscribers) {
 		this.policyStatusSubscribers = policyStatusSubscribers;
+		logger.info("Policy status subscribers updated: {}", policyStatusSubscribers != null ? policyStatusSubscribers.size() : "empty");
 		if (policyStatusListener != null) {
 			policyStatusListener.setSubscribers(policyStatusSubscribers);
 		}
@@ -544,6 +547,7 @@ public class XMPPClientImpl {
 	 */
 	public void setRegistrationSubscribers(List<IRegistrationSubscriber> registrationSubscribers) {
 		this.registrationSubscribers = registrationSubscribers;
+		logger.info("Registration subscribers updated: {}", registrationSubscribers != null ? registrationSubscribers.size() : "empty");
 		if (registrationListener != null) {
 			registrationListener.setSubscribers(registrationSubscribers);
 		}
@@ -551,12 +555,25 @@ public class XMPPClientImpl {
 
 	/**
 	 * 
-	 * @param userSessionSubscribers
+	 * @param userSessionSubscriber
 	 */
-	public void setUserSessionSubscribers(List<IUserSessionSubscriber> userSessionSubscribers) {
-		this.userSessionSubscribers = userSessionSubscribers;
+	public void setUserSessionSubscriber(IUserSessionSubscriber userSessionSubscriber) {
+		this.userSessionSubscriber = userSessionSubscriber;
+		logger.info("User session subscriber updated: {}", userSessionSubscriber != null);
 		if (userSessionListener != null) {
-			userSessionListener.setSubscribers(userSessionSubscribers);
+			userSessionListener.setSubscriber(userSessionSubscriber);
+		}
+	}
+
+	/**
+	 * 
+	 * @param missingPluginSubscriber
+	 */
+	public void setMissingPluginSubscriber(IMissingPluginSubscriber missingPluginSubscriber) {
+		this.missingPluginSubscriber = missingPluginSubscriber;
+		logger.info("Missing plugin subscriber updated: {}", missingPluginSubscriber != null);
+		if (missingPluginListener != null) {
+			missingPluginListener.setSubscriber(missingPluginSubscriber);
 		}
 	}
 
@@ -566,19 +583,9 @@ public class XMPPClientImpl {
 	 */
 	public void setPolicySubscriber(IPolicySubscriber policySubscriber) {
 		this.policySubscriber = policySubscriber;
+		logger.info("Policy subscriber updated: {}", policySubscriber != null);
 		if (policyListener != null) {
 			policyListener.setSubscriber(policySubscriber);
-		}
-	}
-
-	/**
-	 * 
-	 * @param missingPluginSubscribers
-	 */
-	public void setMissingPluginSubscribers(List<IMissingPluginSubscriber> missingPluginSubscribers) {
-		this.missingPluginSubscribers = missingPluginSubscribers;
-		if (missingPluginListener != null) {
-			missingPluginListener.setSubscribers(missingPluginSubscribers);
 		}
 	}
 

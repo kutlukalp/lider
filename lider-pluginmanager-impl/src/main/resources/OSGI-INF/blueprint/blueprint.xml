@@ -6,15 +6,6 @@
 		<property name="entityFactory" ref="entityFactory" />
 		<property name="pluginInfoList" ref="pluginInfoList" />
 	</bean>
-	
-	<service ref="missingPluginSubscriber"
-		interface="tr.org.liderahenk.lider.core.api.messaging.subscribers.IMissingPluginSubscriber" />
-	<bean id="missingPluginSubscriber"
-		class="tr.org.liderahenk.lider.pluginmanager.subscribers.MissingPluginSubscriberImpl">
-		<property name="messagingService" ref="messagingService" />
-		<property name="messageFactory" ref="messageFactory" />
-		<property name="pluginDao" ref="pluginDao" />
-	</bean>
 
 	<reference-list id="pluginInfoList" availability="optional"
 		interface="tr.org.liderahenk.lider.core.api.plugin.IPluginInfo" />
@@ -22,9 +13,4 @@
 		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IPluginDao" />
 	<reference id="entityFactory"
 		interface="tr.org.liderahenk.lider.core.api.persistence.factories.IEntityFactory" />
-	<reference id="messagingService"
-		interface="tr.org.liderahenk.lider.core.api.messaging.IMessagingService" />
-	<reference id="messageFactory"
-		interface="tr.org.liderahenk.lider.core.api.messaging.IMessageFactory" />
-
 </blueprint>

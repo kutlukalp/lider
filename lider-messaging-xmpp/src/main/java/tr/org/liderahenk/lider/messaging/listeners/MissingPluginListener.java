@@ -1,7 +1,6 @@
 package tr.org.liderahenk.lider.messaging.listeners;
 
 import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.regex.Pattern;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -13,7 +12,9 @@ import org.jivesoftware.smack.packet.Stanza;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IMissingPluginSubscriber;
+import tr.org.liderahenk.lider.messaging.XMPPClientImpl;
 import tr.org.liderahenk.lider.messaging.messages.MissingPluginMessageImpl;
 
 /**
@@ -33,9 +34,17 @@ public class MissingPluginListener implements StanzaListener, StanzaFilter {
 			Pattern.CASE_INSENSITIVE);
 
 	/**
-	 * Message subscribers
+	 * Message subscriber
 	 */
-	private List<IMissingPluginSubscriber> subscribers;
+	private IMissingPluginSubscriber subscriber;
+
+	// TODO IMPROVEMENT: separate xmpp client into two classes. one for
+	// configuration/setup, other for functional methods
+	private XMPPClientImpl client;
+
+	public MissingPluginListener(XMPPClientImpl client) {
+		this.client = client;
+	}
 
 	@Override
 	public boolean accept(Stanza stanza) {
@@ -52,11 +61,10 @@ public class MissingPluginListener implements StanzaListener, StanzaFilter {
 
 	@Override
 	public void processPacket(Stanza packet) throws NotConnectedException {
-		Message msg = null;
 		try {
 			if (packet instanceof Message) {
 
-				msg = (Message) packet;
+				Message msg = (Message) packet;
 				logger.info("Missing plugin message received from => {}, body => {}", msg.getFrom(), msg.getBody());
 
 				ObjectMapper mapper = new ObjectMapper();
@@ -66,16 +74,10 @@ public class MissingPluginListener implements StanzaListener, StanzaFilter {
 				MissingPluginMessageImpl message = mapper.readValue(msg.getBody(), MissingPluginMessageImpl.class);
 				message.setFrom(msg.getFrom());
 
-				if (subscribers != null && !subscribers.isEmpty()) {
-					// Notify each subscriber
-					for (IMissingPluginSubscriber subscriber : subscribers) {
-						try {
-							subscriber.messageReceived(message);
-						} catch (Exception e) {
-							logger.error("Subscriber could not handle message: ", e);
-						}
-						logger.debug("Notified subscriber => {}", subscriber);
-					}
+				if (subscriber != null) {
+					ILiderMessage response = subscriber.messageReceived(message);
+					logger.debug("Notified subscriber => {}", subscriber);
+					client.sendMessage(new ObjectMapper().writeValueAsString(response), msg.getFrom());
 				}
 
 			}
@@ -84,12 +86,8 @@ public class MissingPluginListener implements StanzaListener, StanzaFilter {
 		}
 	}
 
-	/**
-	 * 
-	 * @param subscribers
-	 */
-	public void setSubscribers(List<IMissingPluginSubscriber> subscribers) {
-		this.subscribers = subscribers;
+	public void setSubscriber(IMissingPluginSubscriber subscriber) {
+		this.subscriber = subscriber;
 	}
 
 }
