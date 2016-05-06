@@ -39,17 +39,20 @@ public class UserSessionSubscriberImpl implements IUserSessionSubscriber {
 
 		// Find related agent record
 		List<? extends IAgent> agentList = agentDao.findByProperty(IAgent.class, "jid", uid, 1);
-		IAgent agent = agentList.get(0);
+		IAgent agent = agentList != null && !agentList.isEmpty() ? agentList.get(0) : null;
 
-		// Add new user session info
-		IUserSession userSession = entityFactory.createUserSession(message.getUsername(),
-				getSessionEvent(message.getType()));
-		agent.addUserSession(userSession);
+		if (agent != null) {
+			// Add new user session info
+			IUserSession userSession = entityFactory.createUserSession(message.getUsername(),
+					getSessionEvent(message.getType()));
+			agent.addUserSession(userSession);
+			// Merge records
+			agentDao.update(agent);
 
-		// Merge records
-		agentDao.update(agent);
-
-		logger.info("Added user session detail to agent: {}", agent);
+			logger.info("Added user session detail to agent: {}", agent);
+		} else {
+			logger.warn("Couldn't find agent with JID: {}", uid);
+		}
 	}
 
 	/**
