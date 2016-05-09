@@ -57,6 +57,16 @@
 		<property name="responseFactory" ref="responseFactory" />
 		<property name="commandDao" ref="commandDao" />
 	</bean>
+	
+	<service ref="reportRequestProcessor"
+		interface="tr.org.liderahenk.lider.core.api.rest.processors.IReportRequestProcessor" />
+	<bean id="reportRequestProcessor"
+		class="tr.org.liderahenk.lider.rest.ReportRequestProcessorImpl">
+		<property name="reportDao" ref="reportDao" />
+		<property name="entityFactory" ref="entityFactory" />
+		<property name="requestFactory" ref="requestFactory" />
+		<property name="responseFactory" ref="responseFactory" />
+	</bean>
 
 	<reference id="pluginDao"
 		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IPluginDao" />
@@ -66,6 +76,8 @@
 		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IPolicyDao" />
 	<reference id="commandDao"
 		interface="tr.org.liderahenk.lider.core.api.persistence.dao.ICommandDao" />
+	<reference id="reportDao"
+		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IReportDao" />
 	<reference id="requestFactory"
 		interface="tr.org.liderahenk.lider.core.api.rest.IRequestFactory" />
 	<reference id="responseFactory"

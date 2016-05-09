@@ -56,6 +56,7 @@
 				/lider/plugin/** = myAuthcAuth
 				/lider/task/** = myAuthcAuth
 				/lider/command/** = myAuthcAuth
+				/lider/report/** = myAuthcAuth
 				/** = myAuthcAuth
 			</value>
 		</property>
@@ -75,6 +76,9 @@
 
 	<osgi:reference id="commandProcessor"
 		interface="tr.org.liderahenk.lider.core.api.rest.processors.ICommandRequestProcessor" />
+
+	<osgi:reference id="reportProcessor"
+		interface="tr.org.liderahenk.lider.core.api.rest.processors.IReportRequestProcessor" />
 		
 	<osgi:reference id="configurationService"
 		interface="tr.org.liderahenk.lider.core.api.configuration.IConfigurationService" />
