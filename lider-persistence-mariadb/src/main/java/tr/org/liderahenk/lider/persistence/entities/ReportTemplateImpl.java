@@ -16,6 +16,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.codehaus.jackson.map.ObjectMapper;
+
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateColumn;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateParameter;
@@ -230,6 +232,25 @@ public class ReportTemplateImpl implements IReportTemplate {
 			columnImpl = new ReportTemplateColumnImpl(column);
 		}
 		templateColumns.add(columnImpl);
+	}
+
+	@Override
+	public String toJson() {
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			return mapper.writeValueAsString(this);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@Override
+	public String toString() {
+		return "ReportTemplateImpl [id=" + id + ", name=" + name + ", description=" + description + ", query=" + query
+				+ ", templateParams=" + templateParams + ", templateColumns=" + templateColumns + ", reportHeader="
+				+ reportHeader + ", reportFooter=" + reportFooter + ", createDate=" + createDate + ", modifyDate="
+				+ modifyDate + "]";
 	}
 
 }

@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateColumn;
+import tr.org.liderahenk.lider.core.api.rest.requests.IReportTemplateColumRequest;
 
 /**
  * This class represents a report column defined in a report template.
@@ -56,6 +57,14 @@ public class ReportTemplateColumnImpl implements IReportTemplateColumn {
 		this.columnOrder = column.getColumnOrder();
 	}
 
+	public ReportTemplateColumnImpl(IReportTemplateColumRequest c) {
+		this.id = c.getId();
+		this.name = c.getName();
+		this.visible = c.isVisible();
+		this.width = c.getWidth();
+		this.columnOrder = c.getColumnOrder();
+	}
+
 	@Override
 	public Long getId() {
 		return id;
@@ -99,6 +108,12 @@ public class ReportTemplateColumnImpl implements IReportTemplateColumn {
 
 	public void setColumnOrder(Integer columnOrder) {
 		this.columnOrder = columnOrder;
+	}
+
+	@Override
+	public String toString() {
+		return "ReportTemplateColumnImpl [id=" + id + ", name=" + name + ", visible=" + visible + ", width=" + width
+				+ ", columnOrder=" + columnOrder + "]";
 	}
 
 }

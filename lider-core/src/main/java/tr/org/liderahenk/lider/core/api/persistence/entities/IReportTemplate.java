@@ -1,6 +1,5 @@
 package tr.org.liderahenk.lider.core.api.persistence.entities;
 
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -10,7 +9,7 @@ import java.util.List;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Kağan Akkaya</a>
  *
  */
-public interface IReportTemplate extends Serializable {
+public interface IReportTemplate extends IEntity {
 
 	Long getId();
 
@@ -35,5 +34,11 @@ public interface IReportTemplate extends Serializable {
 	void addTemplateParameter(IReportTemplateParameter param);
 
 	void addTemplateColumn(IReportTemplateColumn column);
+
+	/**
+	 * 
+	 * @return JSON string representation of this instance
+	 */
+	String toJson();
 
 }
