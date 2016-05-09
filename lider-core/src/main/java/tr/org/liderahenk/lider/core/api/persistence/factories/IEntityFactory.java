@@ -18,6 +18,7 @@ import tr.org.liderahenk.lider.core.api.plugin.IPluginInfo;
 import tr.org.liderahenk.lider.core.api.rest.requests.ICommandRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IProfileRequest;
+import tr.org.liderahenk.lider.core.api.rest.requests.IReportTemplateRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.ITaskRequest;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
@@ -188,5 +189,20 @@ public interface IEntityFactory {
 	 * @return
 	 */
 	IReportTemplate createReportTemplate(IReportTemplate template);
+
+	/**
+	 * 
+	 * @param request
+	 * @return
+	 */
+	IReportTemplate createReportTemplate(IReportTemplateRequest request);
+
+	/**
+	 * 
+	 * @param template
+	 * @param request
+	 * @return
+	 */
+	IReportTemplate createReportTemplate(IReportTemplate template, IReportTemplateRequest request);
 
 }

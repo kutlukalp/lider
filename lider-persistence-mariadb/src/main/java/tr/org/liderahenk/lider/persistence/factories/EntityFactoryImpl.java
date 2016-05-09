@@ -1,5 +1,6 @@
 package tr.org.liderahenk.lider.persistence.factories;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -26,6 +27,9 @@ import tr.org.liderahenk.lider.core.api.plugin.IPluginInfo;
 import tr.org.liderahenk.lider.core.api.rest.requests.ICommandRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IProfileRequest;
+import tr.org.liderahenk.lider.core.api.rest.requests.IReportTemplateColumRequest;
+import tr.org.liderahenk.lider.core.api.rest.requests.IReportTemplateParameterRequest;
+import tr.org.liderahenk.lider.core.api.rest.requests.IReportTemplateRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.ITaskRequest;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 import tr.org.liderahenk.lider.persistence.entities.CommandExecutionImpl;
@@ -35,7 +39,9 @@ import tr.org.liderahenk.lider.persistence.entities.OperationLogImpl;
 import tr.org.liderahenk.lider.persistence.entities.PluginImpl;
 import tr.org.liderahenk.lider.persistence.entities.PolicyImpl;
 import tr.org.liderahenk.lider.persistence.entities.ProfileImpl;
+import tr.org.liderahenk.lider.persistence.entities.ReportTemplateColumnImpl;
 import tr.org.liderahenk.lider.persistence.entities.ReportTemplateImpl;
+import tr.org.liderahenk.lider.persistence.entities.ReportTemplateParameterImpl;
 import tr.org.liderahenk.lider.persistence.entities.TaskImpl;
 import tr.org.liderahenk.lider.persistence.entities.UserSessionImpl;
 
@@ -168,6 +174,51 @@ public class EntityFactoryImpl implements IEntityFactory {
 	@Override
 	public IReportTemplate createReportTemplate(IReportTemplate template) {
 		return new ReportTemplateImpl(template);
+	}
+
+	@Override
+	public IReportTemplate createReportTemplate(IReportTemplateRequest request) {
+		List<? extends IReportTemplateParameterRequest> templateParams = request.getTemplateParams();
+		List<ReportTemplateParameterImpl> params = null;
+		if (templateParams != null) {
+			params = new ArrayList<ReportTemplateParameterImpl>();
+			for (IReportTemplateParameterRequest p : templateParams) {
+				params.add(new ReportTemplateParameterImpl(p));
+			}
+		}
+		List<? extends IReportTemplateColumRequest> templateColumns = request.getTemplateColumns();
+		List<ReportTemplateColumnImpl> columns = null;
+		if (templateColumns != null) {
+			columns = new ArrayList<ReportTemplateColumnImpl>();
+			for (IReportTemplateColumRequest c : templateColumns) {
+				columns.add(new ReportTemplateColumnImpl(c));
+			}
+		}
+		return new ReportTemplateImpl(request.getId(), request.getName(), request.getDescription(), request.getQuery(),
+				params, columns, request.getReportHeader(), request.getReportFooter(), new Date(), null);
+	}
+
+	@Override
+	public IReportTemplate createReportTemplate(IReportTemplate template, IReportTemplateRequest request) {
+		List<? extends IReportTemplateParameterRequest> templateParams = request.getTemplateParams();
+		List<ReportTemplateParameterImpl> params = null;
+		if (templateParams != null) {
+			params = new ArrayList<ReportTemplateParameterImpl>();
+			for (IReportTemplateParameterRequest p : templateParams) {
+				params.add(new ReportTemplateParameterImpl(p));
+			}
+		}
+		List<? extends IReportTemplateColumRequest> templateColumns = request.getTemplateColumns();
+		List<ReportTemplateColumnImpl> columns = null;
+		if (templateColumns != null) {
+			columns = new ArrayList<ReportTemplateColumnImpl>();
+			for (IReportTemplateColumRequest c : templateColumns) {
+				columns.add(new ReportTemplateColumnImpl(c));
+			}
+		}
+		return new ReportTemplateImpl(template.getId(), request.getName(), request.getDescription(), request.getQuery(),
+				params, columns, request.getReportHeader(), request.getReportFooter(), template.getCreateDate(),
+				new Date());
 	}
 
 }
