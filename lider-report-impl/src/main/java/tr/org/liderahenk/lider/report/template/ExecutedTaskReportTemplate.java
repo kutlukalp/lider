@@ -75,4 +75,10 @@ public class ExecutedTaskReportTemplate extends BaseReportTemplate {
 		return null;
 	}
 
+	@Override
+	public String toJson() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
