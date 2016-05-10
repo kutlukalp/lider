@@ -34,6 +34,20 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 	private IResponseFactory responseFactory;
 
 	@Override
+	public IRestResponse validate(String json) {
+		try {
+			IReportTemplateRequest request = requestFactory.createReportTemplateRequest(json);
+			IReportTemplate template = entityFactory.createReportTemplate(request);
+			reportDao.validate(template.getQuery(), template.getTemplateParams());
+
+			return responseFactory.createResponse(RestResponseStatus.OK, "Query validated.");
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			return responseFactory.createResponse(RestResponseStatus.ERROR, e.getMessage());
+		}
+	}
+
+	@Override
 	public IRestResponse add(String json) {
 		try {
 			IReportTemplateRequest request = requestFactory.createReportTemplateRequest(json);
@@ -115,18 +129,34 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 		return responseFactory.createResponse(RestResponseStatus.OK, "Record deleted.");
 	}
 
+	/**
+	 * 
+	 * @param reportDao
+	 */
 	public void setReportDao(IReportDao reportDao) {
 		this.reportDao = reportDao;
 	}
 
+	/**
+	 * 
+	 * @param entityFactory
+	 */
 	public void setEntityFactory(IEntityFactory entityFactory) {
 		this.entityFactory = entityFactory;
 	}
 
+	/**
+	 * 
+	 * @param requestFactory
+	 */
 	public void setRequestFactory(IRequestFactory requestFactory) {
 		this.requestFactory = requestFactory;
 	}
 
+	/**
+	 * 
+	 * @param responseFactory
+	 */
 	public void setResponseFactory(IResponseFactory responseFactory) {
 		this.responseFactory = responseFactory;
 	}

@@ -5,8 +5,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -23,8 +26,11 @@ import org.slf4j.LoggerFactory;
 import tr.org.liderahenk.lider.core.api.persistence.PropertyOrder;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IReportDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateParameter;
 import tr.org.liderahenk.lider.core.api.persistence.enums.OrderType;
+import tr.org.liderahenk.lider.core.api.persistence.enums.ParameterType;
 import tr.org.liderahenk.lider.persistence.entities.ReportTemplateImpl;
+import tr.org.liderahenk.lider.persistence.utils.RandomStringGenerator;
 
 /**
  * Provides database access for reports and report templates. CRUD operations
@@ -176,6 +182,53 @@ public class ReportDaoImpl implements IReportDao {
 		}
 
 		return list;
+	}
+
+	private static final Random rand = new Random();
+
+	@Override
+	public void validate(String query, List<? extends IReportTemplateParameter> params) throws Exception {
+		Query q = entityManager.createQuery(query);
+		// Set query parameter with random values!
+		if (params != null) {
+			for (IReportTemplateParameter param : params) {
+				if (isInteger(param.getKey())) {
+					if (param.getType() == ParameterType.DATE) {
+						q.setParameter(Integer.parseInt(param.getKey()), TemporalType.DATE);
+					} else if (param.getType() == ParameterType.NUMBER) {
+						q.setParameter(Integer.parseInt(param.getKey()), rand.nextInt());
+					} else {
+						q.setParameter(Integer.parseInt(param.getKey()), new RandomStringGenerator(10).nextString());
+					}
+				} else {
+					if (param.getType() == ParameterType.DATE) {
+						q.setParameter(param.getKey(), TemporalType.DATE);
+					} else if (param.getType() == ParameterType.NUMBER) {
+						q.setParameter(param.getKey(), rand.nextInt());
+					} else {
+						q.setParameter(param.getKey(), new RandomStringGenerator(10).nextString());
+					}
+				}
+			}
+		}
+		// If query executes, then it is valid!
+		q.getResultList();
+	}
+
+	public static boolean isInteger(String s) {
+		if (s.isEmpty())
+			return false;
+		for (int i = 0; i < s.length(); i++) {
+			if (i == 0 && s.charAt(i) == '-') {
+				if (s.length() == 1)
+					return false;
+				else
+					continue;
+			}
+			if (Character.digit(s.charAt(i), 10) < 0)
+				return false;
+		}
+		return true;
 	}
 
 	/**

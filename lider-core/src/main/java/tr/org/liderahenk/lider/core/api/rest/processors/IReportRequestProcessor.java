@@ -19,4 +19,6 @@ public interface IReportRequestProcessor {
 
 	IRestResponse delete(Long id);
 
+	IRestResponse validate(String json);
+
 }

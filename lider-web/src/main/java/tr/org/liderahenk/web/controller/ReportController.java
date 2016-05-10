@@ -38,9 +38,25 @@ public class ReportController {
 	@Autowired
 	private IReportRequestProcessor reportProcessor;
 
-	// TODO validate template action
-
 	// TODO generate report action
+
+	/**
+	 * Validate provided template.
+	 * 
+	 * @param requestBody
+	 * @param request
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
+	@RequestMapping(value = "/validate", method = { RequestMethod.GET, RequestMethod.POST })
+	public IRestResponse validateTemplate(@RequestBody String requestBody, HttpServletRequest request)
+			throws UnsupportedEncodingException {
+		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
+		logger.info("Request received. URL: '/lider/report/validate' Body: {}", requestBodyDecoded);
+		IRestResponse restResponse = reportProcessor.validate(requestBodyDecoded);
+		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		return restResponse;
+	}
 
 	/**
 	 * Create new template.
