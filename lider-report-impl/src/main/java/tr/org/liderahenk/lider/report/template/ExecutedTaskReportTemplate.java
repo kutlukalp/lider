@@ -3,6 +3,7 @@ package tr.org.liderahenk.lider.report.template;
 import java.util.ArrayList;
 import java.util.List;
 
+import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateColumn;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateParameter;
 import tr.org.liderahenk.lider.core.api.plugin.BaseReportTemplate;
@@ -60,6 +61,12 @@ public class ExecutedTaskReportTemplate extends BaseReportTemplate {
 			@Override
 			public Integer getColumnOrder() {
 				return 1;
+			}
+
+			@Override
+			public IReportTemplate getTemplate() {
+				// TODO Auto-generated method stub
+				return null;
 			}
 		});
 		return columns;

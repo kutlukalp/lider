@@ -10,7 +10,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -48,13 +47,11 @@ public class ReportTemplateImpl implements IReportTemplate {
 	@Column(name = "QUERY", nullable = false)
 	private String query;
 
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinColumn(name = "PARAMETER_ID", referencedColumnName = "REPORT_TEMPLATE_ID", nullable = false)
-	private List<ReportTemplateParameterImpl> templateParams; // unidirectional
+	@OneToMany(mappedBy = "template", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ReportTemplateParameterImpl> templateParams; // bidirectional
 
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@JoinColumn(name = "COLUMN_ID", referencedColumnName = "REPORT_TEMPLATE_ID", nullable = false)
-	private List<ReportTemplateColumnImpl> templateColumns; // unidirectional
+	@OneToMany(mappedBy = "template", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ReportTemplateColumnImpl> templateColumns; // bidirectional
 
 	@Column(name = "REPORT_HEADER")
 	private String reportHeader;
@@ -217,6 +214,9 @@ public class ReportTemplateImpl implements IReportTemplate {
 		} else {
 			paramImpl = new ReportTemplateParameterImpl(param);
 		}
+		if (paramImpl.getTemplate() != this) {
+			paramImpl.setTemplate(this);
+		}
 		templateParams.add(paramImpl);
 	}
 
@@ -230,6 +230,9 @@ public class ReportTemplateImpl implements IReportTemplate {
 			columnImpl = (ReportTemplateColumnImpl) column;
 		} else {
 			columnImpl = new ReportTemplateColumnImpl(column);
+		}
+		if (columnImpl.getTemplate() != this) {
+			columnImpl.setTemplate(this);
 		}
 		templateColumns.add(columnImpl);
 	}

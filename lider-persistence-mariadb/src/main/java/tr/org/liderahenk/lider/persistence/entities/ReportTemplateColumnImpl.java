@@ -2,9 +2,15 @@ package tr.org.liderahenk.lider.persistence.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateColumn;
 import tr.org.liderahenk.lider.core.api.rest.requests.IReportTemplateColumRequest;
@@ -15,8 +21,10 @@ import tr.org.liderahenk.lider.core.api.rest.requests.IReportTemplateColumReques
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
+@JsonIgnoreProperties({ "template" })
 @Entity
-@Table(name = "R_REPORT_TEMPLATE_COLUMN")
+@Table(name = "R_REPORT_TEMPLATE_COLUMN", uniqueConstraints = @UniqueConstraint(columnNames = { "REPORT_TEMPLATE_ID",
+		"COLUMN_ORDER" }) )
 public class ReportTemplateColumnImpl implements IReportTemplateColumn {
 
 	private static final long serialVersionUID = 7196785409916030894L;
@@ -25,6 +33,10 @@ public class ReportTemplateColumnImpl implements IReportTemplateColumn {
 	@GeneratedValue
 	@Column(name = "COLUMN_ID", unique = true, nullable = false)
 	private Long id;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "REPORT_TEMPLATE_ID", nullable = false)
+	private ReportTemplateImpl template; // bidirectional
 
 	@Column(name = "NAME", nullable = false)
 	private String name;
@@ -35,14 +47,16 @@ public class ReportTemplateColumnImpl implements IReportTemplateColumn {
 	@Column(name = "WIDTH")
 	private Integer width;
 
-	@Column(name = "COLUMN_ORDER")
+	@Column(name = "COLUMN_ORDER", nullable = false)
 	private Integer columnOrder;
 
 	public ReportTemplateColumnImpl() {
 	}
 
-	public ReportTemplateColumnImpl(Long id, String name, boolean visible, Integer width, Integer columnOrder) {
+	public ReportTemplateColumnImpl(Long id, ReportTemplateImpl template, String name, boolean visible, Integer width,
+			Integer columnOrder) {
 		this.id = id;
+		this.template = template;
 		this.name = name;
 		this.visible = visible;
 		this.width = width;
@@ -55,6 +69,9 @@ public class ReportTemplateColumnImpl implements IReportTemplateColumn {
 		this.visible = column.isVisible();
 		this.width = column.getWidth();
 		this.columnOrder = column.getColumnOrder();
+		if (column.getTemplate() instanceof ReportTemplateImpl) {
+			this.template = (ReportTemplateImpl) column.getTemplate();
+		}
 	}
 
 	public ReportTemplateColumnImpl(IReportTemplateColumRequest c) {
@@ -72,6 +89,15 @@ public class ReportTemplateColumnImpl implements IReportTemplateColumn {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	@Override
+	public ReportTemplateImpl getTemplate() {
+		return template;
+	}
+
+	public void setTemplate(ReportTemplateImpl template) {
+		this.template = template;
 	}
 
 	@Override

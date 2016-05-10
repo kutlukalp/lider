@@ -2,9 +2,15 @@ package tr.org.liderahenk.lider.persistence.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateParameter;
 import tr.org.liderahenk.lider.core.api.persistence.enums.ParameterType;
@@ -16,8 +22,10 @@ import tr.org.liderahenk.lider.core.api.rest.requests.IReportTemplateParameterRe
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
+@JsonIgnoreProperties({ "template" })
 @Entity
-@Table(name = "R_REPORT_TEMPLATE_PARAMETER")
+@Table(name = "R_REPORT_TEMPLATE_PARAMETER", uniqueConstraints = @UniqueConstraint(columnNames = { "REPORT_TEMPLATE_ID",
+		"PARAMETER_KEY" }) )
 public class ReportTemplateParameterImpl implements IReportTemplateParameter {
 
 	private static final long serialVersionUID = -1361608449887309975L;
@@ -27,20 +35,26 @@ public class ReportTemplateParameterImpl implements IReportTemplateParameter {
 	@Column(name = "PARAMETER_ID", unique = true, nullable = false)
 	private Long id;
 
-	@Column(name = "PARAMETER_KEY")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "REPORT_TEMPLATE_ID", nullable = false)
+	private ReportTemplateImpl template; // bidirectional
+
+	@Column(name = "PARAMETER_KEY", nullable = false)
 	private String key;
 
-	@Column(name = "LABEL")
+	@Column(name = "LABEL", nullable = false)
 	private String label;
 
-	@Column(name = "PARAMETER_TYPE")
+	@Column(name = "PARAMETER_TYPE", nullable = false)
 	private Integer type;
 
 	public ReportTemplateParameterImpl() {
 	}
 
-	public ReportTemplateParameterImpl(Long id, String key, String label, ParameterType type) {
+	public ReportTemplateParameterImpl(Long id, ReportTemplateImpl template, String key, String label,
+			ParameterType type) {
 		this.id = id;
+		this.template = template;
 		this.key = key;
 		this.label = label;
 		setType(type);
@@ -51,6 +65,9 @@ public class ReportTemplateParameterImpl implements IReportTemplateParameter {
 		this.key = param.getKey();
 		this.label = param.getLabel();
 		setType(param.getType());
+		if (param.getTemplate() instanceof ReportTemplateImpl) {
+			this.template = (ReportTemplateImpl) param.getTemplate();
+		}
 	}
 
 	public ReportTemplateParameterImpl(IReportTemplateParameterRequest p) {
@@ -67,6 +84,15 @@ public class ReportTemplateParameterImpl implements IReportTemplateParameter {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	@Override
+	public ReportTemplateImpl getTemplate() {
+		return template;
+	}
+
+	public void setTemplate(ReportTemplateImpl template) {
+		this.template = template;
 	}
 
 	@Override

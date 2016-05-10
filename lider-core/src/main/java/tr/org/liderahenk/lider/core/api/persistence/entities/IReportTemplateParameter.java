@@ -25,4 +25,6 @@ public interface IReportTemplateParameter extends Serializable {
 
 	String getLabel();
 
+	IReportTemplate getTemplate();
+
 }

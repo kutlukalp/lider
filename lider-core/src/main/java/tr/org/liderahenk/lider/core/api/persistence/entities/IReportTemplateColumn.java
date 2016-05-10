@@ -20,4 +20,6 @@ public interface IReportTemplateColumn extends Serializable {
 
 	Integer getColumnOrder();
 
+	IReportTemplate getTemplate();
+
 }
