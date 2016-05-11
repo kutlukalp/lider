@@ -49,6 +49,7 @@ public class ReportController {
 	 * @throws UnsupportedEncodingException
 	 */
 	@RequestMapping(value = "/validate", method = { RequestMethod.GET, RequestMethod.POST })
+	@ResponseBody
 	public IRestResponse validateTemplate(@RequestBody String requestBody, HttpServletRequest request)
 			throws UnsupportedEncodingException {
 		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);

@@ -1,6 +1,14 @@
 package tr.org.liderahenk.lider.core.api.persistence.enums;
 
+/**
+ * Provides parameter types that can be used for report and report templates.
+ * 
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ *
+ */
 public enum ParameterType {
+	// In case of new parameter type, make sure to update
+	// ReportDaoImpl.validate() method as well!
 	STRING(1), DATE(2), NUMBER(3);
 
 	private int id;
