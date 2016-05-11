@@ -1,5 +1,6 @@
 package tr.org.liderahenk.lider.persistence.dao;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import tr.org.liderahenk.lider.core.api.persistence.PropertyOrder;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IReportDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateColumn;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateParameter;
 import tr.org.liderahenk.lider.core.api.persistence.enums.OrderType;
 import tr.org.liderahenk.lider.core.api.persistence.enums.ParameterType;
@@ -194,7 +196,7 @@ public class ReportDaoImpl implements IReportDao {
 			for (IReportTemplateParameter param : params) {
 				if (isInteger(param.getKey())) {
 					if (param.getType() == ParameterType.DATE) {
-						q.setParameter(Integer.parseInt(param.getKey()), TemporalType.DATE);
+						q.setParameter(Integer.parseInt(param.getKey()), new Date(), TemporalType.DATE);
 					} else if (param.getType() == ParameterType.NUMBER) {
 						q.setParameter(Integer.parseInt(param.getKey()), rand.nextInt());
 					} else {
@@ -202,7 +204,7 @@ public class ReportDaoImpl implements IReportDao {
 					}
 				} else {
 					if (param.getType() == ParameterType.DATE) {
-						q.setParameter(param.getKey(), TemporalType.DATE);
+						q.setParameter(param.getKey(), new Date(), TemporalType.DATE);
 					} else if (param.getType() == ParameterType.NUMBER) {
 						q.setParameter(param.getKey(), rand.nextInt());
 					} else {
@@ -211,8 +213,43 @@ public class ReportDaoImpl implements IReportDao {
 				}
 			}
 		}
-		// If query executes, then it is valid!
+		// If query executes, we can assume it is valid!
 		q.getResultList();
+	}
+
+	@Override
+	public List<?> generate(String query, List<? extends IReportTemplateParameter> params, Map<String, Object> values,
+			List<? extends IReportTemplateColumn> columns) throws Exception {
+		Query q = entityManager.createQuery(query);
+		// Set query parameters!
+		if (params != null) {
+			for (IReportTemplateParameter param : params) {
+				if (isInteger(param.getKey())) {
+					if (param.getType() == ParameterType.DATE) {
+						// TODO date pattern
+						q.setParameter(Integer.parseInt(param.getKey()),
+								new SimpleDateFormat().parse(values.get(param.getKey()).toString()), TemporalType.DATE);
+					} else if (param.getType() == ParameterType.NUMBER) {
+						q.setParameter(Integer.parseInt(param.getKey()), values.get(param.getKey()));
+					} else {
+						q.setParameter(Integer.parseInt(param.getKey()), values.get(param.getKey()));
+					}
+				} else {
+					if (param.getType() == ParameterType.DATE) {
+						// TODO date pattern
+						q.setParameter(param.getKey(),
+								new SimpleDateFormat().parse(values.get(param.getKey()).toString()), TemporalType.DATE);
+					} else if (param.getType() == ParameterType.NUMBER) {
+						q.setParameter(param.getKey(), values.get(param.getKey()));
+					} else {
+						q.setParameter(param.getKey(), values.get(param.getKey()));
+					}
+				}
+			}
+		}
+		// Execute query
+		List<?> resultList = q.getResultList();
+		return resultList;
 	}
 
 	public static boolean isInteger(String s) {

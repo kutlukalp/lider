@@ -38,7 +38,24 @@ public class ReportController {
 	@Autowired
 	private IReportRequestProcessor reportProcessor;
 
-	// TODO generate report action
+	/**
+	 * Generate report JSON from provided template ID.
+	 * 
+	 * @param requestBody
+	 * @param request
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
+	@RequestMapping(value = "/generate", method = { RequestMethod.POST })
+	@ResponseBody
+	public IRestResponse generateReport(@RequestBody String requestBody, HttpServletRequest request)
+			throws UnsupportedEncodingException {
+		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
+		logger.info("Request received. URL: '/lider/report/generate' Body: {}", requestBodyDecoded);
+		IRestResponse restResponse = reportProcessor.generate(requestBodyDecoded);
+		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		return restResponse;
+	}
 
 	/**
 	 * Validate provided template.

@@ -6,6 +6,7 @@ import java.util.Map;
 import tr.org.liderahenk.lider.core.api.persistence.IBaseDao;
 import tr.org.liderahenk.lider.core.api.persistence.PropertyOrder;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateColumn;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateParameter;
 
 public interface IReportDao extends IBaseDao<IReportTemplate> {
@@ -31,5 +32,8 @@ public interface IReportDao extends IBaseDao<IReportTemplate> {
 			Map<String, Object> propertiesMap, List<PropertyOrder> orders, Integer maxResults);
 
 	void validate(String query, List<? extends IReportTemplateParameter> templateParams) throws Exception;
+
+	List<?> generate(String query, List<? extends IReportTemplateParameter> templateParams, Map<String, Object> map,
+			List<? extends IReportTemplateColumn> templateColumns) throws Exception;
 
 }

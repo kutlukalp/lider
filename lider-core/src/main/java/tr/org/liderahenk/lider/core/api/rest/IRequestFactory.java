@@ -3,6 +3,7 @@ package tr.org.liderahenk.lider.core.api.rest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyExecutionRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IProfileRequest;
+import tr.org.liderahenk.lider.core.api.rest.requests.IReportGenerationRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IReportTemplateRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.ITaskRequest;
 
@@ -24,5 +25,7 @@ public interface IRequestFactory {
 	IPolicyExecutionRequest createPolicyExecutionRequest(String json) throws Exception;
 
 	IReportTemplateRequest createReportTemplateRequest(String json) throws Exception;
+
+	IReportGenerationRequest createReportGenerationRequest(String json) throws Exception;
 
 }

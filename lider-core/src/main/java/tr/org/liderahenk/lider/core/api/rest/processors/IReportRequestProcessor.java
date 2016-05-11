@@ -21,4 +21,6 @@ public interface IReportRequestProcessor {
 
 	IRestResponse validate(String json);
 
+	IRestResponse generate(String json);
+
 }

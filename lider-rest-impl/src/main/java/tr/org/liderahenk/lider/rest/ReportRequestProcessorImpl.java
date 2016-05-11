@@ -15,6 +15,7 @@ import tr.org.liderahenk.lider.core.api.rest.IRequestFactory;
 import tr.org.liderahenk.lider.core.api.rest.IResponseFactory;
 import tr.org.liderahenk.lider.core.api.rest.enums.RestResponseStatus;
 import tr.org.liderahenk.lider.core.api.rest.processors.IReportRequestProcessor;
+import tr.org.liderahenk.lider.core.api.rest.requests.IReportGenerationRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IReportTemplateRequest;
 import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
 
@@ -32,6 +33,26 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 	private IEntityFactory entityFactory;
 	private IRequestFactory requestFactory;
 	private IResponseFactory responseFactory;
+
+	@Override
+	public IRestResponse generate(String json) {
+		try {
+			IReportGenerationRequest request = requestFactory.createReportGenerationRequest(json);
+			IReportTemplate template = reportDao.find(request.getTemplateId());
+
+			// Generic type can be an entity class or an object array!
+			List<?> resultList = reportDao.generate(template.getQuery(), template.getTemplateParams(),
+					request.getParamValues(), template.getTemplateColumns());
+
+			Map<String, Object> resultMap = new HashMap<String, Object>();
+			resultMap.put("report", new ObjectMapper().writeValueAsString(resultList));
+
+			return responseFactory.createResponse(RestResponseStatus.OK, "Record saved.", resultMap);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			return responseFactory.createResponse(RestResponseStatus.ERROR, e.getMessage());
+		}
+	}
 
 	@Override
 	public IRestResponse validate(String json) {
