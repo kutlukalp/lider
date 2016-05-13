@@ -35,7 +35,7 @@ public class ReportTemplateParameterImpl implements IReportTemplateParameter {
 	@Column(name = "PARAMETER_ID", unique = true, nullable = false)
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "REPORT_TEMPLATE_ID", nullable = false)
 	private ReportTemplateImpl template; // bidirectional
 
