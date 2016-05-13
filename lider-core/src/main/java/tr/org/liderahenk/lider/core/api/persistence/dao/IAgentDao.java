@@ -78,4 +78,10 @@ public interface IAgentDao extends IBaseDao<IAgent> {
 	List<? extends IAgent> findByProperties(Class<? extends IAgent> obj, Map<String, Object> propertiesMap,
 			List<PropertyOrder> orders, Integer maxResults);
 
+	/**
+	 * 
+	 * @return
+	 */
+	List<String> getPropertyNames();
+
 }
