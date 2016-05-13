@@ -22,6 +22,7 @@ import tr.org.liderahenk.lider.core.api.persistence.dao.IAgentDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IAgent;
 import tr.org.liderahenk.lider.core.api.persistence.enums.OrderType;
 import tr.org.liderahenk.lider.persistence.entities.AgentImpl;
+import tr.org.liderahenk.lider.persistence.entities.AgentPropertyImpl;
 
 /**
  * Provides database access for agents. CRUD operations for agents and their
@@ -112,6 +113,14 @@ public class AgentDaoImpl implements IAgentDao {
 		List<AgentImpl> agentList = query.getResultList();
 		logger.debug("IAgent objects found: {}", agentList);
 		return agentList;
+	}
+	
+	@Override
+	public List<String> getPropertyNames() {
+		TypedQuery<String> query = entityManager.createQuery("select p.propertyName from " + AgentPropertyImpl.class.getSimpleName() + " p", String.class);
+		List<String> propertyNames = query.getResultList();
+		logger.debug("Property names found: {}", propertyNames);
+		return propertyNames;
 	}
 
 	@Override

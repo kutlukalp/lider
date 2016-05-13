@@ -78,5 +78,18 @@
 		<tx:transaction method="*" value="Required" />
 		<jpa:context property="entityManager" unitname="lider" />
 	</bean>
+	
+	<service ref="getLdapSearchAttrCommand" interface="tr.org.liderahenk.lider.core.api.plugin.ICommand" />
+	<bean id="getLdapSearchAttrCommand"
+		class="tr.org.liderahenk.lider.persistence.commands.GetLdapSearchAttrCommand">
+		<property name="resultFactory" ref="resultFactory" />
+		<property name="configurationService" ref="configurationService" />
+		<property name="agentDao" ref="agentDao" />
+	</bean>
+	
+	<reference id="resultFactory"
+		interface="tr.org.liderahenk.lider.core.api.service.ICommandResultFactory" />
+	<reference id="configurationService"
+		interface="tr.org.liderahenk.lider.core.api.configuration.IConfigurationService" />
 
 </blueprint>
