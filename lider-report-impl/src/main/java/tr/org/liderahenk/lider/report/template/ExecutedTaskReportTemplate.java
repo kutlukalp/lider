@@ -3,11 +3,20 @@ package tr.org.liderahenk.lider.report.template;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.codehaus.jackson.map.ObjectMapper;
+
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateColumn;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateParameter;
+import tr.org.liderahenk.lider.core.api.persistence.enums.ParameterType;
 import tr.org.liderahenk.lider.core.api.plugin.BaseReportTemplate;
 
+/**
+ * Default report template for executed tasks.
+ * 
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ *
+ */
 public class ExecutedTaskReportTemplate extends BaseReportTemplate {
 
 	private static final long serialVersionUID = -8026043224671892836L;
@@ -19,57 +28,89 @@ public class ExecutedTaskReportTemplate extends BaseReportTemplate {
 
 	@Override
 	public String getDescription() {
-		return "Çalıştırılan görevler hakkında rapor";
+		return "Çalıştırılan görevler hakkında detay rapor";
 	}
 
 	@Override
 	public String getQuery() {
-		return "";
+		return "SELECT t, " 
+				+ "SUM(CASE WHEN cer.responseCode = :resp_success then 1 ELSE 0 END) as success, "
+				+ "SUM(CASE WHEN cer.responseCode = :resp_received THEN 1 ELSE 0 END) as received, "
+				+ "SUM(CASE WHEN cer.responseCode = :resp_error then 1 ELSE 0 END) as error "
+				+ "FROM CommandImpl c LEFT JOIN c.commandExecutions ce LEFT JOIN ce.commandExecutionResults cer INNER JOIN c.task t INNER JOIN t.plugin p "
+				+ "WHERE p.name LIKE :pluginName AND p.version LIKE :pluginVersion GROUP BY t";
 	}
 
 	@Override
 	public List<? extends IReportTemplateParameter> getTemplateParams() {
-		return null;
-	}
+		List<IReportTemplateParameter> params = new ArrayList<IReportTemplateParameter>();
+		// Plugin name
+		params.add(new IReportTemplateParameter() {
 
-	@Override
-	public List<? extends IReportTemplateColumn> getTemplateColumns() {
-		List<IReportTemplateColumn> columns = new ArrayList<IReportTemplateColumn>();
-		columns.add(new IReportTemplateColumn() {
-			private static final long serialVersionUID = 213078955635257067L;
+			private static final long serialVersionUID = -6579501320904978340L;
 
 			@Override
-			public boolean isVisible() {
-				return true;
+			public ParameterType getType() {
+				return ParameterType.STRING;
 			}
 
 			@Override
-			public Integer getWidth() {
-				return 100;
+			public IReportTemplate getTemplate() {
+				return getSelf();
 			}
 
 			@Override
-			public String getName() {
-				return "";
+			public String getLabel() {
+				return "Eklenti adı";
+			}
+
+			@Override
+			public String getKey() {
+				return "pluginName";
 			}
 
 			@Override
 			public Long getId() {
 				return null;
 			}
+		});
+		// Plugin version
+		params.add(new IReportTemplateParameter() {
+
+			private static final long serialVersionUID = -8460266012427204991L;
 
 			@Override
-			public Integer getColumnOrder() {
-				return 1;
+			public ParameterType getType() {
+				return ParameterType.STRING;
 			}
 
 			@Override
 			public IReportTemplate getTemplate() {
-				// TODO Auto-generated method stub
+				return getSelf();
+			}
+
+			@Override
+			public String getLabel() {
+				return "Eklenti sürümü";
+			}
+
+			@Override
+			public String getKey() {
+				return "pluginVersion";
+			}
+
+			@Override
+			public Long getId() {
 				return null;
 			}
 		});
-		return columns;
+		return params;
+	}
+
+	@Override
+	public List<? extends IReportTemplateColumn> getTemplateColumns() {
+		// We want to display all columns!
+		return null;
 	}
 
 	@Override
@@ -84,8 +125,17 @@ public class ExecutedTaskReportTemplate extends BaseReportTemplate {
 
 	@Override
 	public String toJson() {
-		// TODO Auto-generated method stub
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			return mapper.writeValueAsString(this);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return null;
+	}
+
+	protected ExecutedTaskReportTemplate getSelf() {
+		return this;
 	}
 
 }

@@ -25,6 +25,20 @@ public class TemplateManager {
 	private List<IReportTemplate> templateList;
 	private IReportDao reportDao;
 	private IEntityFactory entityFactory;
+	private IReportTemplate taskTemplate;
+
+	public void init() {
+		// Check if task template already exists!
+		List<? extends IReportTemplate> templates = reportDao.findByProperty(IReportTemplate.class, "name",
+				taskTemplate.getName(), 1);
+		IReportTemplate template = templates != null && !templates.isEmpty() ? templates.get(0) : null;
+		if (template != null) {
+			template = entityFactory.createReportTemplate(template, taskTemplate);
+			reportDao.update(template);
+		} else {
+			reportDao.save(taskTemplate);
+		}
+	}
 
 	private void registerTemplates() {
 
@@ -87,6 +101,14 @@ public class TemplateManager {
 	 */
 	public void setEntityFactory(IEntityFactory entityFactory) {
 		this.entityFactory = entityFactory;
+	}
+
+	/**
+	 * 
+	 * @param taskTemplate
+	 */
+	public void setTaskTemplate(IReportTemplate taskTemplate) {
+		this.taskTemplate = taskTemplate;
 	}
 
 }
