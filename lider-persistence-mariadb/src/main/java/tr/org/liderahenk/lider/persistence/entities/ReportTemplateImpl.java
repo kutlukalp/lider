@@ -38,13 +38,13 @@ public class ReportTemplateImpl implements IReportTemplate {
 	@Column(name = "REPORT_TEMPLATE_ID", unique = true, nullable = false)
 	private Long id;
 
-	@Column(name = "NAME", unique = true, nullable = false)
+	@Column(name = "NAME", unique = true, nullable = false, length = 255)
 	private String name;
 
-	@Column(name = "DESCRIPTION")
+	@Column(name = "DESCRIPTION", length = 500)
 	private String description;
 
-	@Column(name = "QUERY", nullable = false)
+	@Column(name = "QUERY", nullable = false, length = 4000)
 	private String query;
 
 	@OneToMany(mappedBy = "template", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -53,10 +53,10 @@ public class ReportTemplateImpl implements IReportTemplate {
 	@OneToMany(mappedBy = "template", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ReportTemplateColumnImpl> templateColumns; // bidirectional
 
-	@Column(name = "REPORT_HEADER")
+	@Column(name = "REPORT_HEADER", length = 500)
 	private String reportHeader;
 
-	@Column(name = "REPORT_FOOTER")
+	@Column(name = "REPORT_FOOTER", length = 500)
 	private String reportFooter;
 
 	@Temporal(TemporalType.TIMESTAMP)
