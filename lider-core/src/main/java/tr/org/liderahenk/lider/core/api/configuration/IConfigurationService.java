@@ -50,6 +50,12 @@ public interface IConfigurationService {
 	 */
 	Boolean getLdapUseSsl();
 
+	/**
+	 * 
+	 * @return LDAP search attributes that can be used in new search editor.
+	 */
+	String getLdapSearchAttributes();
+
 	//
 	// XMPP configuration
 	//

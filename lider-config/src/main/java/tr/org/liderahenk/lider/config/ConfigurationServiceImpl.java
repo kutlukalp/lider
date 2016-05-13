@@ -28,6 +28,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 	private String ldapPassword;
 	private String ldapRootDn;
 	private Boolean ldapUseSsl;
+	private String ldapSearchAttributes;
 
 	// XMPP configuration
 	private String xmppHost; // host name/server name
@@ -350,6 +351,15 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 
 	public void setTaskManagerLogXmppMessagesEnabled(Boolean taskManagerLogXmppMessagesEnabled) {
 		this.taskManagerLogXmppMessagesEnabled = taskManagerLogXmppMessagesEnabled;
+	}
+
+	@Override
+	public String getLdapSearchAttributes() {
+		return ldapSearchAttributes;
+	}
+
+	public void setLdapSearchAttributes(String ldapSearchAttributes) {
+		this.ldapSearchAttributes = ldapSearchAttributes;
 	}
 
 }

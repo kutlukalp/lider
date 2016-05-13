@@ -20,6 +20,7 @@
 		<property name="ldapPassword" value="${ldap.password}" />
 		<property name="ldapRootDn" value="${ldap.root.dn}" />
 		<property name="ldapUseSsl" value="${ldap.use.ssl}" />
+		<property name="ldapSearchAttributes" value="${ldap.search.attributes}" />
 
 		<property name="xmppHost" value="${xmpp.host}" />
 		<property name="xmppPort" value="${xmpp.port}" />
