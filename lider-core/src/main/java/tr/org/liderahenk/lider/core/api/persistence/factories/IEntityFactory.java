@@ -177,11 +177,11 @@ public interface IEntityFactory {
 
 	/**
 	 * 
-	 * @param temp
+	 * @param existingTemplate
 	 * @param template
 	 * @return
 	 */
-	IReportTemplate createReportTemplate(IReportTemplate temp, IReportTemplate template);
+	IReportTemplate createReportTemplate(IReportTemplate existingTemplate, IReportTemplate template);
 
 	/**
 	 * 
@@ -199,10 +199,10 @@ public interface IEntityFactory {
 
 	/**
 	 * 
-	 * @param template
+	 * @param existingTemplate
 	 * @param request
 	 * @return
 	 */
-	IReportTemplate createReportTemplate(IReportTemplate template, IReportTemplateRequest request);
+	IReportTemplate createReportTemplate(IReportTemplate existingTemplate, IReportTemplateRequest request);
 
 }

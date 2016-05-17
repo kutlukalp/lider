@@ -14,7 +14,6 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateParameter;
 import tr.org.liderahenk.lider.core.api.persistence.enums.ParameterType;
-import tr.org.liderahenk.lider.core.api.rest.requests.IReportTemplateParameterRequest;
 
 /**
  * This class represents a report parameter defined in a report template.
@@ -68,13 +67,6 @@ public class ReportTemplateParameterImpl implements IReportTemplateParameter {
 		if (param.getTemplate() instanceof ReportTemplateImpl) {
 			this.template = (ReportTemplateImpl) param.getTemplate();
 		}
-	}
-
-	public ReportTemplateParameterImpl(IReportTemplateParameterRequest p) {
-		this.id = p.getId();
-		this.key = p.getKey();
-		this.label = p.getLabel();
-		setType(p.getType());
 	}
 
 	@Override

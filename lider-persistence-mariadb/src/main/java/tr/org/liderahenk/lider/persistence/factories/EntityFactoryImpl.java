@@ -1,6 +1,5 @@
 package tr.org.liderahenk.lider.persistence.factories;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -152,10 +151,10 @@ public class EntityFactoryImpl implements IEntityFactory {
 	}
 
 	@Override
-	public IReportTemplate createReportTemplate(IReportTemplate temp, IReportTemplate template) {
-		ReportTemplateImpl templateImpl = new ReportTemplateImpl(temp.getId(), temp.getName(),
+	public IReportTemplate createReportTemplate(IReportTemplate existingTemplate, IReportTemplate template) {
+		ReportTemplateImpl templateImpl = new ReportTemplateImpl(existingTemplate.getId(), existingTemplate.getName(),
 				template.getDescription(), template.getQuery(), null, null, template.getReportHeader(),
-				template.getReportFooter(), temp.getCreateDate(), new Date());
+				template.getReportFooter(), existingTemplate.getCreateDate(), new Date());
 		List<? extends IReportTemplateParameter> params = template.getTemplateParams();
 		if (params != null) {
 			for (IReportTemplateParameter param : params) {
@@ -178,47 +177,50 @@ public class EntityFactoryImpl implements IEntityFactory {
 
 	@Override
 	public IReportTemplate createReportTemplate(IReportTemplateRequest request) {
-		List<? extends IReportTemplateParameterRequest> templateParams = request.getTemplateParams();
-		List<ReportTemplateParameterImpl> params = null;
-		if (templateParams != null) {
-			params = new ArrayList<ReportTemplateParameterImpl>();
-			for (IReportTemplateParameterRequest p : templateParams) {
-				params.add(new ReportTemplateParameterImpl(p));
+		ReportTemplateImpl template = new ReportTemplateImpl(request.getId(), request.getName(),
+				request.getDescription(), request.getQuery(), null, null, request.getReportHeader(),
+				request.getReportFooter(), new Date(), null);
+
+		List<? extends IReportTemplateParameterRequest> params = request.getTemplateParams();
+		if (params != null) {
+			for (IReportTemplateParameterRequest p : params) {
+				template.addTemplateParameter(
+						new ReportTemplateParameterImpl(null, template, p.getKey(), p.getLabel(), p.getType()));
 			}
 		}
-		List<? extends IReportTemplateColumRequest> templateColumns = request.getTemplateColumns();
-		List<ReportTemplateColumnImpl> columns = null;
-		if (templateColumns != null) {
-			columns = new ArrayList<ReportTemplateColumnImpl>();
-			for (IReportTemplateColumRequest c : templateColumns) {
-				columns.add(new ReportTemplateColumnImpl(c));
+		List<? extends IReportTemplateColumRequest> columns = request.getTemplateColumns();
+		if (columns != null) {
+			for (IReportTemplateColumRequest c : columns) {
+				template.addTemplateColumn(new ReportTemplateColumnImpl(null, template, c.getName(), c.isVisible(),
+						c.getWidth(), c.getColumnOrder()));
 			}
 		}
-		return new ReportTemplateImpl(request.getId(), request.getName(), request.getDescription(), request.getQuery(),
-				params, columns, request.getReportHeader(), request.getReportFooter(), new Date(), null);
+
+		return template;
 	}
 
 	@Override
-	public IReportTemplate createReportTemplate(IReportTemplate template, IReportTemplateRequest request) {
-		List<? extends IReportTemplateParameterRequest> templateParams = request.getTemplateParams();
-		List<ReportTemplateParameterImpl> params = null;
-		if (templateParams != null) {
-			params = new ArrayList<ReportTemplateParameterImpl>();
-			for (IReportTemplateParameterRequest p : templateParams) {
-				params.add(new ReportTemplateParameterImpl(p));
+	public IReportTemplate createReportTemplate(IReportTemplate existingTemplate, IReportTemplateRequest request) {
+		ReportTemplateImpl template = new ReportTemplateImpl(existingTemplate.getId(), request.getName(),
+				request.getDescription(), request.getQuery(), null, null, request.getReportHeader(),
+				request.getReportFooter(), existingTemplate.getCreateDate(), new Date());
+
+		List<? extends IReportTemplateParameterRequest> params = request.getTemplateParams();
+		if (params != null) {
+			for (IReportTemplateParameterRequest p : params) {
+				template.addTemplateParameter(
+						new ReportTemplateParameterImpl(null, template, p.getKey(), p.getLabel(), p.getType()));
 			}
 		}
-		List<? extends IReportTemplateColumRequest> templateColumns = request.getTemplateColumns();
-		List<ReportTemplateColumnImpl> columns = null;
-		if (templateColumns != null) {
-			columns = new ArrayList<ReportTemplateColumnImpl>();
-			for (IReportTemplateColumRequest c : templateColumns) {
-				columns.add(new ReportTemplateColumnImpl(c));
+		List<? extends IReportTemplateColumRequest> columns = request.getTemplateColumns();
+		if (columns != null) {
+			for (IReportTemplateColumRequest c : columns) {
+				template.addTemplateColumn(new ReportTemplateColumnImpl(null, template, c.getName(), c.isVisible(),
+						c.getWidth(), c.getColumnOrder()));
 			}
 		}
-		return new ReportTemplateImpl(template.getId(), request.getName(), request.getDescription(), request.getQuery(),
-				params, columns, request.getReportHeader(), request.getReportFooter(), template.getCreateDate(),
-				new Date());
+
+		return template;
 	}
 
 }

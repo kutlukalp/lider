@@ -13,7 +13,6 @@ import javax.persistence.UniqueConstraint;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateColumn;
-import tr.org.liderahenk.lider.core.api.rest.requests.IReportTemplateColumRequest;
 
 /**
  * This class represents a report column defined in a report template.
@@ -72,14 +71,6 @@ public class ReportTemplateColumnImpl implements IReportTemplateColumn {
 		if (column.getTemplate() instanceof ReportTemplateImpl) {
 			this.template = (ReportTemplateImpl) column.getTemplate();
 		}
-	}
-
-	public ReportTemplateColumnImpl(IReportTemplateColumRequest c) {
-		this.id = c.getId();
-		this.name = c.getName();
-		this.visible = c.isVisible();
-		this.width = c.getWidth();
-		this.columnOrder = c.getColumnOrder();
 	}
 
 	@Override

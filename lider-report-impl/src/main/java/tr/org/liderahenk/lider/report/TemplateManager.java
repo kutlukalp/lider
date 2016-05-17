@@ -31,10 +31,10 @@ public class TemplateManager {
 		// Check if task template already exists!
 		List<? extends IReportTemplate> templates = reportDao.findByProperty(IReportTemplate.class, "name",
 				taskTemplate.getName(), 1);
-		IReportTemplate template = templates != null && !templates.isEmpty() ? templates.get(0) : null;
-		if (template != null) {
-			template = entityFactory.createReportTemplate(template, taskTemplate);
-			reportDao.update(template);
+		IReportTemplate existingTemplate = templates != null && !templates.isEmpty() ? templates.get(0) : null;
+		if (existingTemplate != null) {
+			existingTemplate = entityFactory.createReportTemplate(existingTemplate, taskTemplate);
+			reportDao.update(existingTemplate);
 		} else {
 			reportDao.save(taskTemplate);
 		}
