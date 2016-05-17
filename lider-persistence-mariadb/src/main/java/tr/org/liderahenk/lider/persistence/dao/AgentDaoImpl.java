@@ -117,7 +117,7 @@ public class AgentDaoImpl implements IAgentDao {
 	
 	@Override
 	public List<String> getPropertyNames() {
-		TypedQuery<String> query = entityManager.createQuery("select p.propertyName from " + AgentPropertyImpl.class.getSimpleName() + " p", String.class);
+		TypedQuery<String> query = entityManager.createQuery("select distinct p.propertyName from " + AgentPropertyImpl.class.getSimpleName() + " p", String.class);
 		List<String> propertyNames = query.getResultList();
 		logger.debug("Property names found: {}", propertyNames);
 		return propertyNames;
