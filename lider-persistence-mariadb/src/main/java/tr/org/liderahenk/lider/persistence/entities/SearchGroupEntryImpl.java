@@ -27,7 +27,7 @@ import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
  */
 @JsonIgnoreProperties({ "group" })
 @Entity
-@Table(name = "C_SEARCH_GROUP_ENTRY", uniqueConstraints = @UniqueConstraint(columnNames = { "AGENT_ID", "DN" }) )
+@Table(name = "C_SEARCH_GROUP_ENTRY", uniqueConstraints = @UniqueConstraint(columnNames = { "SEARCH_GROUP_ID", "DN" }) )
 public class SearchGroupEntryImpl implements ISearchGroupEntry {
 
 	private static final long serialVersionUID = -2563974322082465664L;
@@ -41,10 +41,10 @@ public class SearchGroupEntryImpl implements ISearchGroupEntry {
 	@JoinColumn(name = "SEARCH_GROUP_ID", nullable = false)
 	private SearchGroupImpl group; // bidirectional
 
-	@Column(name = "DN", nullable = false, length = 4000)
+	@Column(name = "DN", nullable = false)
 	private String dn;
 
-	@Column(name = "DN_TYPE", length = 1)
+	@Column(name = "DN_TYPE", length = 1, nullable = false)
 	private Integer dnType;
 
 	@Temporal(TemporalType.TIMESTAMP)

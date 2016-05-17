@@ -38,7 +38,7 @@ public class SearchGroupImpl implements ISearchGroup {
 	@Column(name = "SEARCH_GROUP_ID", unique = true, nullable = false)
 	private Long id;
 
-	@Column(name = "GROUP_NAME", unique = true, nullable = false, length = 1000)
+	@Column(name = "GROUP_NAME", nullable = false, length = 1000)
 	private String name;
 
 	@Column(name = "SEARCH_CRITERIA", nullable = false, length = 4000)
