@@ -1,6 +1,7 @@
 package tr.org.liderahenk.lider.service.requests;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -121,7 +122,7 @@ public class TaskRequestImpl implements ITaskRequest {
 
 	@Override
 	public Map<String, Object> getParameterMap() {
-		return parameterMap;
+		return parameterMap == null ? new HashMap<String, Object>() : parameterMap;
 	}
 
 	public void setParameterMap(Map<String, Object> parameterMap) {
