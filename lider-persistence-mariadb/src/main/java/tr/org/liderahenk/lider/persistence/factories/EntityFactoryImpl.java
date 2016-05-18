@@ -2,11 +2,14 @@ package tr.org.liderahenk.lider.persistence.factories;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
 import tr.org.liderahenk.lider.core.api.messaging.messages.IPolicyStatusMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.ITaskStatusMessage;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IAgent;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecution;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecutionResult;
@@ -31,6 +34,8 @@ import tr.org.liderahenk.lider.core.api.rest.requests.IReportTemplateParameterRe
 import tr.org.liderahenk.lider.core.api.rest.requests.IReportTemplateRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.ITaskRequest;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
+import tr.org.liderahenk.lider.persistence.entities.AgentImpl;
+import tr.org.liderahenk.lider.persistence.entities.AgentPropertyImpl;
 import tr.org.liderahenk.lider.persistence.entities.CommandExecutionImpl;
 import tr.org.liderahenk.lider.persistence.entities.CommandExecutionResultImpl;
 import tr.org.liderahenk.lider.persistence.entities.CommandImpl;
@@ -221,6 +226,45 @@ public class EntityFactoryImpl implements IEntityFactory {
 		}
 
 		return template;
+	}
+
+	@Override
+	public IAgent createAgent(IAgent agent) {
+		return new AgentImpl(agent);
+	}
+
+	@Override
+	public IAgent createAgent(Long id, String jid, String dn, String password, String hostname, String ipAddresses,
+			String macAddresses, Map<String, Object> data) {
+		AgentImpl agentImpl = new AgentImpl(id, jid, false, dn, password, hostname, ipAddresses, macAddresses,
+				new Date(), null, null, null);
+		if (data != null) {
+			for (Entry<String, Object> entry : data.entrySet()) {
+				if (entry.getKey() != null && entry.getValue() != null) {
+					agentImpl.addProperty(new AgentPropertyImpl(null, agentImpl, entry.getKey(),
+							entry.getValue().toString(), new Date()));
+				}
+			}
+		}
+		return agentImpl;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public IAgent createAgent(IAgent existingAgent, String password, String hostname, String ipAddresses,
+			String macAddresses, Map<String, Object> data) {
+		AgentImpl agentImpl = new AgentImpl(existingAgent.getId(), existingAgent.getJid(), false, existingAgent.getDn(),
+				password, hostname, ipAddresses, macAddresses, existingAgent.getCreateDate(), new Date(), null,
+				(List<UserSessionImpl>) existingAgent.getSessions());
+		if (data != null) {
+			for (Entry<String, Object> entry : data.entrySet()) {
+				if (entry.getKey() != null && entry.getValue() != null) {
+					agentImpl.addProperty(new AgentPropertyImpl(null, agentImpl, entry.getKey(),
+							entry.getValue().toString(), new Date()));
+				}
+			}
+		}
+		return agentImpl;
 	}
 
 }

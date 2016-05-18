@@ -1,7 +1,10 @@
 package tr.org.liderahenk.lider.core.api.persistence.factories;
 
+import java.util.Map;
+
 import tr.org.liderahenk.lider.core.api.messaging.messages.IPolicyStatusMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.ITaskStatusMessage;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IAgent;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecution;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecutionResult;
@@ -204,5 +207,40 @@ public interface IEntityFactory {
 	 * @return
 	 */
 	IReportTemplate createReportTemplate(IReportTemplate existingTemplate, IReportTemplateRequest request);
+
+	/**
+	 * 
+	 * @param agent
+	 * @return
+	 */
+	IAgent createAgent(IAgent agent);
+
+	/**
+	 * 
+	 * @param id
+	 * @param jid
+	 * @param dn
+	 * @param password
+	 * @param hostname
+	 * @param ipAddresses
+	 * @param macAddresses
+	 * @param data
+	 * @return
+	 */
+	IAgent createAgent(Long id, String jid, String dn, String password, String hostname, String ipAddresses,
+			String macAddresses, Map<String, Object> data);
+
+	/**
+	 * 
+	 * @param existingAgent
+	 * @param password
+	 * @param hostname
+	 * @param ipAddresses
+	 * @param macAddresses
+	 * @param data
+	 * @return
+	 */
+	IAgent createAgent(IAgent existingAgent, String password, String hostname, String ipAddresses, String macAddresses,
+			Map<String, Object> data);
 
 }
