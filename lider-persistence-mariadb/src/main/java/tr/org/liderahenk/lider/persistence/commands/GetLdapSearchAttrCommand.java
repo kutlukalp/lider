@@ -3,7 +3,6 @@ package tr.org.liderahenk.lider.persistence.commands;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -26,20 +25,19 @@ public class GetLdapSearchAttrCommand extends BaseCommand {
 
 	@Override
 	public ICommandResult execute(ICommandContext context) throws Exception {
-		List<String> attributes = new ArrayList<String>();
-		// Read LDAP search attributes
-		String searchAttributes = configurationService.getLdapSearchAttributes();
-		if (searchAttributes != null) {
-			attributes.addAll(Arrays.asList(searchAttributes.split(",")));
-		}
-		// Append agent properties
-		List<String> propertyNames = agentDao.getPropertyNames();
-		attributes.addAll(propertyNames);
-
-		logger.debug("LDAP search attributes: {}", attributes);
-
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		resultMap.put("attributes", attributes);
+		// Read LDAP search attributes
+		String attributes = configurationService.getLdapSearchAttributes();
+		if (attributes != null) {
+			resultMap.put("attributes", Arrays.asList(attributes.split(",")));
+			logger.debug("LDAP search attributes: {}", attributes);
+		}
+		// Read agent properties
+		Map<String, String> properties = agentDao.getProperties();
+		if (properties != null) {
+			resultMap.put("properties", properties);
+			logger.debug("Agent properties: {}", properties);
+		}
 		return resultFactory.create(CommandResultStatus.OK, new ArrayList<String>(), this, resultMap);
 	}
 
