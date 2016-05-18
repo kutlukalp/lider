@@ -31,22 +31,13 @@
 		<property name="policySubscriber" ref="policySubscriber" />
 	</bean>
 
-	<service ref="defaultRegistrationSubscriber">
-		<interfaces>
-			<value>tr.org.liderahenk.lider.core.api.messaging.subscribers.IRegistrationSubscriber</value>
-			<value>org.osgi.service.event.EventHandler</value>
-		</interfaces>
-		<service-properties>
-			<entry key="event.topics" value="tr/org/liderahenk/file/received" />
-		</service-properties>
-	</service>
+	<service ref="defaultRegistrationSubscriber" interface="tr.org.liderahenk.lider.core.api.messaging.subscribers.IRegistrationSubscriber" />
 	<bean id="defaultRegistrationSubscriber"
 		class="tr.org.liderahenk.lider.messaging.subscribers.DefaultRegistrationSubscriberImpl">
 		<property name="ldapService" ref="ldapService" />
 		<property name="configurationService" ref="configurationService" />
 		<property name="agentDao" ref="agentDao" />
-		<property name="messagingService" ref="messagingService" />
-		<property name="context" ref="blueprintBundleContext" />
+		<property name="entityFactory" ref="entityFactory" />
 	</bean>
 
 	<bean id="userSessionSubscriber"

@@ -1,29 +1,15 @@
 package tr.org.liderahenk.lider.messaging.subscribers;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
-import org.osgi.framework.BundleContext;
-import org.osgi.service.event.Event;
-import org.osgi.service.event.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
-import tr.org.liderahenk.lider.core.api.messaging.IMessagingService;
 import tr.org.liderahenk.lider.core.api.messaging.enums.AgentMessageType;
 import tr.org.liderahenk.lider.core.api.messaging.enums.StatusCode;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IRegistrationMessage;
@@ -31,8 +17,7 @@ import tr.org.liderahenk.lider.core.api.messaging.messages.IRegistrationResponse
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IRegistrationSubscriber;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IAgentDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IAgent;
-import tr.org.liderahenk.lider.core.api.persistence.entities.IAgentProperty;
-import tr.org.liderahenk.lider.core.api.persistence.entities.IUserSession;
+import tr.org.liderahenk.lider.core.api.persistence.factories.IEntityFactory;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 import tr.org.liderahenk.lider.messaging.messages.RegistrationResponseMessageImpl;
 
@@ -64,15 +49,14 @@ import tr.org.liderahenk.lider.messaging.messages.RegistrationResponseMessageImp
  * @see tr.org.liderahenk.lider.core.api.messaging.IRegistrationMessage
  *
  */
-public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscriber, EventHandler {
+public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscriber {
 
 	private static Logger logger = LoggerFactory.getLogger(DefaultRegistrationSubscriberImpl.class);
 
 	private ILDAPService ldapService;
 	private IConfigurationService configurationService;
 	private IAgentDao agentDao;
-	private IMessagingService messagingService;
-	private BundleContext context;
+	private IEntityFactory entityFactory;
 
 	/**
 	 * Check if agent defined in the received message is already registered, if
@@ -84,11 +68,9 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 
 		String uid = message.getFrom().split("@")[0];
 
-		logger.error("Message: {}", message);
-
 		// Register agent
 		if (AgentMessageType.REGISTER == message.getType()) {
-			
+
 			// Check if agent LDAP entry already exists
 			final List<LdapEntry> entry = ldapService.search(configurationService.getAgentLdapJidAttribute(), uid,
 					new String[] { configurationService.getAgentLdapJidAttribute() });
@@ -97,39 +79,24 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 				ldapService.updateEntry(entry.get(0).getDistinguishedName(), "userPassword", message.getPassword());
 
 				// Find related agent database record.
-				
-				List<? extends IAgent> agentList = agentDao.findByProperty(IAgent.class, "jid", uid, 1);
-				
-				if(agentList != null && ! agentList.isEmpty()){
-					IAgent agent = agentList.get(0);
-					// Add new properties
-					List<? extends IAgentProperty> properties = createProperties(message);
-					if (properties != null) {
-						for (IAgentProperty property : properties) {
-							agent.addProperty(property);
-						}
-					}
-					
+				List<? extends IAgent> agents = agentDao.findByProperty(IAgent.class, "jid", uid, 1);
+				// We found the agent, update its properties!
+				if (agents != null && !agents.isEmpty()) {
+					IAgent agent = agents.get(0);
+					agent = entityFactory.createAgent(agent, message.getPassword(), message.getHostname(),
+							message.getIpAddresses(), message.getMacAddresses(), message.getData());
 					// Merge records
 					agentDao.update(agent);
-				}
-				else{
+				} else {
 					String entryDN = createEntryDN(message);
-					IAgent agent = createAgent(message, entryDN, uid);
-
-					// Add new properties
-					List<? extends IAgentProperty> properties = createProperties(message);
-					if (properties != null) {
-						for (IAgentProperty property : properties) {
-							agent.addProperty(property);
-						}
-					}
+					IAgent agent = entityFactory.createAgent(null, uid, entryDN, message.getPassword(),
+							message.getHostname(), message.getIpAddresses(), message.getMacAddresses(),
+							message.getData());
 					// Persist record
 					agentDao.save(agent);
 				}
-				
 
-				logger.error(
+				logger.warn(
 						"Agent DN {} already exists! Updated its password and database properties with the values submitted.",
 						entry.get(0).getDistinguishedName());
 				return new RegistrationResponseMessageImpl(StatusCode.ALREADY_EXISTS,
@@ -137,13 +104,8 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 								+ " already exists! Updated its password and database properties with the values submitted.",
 						entry.get(0).getDistinguishedName(), null, new Date());
 			} else {
-				logger.error("Creating account: {} with password: {}",
+				logger.debug("Creating account: {} with password: {}",
 						new Object[] { message.getFrom(), message.getPassword() });
-
-				// Create new XMPP account
-				//messagingService.createAccount(message.getFrom(), message.getPassword());
-
-				//logger.error("Created account!");
 
 				// Create new agent LDAP entry.
 				Map<String, String[]> attributes = new HashMap<String, String[]>();
@@ -156,75 +118,21 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 				attributes.put("owner", new String[] { "ou=Uncategorized,dc=mys,dc=pardus,dc=org" });
 				//
 
-				logger.error("Creating DN");
-
 				String entryDN = createEntryDN(message);
 				ldapService.addEntry(entryDN, attributes);
 				logger.debug("Agent DN {} created successfully!", entryDN);
 
 				// Create new agent database record
-				IAgent agent = createAgent(message, entryDN, uid);
-
-				// Add new properties
-				List<? extends IAgentProperty> properties = createProperties(message);
-				if (properties != null) {
-					for (IAgentProperty property : properties) {
-						agent.addProperty(property);
-					}
-				}
+				IAgent agent = entityFactory.createAgent(null, uid, entryDN, message.getPassword(),
+						message.getHostname(), message.getIpAddresses(), message.getMacAddresses(), message.getData());
 				// Persist record
 				agentDao.save(agent);
-				logger.error("Creating DB records!");
-
-				//logger.error("Sending file to agent");
-
-				// Send script file to agent to gather more system info
-				// messagingService.sendFile(getFileAsByteArray(),
-				// message.getFrom());
-
-				//logger.error("Sent file to agent");
-				//logger.error("Instruct agent to execute script");
-
-				// Force agent to execute script and return result
-				//messagingService.executeScript("/opt/ahenk/received-files/lider/test.sh", message.getFrom());
-
-				//logger.error("Script executed");
-				//logger.error("Requesting script result");
-
-				// Request script result
-				//messagingService.requestFile("/tmp/hosts", message.getFrom());
-
-				//logger.error("Script result file requested");
 
 				logger.error("{} and its related database record created successfully!", entryDN);
 				return new RegistrationResponseMessageImpl(StatusCode.REGISTERED,
 						entryDN + " and its related database record created successfully!", entryDN, null, new Date());
 			}
-
 		} else if (AgentMessageType.UNREGISTER == message.getType()) {
-			// TEST//TEST//TEST//TEST//TEST//TEST//TEST//TEST
-			//logger.error("------->UNREGISTER");
-			//messagingService.sendFile(getFileAsByteArray(), message.getFrom());
-			//String md5 = getMD5ofFile(getFileAsByteArray());
-			//logger.error("------->move 2");
-			//messagingService.moveFile(md5, "/tmp/", message.getFrom());
-			//logger.error("------->execute 3");
-			//messagingService.executeScript("/tmp/" + md5, message.getFrom());
-			//logger.error("------->request 4");
-			//messagingService.requestFile("/tmp/test.out", message.getFrom());
-			//logger.error("------->finish 5");
-			// TEST//TEST//TEST//TEST//TEST//TEST//TEST//TEST
-
-			return null;
-		} else if (AgentMessageType.REGISTER_LDAP == message.getType()) {
-			logger.info("REGISTER_LDAP");
-			return null;
-		}
-		//
-		// Unregister agent
-		//
-		else {
-			logger.error("UNKNOWN MSG TYPE");
 			// Check if agent LDAP entry already exists
 			final List<LdapEntry> entry = ldapService.search(configurationService.getAgentLdapJidAttribute(), uid,
 					new String[] { configurationService.getAgentLdapJidAttribute() });
@@ -235,213 +143,18 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 			}
 
 			// Find related agent database record.
-			List<? extends IAgent> agentList = agentDao.findByProperty(IAgent.class, "jid", uid, 1);
-			IAgent agent = agentList.get(0);
+			List<? extends IAgent> agents = agentDao.findByProperty(IAgent.class, "jid", uid, 1);
+			IAgent agent = agents != null && !agents.isEmpty() ? agents.get(0) : null;
 
 			// Mark the record as deleted.
-			agentDao.delete(agent.getId());
+			if (agent != null) {
+				agentDao.delete(agent.getId());
+			}
 
 			return null;
-		}
-	}
-
-	private String getMD5ofFile(byte[] inputBytes) {
-
-		MessageDigest digest;
-		String result = null;
-		try {
-			digest = MessageDigest.getInstance("MD5");
-			byte[] hashBytes = digest.digest(inputBytes);
-
-			final StringBuilder builder = new StringBuilder();
-			for (byte b : hashBytes) {
-				builder.append(String.format("%02x", b));
-			}
-			result = builder.toString();
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
-
-		return result;
-	}
-
-	private byte[] getFileAsByteArray() throws IOException {
-
-		logger.error("Trying to locate file test.sh");
-		InputStream inputStream = context.getBundle().getEntry("/test.sh").openStream();
-		logger.error("test.sh found!");
-
-		StringBuilder sb = new StringBuilder("");
-		BufferedReader br = null;
-
-		try {
-			br = new BufferedReader(new InputStreamReader(inputStream));
-			String read;
-			while ((read = br.readLine()) != null) {
-				sb.append(read);
-				sb.append("\n");
-			}
-		} finally {
-			if (br != null) {
-				br.close();
-			}
-		}
-
-		logger.error("test.sh file's been read!");
-
-		return sb.toString().getBytes(StandardCharsets.UTF_8);
-	}
-
-	/**
-	 * Create list of IAgentProperty instances from provided message.
-	 * 
-	 * @param message
-	 * @param uid
-	 * @return
-	 */
-	private List<? extends IAgentProperty> createProperties(final IRegistrationMessage message) {
-
-		Map<String, Object> propertyMap = message.getData();
-		List<IAgentProperty> properties = null;
-
-		if (propertyMap != null) {
-			properties = new ArrayList<IAgentProperty>();
-
-			Set<Entry<String, Object>> entrySet = propertyMap.entrySet();
-			for (Entry<String, Object> entry : entrySet) {
-
-				final String propName = entry.getKey();
-				final String propValue = entry.getValue() != null ? entry.getValue().toString() : null;
-
-				if (propName != null && propValue != null) {
-					properties.add(new IAgentProperty() {
-
-						private static final long serialVersionUID = -1109853197778751021L;
-
-						@Override
-						public Long getId() {
-							return null;
-						}
-
-						@Override
-						public IAgent getAgent() {
-							return null;
-						}
-
-						@Override
-						public String getPropertyName() {
-							return propName;
-						}
-
-						@Override
-						public String getPropertyValue() {
-							return propValue;
-						}
-
-						@Override
-						public Date getCreateDate() {
-							return message.getTimestamp();
-						}
-
-					});
-				}
-			}
-		}
-
-		return properties;
-	}
-
-	/**
-	 * Create new agent with provided DN and agent UID.
-	 * 
-	 * @param message
-	 * @param entryDN
-	 * @return
-	 */
-	private IAgent createAgent(final IRegistrationMessage message, final String dn, final String uid) {
-		if (message != null && dn != null) {
-
-			final IAgent agent = new IAgent() {
-
-				private static final long serialVersionUID = 577470808998737417L;
-
-				List<IAgentProperty> properties = null;
-
-				@Override
-				public Long getId() {
-					return null;
-				}
-
-				@Override
-				public String getJid() {
-					return uid; // XMPP JID = LDAP UID
-				}
-
-				@Override
-				public String getPassword() {
-					return message.getPassword();
-				}
-
-				@Override
-				public String getHostname() {
-					return message.getHostname();
-				}
-
-				@Override
-				public String getIpAddresses() {
-					return message.getIpAddresses();
-				}
-
-				@Override
-				public String getMacAddresses() {
-					return message.getMacAddresses();
-				}
-
-				@Override
-				public String getDn() {
-					return dn;
-				}
-
-				@Override
-				public Date getCreateDate() {
-					return new Date();
-				}
-
-				@Override
-				public Date getModifyDate() {
-					return new Date();
-				}
-
-				@Override
-				public Boolean getDeleted() {
-					return false;
-				}
-
-				@Override
-				public List<? extends IAgentProperty> getProperties() {
-					return this.properties;
-				}
-
-				@Override
-				public void addProperty(IAgentProperty property) {
-					if (properties == null) {
-						properties = new ArrayList<IAgentProperty>();
-					}
-					properties.add(property);
-				}
-
-				@Override
-				public List<? extends IUserSession> getSessions() {
-					return null;
-				}
-
-				@Override
-				public void addUserSession(IUserSession userSession) {
-				}
-
-			};
-
-			return agent;
+		} else if (AgentMessageType.REGISTER_LDAP == message.getType()) {
+			logger.info("REGISTER_LDAP");
+			return null;
 		}
 
 		return null;
@@ -466,17 +179,6 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 		entryDN.append(configurationService.getAgentLdapBaseDn() == null ? configurationService.getAgentLdapBaseDn()
 				: configurationService.getAgentLdapBaseDn());
 		return entryDN.toString();
-	}
-
-	@Override
-	public void handleEvent(Event event) {
-
-		logger.error("Requested file received");
-
-		// TODO
-		// TODO
-		// TODO
-		// TODO
 	}
 
 	/**
@@ -505,18 +207,10 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 
 	/**
 	 * 
-	 * @param messagingService
+	 * @param entityFactory
 	 */
-	public void setMessagingService(IMessagingService messagingService) {
-		this.messagingService = messagingService;
-	}
-
-	/**
-	 * 
-	 * @param context
-	 */
-	public void setContext(BundleContext context) {
-		this.context = context;
+	public void setEntityFactory(IEntityFactory entityFactory) {
+		this.entityFactory = entityFactory;
 	}
 
 }
