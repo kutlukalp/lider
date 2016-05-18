@@ -82,6 +82,6 @@ public interface IAgentDao extends IBaseDao<IAgent> {
 	 * 
 	 * @return
 	 */
-	List<String> getPropertyNames();
+	Map<String, String> getProperties();
 
 }

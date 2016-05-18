@@ -1,11 +1,13 @@
 package tr.org.liderahenk.lider.persistence.dao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -114,14 +116,6 @@ public class AgentDaoImpl implements IAgentDao {
 		logger.debug("IAgent objects found: {}", agentList);
 		return agentList;
 	}
-	
-	@Override
-	public List<String> getPropertyNames() {
-		TypedQuery<String> query = entityManager.createQuery("select distinct p.propertyName from " + AgentPropertyImpl.class.getSimpleName() + " p", String.class);
-		List<String> propertyNames = query.getResultList();
-		logger.debug("Property names found: {}", propertyNames);
-		return propertyNames;
-	}
 
 	@Override
 	public List<? extends IAgent> findByProperties(Class<? extends IAgent> obj, Map<String, Object> propertiesMap,
@@ -175,6 +169,32 @@ public class AgentDaoImpl implements IAgentDao {
 		}
 
 		return list;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Map<String, String> getProperties() {
+		Query query = entityManager.createQuery("SELECT DISTINCT p.propertyName, p.propertyValue FROM "
+				+ AgentPropertyImpl.class.getSimpleName() + " p");
+		List<Object[]> resultList = query.getResultList();
+		Map<String, String> properties = null;
+		if (resultList != null) {
+			properties = new HashMap<String, String>();
+			for (Object[] r : resultList) {
+				if (r[0] == null || r[1] == null) {
+					continue;
+				}
+				String key = r[0].toString();
+				String value = r[1].toString();
+				if (properties.get(key) != null) {
+					// Group values belong to the same property
+					String oldValue = properties.get(key);
+					value = oldValue + ", " + value;
+				}
+				properties.put(key, value);
+			}
+		}
+		return properties;
 	}
 
 	public void setEntityManager(EntityManager entityManager) {
