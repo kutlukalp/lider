@@ -50,7 +50,7 @@ public class CommandController {
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 */
-	@RequestMapping(value = "/task/list", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "/task/list", method = { RequestMethod.GET })
 	@ResponseBody
 	public IRestResponse listExecutedTasks(@RequestParam(value = "pluginName", required = false) String pluginName,
 			@RequestParam(value = "pluginVersion", required = false) String pluginVersion,
@@ -76,7 +76,7 @@ public class CommandController {
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 */
-	@RequestMapping(value = "/task/{id:[\\d]+}/get", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "/task/{id:[\\d]+}/get", method = { RequestMethod.GET })
 	@ResponseBody
 	public IRestResponse getTaskCommand(@PathVariable final long id, HttpServletRequest request)
 			throws UnsupportedEncodingException {
@@ -98,7 +98,7 @@ public class CommandController {
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 */
-	@RequestMapping(value = "/policy/list", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "/policy/list", method = { RequestMethod.GET })
 	@ResponseBody
 	public IRestResponse listExecutedPolicies(@RequestParam(value = "label", required = false) String label,
 			@RequestParam(value = "createDateRangeStart", required = false) Long createDateRangeStart,
@@ -123,7 +123,7 @@ public class CommandController {
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 */
-	@RequestMapping(value = "/policy/{id:[\\d]+}/get", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "/policy/{id:[\\d]+}/get", method = { RequestMethod.GET })
 	@ResponseBody
 	public IRestResponse getPolicyCommand(@PathVariable final long id, HttpServletRequest request)
 			throws UnsupportedEncodingException {

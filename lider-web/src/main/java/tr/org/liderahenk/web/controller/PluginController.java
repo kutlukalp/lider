@@ -46,7 +46,7 @@ public class PluginController {
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 */
-	@RequestMapping(value = "/list", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "/list", method = { RequestMethod.GET })
 	@ResponseBody
 	public IRestResponse listPlugins(@RequestParam(value = "name", required = false) String name,
 			@RequestParam(value = "version", required = false) String version, HttpServletRequest request)
@@ -65,7 +65,7 @@ public class PluginController {
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 */
-	@RequestMapping(value = "/{id:[\\d]+}/get", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "/{id:[\\d]+}/get", method = { RequestMethod.GET })
 	@ResponseBody
 	public IRestResponse getPlugin(@PathVariable final long id, HttpServletRequest request)
 			throws UnsupportedEncodingException {

@@ -46,7 +46,7 @@ public class ProfileController {
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 */
-	@RequestMapping(value = "/add", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "/add", method = { RequestMethod.POST })
 	@ResponseBody
 	public IRestResponse addProfile(@RequestBody String requestBody, HttpServletRequest request)
 			throws UnsupportedEncodingException {
@@ -65,7 +65,7 @@ public class ProfileController {
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 */
-	@RequestMapping(value = "/update", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "/update", method = { RequestMethod.POST })
 	@ResponseBody
 	public IRestResponse updateProfile(@RequestBody String requestBody, HttpServletRequest request)
 			throws UnsupportedEncodingException {
@@ -87,7 +87,7 @@ public class ProfileController {
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 */
-	@RequestMapping(value = "/list", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "/list", method = { RequestMethod.GET })
 	@ResponseBody
 	public IRestResponse listProfiles(@RequestParam(value = "pluginName", required = true) String pluginName,
 			@RequestParam(value = "pluginVersion", required = true) String pluginVersion,
@@ -109,7 +109,7 @@ public class ProfileController {
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 */
-	@RequestMapping(value = "/{id:[\\d]+}/get", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "/{id:[\\d]+}/get", method = { RequestMethod.GET })
 	@ResponseBody
 	public IRestResponse getProfile(@PathVariable final long id, HttpServletRequest request)
 			throws UnsupportedEncodingException {
@@ -127,7 +127,7 @@ public class ProfileController {
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 */
-	@RequestMapping(value = "/{id:[\\d]+}/delete", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "/{id:[\\d]+}/delete", method = { RequestMethod.GET })
 	@ResponseBody
 	public IRestResponse deleteProfile(@PathVariable final long id, HttpServletRequest request)
 			throws UnsupportedEncodingException {

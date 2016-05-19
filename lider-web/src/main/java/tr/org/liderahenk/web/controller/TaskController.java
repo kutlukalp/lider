@@ -36,7 +36,7 @@ public class TaskController {
 	@Autowired
 	private ITaskRequestProcessor taskProcessor;
 
-	@RequestMapping(value = "/execute", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "/execute", method = { RequestMethod.POST })
 	@ResponseBody
 	public IRestResponse executeTask(@RequestBody String requestBody, HttpServletRequest request)
 			throws UnsupportedEncodingException {

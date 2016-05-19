@@ -9,8 +9,19 @@ import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
  */
 public interface IPluginRequestProcessor {
 
+	/**
+	 * 
+	 * @param name
+	 * @param version
+	 * @return
+	 */
 	IRestResponse list(String name, String version);
 
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
 	IRestResponse get(Long id);
 
 }

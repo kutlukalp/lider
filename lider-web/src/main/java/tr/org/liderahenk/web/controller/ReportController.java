@@ -65,7 +65,7 @@ public class ReportController {
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 */
-	@RequestMapping(value = "/validate", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "/validate", method = { RequestMethod.POST })
 	@ResponseBody
 	public IRestResponse validateTemplate(@RequestBody String requestBody, HttpServletRequest request)
 			throws UnsupportedEncodingException {
@@ -84,7 +84,7 @@ public class ReportController {
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 */
-	@RequestMapping(value = "/add", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "/add", method = { RequestMethod.POST })
 	@ResponseBody
 	public IRestResponse addTemplate(@RequestBody String requestBody, HttpServletRequest request)
 			throws UnsupportedEncodingException {
@@ -103,7 +103,7 @@ public class ReportController {
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 */
-	@RequestMapping(value = "/update", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "/update", method = { RequestMethod.POST })
 	@ResponseBody
 	public IRestResponse updateTemplate(@RequestBody String requestBody, HttpServletRequest request)
 			throws UnsupportedEncodingException {
@@ -123,7 +123,7 @@ public class ReportController {
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 */
-	@RequestMapping(value = "/list", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "/list", method = { RequestMethod.GET })
 	@ResponseBody
 	public IRestResponse listPolicies(@RequestParam(value = "name", required = false) String name,
 			HttpServletRequest request) throws UnsupportedEncodingException {
@@ -141,7 +141,7 @@ public class ReportController {
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 */
-	@RequestMapping(value = "/{id:[\\d]+}/get", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "/{id:[\\d]+}/get", method = { RequestMethod.GET })
 	@ResponseBody
 	public IRestResponse getTemplate(@PathVariable final long id, HttpServletRequest request)
 			throws UnsupportedEncodingException {
@@ -159,7 +159,7 @@ public class ReportController {
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 */
-	@RequestMapping(value = "/{id:[\\d]+}/delete", method = { RequestMethod.GET, RequestMethod.POST })
+	@RequestMapping(value = "/{id:[\\d]+}/delete", method = { RequestMethod.GET })
 	@ResponseBody
 	public IRestResponse deleteTemplate(@PathVariable final long id, HttpServletRequest request)
 			throws UnsupportedEncodingException {
