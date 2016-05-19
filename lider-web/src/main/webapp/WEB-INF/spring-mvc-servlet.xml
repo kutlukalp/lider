@@ -57,6 +57,8 @@
 				/lider/task/** = myAuthcAuth
 				/lider/command/** = myAuthcAuth
 				/lider/report/** = myAuthcAuth
+				/lider/agent/** = myAuthcAuth
+				/lider/searchgroup/** = myAuthcAuth
 				/** = myAuthcAuth
 			</value>
 		</property>
@@ -70,6 +72,9 @@
 
 	<osgi:reference id="pluginProcessor"
 		interface="tr.org.liderahenk.lider.core.api.rest.processors.IPluginRequestProcessor" />
+
+	<osgi:reference id="agentProcessor"
+		interface="tr.org.liderahenk.lider.core.api.rest.processors.IAgentRequestProcessor" />
 
 	<osgi:reference id="taskProcessor"
 		interface="tr.org.liderahenk.lider.core.api.rest.processors.ITaskRequestProcessor" />
