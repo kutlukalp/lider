@@ -15,6 +15,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.codehaus.jackson.map.ObjectMapper;
+
 import tr.org.liderahenk.lider.core.api.persistence.entities.IAgent;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IAgentProperty;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IUserSession;
@@ -69,7 +71,7 @@ public class AgentImpl implements IAgent {
 	@OneToMany(mappedBy = "agent", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
 	private List<AgentPropertyImpl> properties = new ArrayList<AgentPropertyImpl>(); // bidirectional
 
-	@OneToMany(mappedBy = "agent", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = false)
+	@OneToMany(mappedBy = "agent", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = false)
 	private List<UserSessionImpl> sessions = new ArrayList<UserSessionImpl>(); // bidirectional
 
 	public AgentImpl() {
@@ -263,6 +265,17 @@ public class AgentImpl implements IAgent {
 			userSessionImpl.setAgent(this);
 		}
 		sessions.add(userSessionImpl);
+	}
+
+	@Override
+	public String toJson() {
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			return mapper.writeValueAsString(this);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	@Override

@@ -39,6 +39,14 @@
 		<property name="responseFactory" ref="responseFactory" />
 	</bean>
 
+	<service ref="agentRequestProcessor"
+		interface="tr.org.liderahenk.lider.core.api.rest.processors.IAgentRequestProcessor" />
+	<bean id="agentRequestProcessor"
+		class="tr.org.liderahenk.lider.rest.AgentRequestProcessorImpl">
+		<property name="agentDao" ref="agentDao" />
+		<property name="responseFactory" ref="responseFactory" />
+	</bean>
+
 	<service ref="taskRequestProcessor"
 		interface="tr.org.liderahenk.lider.core.api.rest.processors.ITaskRequestProcessor" />
 	<bean id="taskRequestProcessor" class="tr.org.liderahenk.lider.rest.TaskRequestProcessorImpl">
@@ -70,6 +78,8 @@
 
 	<reference id="pluginDao"
 		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IPluginDao" />
+	<reference id="agentDao"
+		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IAgentDao" />
 	<reference id="profileDao"
 		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IProfileDao" />
 	<reference id="policyDao"

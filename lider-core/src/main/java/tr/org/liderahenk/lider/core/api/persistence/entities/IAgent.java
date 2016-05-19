@@ -83,4 +83,10 @@ public interface IAgent extends IEntity {
 	 */
 	Date getModifyDate();
 
+	/**
+	 * 
+	 * @return JSON string representation of this instance
+	 */
+	String toJson();
+
 }
