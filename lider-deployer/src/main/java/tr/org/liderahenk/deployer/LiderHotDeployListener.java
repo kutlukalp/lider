@@ -21,13 +21,14 @@ import org.slf4j.LoggerFactory;
 import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.deployer.ILiderHotDeployListener;
 
+
 /**
  * Default implementation for {@link ILiderHotDeployListener}
  * 
  * @author <a href="mailto:basaran.ismaill@gmail.com">İsmail BAŞARAN</a>
  * 
  */
-public class LiderHotDeployListener implements ILiderHotDeployListener{
+public class LiderHotDeployListener implements ILiderHotDeployListener,Runnable{
 	
 	
 	private final static Logger logger = LoggerFactory.getLogger(LiderHotDeployListener.class);
@@ -58,8 +59,9 @@ public class LiderHotDeployListener implements ILiderHotDeployListener{
 		try {
 			this.watcher = FileSystems.getDefault().newWatchService();
 			this.keys = new HashMap<WatchKey,Path>();
-			Path dir = Paths.get("/home/ismail/devzone"); // get path value from configuration file
+			Path dir = Paths.get(configurationService.getHotDeploymentPath()); // get path value from configuration file
 			register(dir);
+			new Thread(this).start(); //TODO
 		} catch (IOException e) {
 			logger.error("[LiderHotDeployListener] Exeption occured when initializing hot deployment listener...");
 			e.printStackTrace();
@@ -77,6 +79,10 @@ public class LiderHotDeployListener implements ILiderHotDeployListener{
 		}
 	}
 	
+	@Override
+	public void run() {
+		processEvents();
+	}
 	
 	@Override
 	public void processEvents() {
@@ -108,7 +114,10 @@ public class LiderHotDeployListener implements ILiderHotDeployListener{
                 Path name = ev.context();
                 Path child = dir.resolve(name);
 
-                logger.debug("%s: %s\n", event.kind().name(), child);
+                logger.info("%s: %s\n", event.kind().name(), child);
+                System.out.println(event.kind().name());
+                System.out.println(child);
+                //TODO untar plugin and dispatch plugins 
 
                 
             }
@@ -134,5 +143,8 @@ public class LiderHotDeployListener implements ILiderHotDeployListener{
 	public void setConfigurationService(IConfigurationService configurationService) {
 		this.configurationService = configurationService;
 	}
+
+
+	
 
 }

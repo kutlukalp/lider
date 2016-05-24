@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
+
+	<service ref="liderDeploymentService" interface="tr.org.liderahenk.lider.core.api.deployer.ILiderHotDeployListener" />
+
+	<bean id="liderDeploymentService" class="tr.org.liderahenk.deployer.LiderHotDeployListener"
+		init-method="init" >
+		<property name="configurationService" ref="configurationService" />
+	</bean>
+	
+	<reference id="configurationService" interface="tr.org.liderahenk.lider.core.api.configuration.IConfigurationService" />
+</blueprint>

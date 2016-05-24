@@ -209,5 +209,8 @@ public interface IConfigurationService {
 	 * @return true if xmpp message logs enabled
 	 */
 	Boolean getTaskManagerLogXmppMessagesEnabled();
+	
+	
+	String getHotDeploymentPath();
 
 }
