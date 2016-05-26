@@ -50,6 +50,7 @@
         <bundle start-level="84">mvn:${groupId}/lider-pluginmanager-impl/${project.version}</bundle>
         <bundle start-level="84">mvn:${groupId}/lider-policymanager-impl/${project.version}</bundle>
         <bundle start-level="85">mvn:${groupId}/lider-karaf-console/${project.version}</bundle>
+        <bundle start-level="86">mvn:${groupId}/lider-report-impl/${project.version}</bundle>
     </feature>
     
     <feature name="lider-dependent-bundles" description="${project.name}" version="${project.version}">
