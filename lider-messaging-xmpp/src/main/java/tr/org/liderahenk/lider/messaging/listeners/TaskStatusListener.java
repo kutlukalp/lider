@@ -55,7 +55,7 @@ public class TaskStatusListener implements StanzaListener, StanzaFilter {
 			if (packet instanceof Message) {
 
 				Message msg = (Message) packet;
-				logger.info("Task status update message received from => {}, body => {}", msg.getFrom(), msg.getBody());
+				logger.info("Task status message received from => {}, body => {}", msg.getFrom(), msg.getBody());
 
 				ObjectMapper mapper = new ObjectMapper();
 				mapper.setDateFormat(new SimpleDateFormat("dd-MM-yyyy HH:mm"));
