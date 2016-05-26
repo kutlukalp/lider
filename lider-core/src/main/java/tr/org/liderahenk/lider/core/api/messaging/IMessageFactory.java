@@ -11,6 +11,10 @@ import tr.org.liderahenk.lider.core.api.messaging.messages.IInstallPluginMessage
 import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IPluginNotFoundMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IRequestFileMessage;
+import tr.org.liderahenk.lider.core.api.messaging.notifications.ITaskNotification;
+import tr.org.liderahenk.lider.core.api.messaging.notifications.ITaskStatusNotification;
+import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
+import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecutionResult;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 
@@ -93,5 +97,25 @@ public interface IMessageFactory {
 	 */
 	IInstallPluginMessage createInstallPluginMessage(String recipient, String pluginName, String pluginVersion,
 			Map<String, Object> parameterMap, Protocol protocol);
+
+	/**
+	 * Create task notification that can be used to notify related Lider Console
+	 * user.
+	 * 
+	 * @param recipient
+	 * @param command
+	 * @return
+	 */
+	ITaskNotification createTaskNotification(String recipient, ICommand command);
+
+	/**
+	 * Create task status notification that can be used to notify related
+	 * plugins and Lider Console user.
+	 * 
+	 * @param recipient
+	 * @param result
+	 * @return
+	 */
+	ITaskStatusNotification createTaskStatusNotification(String recipient, ICommandExecutionResult result);
 
 }
