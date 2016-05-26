@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -25,6 +26,7 @@ import tr.org.liderahenk.lider.core.api.messaging.IMessagingService;
 import tr.org.liderahenk.lider.core.api.messaging.enums.StatusCode;
 import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.ITaskStatusMessage;
+import tr.org.liderahenk.lider.core.api.messaging.notifications.ITaskNotification;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.ITaskStatusSubscriber;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IAgentDao;
 import tr.org.liderahenk.lider.core.api.persistence.dao.ICommandDao;
@@ -74,9 +76,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 
 	@Override
 	public void executeTask(final ITaskRequest request, List<LdapEntry> entries) throws TaskSubmissionFailedException {
-
 		try {
-
 			// Find related plugin
 			final IPlugin plugin = findRelatedPlugin(request.getPluginName(), request.getPluginVersion());
 
@@ -90,10 +90,10 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 
 			// While persisting each command execution, send task message
 			// to agent, if necessary!
+			List<ICommandExecution> executions = null;
 			if (entries != null && !entries.isEmpty()) {
-
+				executions = new ArrayList<ICommandExecution>();
 				for (final LdapEntry entry : entries) {
-
 					boolean isAhenk = ldapService.isAhenk(entry);
 
 					// New command execution
@@ -118,9 +118,14 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 
 					// TODO improvement. Use batch if possible!
 					commandDao.save(execution);
+					executions.add(execution);
 				}
-
 			}
+
+			// Create & send notification to Lider Console
+			ITaskNotification notification = messageFactory.createTaskNotification(command.getCommandOwnerUid(),
+					command);
+			messagingService.sendNotification(notification);
 
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -134,7 +139,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 	/**
 	 * Triggered when a task status message received. This method listens to
 	 * agent responses and creates new command execution results accordingly. It
-	 * also throws a task status event in order to notify plugins and Lider
+	 * also throws a 'task status' event in order to notify plugins and Lider
 	 * Console about task result (Plugins may listen to this event by
 	 * implementing {@link ITaskAwareCommand} interface).
 	 * 
@@ -172,7 +177,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 						while (!file.exists()) {
 							Thread.sleep(100);
 							if (i > 1000) {
-								throw new RuntimeException("XMPP File transfer error. File="+file.getAbsolutePath());
+								throw new RuntimeException("XMPP File transfer error. File=" + file.getAbsolutePath());
 							}
 							i++;
 						}
@@ -193,9 +198,9 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 							Dictionary<String, Object> payload = new Hashtable<String, Object>();
 							// Task status message
 							payload.put("message", message);
-							// Find who created the task
-							payload.put("messageJID", commandExecution.getCommand().getCommandOwnerUid());
-							eventAdmin.postEvent(new Event(LiderConstants.EVENTS.TASK_UPDATE, payload));
+							// Resulting execution result
+							payload.put("result", result);
+							eventAdmin.postEvent(new Event(LiderConstants.EVENTS.TASK_STATUS_RECEIVED, payload));
 						}
 					} catch (Exception e) {
 						logger.error(e.getMessage(), e);
