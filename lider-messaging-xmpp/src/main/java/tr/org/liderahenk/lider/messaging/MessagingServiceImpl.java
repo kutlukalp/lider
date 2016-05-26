@@ -2,14 +2,17 @@ package tr.org.liderahenk.lider.messaging;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.messaging.IMessagingService;
 import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
+import tr.org.liderahenk.lider.core.api.messaging.notifications.INotification;
 import tr.org.liderahenk.lider.messaging.messages.ExecuteScriptMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.MoveFileMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.RequestFileMessageImpl;
@@ -41,6 +44,13 @@ public class MessagingServiceImpl implements IMessagingService {
 	@Override
 	public void sendMessage(ILiderMessage message) throws Exception {
 		xmppClient.sendMessage(message);
+	}
+	
+	@Override
+	public void sendNotification(INotification notification) throws Exception {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.setDateFormat(new SimpleDateFormat("dd-MM-yyyy HH:mm"));
+		xmppClient.sendMessage(mapper.writeValueAsString(notification), notification.getRecipient());
 	}
 
 	@Override

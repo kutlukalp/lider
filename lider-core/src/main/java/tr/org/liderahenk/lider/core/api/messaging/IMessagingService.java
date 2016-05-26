@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
+import tr.org.liderahenk.lider.core.api.messaging.notifications.INotification;
 
 /**
  * Provides messaging services throughout system.
@@ -41,6 +42,14 @@ public interface IMessagingService {
 	 * @throws Exception
 	 */
 	void sendMessage(ILiderMessage message) throws Exception;
+
+	/**
+	 * Send pre-defined notification to Lider Console
+	 * 
+	 * @param notification
+	 * @throws Exception
+	 */
+	void sendNotification(INotification notification) throws Exception;
 
 	/**
 	 * Send file to agent via XEP-0065
@@ -86,7 +95,7 @@ public interface IMessagingService {
 	 * @throws Exception
 	 */
 	void executeScript(String filePath, String jid) throws Exception;
-	
+
 	/**
 	 * Move file on agent and get result as file.
 	 * 
