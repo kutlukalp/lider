@@ -2,7 +2,7 @@ package tr.org.liderahenk.lider.core.api.rest.requests;
 
 import java.util.List;
 
-import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
+import tr.org.liderahenk.lider.core.api.rest.enums.DNType;
 
 /**
  * Base request for ICommand related objects.
@@ -14,6 +14,6 @@ public interface ICommandRequest extends IRequest {
 
 	List<String> getDnList();
 
-	RestDNType getDnType();
+	DNType getDnType();
 
 }

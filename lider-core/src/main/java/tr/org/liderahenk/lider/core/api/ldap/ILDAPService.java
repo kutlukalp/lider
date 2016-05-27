@@ -7,7 +7,7 @@ import org.apache.directory.api.ldap.model.entry.Entry;
 import org.apache.directory.ldap.client.api.LdapConnection;
 
 import tr.org.liderahenk.lider.core.api.ldap.exception.LdapException;
-import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
+import tr.org.liderahenk.lider.core.api.rest.enums.DNType;
 import tr.org.liderahenk.lider.core.model.ldap.IUser;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
@@ -55,6 +55,6 @@ public interface ILDAPService {
 
 	boolean isUser(LdapEntry entry);
 
-	List<LdapEntry> findTargetEntries(List<String> dnList, RestDNType dnType);
+	List<LdapEntry> findTargetEntries(List<String> dnList, DNType dnType);
 
 }

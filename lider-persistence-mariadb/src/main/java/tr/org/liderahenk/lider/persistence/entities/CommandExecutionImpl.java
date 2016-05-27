@@ -24,7 +24,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecution;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecutionResult;
-import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
+import tr.org.liderahenk.lider.core.api.rest.enums.DNType;
 
 /**
  * Entity class for command execution.
@@ -67,7 +67,7 @@ public class CommandExecutionImpl implements ICommandExecution {
 	public CommandExecutionImpl() {
 	}
 
-	public CommandExecutionImpl(Long id, CommandImpl command, RestDNType dnType, String dn, Date createDate,
+	public CommandExecutionImpl(Long id, CommandImpl command, DNType dnType, String dn, Date createDate,
 			List<CommandExecutionResultImpl> commandExecutionResults) {
 		this.id = id;
 		this.command = command;
@@ -116,11 +116,11 @@ public class CommandExecutionImpl implements ICommandExecution {
 	}
 
 	@Override
-	public RestDNType getDnType() {
-		return RestDNType.getType(dnType);
+	public DNType getDnType() {
+		return DNType.getType(dnType);
 	}
 
-	public void setDnType(RestDNType dnType) {
+	public void setDnType(DNType dnType) {
 		if (dnType == null) {
 			this.dnType = null;
 		} else {

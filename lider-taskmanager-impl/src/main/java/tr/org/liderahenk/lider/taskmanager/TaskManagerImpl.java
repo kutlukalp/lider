@@ -41,7 +41,7 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 import tr.org.liderahenk.lider.core.api.persistence.enums.ContentType;
 import tr.org.liderahenk.lider.core.api.persistence.factories.IEntityFactory;
 import tr.org.liderahenk.lider.core.api.plugin.ITaskAwareCommand;
-import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
+import tr.org.liderahenk.lider.core.api.rest.enums.DNType;
 import tr.org.liderahenk.lider.core.api.rest.requests.ITaskRequest;
 import tr.org.liderahenk.lider.core.api.taskmanager.ITaskManager;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskSubmissionFailedException;
@@ -164,7 +164,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 					// because (unlike policies) tasks can only be executed for
 					// agents on agents!
 					ICommandExecution commandExecution = commandDao.findExecution(message.getTaskId(), agent.getDn(),
-							RestDNType.AHENK);
+							DNType.AHENK);
 
 					ICommandExecutionResult result = null;
 					if (ContentType.getFileContentTypes().contains(message.getContentType())) {

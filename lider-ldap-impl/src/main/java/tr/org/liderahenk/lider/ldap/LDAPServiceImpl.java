@@ -45,7 +45,7 @@ import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
 import tr.org.liderahenk.lider.core.api.ldap.LdapSearchFilterAttribute;
 import tr.org.liderahenk.lider.core.api.ldap.enums.LdapSearchFilterEnum;
 import tr.org.liderahenk.lider.core.api.ldap.exception.LdapException;
-import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
+import tr.org.liderahenk.lider.core.api.rest.enums.DNType;
 import tr.org.liderahenk.lider.core.model.ldap.IUser;
 import tr.org.liderahenk.lider.core.model.ldap.IUserPrivilege;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
@@ -595,13 +595,13 @@ public class LDAPServiceImpl implements ILDAPService {
 	// TODO handle situation where entry.getType is null or invalid
 	@Override
 	public boolean isAhenk(LdapEntry entry) {
-		return entry.getType() == RestDNType.AHENK;
+		return entry.getType() == DNType.AHENK;
 	}
 
 	// TODO handle situation where entry.getType is null or invalid
 	@Override
 	public boolean isUser(LdapEntry entry) {
-		return entry.getType() == RestDNType.USER;
+		return entry.getType() == DNType.USER;
 	}
 
 	/**
@@ -617,7 +617,7 @@ public class LDAPServiceImpl implements ILDAPService {
 	 * @return
 	 */
 	@Override
-	public List<LdapEntry> findTargetEntries(List<String> dnList, RestDNType dnType) {
+	public List<LdapEntry> findTargetEntries(List<String> dnList, DNType dnType) {
 		List<LdapEntry> entries = null;
 		if (dnList != null && !dnList.isEmpty() && dnType != null) {
 
@@ -674,9 +674,9 @@ public class LDAPServiceImpl implements ILDAPService {
 	 * @return true if provided type is desired type (or its child), false
 	 *         otherwise.
 	 */
-	private boolean isValidType(RestDNType type, RestDNType desiredType) {
-		return type == desiredType || (desiredType == RestDNType.ALL
-				&& (type == RestDNType.AHENK || type == RestDNType.USER || type == RestDNType.GROUP));
+	private boolean isValidType(DNType type, DNType desiredType) {
+		return type == desiredType || (desiredType == DNType.ALL
+				&& (type == DNType.AHENK || type == DNType.USER || type == DNType.GROUP));
 	}
 
 	/**
@@ -686,14 +686,14 @@ public class LDAPServiceImpl implements ILDAPService {
 	 * @param dnType
 	 * @return
 	 */
-	private String convertDNType2ObjectClass(RestDNType dnType) {
-		if (RestDNType.AHENK == dnType) {
+	private String convertDNType2ObjectClass(DNType dnType) {
+		if (DNType.AHENK == dnType) {
 			return configurationService.getAgentLdapObjectClasses();
-		} else if (RestDNType.USER == dnType) {
+		} else if (DNType.USER == dnType) {
 			return configurationService.getUserLdapObjectClasses();
-		} else if (RestDNType.GROUP == dnType) {
+		} else if (DNType.GROUP == dnType) {
 			return configurationService.getGroupLdapObjectClasses();
-		} else if (RestDNType.ALL == dnType) {
+		} else if (DNType.ALL == dnType) {
 			return "*";
 		} else {
 			throw new IllegalArgumentException("DN type was invalid.");
@@ -706,24 +706,24 @@ public class LDAPServiceImpl implements ILDAPService {
 	 * @param attribute
 	 * @return
 	 */
-	private RestDNType convertObjectClass2DNType(Attribute objectClass) {
+	private DNType convertObjectClass2DNType(Attribute objectClass) {
 		// Check if agent
 		String agentObjectClasses = configurationService.getAgentLdapObjectClasses();
 		boolean isAgent = objectClass.contains(agentObjectClasses.split(","));
 		if (isAgent) {
-			return RestDNType.AHENK;
+			return DNType.AHENK;
 		}
 		// Check if user
 		String userObjectClasses = configurationService.getUserLdapObjectClasses();
 		boolean isUser = objectClass.contains(userObjectClasses.split(","));
 		if (isUser) {
-			return RestDNType.USER;
+			return DNType.USER;
 		}
 		// Check if group
 		String groupObjectClasses = configurationService.getGroupLdapObjectClasses();
 		boolean isGroup = objectClass.contains(groupObjectClasses.split(","));
 		if (isGroup) {
-			return RestDNType.GROUP;
+			return DNType.GROUP;
 		}
 		return null;
 	}

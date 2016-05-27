@@ -54,8 +54,12 @@ public class CommandExecutionResultImpl implements ICommandExecutionResult {
 	@Column(name = "RESPONSE_MESSAGE")
 	private String responseMessage;
 
+	/**
+	 * Response data can be anything (JSON data, alphanumeric value, file such
+	 * as JPEG, doc etc.)
+	 */
 	@Lob
-	@Column(name = "RESPONSE_DATA", length=4*1024*1024*1024)
+	@Column(name = "RESPONSE_DATA", length = 4 * 1024 * 1024 * 1024)
 	private byte[] responseData;
 
 	@Column(name = "CONTENT_TYPE", length = 3)

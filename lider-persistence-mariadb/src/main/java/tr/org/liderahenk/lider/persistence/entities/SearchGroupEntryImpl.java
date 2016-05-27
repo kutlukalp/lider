@@ -17,7 +17,7 @@ import javax.persistence.UniqueConstraint;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import tr.org.liderahenk.lider.core.api.persistence.entities.ISearchGroupEntry;
-import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
+import tr.org.liderahenk.lider.core.api.rest.enums.DNType;
 
 /**
  * Entity class for search group entries.
@@ -54,7 +54,7 @@ public class SearchGroupEntryImpl implements ISearchGroupEntry {
 	public SearchGroupEntryImpl() {
 	}
 
-	public SearchGroupEntryImpl(Long id, SearchGroupImpl group, String dn, RestDNType dnType, Date createDate) {
+	public SearchGroupEntryImpl(Long id, SearchGroupImpl group, String dn, DNType dnType, Date createDate) {
 		this.id = id;
 		this.group = group;
 		this.dn = dn;
@@ -100,11 +100,11 @@ public class SearchGroupEntryImpl implements ISearchGroupEntry {
 	}
 
 	@Override
-	public RestDNType getDnType() {
-		return RestDNType.getType(dnType);
+	public DNType getDnType() {
+		return DNType.getType(dnType);
 	}
 
-	public void setDnType(RestDNType dnType) {
+	public void setDnType(DNType dnType) {
 		if (dnType == null) {
 			this.dnType = null;
 		} else {

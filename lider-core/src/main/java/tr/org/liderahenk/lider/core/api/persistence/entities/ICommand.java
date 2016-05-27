@@ -3,7 +3,7 @@ package tr.org.liderahenk.lider.core.api.persistence.entities;
 import java.util.Date;
 import java.util.List;
 
-import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
+import tr.org.liderahenk.lider.core.api.rest.enums.DNType;
 
 /**
  * ICommand entity class is responsible for storing command records.
@@ -43,7 +43,7 @@ public interface ICommand extends IEntity {
 	 * 
 	 * @return DN type which subject to command execution
 	 */
-	RestDNType getDnType();
+	DNType getDnType();
 
 	/**
 	 * 

@@ -2,7 +2,7 @@ package tr.org.liderahenk.lider.core.api.persistence.entities;
 
 import java.util.List;
 
-import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
+import tr.org.liderahenk.lider.core.api.rest.enums.DNType;
 
 /**
  * ICommandExecution entity class is responsible for storing command execution
@@ -15,7 +15,7 @@ public interface ICommandExecution extends IEntity {
 
 	ICommand getCommand();
 
-	RestDNType getDnType();
+	DNType getDnType();
 
 	String getDn();
 

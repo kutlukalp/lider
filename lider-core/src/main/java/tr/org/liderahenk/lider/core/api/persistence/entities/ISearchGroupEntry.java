@@ -1,6 +1,6 @@
 package tr.org.liderahenk.lider.core.api.persistence.entities;
 
-import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
+import tr.org.liderahenk.lider.core.api.rest.enums.DNType;
 
 /**
  * ISearchGroupEntry is entity class for search group entries.
@@ -27,6 +27,6 @@ public interface ISearchGroupEntry extends IEntity {
 	 * 
 	 * @return DN type
 	 */
-	RestDNType getDnType();
+	DNType getDnType();
 
 }

@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
-import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
+import tr.org.liderahenk.lider.core.api.rest.enums.DNType;
 import tr.org.liderahenk.lider.core.api.rest.requests.ITaskRequest;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -25,7 +25,7 @@ public class TaskRequestImpl implements ITaskRequest {
 	 * tasks. (For example DN list may consists of some OU groups and user may
 	 * only want to execute a task on user DN's inside these groups.)
 	 */
-	private RestDNType dnType;
+	private DNType dnType;
 
 	/**
 	 * Name of the plugin which executes the task.
@@ -62,7 +62,7 @@ public class TaskRequestImpl implements ITaskRequest {
 	public TaskRequestImpl() {
 	}
 
-	public TaskRequestImpl(List<String> dnList, RestDNType dnType, String pluginName, String pluginVersion,
+	public TaskRequestImpl(List<String> dnList, DNType dnType, String pluginName, String pluginVersion,
 			String commandId, Map<String, Object> parameterMap, String cronExpression, Date timestamp) {
 		super();
 		this.dnList = dnList;
@@ -85,11 +85,11 @@ public class TaskRequestImpl implements ITaskRequest {
 	}
 
 	@Override
-	public RestDNType getDnType() {
+	public DNType getDnType() {
 		return dnType;
 	}
 
-	public void setDnType(RestDNType dnType) {
+	public void setDnType(DNType dnType) {
 		this.dnType = dnType;
 	}
 
