@@ -48,6 +48,8 @@
 		<property name="taskManagerTaskTimeout" value="${taskmanager.task.timeout}" />
 		<property name="taskManagerMulticastEnabled" value="${taskmanager.multicast.enabled}" />
 		<property name="taskManagerLogXmppMessagesEnabled" value="${taskmanager.log.xmpp.messages.enabled}" />
+		
+		<property name="hotDeploymentPath" value="${hot.deployment.path}" />
 	</bean>
 
 	<service ref="getSystemConfigCommand" interface="tr.org.liderahenk.lider.core.api.plugin.ICommand" />
