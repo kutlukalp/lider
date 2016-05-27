@@ -220,7 +220,7 @@ public class CommandDaoImpl implements ICommandDao {
 		Query query = entityManager.createQuery(FIND_EXECUTION);
 		query.setParameter("dnType", dnType.getId());
 		query.setParameter("dn", dn);
-		query.setParameter("taskId", taskId);
+		query.setParameter("taskId", taskId); // FIXME ???
 		List<CommandExecutionImpl> resultList = query.setMaxResults(1)
 				.getResultList();
 		return resultList.get(0);

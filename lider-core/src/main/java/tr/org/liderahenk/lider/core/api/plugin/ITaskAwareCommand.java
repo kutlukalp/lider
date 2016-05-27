@@ -1,6 +1,7 @@
 package tr.org.liderahenk.lider.core.api.plugin;
 
 import tr.org.liderahenk.lider.core.api.messaging.messages.ITaskStatusMessage;
+import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecutionResult;
 import tr.org.liderahenk.lider.core.api.taskmanager.ITaskManager;
 
 /**
@@ -15,12 +16,12 @@ public interface ITaskAwareCommand {
 
 	/**
 	 * 
-	 * @param taskUpdate
+	 * @param result
 	 *            event from system
 	 * 
 	 *            implementors of this interface are notified synchronously, so
 	 *            please AVOID long running processes in this method
 	 * 
 	 */
-	void onTaskUpdate(ITaskStatusMessage taskUpdate);
+	void onTaskUpdate(ICommandExecutionResult result);
 }

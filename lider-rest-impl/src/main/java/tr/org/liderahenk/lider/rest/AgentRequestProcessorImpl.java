@@ -36,7 +36,7 @@ public class AgentRequestProcessorImpl implements IAgentRequestProcessor {
 			propertiesMap.put("hostname", hostname);
 		}
 		if (dn != null && !dn.isEmpty()) {
-			propertiesMap.put("version", dn);
+			propertiesMap.put("dn", dn);
 		}
 
 		// Find desired agents

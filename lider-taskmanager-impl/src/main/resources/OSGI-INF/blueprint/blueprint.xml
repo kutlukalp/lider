@@ -26,23 +26,26 @@
 		<property name="entityFactory" ref="entityFactory" />
 	</bean>
 
-	<service ref="taskStatusHandler" interface="org.osgi.service.event.EventHandler">
+	<!-- Task status notifier for subscribed plugins -->
+	<service ref="pluginNotifier" interface="org.osgi.service.event.EventHandler">
 		<service-properties>
-			<entry key="event.topics" value="tr/org/liderahenk/task/update" />
+			<entry key="event.topics" value="tr/org/liderahenk/task/status/received" />
 		</service-properties>
 	</service>
-	<bean id="taskStatusHandler"
-		class="tr.org.liderahenk.lider.taskmanager.TaskStatusEventHandler">
+	<bean id="pluginNotifier"
+		class="tr.org.liderahenk.lider.taskmanager.notifiers.PluginNotifier">
 		<property name="taskAwareCommands" ref="taskAwareCommands" />
 	</bean>
-
-	<service ref="consoleNotifyTaskStatusEventHandler" interface="org.osgi.service.event.EventHandler">
+	
+	<!-- Task status notifier for Lider Console -->
+	<service ref="liderConsoleNotifier" interface="org.osgi.service.event.EventHandler">
 		<service-properties>
-			<entry key="event.topics" value="tr/org/liderahenk/task/update" />
+			<entry key="event.topics" value="tr/org/liderahenk/task/status/received" />
 		</service-properties>
 	</service>
-	<bean id="consoleNotifyTaskStatusEventHandler"
-		class="tr.org.liderahenk.lider.taskmanager.ConsoleNotifyTaskStatusEventHandler">
+	<bean id="liderConsoleNotifier"
+		class="tr.org.liderahenk.lider.taskmanager.notifiers.LiderConsoleNotifier">
+		<property name="messageFactory" ref="messageFactory" />
 		<property name="messagingService" ref="messagingService" />
 	</bean>
 

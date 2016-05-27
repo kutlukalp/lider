@@ -81,7 +81,7 @@ public class PolicyManagerImpl implements IPolicyStatusSubscriber {
 							payload.put("message", message);
 							// Find who created the task
 							payload.put("messageJID", commandExecution.getCommand().getCommandOwnerUid());
-							eventAdmin.postEvent(new Event(LiderConstants.EVENTS.POLICY_UPDATE, payload));
+							eventAdmin.postEvent(new Event(LiderConstants.EVENTS.POLICY_STATUS_RECEIVED, payload));
 						}
 					} catch (Exception e) {
 						logger.error(e.getMessage(), e);

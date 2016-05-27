@@ -23,11 +23,11 @@ public class LiderConstants {
 		/**
 		 * Thrown when task status message received
 		 */
-		public static final String TASK_UPDATE = "tr/org/liderahenk/task/update";
+		public static final String TASK_STATUS_RECEIVED = "tr/org/liderahenk/task/status/received";
 		/**
 		 * Thrown when policy status message received
 		 */
-		public static final String POLICY_UPDATE = "tr/org/liderahenk/policy/update";
+		public static final String POLICY_STATUS_RECEIVED = "tr/org/liderahenk/policy/status/received";
 	}
 
 }
