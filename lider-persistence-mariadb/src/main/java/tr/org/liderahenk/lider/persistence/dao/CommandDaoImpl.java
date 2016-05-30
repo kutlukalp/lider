@@ -34,7 +34,7 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecutionRe
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 import tr.org.liderahenk.lider.core.api.persistence.enums.OrderType;
-import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
+import tr.org.liderahenk.lider.core.api.rest.enums.DNType;
 import tr.org.liderahenk.lider.persistence.entities.CommandExecutionImpl;
 import tr.org.liderahenk.lider.persistence.entities.CommandExecutionResultImpl;
 import tr.org.liderahenk.lider.persistence.entities.CommandImpl;
@@ -216,11 +216,11 @@ public class CommandDaoImpl implements ICommandDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public ICommandExecution findExecution(Long taskId, String dn,
-			RestDNType dnType) {
+			DNType dnType) {
 		Query query = entityManager.createQuery(FIND_EXECUTION);
 		query.setParameter("dnType", dnType.getId());
 		query.setParameter("dn", dn);
-		query.setParameter("taskId", taskId);
+		query.setParameter("taskId", taskId); // FIXME ???
 		List<CommandExecutionImpl> resultList = query.setMaxResults(1)
 				.getResultList();
 		return resultList.get(0);

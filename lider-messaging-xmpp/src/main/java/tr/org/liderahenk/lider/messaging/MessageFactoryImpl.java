@@ -15,6 +15,11 @@ import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteTaskMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IInstallPluginMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IPluginNotFoundMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IRequestFileMessage;
+import tr.org.liderahenk.lider.core.api.messaging.notifications.ITaskNotification;
+import tr.org.liderahenk.lider.core.api.messaging.notifications.ITaskStatusNotification;
+import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
+import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecutionResult;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 import tr.org.liderahenk.lider.messaging.messages.ExecutePoliciesMessageImpl;
@@ -23,10 +28,12 @@ import tr.org.liderahenk.lider.messaging.messages.ExecuteTaskMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.InstallPluginMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.PluginNotFoundMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.RequestFileMessageImpl;
+import tr.org.liderahenk.lider.messaging.notifications.TaskNotificationImpl;
+import tr.org.liderahenk.lider.messaging.notifications.TaskStatusNotificationImpl;
 
 /**
  * Default implementation for {@link IMessageFactory}. Responsible for creating
- * XMPP message from specified task object.
+ * XMPP messages for agents and notification for Lider Console.
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
@@ -63,15 +70,30 @@ public class MessageFactoryImpl implements IMessageFactory {
 		return new ExecutePoliciesMessageImpl(recipient, username, userPolicyProfiles, userPolicyVersion,
 				userCommandExecutionId, agentPolicyProfiles, agentPolicyVersion, agentCommandExecutionId, new Date());
 	}
-	
+
 	@Override
-	public IPluginNotFoundMessage createPluginNotFoundMessage(String recipient, String pluginName, String pluginVersion) {
+	public IPluginNotFoundMessage createPluginNotFoundMessage(String recipient, String pluginName,
+			String pluginVersion) {
 		return new PluginNotFoundMessageImpl(recipient, pluginName, pluginVersion, new Date());
 	}
-	
+
 	@Override
-	public IInstallPluginMessage createInstallPluginMessage(String recipient, String pluginName, String pluginVersion, Map<String, Object> parameterMap, Protocol protocol) {
+	public IInstallPluginMessage createInstallPluginMessage(String recipient, String pluginName, String pluginVersion,
+			Map<String, Object> parameterMap, Protocol protocol) {
 		return new InstallPluginMessageImpl(recipient, pluginName, pluginVersion, parameterMap, protocol, new Date());
+	}
+
+	@Override
+	public ITaskNotification createTaskNotification(String recipient, ICommand command) {
+		return new TaskNotificationImpl(recipient, command, new Date());
+	}
+
+	@Override
+	public ITaskStatusNotification createTaskStatusNotification(String recipient, ICommandExecutionResult result) {
+		IPlugin p = result.getCommandExecution().getCommand().getTask().getPlugin();
+		return new TaskStatusNotificationImpl(recipient, p.getName(), p.getVersion(),
+				result.getCommandExecution().getCommand().getTask().getCommandClsId(), result.getCommandExecution(),
+				result, new Date());
 	}
 
 }

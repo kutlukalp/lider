@@ -30,7 +30,7 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecution;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
-import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
+import tr.org.liderahenk.lider.core.api.rest.enums.DNType;
 
 /**
  * Entity class for command.
@@ -82,7 +82,7 @@ public class CommandImpl implements ICommand {
 	public CommandImpl() {
 	}
 
-	public CommandImpl(Long id, IPolicy policy, ITask task, List<String> dnList, RestDNType dnType,
+	public CommandImpl(Long id, IPolicy policy, ITask task, List<String> dnList, DNType dnType,
 			String commandOwnerUid, Date activationDate, Date createDate, List<CommandExecutionImpl> commandExecutions)
 					throws JsonGenerationException, JsonMappingException, IOException {
 		this.id = id;
@@ -165,11 +165,11 @@ public class CommandImpl implements ICommand {
 	}
 
 	@Override
-	public RestDNType getDnType() {
-		return RestDNType.getType(dnType);
+	public DNType getDnType() {
+		return DNType.getType(dnType);
 	}
 
-	public void setDnType(RestDNType dnType) {
+	public void setDnType(DNType dnType) {
 		if (dnType == null) {
 			this.dnType = null;
 		} else {

@@ -60,6 +60,8 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 	private Long taskManagerTaskTimeout;
 	private Boolean taskManagerMulticastEnabled;
 	private Boolean taskManagerLogXmppMessagesEnabled;
+	
+	private String hotDeploymentPath;
 
 	public void refresh() {
 		logger.info("Configuration updated using blueprint: {}", prettyPrintConfig());
@@ -81,7 +83,8 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 				+ ", userAuthorizationEnabled=" + userAuthorizationEnabled + ", groupLdapObjectClasses="
 				+ groupLdapObjectClasses + ", taskManagerTaskTimeout=" + taskManagerTaskTimeout
 				+ ", taskManagerMulticastEnabled=" + taskManagerMulticastEnabled
-				+ ", taskManagerLogXmppMessagesEnabled=" + taskManagerLogXmppMessagesEnabled + "]";
+				+ ", taskManagerLogXmppMessagesEnabled=" + taskManagerLogXmppMessagesEnabled 
+				+ ", hotDeploymentPath=" + hotDeploymentPath + "]";
 	}
 
 	public String prettyPrintConfig() {
@@ -360,6 +363,14 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 
 	public void setLdapSearchAttributes(String ldapSearchAttributes) {
 		this.ldapSearchAttributes = ldapSearchAttributes;
+	}
+
+	public String getHotDeploymentPath() {
+		return hotDeploymentPath;
+	}
+
+	public void setHotDeploymentPath(String hotDeploymentPath) {
+		this.hotDeploymentPath = hotDeploymentPath;
 	}
 
 }

@@ -48,7 +48,7 @@ public class AgentController {
 	 */
 	@RequestMapping(value = "/list", method = { RequestMethod.GET })
 	@ResponseBody
-	public IRestResponse listPlugins(@RequestParam(value = "hostname", required = false) String hostname,
+	public IRestResponse listAgents(@RequestParam(value = "hostname", required = false) String hostname,
 			@RequestParam(value = "dn", required = false) String dn, HttpServletRequest request)
 					throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/agent/list?hostname={}&dn={}'", new Object[] { hostname, dn });
@@ -67,7 +67,7 @@ public class AgentController {
 	 */
 	@RequestMapping(value = "/{id:[\\d]+}/get", method = { RequestMethod.GET })
 	@ResponseBody
-	public IRestResponse getPlugin(@PathVariable final long id, HttpServletRequest request)
+	public IRestResponse getAgent(@PathVariable final long id, HttpServletRequest request)
 			throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/agent/{}/get'", id);
 		IRestResponse restResponse = agentProcessor.get(id);

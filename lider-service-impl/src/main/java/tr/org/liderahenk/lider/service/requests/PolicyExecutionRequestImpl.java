@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
-import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
+import tr.org.liderahenk.lider.core.api.rest.enums.DNType;
 import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyExecutionRequest;
 
 /**
@@ -22,7 +22,7 @@ public class PolicyExecutionRequestImpl implements IPolicyExecutionRequest {
 
 	private List<String> dnList;
 
-	private RestDNType dnType;
+	private DNType dnType;
 
 	private Date activationDate;
 
@@ -31,7 +31,7 @@ public class PolicyExecutionRequestImpl implements IPolicyExecutionRequest {
 	public PolicyExecutionRequestImpl() {
 	}
 
-	public PolicyExecutionRequestImpl(Long id, List<String> dnList, RestDNType dnType, Date activationDate,
+	public PolicyExecutionRequestImpl(Long id, List<String> dnList, DNType dnType, Date activationDate,
 			Date timestamp) {
 		super();
 		this.id = id;
@@ -60,11 +60,11 @@ public class PolicyExecutionRequestImpl implements IPolicyExecutionRequest {
 	}
 
 	@Override
-	public RestDNType getDnType() {
+	public DNType getDnType() {
 		return dnType;
 	}
 
-	public void setDnType(RestDNType dnType) {
+	public void setDnType(DNType dnType) {
 		this.dnType = dnType;
 	}
 

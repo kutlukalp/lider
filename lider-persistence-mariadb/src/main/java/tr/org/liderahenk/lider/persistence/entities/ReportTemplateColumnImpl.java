@@ -22,8 +22,11 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateColu
  */
 @JsonIgnoreProperties({ "template" })
 @Entity
-@Table(name = "R_REPORT_TEMPLATE_COLUMN", uniqueConstraints = @UniqueConstraint(columnNames = { "REPORT_TEMPLATE_ID",
-		"COLUMN_ORDER" }) )
+/*
+ * FIXME a JPA bug prevents insert actions on this table due to uniqueConstraints annotation.
+ */
+@Table(name = "R_REPORT_TEMPLATE_COLUMN" /*, uniqueConstraints = @UniqueConstraint(columnNames = { "REPORT_TEMPLATE_ID",
+		"COLUMN_ORDER" }) */ )
 public class ReportTemplateColumnImpl implements IReportTemplateColumn {
 
 	private static final long serialVersionUID = 7196785409916030894L;

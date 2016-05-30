@@ -26,7 +26,7 @@ import tr.org.liderahenk.lider.core.api.persistence.PropertyOrder;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IPolicyDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
 import tr.org.liderahenk.lider.core.api.persistence.enums.OrderType;
-import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
+import tr.org.liderahenk.lider.core.api.rest.enums.DNType;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 import tr.org.liderahenk.lider.persistence.entities.PolicyImpl;
 
@@ -210,10 +210,10 @@ public class PolicyDaoImpl implements IPolicyDao {
 			sql = sql.replaceFirst("##WHERE##", "");
 		}
 		Query query = entityManager.createQuery(sql);
-		query.setParameter("sDnType", RestDNType.USER.getId());
+		query.setParameter("sDnType", DNType.USER.getId());
 		query.setParameter("sDn", userDn);
 		if (list != null && !list.isEmpty()) {
-			query.setParameter("gDnType", RestDNType.GROUP.getId());
+			query.setParameter("gDnType", DNType.GROUP.getId());
 			query.setParameter("gDnList", list);
 		}
 		query.setParameter("today", new Date(), TemporalType.DATE);
@@ -245,7 +245,7 @@ public class PolicyDaoImpl implements IPolicyDao {
 	@Override
 	public List<Object[]> getLatestAgentPolicy(String agentDn) {
 		Query query = entityManager.createQuery(LATEST_MACHINE_POLICY);
-		query.setParameter("dnType", RestDNType.AHENK.getId());
+		query.setParameter("dnType", DNType.AHENK.getId());
 		query.setParameter("dn", agentDn);
 		query.setParameter("today", new Date(), TemporalType.DATE);
 		List<Object[]> resultList = query.setMaxResults(1).getResultList();

@@ -23,8 +23,11 @@ import tr.org.liderahenk.lider.core.api.persistence.enums.ParameterType;
  */
 @JsonIgnoreProperties({ "template" })
 @Entity
-@Table(name = "R_REPORT_TEMPLATE_PARAMETER", uniqueConstraints = @UniqueConstraint(columnNames = { "REPORT_TEMPLATE_ID",
-		"PARAMETER_KEY" }) )
+/*
+ * FIXME a JPA bug prevents insert actions on this table due to uniqueConstraints annotation.
+ */
+@Table(name = "R_REPORT_TEMPLATE_PARAMETER" /*, uniqueConstraints = @UniqueConstraint(columnNames = { "REPORT_TEMPLATE_ID",
+		"PARAMETER_KEY" })*/ )
 public class ReportTemplateParameterImpl implements IReportTemplateParameter {
 
 	private static final long serialVersionUID = -1361608449887309975L;

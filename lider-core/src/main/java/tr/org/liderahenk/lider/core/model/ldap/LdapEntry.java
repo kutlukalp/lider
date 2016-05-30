@@ -2,7 +2,7 @@ package tr.org.liderahenk.lider.core.model.ldap;
 
 import java.util.Map;
 
-import tr.org.liderahenk.lider.core.api.rest.enums.RestDNType;
+import tr.org.liderahenk.lider.core.api.rest.enums.DNType;
 
 /**
  * LDAP entry mapping
@@ -23,7 +23,7 @@ public class LdapEntry {
 	 */
 	private Map<String, String> attributes;
 
-	private RestDNType type;
+	private DNType type;
 
 	/**
 	 * 
@@ -31,7 +31,7 @@ public class LdapEntry {
 	 * @param attributes
 	 * @param type
 	 */
-	public LdapEntry(String dn, Map<String, String> attributes, RestDNType type) {
+	public LdapEntry(String dn, Map<String, String> attributes, DNType type) {
 		this.distinguishedName = dn;
 		this.attributes = attributes;
 		this.type = type;
@@ -66,7 +66,7 @@ public class LdapEntry {
 	 * 
 	 * @return DN type
 	 */
-	public RestDNType getType() {
+	public DNType getType() {
 		return type;
 	}
 
