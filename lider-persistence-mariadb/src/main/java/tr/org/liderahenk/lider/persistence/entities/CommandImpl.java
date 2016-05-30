@@ -50,11 +50,15 @@ public class CommandImpl implements ICommand {
 	@Column(name = "COMMAND_ID", unique = true, nullable = false)
 	private Long id;
 
-	@OneToOne(optional = true, fetch = FetchType.LAZY)
+	// FIXME these should be FetchType.LAZY but current version of OpenJPA does
+	// not retrieve the records on access.
+	@OneToOne(optional = true, fetch = FetchType.EAGER)
 	@JoinColumn(name = "POLICY_ID", referencedColumnName = "POLICY_ID", insertable = true, updatable = false, nullable = true, unique = false)
 	private PolicyImpl policy;
 
-	@OneToOne(optional = true, fetch = FetchType.LAZY)
+	// FIXME these should be FetchType.LAZY but current version of OpenJPA does
+	// not retrieve the records on access.
+	@OneToOne(optional = true, fetch = FetchType.EAGER)
 	@JoinColumn(name = "TASK_ID", referencedColumnName = "TASK_ID", insertable = true, updatable = false, nullable = true, unique = false)
 	private TaskImpl task;
 
@@ -82,8 +86,8 @@ public class CommandImpl implements ICommand {
 	public CommandImpl() {
 	}
 
-	public CommandImpl(Long id, IPolicy policy, ITask task, List<String> dnList, DNType dnType,
-			String commandOwnerUid, Date activationDate, Date createDate, List<CommandExecutionImpl> commandExecutions)
+	public CommandImpl(Long id, IPolicy policy, ITask task, List<String> dnList, DNType dnType, String commandOwnerUid,
+			Date activationDate, Date createDate, List<CommandExecutionImpl> commandExecutions)
 					throws JsonGenerationException, JsonMappingException, IOException {
 		this.id = id;
 		this.policy = (PolicyImpl) policy;
