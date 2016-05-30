@@ -2,7 +2,7 @@
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
 	<bean id="taskTemplate"
-		class="tr.org.liderahenk.lider.report.template.ExecutedTaskReportTemplate" />
+		class="tr.org.liderahenk.lider.report.templates.ExecutedTaskReportTemplateImpl" />
 
 	<bean id="templateManager" class="tr.org.liderahenk.lider.report.TemplateManager" init-method="init">
 		<property name="reportDao" ref="reportDao" />

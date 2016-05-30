@@ -1,4 +1,4 @@
-package tr.org.liderahenk.lider.report.template;
+package tr.org.liderahenk.lider.report.templates;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +17,7 @@ import tr.org.liderahenk.lider.core.api.plugin.BaseReportTemplate;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
-public class ExecutedTaskReportTemplate extends BaseReportTemplate {
+public class ExecutedTaskReportTemplateImpl extends BaseReportTemplate {
 
 	private static final long serialVersionUID = -8026043224671892836L;
 
@@ -134,7 +134,7 @@ public class ExecutedTaskReportTemplate extends BaseReportTemplate {
 		return null;
 	}
 
-	protected ExecutedTaskReportTemplate getSelf() {
+	protected ExecutedTaskReportTemplateImpl getSelf() {
 		return this;
 	}
 
