@@ -2,6 +2,7 @@ package tr.org.liderahenk.lider.core.api.persistence.dao;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import tr.org.liderahenk.lider.core.api.persistence.IBaseDao;
 import tr.org.liderahenk.lider.core.api.persistence.PropertyOrder;
@@ -31,9 +32,9 @@ public interface IReportDao extends IBaseDao<IReportTemplate> {
 	List<? extends IReportTemplate> findByProperties(Class<? extends IReportTemplate> obj,
 			Map<String, Object> propertiesMap, List<PropertyOrder> orders, Integer maxResults);
 
-	void validate(String query, List<? extends IReportTemplateParameter> templateParams) throws Exception;
+	void validate(String query, Set<? extends IReportTemplateParameter> templateParams) throws Exception;
 
-	List<?> generate(String query, List<? extends IReportTemplateParameter> templateParams, Map<String, Object> map,
-			List<? extends IReportTemplateColumn> templateColumns) throws Exception;
+	List<?> generate(String query, Set<? extends IReportTemplateParameter> templateParams, Map<String, Object> map,
+			Set<? extends IReportTemplateColumn> templateColumns) throws Exception;
 
 }

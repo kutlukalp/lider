@@ -1,7 +1,7 @@
 package tr.org.liderahenk.lider.core.api.persistence.entities;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 /**
  * 
@@ -19,9 +19,9 @@ public interface IReportTemplate extends IEntity {
 
 	String getQuery();
 
-	List<? extends IReportTemplateParameter> getTemplateParams();
+	Set<? extends IReportTemplateParameter> getTemplateParams();
 
-	List<? extends IReportTemplateColumn> getTemplateColumns();
+	Set<? extends IReportTemplateColumn> getTemplateColumns();
 
 	String getReportHeader();
 

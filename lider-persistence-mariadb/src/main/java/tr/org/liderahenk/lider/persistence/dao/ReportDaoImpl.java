@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -189,7 +190,7 @@ public class ReportDaoImpl implements IReportDao {
 	private static final Random rand = new Random();
 
 	@Override
-	public void validate(String query, List<? extends IReportTemplateParameter> params) throws Exception {
+	public void validate(String query, Set<? extends IReportTemplateParameter> params) throws Exception {
 		Query q = entityManager.createQuery(query);
 		// Set query parameter with random values!
 		if (params != null) {
@@ -218,8 +219,8 @@ public class ReportDaoImpl implements IReportDao {
 	}
 
 	@Override
-	public List<?> generate(String query, List<? extends IReportTemplateParameter> params, Map<String, Object> values,
-			List<? extends IReportTemplateColumn> columns) throws Exception {
+	public List<?> generate(String query, Set<? extends IReportTemplateParameter> params, Map<String, Object> values,
+			Set<? extends IReportTemplateColumn> columns) throws Exception {
 		Query q = entityManager.createQuery(query);
 		// Set query parameters!
 		if (params != null) {

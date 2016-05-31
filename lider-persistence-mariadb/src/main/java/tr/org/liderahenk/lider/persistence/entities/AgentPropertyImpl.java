@@ -125,7 +125,7 @@ public class AgentPropertyImpl implements IAgentProperty {
 	}
 
 	/**
-	 * hashCode() & equals() are overrided to prevent duplicates records!
+	 * hashCode() & equals() are overrided to prevent duplicate records!
 	 */
 	@Override
 	public int hashCode() {
@@ -136,7 +136,7 @@ public class AgentPropertyImpl implements IAgentProperty {
 	}
 
 	/**
-	 * hashCode() & equals() are overrided to prevent duplicates records!
+	 * hashCode() & equals() are overrided to prevent duplicate records!
 	 */
 	@Override
 	public boolean equals(Object obj) {

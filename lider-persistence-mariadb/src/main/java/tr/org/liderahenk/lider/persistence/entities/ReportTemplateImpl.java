@@ -1,8 +1,8 @@
 package tr.org.liderahenk.lider.persistence.entities;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -48,10 +48,10 @@ public class ReportTemplateImpl implements IReportTemplate {
 	private String query;
 
 	@OneToMany(mappedBy = "template", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<ReportTemplateParameterImpl> templateParams; // bidirectional
+	private Set<ReportTemplateParameterImpl> templateParams = new HashSet<ReportTemplateParameterImpl>(0); // bidirectional
 
 	@OneToMany(mappedBy = "template", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<ReportTemplateColumnImpl> templateColumns; // bidirectional
+	private Set<ReportTemplateColumnImpl> templateColumns = new HashSet<ReportTemplateColumnImpl>(0); // bidirectional
 
 	@Column(name = "REPORT_HEADER", length = 500)
 	private String reportHeader;
@@ -71,7 +71,7 @@ public class ReportTemplateImpl implements IReportTemplate {
 	}
 
 	public ReportTemplateImpl(Long id, String name, String description, String query,
-			List<ReportTemplateParameterImpl> templateParams, List<ReportTemplateColumnImpl> templateColumns,
+			Set<ReportTemplateParameterImpl> templateParams, Set<ReportTemplateColumnImpl> templateColumns,
 			String reportHeader, String reportFooter, Date createDate, Date modifyDate) {
 		this.id = id;
 		this.name = name;
@@ -96,7 +96,7 @@ public class ReportTemplateImpl implements IReportTemplate {
 		this.modifyDate = template.getModifyDate();
 
 		// Convert IReportTemplateParameter to ReportTemplateParameterImpl
-		List<? extends IReportTemplateParameter> params = template.getTemplateParams();
+		Set<? extends IReportTemplateParameter> params = template.getTemplateParams();
 		if (params != null) {
 			for (IReportTemplateParameter param : params) {
 				addTemplateParameter(param);
@@ -104,13 +104,12 @@ public class ReportTemplateImpl implements IReportTemplate {
 		}
 
 		// Convert IReportTemplateColumn to ReportTemplateColumnImpl
-		List<? extends IReportTemplateColumn> columns = template.getTemplateColumns();
+		Set<? extends IReportTemplateColumn> columns = template.getTemplateColumns();
 		if (columns != null) {
 			for (IReportTemplateColumn column : columns) {
 				addTemplateColumn(column);
 			}
 		}
-
 	}
 
 	@Override
@@ -150,20 +149,20 @@ public class ReportTemplateImpl implements IReportTemplate {
 	}
 
 	@Override
-	public List<ReportTemplateParameterImpl> getTemplateParams() {
+	public Set<ReportTemplateParameterImpl> getTemplateParams() {
 		return templateParams;
 	}
 
-	public void setTemplateParams(List<ReportTemplateParameterImpl> templateParams) {
+	public void setTemplateParams(Set<ReportTemplateParameterImpl> templateParams) {
 		this.templateParams = templateParams;
 	}
 
 	@Override
-	public List<ReportTemplateColumnImpl> getTemplateColumns() {
+	public Set<ReportTemplateColumnImpl> getTemplateColumns() {
 		return templateColumns;
 	}
 
-	public void setTemplateColumns(List<ReportTemplateColumnImpl> templateColumns) {
+	public void setTemplateColumns(Set<ReportTemplateColumnImpl> templateColumns) {
 		this.templateColumns = templateColumns;
 	}
 
@@ -206,7 +205,7 @@ public class ReportTemplateImpl implements IReportTemplate {
 	@Override
 	public void addTemplateParameter(IReportTemplateParameter param) {
 		if (templateParams == null) {
-			templateParams = new ArrayList<ReportTemplateParameterImpl>();
+			templateParams = new HashSet<ReportTemplateParameterImpl>(0);
 		}
 		ReportTemplateParameterImpl paramImpl = null;
 		if (param instanceof ReportTemplateParameterImpl) {
@@ -223,7 +222,7 @@ public class ReportTemplateImpl implements IReportTemplate {
 	@Override
 	public void addTemplateColumn(IReportTemplateColumn column) {
 		if (templateColumns == null) {
-			templateColumns = new ArrayList<ReportTemplateColumnImpl>();
+			templateColumns = new HashSet<ReportTemplateColumnImpl>();
 		}
 		ReportTemplateColumnImpl columnImpl = null;
 		if (column instanceof ReportTemplateColumnImpl) {

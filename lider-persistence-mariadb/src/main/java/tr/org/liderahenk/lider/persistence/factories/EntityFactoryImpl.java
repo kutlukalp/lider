@@ -161,13 +161,13 @@ public class EntityFactoryImpl implements IEntityFactory {
 		ReportTemplateImpl templateImpl = new ReportTemplateImpl(existingTemplate.getId(), existingTemplate.getName(),
 				template.getDescription(), template.getQuery(), null, null, template.getReportHeader(),
 				template.getReportFooter(), existingTemplate.getCreateDate(), new Date());
-		List<? extends IReportTemplateParameter> params = template.getTemplateParams();
+		Set<? extends IReportTemplateParameter> params = template.getTemplateParams();
 		if (params != null) {
 			for (IReportTemplateParameter param : params) {
 				templateImpl.addTemplateParameter(param);
 			}
 		}
-		List<? extends IReportTemplateColumn> columns = template.getTemplateColumns();
+		Set<? extends IReportTemplateColumn> columns = template.getTemplateColumns();
 		if (columns != null) {
 			for (IReportTemplateColumn column : columns) {
 				templateImpl.addTemplateColumn(column);

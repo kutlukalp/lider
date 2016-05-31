@@ -23,11 +23,8 @@ import tr.org.liderahenk.lider.core.api.persistence.enums.ParameterType;
  */
 @JsonIgnoreProperties({ "template" })
 @Entity
-/*
- * FIXME a JPA bug prevents insert actions on this table due to uniqueConstraints annotation.
- */
-@Table(name = "R_REPORT_TEMPLATE_PARAMETER" /*, uniqueConstraints = @UniqueConstraint(columnNames = { "REPORT_TEMPLATE_ID",
-		"PARAMETER_KEY" })*/ )
+@Table(name = "R_REPORT_TEMPLATE_PARAMETER", uniqueConstraints = @UniqueConstraint(columnNames = { "REPORT_TEMPLATE_ID",
+		"PARAMETER_KEY" }) )
 public class ReportTemplateParameterImpl implements IReportTemplateParameter {
 
 	private static final long serialVersionUID = -1361608449887309975L;
@@ -124,6 +121,37 @@ public class ReportTemplateParameterImpl implements IReportTemplateParameter {
 	@Override
 	public String toString() {
 		return "ReportTemplateParameterImpl [id=" + id + ", key=" + key + ", label=" + label + ", type=" + type + "]";
+	}
+
+	/**
+	 * hashCode() & equals() are overrided to prevent duplicate records!
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((key == null) ? 0 : key.hashCode());
+		return result;
+	}
+
+	/**
+	 * hashCode() & equals() are overrided to prevent duplicate records!
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ReportTemplateParameterImpl other = (ReportTemplateParameterImpl) obj;
+		if (key == null) {
+			if (other.key != null)
+				return false;
+		} else if (!key.equals(other.key))
+			return false;
+		return true;
 	}
 
 }

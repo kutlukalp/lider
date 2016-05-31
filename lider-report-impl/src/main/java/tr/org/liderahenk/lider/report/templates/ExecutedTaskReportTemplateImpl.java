@@ -1,7 +1,7 @@
 package tr.org.liderahenk.lider.report.templates;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -33,8 +33,7 @@ public class ExecutedTaskReportTemplateImpl extends BaseReportTemplate {
 
 	@Override
 	public String getQuery() {
-		return "SELECT t, " 
-				+ "SUM(CASE WHEN cer.responseCode = :resp_success then 1 ELSE 0 END) as success, "
+		return "SELECT t, " + "SUM(CASE WHEN cer.responseCode = :resp_success then 1 ELSE 0 END) as success, "
 				+ "SUM(CASE WHEN cer.responseCode = :resp_received THEN 1 ELSE 0 END) as received, "
 				+ "SUM(CASE WHEN cer.responseCode = :resp_error then 1 ELSE 0 END) as error "
 				+ "FROM CommandImpl c LEFT JOIN c.commandExecutions ce LEFT JOIN ce.commandExecutionResults cer INNER JOIN c.task t INNER JOIN t.plugin p "
@@ -42,8 +41,8 @@ public class ExecutedTaskReportTemplateImpl extends BaseReportTemplate {
 	}
 
 	@Override
-	public List<? extends IReportTemplateParameter> getTemplateParams() {
-		List<IReportTemplateParameter> params = new ArrayList<IReportTemplateParameter>();
+	public Set<? extends IReportTemplateParameter> getTemplateParams() {
+		Set<IReportTemplateParameter> params = new HashSet<IReportTemplateParameter>();
 		// Plugin name
 		params.add(new IReportTemplateParameter() {
 
@@ -108,7 +107,7 @@ public class ExecutedTaskReportTemplateImpl extends BaseReportTemplate {
 	}
 
 	@Override
-	public List<? extends IReportTemplateColumn> getTemplateColumns() {
+	public Set<? extends IReportTemplateColumn> getTemplateColumns() {
 		// We want to display all columns!
 		return null;
 	}

@@ -22,11 +22,8 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateColu
  */
 @JsonIgnoreProperties({ "template" })
 @Entity
-/*
- * FIXME a JPA bug prevents insert actions on this table due to uniqueConstraints annotation.
- */
-@Table(name = "R_REPORT_TEMPLATE_COLUMN" /*, uniqueConstraints = @UniqueConstraint(columnNames = { "REPORT_TEMPLATE_ID",
-		"COLUMN_ORDER" }) */ )
+@Table(name = "R_REPORT_TEMPLATE_COLUMN", uniqueConstraints = @UniqueConstraint(columnNames = { "REPORT_TEMPLATE_ID",
+		"COLUMN_ORDER" }) )
 public class ReportTemplateColumnImpl implements IReportTemplateColumn {
 
 	private static final long serialVersionUID = 7196785409916030894L;
@@ -134,6 +131,37 @@ public class ReportTemplateColumnImpl implements IReportTemplateColumn {
 	public String toString() {
 		return "ReportTemplateColumnImpl [id=" + id + ", name=" + name + ", visible=" + visible + ", width=" + width
 				+ ", columnOrder=" + columnOrder + "]";
+	}
+
+	/**
+	 * hashCode() & equals() are overrided to prevent duplicate records!
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((columnOrder == null) ? 0 : columnOrder.hashCode());
+		return result;
+	}
+
+	/**
+	 * hashCode() & equals() are overrided to prevent duplicate records!
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ReportTemplateColumnImpl other = (ReportTemplateColumnImpl) obj;
+		if (columnOrder == null) {
+			if (other.columnOrder != null)
+				return false;
+		} else if (!columnOrder.equals(other.columnOrder))
+			return false;
+		return true;
 	}
 
 }
