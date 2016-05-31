@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -254,8 +255,9 @@ public class EntityFactoryImpl implements IEntityFactory {
 	public IAgent createAgent(IAgent existingAgent, String password, String hostname, String ipAddresses,
 			String macAddresses, Map<String, Object> data) {
 		AgentImpl agentImpl = new AgentImpl(existingAgent.getId(), existingAgent.getJid(), false, existingAgent.getDn(),
-				password, hostname, ipAddresses, macAddresses, existingAgent.getCreateDate(), new Date(), null,
-				(List<UserSessionImpl>) existingAgent.getSessions());
+				password, hostname, ipAddresses, macAddresses, existingAgent.getCreateDate(), new Date(),
+				(Set<AgentPropertyImpl>) existingAgent.getProperties(),
+				(Set<UserSessionImpl>) existingAgent.getSessions());
 		if (data != null) {
 			for (Entry<String, Object> entry : data.entrySet()) {
 				if (entry.getKey() != null && entry.getValue() != null) {

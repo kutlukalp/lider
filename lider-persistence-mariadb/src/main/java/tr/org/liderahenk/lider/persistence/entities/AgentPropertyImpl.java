@@ -124,4 +124,35 @@ public class AgentPropertyImpl implements IAgentProperty {
 				+ ", createDate=" + createDate + "]";
 	}
 
+	/**
+	 * hashCode() & equals() are overrided to prevent duplicates records!
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((propertyName == null) ? 0 : propertyName.hashCode());
+		return result;
+	}
+
+	/**
+	 * hashCode() & equals() are overrided to prevent duplicates records!
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AgentPropertyImpl other = (AgentPropertyImpl) obj;
+		if (propertyName == null) {
+			if (other.propertyName != null)
+				return false;
+		} else if (!propertyName.equals(other.propertyName))
+			return false;
+		return true;
+	}
+
 }

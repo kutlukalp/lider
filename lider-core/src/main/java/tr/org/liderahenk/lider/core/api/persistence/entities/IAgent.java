@@ -1,7 +1,7 @@
 package tr.org.liderahenk.lider.core.api.persistence.entities;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 /**
  * IAgent entity class is responsible for storing agent records.
@@ -57,7 +57,7 @@ public interface IAgent extends IEntity {
 	 * 
 	 * @return
 	 */
-	List<? extends IAgentProperty> getProperties();
+	Set<? extends IAgentProperty> getProperties();
 
 	/**
 	 * 
@@ -69,7 +69,7 @@ public interface IAgent extends IEntity {
 	 * 
 	 * @return
 	 */
-	List<? extends IUserSession> getSessions();
+	Set<? extends IUserSession> getSessions();
 
 	/**
 	 * 

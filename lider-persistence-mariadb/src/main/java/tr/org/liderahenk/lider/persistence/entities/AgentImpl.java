@@ -1,8 +1,8 @@
 package tr.org.liderahenk.lider.persistence.entities;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -69,17 +69,17 @@ public class AgentImpl implements IAgent {
 	private Date modifyDate;
 
 	@OneToMany(mappedBy = "agent", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-	private List<AgentPropertyImpl> properties = new ArrayList<AgentPropertyImpl>(); // bidirectional
+	private Set<AgentPropertyImpl> properties = new HashSet<AgentPropertyImpl>(0); // bidirectional
 
 	@OneToMany(mappedBy = "agent", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = false)
-	private List<UserSessionImpl> sessions = new ArrayList<UserSessionImpl>(); // bidirectional
+	private Set<UserSessionImpl> sessions = new HashSet<UserSessionImpl>(0); // bidirectional
 
 	public AgentImpl() {
 	}
 
 	public AgentImpl(Long id, String jid, Boolean deleted, String dn, String password, String hostname,
 			String ipAddresses, String macAddresses, Date createDate, Date modifyDate,
-			List<AgentPropertyImpl> properties, List<UserSessionImpl> sessions) {
+			Set<AgentPropertyImpl> properties, Set<UserSessionImpl> sessions) {
 		super();
 		this.id = id;
 		this.jid = jid;
@@ -108,7 +108,7 @@ public class AgentImpl implements IAgent {
 		this.modifyDate = agent.getModifyDate();
 
 		// Convert IAgentProperty to AgentPropertyImpl
-		List<? extends IAgentProperty> tmpProperties = agent.getProperties();
+		Set<? extends IAgentProperty> tmpProperties = agent.getProperties();
 		if (tmpProperties != null) {
 			for (IAgentProperty tmpProperty : tmpProperties) {
 				addProperty(tmpProperty);
@@ -116,13 +116,12 @@ public class AgentImpl implements IAgent {
 		}
 
 		// Convert IUserSession to UserSessionImpl
-		List<? extends IUserSession> tmpUserSessions = agent.getSessions();
+		Set<? extends IUserSession> tmpUserSessions = agent.getSessions();
 		if (tmpUserSessions != null) {
 			for (IUserSession tmpUserSession : tmpUserSessions) {
 				addUserSession(tmpUserSession);
 			}
 		}
-
 	}
 
 	@Override
@@ -216,18 +215,18 @@ public class AgentImpl implements IAgent {
 	}
 
 	@Override
-	public List<AgentPropertyImpl> getProperties() {
+	public Set<AgentPropertyImpl> getProperties() {
 		return properties;
 	}
 
-	public void setProperties(List<AgentPropertyImpl> properties) {
+	public void setProperties(Set<AgentPropertyImpl> properties) {
 		this.properties = properties;
 	}
 
 	@Override
 	public void addProperty(IAgentProperty property) {
 		if (properties == null) {
-			properties = new ArrayList<AgentPropertyImpl>();
+			properties = new HashSet<AgentPropertyImpl>(0);
 		}
 		AgentPropertyImpl propertyImpl = null;
 		if (property instanceof AgentPropertyImpl) {
@@ -242,18 +241,18 @@ public class AgentImpl implements IAgent {
 	}
 
 	@Override
-	public List<UserSessionImpl> getSessions() {
+	public Set<UserSessionImpl> getSessions() {
 		return sessions;
 	}
 
-	public void setSessions(List<UserSessionImpl> sessions) {
+	public void setSessions(Set<UserSessionImpl> sessions) {
 		this.sessions = sessions;
 	}
 
 	@Override
 	public void addUserSession(IUserSession userSession) {
 		if (sessions == null) {
-			sessions = new ArrayList<UserSessionImpl>();
+			sessions = new HashSet<UserSessionImpl>(0);
 		}
 		UserSessionImpl userSessionImpl = null;
 		if (userSession instanceof UserSessionImpl) {
