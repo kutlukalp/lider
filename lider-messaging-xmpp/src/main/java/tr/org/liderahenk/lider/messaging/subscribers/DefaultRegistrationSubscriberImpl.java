@@ -74,26 +74,29 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 			// Check if agent LDAP entry already exists
 			final List<LdapEntry> entry = ldapService.search(configurationService.getAgentLdapJidAttribute(), uid,
 					new String[] { configurationService.getAgentLdapJidAttribute() });
+
 			if (entry != null && !entry.isEmpty()) {
+				logger.info("Updating account: {} with password: {}",
+						new Object[] { message.getFrom(), message.getPassword() });
+
 				// Update agent LDAP entry.
 				ldapService.updateEntry(entry.get(0).getDistinguishedName(), "userPassword", message.getPassword());
+				logger.info("Agent DN {} updated successfully!", entry.get(0).getDistinguishedName());
 
 				// Find related agent database record.
 				List<? extends IAgent> agents = agentDao.findByProperty(IAgent.class, "jid", uid, 1);
-				// We found the agent, update its properties!
-				if (agents != null && !agents.isEmpty()) {
-					IAgent agent = agents.get(0);
+				IAgent agent = agents != null && !agents.isEmpty() ? agents.get(0) : null;
+
+				// Update the record
+				if (agent != null) {
 					agent = entityFactory.createAgent(agent, message.getPassword(), message.getHostname(),
 							message.getIpAddresses(), message.getMacAddresses(), message.getData());
-					// Merge records
 					agentDao.update(agent);
 				} else {
-					String entryDN = createEntryDN(message);
-					IAgent agent = entityFactory.createAgent(null, uid, entryDN, message.getPassword(),
-							message.getHostname(), message.getIpAddresses(), message.getMacAddresses(),
-							message.getData());
-					// Persist record
-					agentDao.save(agent);
+					logger.error("Agent database record couldn't be found, see Lider logs for more info.");
+					return new RegistrationResponseMessageImpl(StatusCode.REGISTRATION_ERROR,
+							"Agent database record couldn't be found, see Lider logs for more info.", null, null,
+							new Date());
 				}
 
 				logger.warn(
@@ -104,7 +107,7 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 								+ " already exists! Updated its password and database properties with the values submitted.",
 						entry.get(0).getDistinguishedName(), null, new Date());
 			} else {
-				logger.debug("Creating account: {} with password: {}",
+				logger.info("Creating account: {} with password: {}",
 						new Object[] { message.getFrom(), message.getPassword() });
 
 				// Create new agent LDAP entry.
@@ -119,8 +122,6 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 				//
 
 				String entryDN = createEntryDN(message);
-				ldapService.addEntry(entryDN, attributes);
-				logger.debug("Agent DN {} created successfully!", entryDN);
 
 				// Create new agent database record
 				IAgent agent = entityFactory.createAgent(null, uid, entryDN, message.getPassword(),
@@ -128,7 +129,10 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 				// Persist record
 				agentDao.save(agent);
 
-				logger.error("{} and its related database record created successfully!", entryDN);
+				ldapService.addEntry(entryDN, attributes);
+				logger.info("Agent DN {} created successfully!", entryDN);
+
+				logger.info("{} and its related database record created successfully!", entryDN);
 				return new RegistrationResponseMessageImpl(StatusCode.REGISTERED,
 						entryDN + " and its related database record created successfully!", entryDN, null, new Date());
 			}
