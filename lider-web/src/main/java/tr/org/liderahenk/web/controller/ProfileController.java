@@ -92,7 +92,7 @@ public class ProfileController {
 	public IRestResponse listProfiles(@RequestParam(value = "pluginName", required = true) String pluginName,
 			@RequestParam(value = "pluginVersion", required = true) String pluginVersion,
 			@RequestParam(value = "label", required = false) String label,
-			@RequestParam(value = "active", required = false, defaultValue = "true") Boolean active,
+			@RequestParam(value = "active", required = false) Boolean active,
 			HttpServletRequest request) throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/profile/list?pluginName={}&pluginVersion={}&label={}&active={}'",
 				new Object[] { pluginName, pluginVersion, label, active });
