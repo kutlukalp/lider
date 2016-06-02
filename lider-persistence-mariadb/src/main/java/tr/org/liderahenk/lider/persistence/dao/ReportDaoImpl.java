@@ -218,8 +218,9 @@ public class ReportDaoImpl implements IReportDao {
 		q.getResultList();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<?> generate(String query, Set<? extends IReportTemplateParameter> params, Map<String, Object> values,
+	public List<Object[]> generate(String query, Set<? extends IReportTemplateParameter> params, Map<String, Object> values,
 			Set<? extends IReportTemplateColumn> columns) throws Exception {
 		Query q = entityManager.createQuery(query);
 		// Set query parameters!
@@ -249,7 +250,7 @@ public class ReportDaoImpl implements IReportDao {
 			}
 		}
 		// Execute query
-		List<?> resultList = q.getResultList();
+		List<Object[]> resultList = q.getResultList();
 		return resultList;
 	}
 

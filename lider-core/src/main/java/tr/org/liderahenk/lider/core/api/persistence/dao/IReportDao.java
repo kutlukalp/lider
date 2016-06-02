@@ -34,7 +34,7 @@ public interface IReportDao extends IBaseDao<IReportTemplate> {
 
 	void validate(String query, Set<? extends IReportTemplateParameter> templateParams) throws Exception;
 
-	List<?> generate(String query, Set<? extends IReportTemplateParameter> templateParams, Map<String, Object> map,
+	List<Object[]> generate(String query, Set<? extends IReportTemplateParameter> templateParams, Map<String, Object> map,
 			Set<? extends IReportTemplateColumn> templateColumns) throws Exception;
 
 }

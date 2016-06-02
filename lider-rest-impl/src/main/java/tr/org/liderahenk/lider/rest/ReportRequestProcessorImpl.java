@@ -41,7 +41,7 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 			IReportTemplate template = reportDao.find(request.getTemplateId());
 
 			// Generic type can be an entity class or an object array!
-			List<?> resultList = reportDao.generate(template.getQuery(), template.getTemplateParams(),
+			List<Object[]> resultList = reportDao.generate(template.getQuery(), template.getTemplateParams(),
 					request.getParamValues(), template.getTemplateColumns());
 
 			Map<String, Object> resultMap = new HashMap<String, Object>();

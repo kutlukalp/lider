@@ -11,7 +11,7 @@ import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
  * read from <code>${KARAF_HOME}/etc/tr.org.liderahenk.cfg</code> file.<br/>
  * 
  * The configuration service is also updated automatically when a configuration
- * is changed via
+ * property is changed via 'config:edit' or manually.
  * 
  * @author <a href="mailto:bm.volkansahin@gmail.com">volkansahin</a>
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
