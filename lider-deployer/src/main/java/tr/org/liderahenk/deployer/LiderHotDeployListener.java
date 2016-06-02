@@ -1,14 +1,13 @@
 package tr.org.liderahenk.deployer;
 
 import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_DELETE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -20,6 +19,7 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
@@ -27,8 +27,11 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tr.org.liderahenk.deployer.model.PluginArchiveFileInfo;
 import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.deployer.ILiderHotDeployListener;
+import tr.org.liderahenk.lider.core.api.persistence.dao.IManagedPluginDao;
+import tr.org.liderahenk.lider.core.api.persistence.factories.IEntityFactory;
 
 
 /**
@@ -43,6 +46,10 @@ public class LiderHotDeployListener implements ILiderHotDeployListener,Runnable{
 	private final static Logger logger = LoggerFactory.getLogger(LiderHotDeployListener.class);
 	
 	private IConfigurationService configurationService;
+	private IManagedPluginDao managedPluginDao;
+	private IEntityFactory entityFactory;
+	
+	
 	private static final int BUFFER = 8*1024;
 
 	private WatchService watcher;
@@ -58,7 +65,7 @@ public class LiderHotDeployListener implements ILiderHotDeployListener,Runnable{
 	@Override
 	public void register(Path dir) {
 		try {
-			WatchKey key = dir.register(watcher, ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY);
+			WatchKey key = dir.register(watcher, ENTRY_CREATE);
 			keys.put(key, dir);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -133,8 +140,25 @@ public class LiderHotDeployListener implements ILiderHotDeployListener,Runnable{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+                // Check archive file and install plugins.
                 if (checkFileMimeType(child)){
-                	System.out.println("Hemmen yüklüyorum plugini saol yigenim");
+                	try {
+                		// get untar destination path from configuration service
+                		File destionationFile = new File("/tmp/" + child.getFileName());
+                		destionationFile.mkdirs();
+                		PluginArchiveFileInfo unTarPluginInfo = unTarPlugin(child.toString(), destionationFile.toString());
+						if (unTarPluginInfo.getStatus() != -1){
+							Properties pluginPropeties = readPluginProperties(destionationFile.toString());
+							installLiderPlugin(destionationFile.toString()+"/" + unTarPluginInfo.getLiderPluginName());
+							installAhenkPlugin(destionationFile.toString() + "/" + unTarPluginInfo.getAhenkPluginName());
+							installLiderConsolePlugin(destionationFile.toString()+"/site");
+						}else {
+							System.out.println("Eklenti arşiv dosyası lider için uygun değildir.");
+						}
+					} catch (IOException e) {
+						System.out.println("Eklenti yukleme başarısız");
+						e.printStackTrace();
+					}
                 }else {
                 	System.out.println("Bu dosya lider plugini icin uygun degildir.");
                 }
@@ -152,6 +176,28 @@ public class LiderHotDeployListener implements ILiderHotDeployListener,Runnable{
 	}
 	
 	
+	public Boolean installLiderConsolePlugin(String pluginDirectoryPath){
+		System.out.println("Lider Console yüklüyorum plugin pathh -> " + pluginDirectoryPath);
+		return true;
+	}
+	
+	public Boolean installAhenkPlugin(String debFilePath){
+		System.out.println("Ahenk yüklüyorum plugin pathh  -> " + debFilePath);
+		return true;
+	}
+	
+	public Boolean installLiderPlugin(String pluginJarPath){
+		System.out.println("Lider yüklüyorum plugin pathh -> " + pluginJarPath);
+		return true;
+	}
+	
+	
+	public Properties readPluginProperties(String pluginPath) throws FileNotFoundException, IOException{
+		Properties prop = new Properties();
+		prop.load(new FileInputStream(new File(pluginPath+"/lider.properties")));
+		return prop;
+	}
+	
 	public boolean checkFileMimeType(Path filePath){
 		try {
 			//FIXME get from configuration manager
@@ -165,22 +211,41 @@ public class LiderHotDeployListener implements ILiderHotDeployListener,Runnable{
 		} catch (Exception e) {
 			return false;
 		}
-	}
-	
+	}   
 	
 	 //FIXME return file names of archived files
-	 public void unTarPlugin(String tarGzipFilePath, String destPath) throws IOException {
+	 public PluginArchiveFileInfo unTarPlugin(String tarGzipFilePath, String destPath) throws IOException {
 	        TarArchiveInputStream tarIn = null;
+	        PluginArchiveFileInfo info = new PluginArchiveFileInfo();
 	        try {
-	            GzipCompressorInputStream gzIn = new GzipCompressorInputStream(new BufferedInputStream(new FileInputStream(tarGzipFilePath), BUFFER));
+	        	GzipCompressorInputStream gzIn = new GzipCompressorInputStream(new BufferedInputStream(new FileInputStream(tarGzipFilePath), BUFFER));
 	            tarIn = new TarArchiveInputStream(gzIn);
 	            
 	            TarArchiveEntry entry;
 	            while ((entry = (TarArchiveEntry) tarIn.getNextEntry()) != null) {
 	                if (entry.isDirectory()) {
+	                	System.out.println(entry.getName());
 	                    File f = new File(destPath + File.separator + entry.getName());
 	                    f.mkdirs();
 	                } else {
+	                	
+	                	System.out.println(entry.getName());
+	                	if(entry.getName().contains("/")){
+	                		String[] split = entry.getName().split("/");
+	                		String path = destPath + File.separator;
+	                		
+	                		for (int i = 0; i < split.length - 1; i++) {
+								path = path + split[i] + File.separator;
+							}
+	                		
+	                		File pf = new File(path);
+	                		pf.mkdirs();
+	                	}else if(entry.getName().endsWith("deb")){
+	                		info.setAhenkPluginName(entry.getName());
+	                	}else if(entry.getName().endsWith("jar")){
+	                		info.setLiderPluginName(entry.getName());
+	                	}
+//	                	System.out.println(entry.getFile().getParent().toString());
 	                    int count;
 	                    byte data[] = new byte[BUFFER];
 	                    FileOutputStream fos = new FileOutputStream(destPath + File.separator + entry.getName());
@@ -191,11 +256,17 @@ public class LiderHotDeployListener implements ILiderHotDeployListener,Runnable{
 	                    destOut.close();
 	                }
 	            }
-	        } finally {
+			} catch (Exception e) {
+				e.printStackTrace();
+				info.setStatus(-1);
+			}finally {
 	            if (tarIn != null) {
 	                tarIn.close();
 	            }
 	        }
+	     
+	        
+	        return info;
 	    }
 	
 	/**
@@ -205,8 +276,24 @@ public class LiderHotDeployListener implements ILiderHotDeployListener,Runnable{
 	public void setConfigurationService(IConfigurationService configurationService) {
 		this.configurationService = configurationService;
 	}
+	
+	public void setManagedPluginDao(IManagedPluginDao managedPluginDao) {
+		this.managedPluginDao = managedPluginDao;
+	}
 
-
-
+	public void setEntityFactory(IEntityFactory entityFactory) {
+		this.entityFactory = entityFactory;
+	}
+	
+	
+	public static void main(String...strings ){
+		try {
+//			unTarPlugin("/home/ismail/devzone/workspace/lider-ahenk/test/remoteplg/remote.tar.gz", "/opt/lider-server/deploy");
+//			unZipIt("/home/ismail/devzone/workspace/lider-ahenk/test/remoteplg/test.zip", "/opt/lider-server/deploy");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 }

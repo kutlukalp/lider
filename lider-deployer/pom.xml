@@ -42,7 +42,7 @@
 						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
 						<Bundle-Version>${project.version}</Bundle-Version>
 						<Export-Package>
-							tr.org.liderahenk.deployer
+							tr.org.liderahenk.deployer,tr.org.liderahenk.deployer.model
 						</Export-Package>
 					</instructions>
 
