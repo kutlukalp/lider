@@ -1,5 +1,7 @@
 package tr.org.liderahenk.lider.core.api.persistence.factories;
 
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import tr.org.liderahenk.lider.core.api.messaging.messages.IPolicyStatusMessage;
@@ -18,6 +20,8 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IUserSession;
 import tr.org.liderahenk.lider.core.api.persistence.enums.CrudType;
 import tr.org.liderahenk.lider.core.api.persistence.enums.SessionEvent;
 import tr.org.liderahenk.lider.core.api.plugin.IPluginInfo;
+import tr.org.liderahenk.lider.core.api.plugin.deployer.IManagedPlugin;
+import tr.org.liderahenk.lider.core.api.plugin.deployer.IPluginPart;
 import tr.org.liderahenk.lider.core.api.rest.requests.ICommandRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IProfileRequest;
@@ -243,4 +247,9 @@ public interface IEntityFactory {
 	IAgent createAgent(IAgent existingAgent, String password, String hostname, String ipAddresses, String macAddresses,
 			Map<String, Object> data);
 
+	
+	IPluginPart createPluginPart(Long id,String fileName,String type,String fullPath);
+	
+	IManagedPlugin createManagedPlugin(Long id,String name,String version,Date installationDate,Boolean active,List<IPluginPart> parts);
+	
 }

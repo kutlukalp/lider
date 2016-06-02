@@ -27,6 +27,8 @@ import tr.org.liderahenk.lider.core.api.persistence.enums.CrudType;
 import tr.org.liderahenk.lider.core.api.persistence.enums.SessionEvent;
 import tr.org.liderahenk.lider.core.api.persistence.factories.IEntityFactory;
 import tr.org.liderahenk.lider.core.api.plugin.IPluginInfo;
+import tr.org.liderahenk.lider.core.api.plugin.deployer.IManagedPlugin;
+import tr.org.liderahenk.lider.core.api.plugin.deployer.IPluginPart;
 import tr.org.liderahenk.lider.core.api.rest.requests.ICommandRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IProfileRequest;
@@ -40,8 +42,10 @@ import tr.org.liderahenk.lider.persistence.entities.AgentPropertyImpl;
 import tr.org.liderahenk.lider.persistence.entities.CommandExecutionImpl;
 import tr.org.liderahenk.lider.persistence.entities.CommandExecutionResultImpl;
 import tr.org.liderahenk.lider.persistence.entities.CommandImpl;
+import tr.org.liderahenk.lider.persistence.entities.ManagedPlugin;
 import tr.org.liderahenk.lider.persistence.entities.OperationLogImpl;
 import tr.org.liderahenk.lider.persistence.entities.PluginImpl;
+import tr.org.liderahenk.lider.persistence.entities.PluginPart;
 import tr.org.liderahenk.lider.persistence.entities.PolicyImpl;
 import tr.org.liderahenk.lider.persistence.entities.ProfileImpl;
 import tr.org.liderahenk.lider.persistence.entities.ReportTemplateColumnImpl;
@@ -269,4 +273,14 @@ public class EntityFactoryImpl implements IEntityFactory {
 		return agentImpl;
 	}
 
+	
+	public IPluginPart createPluginPart(Long id,String fileName,String type,String fullPath){
+		return new PluginPart(id, fileName, type, fullPath);
+	}
+	
+	public IManagedPlugin createManagedPlugin(Long id,String name,String version,Date installationDate,Boolean active,List<IPluginPart> parts){
+		return new ManagedPlugin(id, name, version, installationDate, active, parts);
+	}
+	
+	
 }
