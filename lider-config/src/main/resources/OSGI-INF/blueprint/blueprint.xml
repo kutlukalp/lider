@@ -49,6 +49,17 @@
 		<property name="taskManagerMulticastEnabled" value="${taskmanager.multicast.enabled}" />
 		<property name="taskManagerLogXmppMessagesEnabled" value="${taskmanager.log.xmpp.messages.enabled}" />
 		
+		<property name="mailAddress" value="${mail.address}" />
+		<property name="mailPassword" value="${mail.password}" />
+		<property name="mailHost" value="${mail.host}" />
+		<property name="mailSmtpPort" value="${mail.smtp.port}" />
+		<property name="mailSmtpAuth" value="${mail.smtp.auth}" />
+		<property name="mailSmtpStartTlsEnable" value="${mail.smtp.starttls.enable}" />
+		<property name="mailSmtpSslEnable" value="${mail.smtp.ssl.enable}" />
+		<property name="mailSmtpConnTimeout" value="${mail.smtp.connectiontimeout}" />
+		<property name="mailSmtpTimeout" value="${mail.smtp.timeout}" />
+		<property name="mailSmtpWriteTimeout" value="${mail.smtp.writetimeout}" />
+		
 		<property name="hotDeploymentPath" value="${hot.deployment.path}" />
 	</bean>
 

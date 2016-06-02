@@ -60,7 +60,18 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 	private Long taskManagerTaskTimeout;
 	private Boolean taskManagerMulticastEnabled;
 	private Boolean taskManagerLogXmppMessagesEnabled;
-	
+
+	// Mail configuration
+	private String mailAddress;
+	private String mailPassword;
+	private String mailHost;
+	private Integer mailSmtpPort;
+	private Boolean mailSmtpAuth;
+	private Boolean mailSmtpStartTlsEnable;
+	private Boolean mailSmtpSslEnable;
+	private Integer mailSmtpConnTimeout;
+	private Integer mailSmtpTimeout;
+	private Integer mailSmtpWriteTimeout;
 	private String hotDeploymentPath;
 
 	public void refresh() {
@@ -71,11 +82,12 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 	public String toString() {
 		return "ConfigurationServiceImpl [ldapServer=" + ldapServer + ", ldapPort=" + ldapPort + ", ldapUsername="
 				+ ldapUsername + ", ldapPassword=" + ldapPassword + ", ldapRootDn=" + ldapRootDn + ", ldapUseSsl="
-				+ ldapUseSsl + ", xmppHost=" + xmppHost + ", xmppPort=" + xmppPort + ", xmppUsername=" + xmppUsername
-				+ ", xmppPassword=" + xmppPassword + ", xmppServiceName=" + xmppServiceName
-				+ ", xmppMaxRetryConnectionCount=" + xmppMaxRetryConnectionCount + ", xmppPacketReplayTimeout="
-				+ xmppPacketReplayTimeout + ", xmppPingTimeout=" + xmppPingTimeout + ", xmppUseSsl=" + xmppUseSsl
-				+ ", xmppFilePath=" + xmppFilePath + ", agentLdapBaseDn=" + agentLdapBaseDn + ", agentLdapIdAttribute="
+				+ ldapUseSsl + ", ldapSearchAttributes=" + ldapSearchAttributes + ", xmppHost=" + xmppHost
+				+ ", xmppPort=" + xmppPort + ", xmppUsername=" + xmppUsername + ", xmppPassword=" + xmppPassword
+				+ ", xmppServiceName=" + xmppServiceName + ", xmppMaxRetryConnectionCount="
+				+ xmppMaxRetryConnectionCount + ", xmppPacketReplayTimeout=" + xmppPacketReplayTimeout
+				+ ", xmppPingTimeout=" + xmppPingTimeout + ", xmppUseSsl=" + xmppUseSsl + ", xmppFilePath="
+				+ xmppFilePath + ", agentLdapBaseDn=" + agentLdapBaseDn + ", agentLdapIdAttribute="
 				+ agentLdapIdAttribute + ", agentLdapJidAttribute=" + agentLdapJidAttribute
 				+ ", agentLdapObjectClasses=" + agentLdapObjectClasses + ", userLdapBaseDn=" + userLdapBaseDn
 				+ ", userLdapUidAttribute=" + userLdapUidAttribute + ", userLdapPrivilegeAttribute="
@@ -83,7 +95,11 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 				+ ", userAuthorizationEnabled=" + userAuthorizationEnabled + ", groupLdapObjectClasses="
 				+ groupLdapObjectClasses + ", taskManagerTaskTimeout=" + taskManagerTaskTimeout
 				+ ", taskManagerMulticastEnabled=" + taskManagerMulticastEnabled
-				+ ", taskManagerLogXmppMessagesEnabled=" + taskManagerLogXmppMessagesEnabled 
+				+ ", taskManagerLogXmppMessagesEnabled=" + taskManagerLogXmppMessagesEnabled + ", mailAddress="
+				+ mailAddress + ", mailPassword=" + mailPassword + ", mailHost=" + mailHost + ", mailSmtpPort="
+				+ mailSmtpPort + ", mailSmtpAuth=" + mailSmtpAuth + ", mailSmtpStartTlsEnable=" + mailSmtpStartTlsEnable
+				+ ", mailSmtpSslEnable=" + mailSmtpSslEnable + ", mailSmtpConnTimeout=" + mailSmtpConnTimeout
+				+ ", mailSmtpTimeout=" + mailSmtpTimeout + ", mailSmtpWriteTimeout=" + mailSmtpWriteTimeout
 				+ ", hotDeploymentPath=" + hotDeploymentPath + "]";
 	}
 
@@ -365,6 +381,97 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		this.ldapSearchAttributes = ldapSearchAttributes;
 	}
 
+	@Override
+	public String getMailAddress() {
+		return mailAddress;
+	}
+
+	public void setMailAddress(String mailAddress) {
+		this.mailAddress = mailAddress;
+	}
+
+	@Override
+	public String getMailPassword() {
+		return mailPassword;
+	}
+
+	public void setMailPassword(String mailPassword) {
+		this.mailPassword = mailPassword;
+	}
+
+	@Override
+	public String getMailHost() {
+		return mailHost;
+	}
+
+	public void setMailHost(String mailHost) {
+		this.mailHost = mailHost;
+	}
+
+	@Override
+	public Integer getMailSmtpPort() {
+		return mailSmtpPort;
+	}
+
+	public void setMailSmtpPort(Integer mailSmtpPort) {
+		this.mailSmtpPort = mailSmtpPort;
+	}
+
+	@Override
+	public Boolean getMailSmtpAuth() {
+		return mailSmtpAuth;
+	}
+
+	public void setMailSmtpAuth(Boolean mailSmtpAuth) {
+		this.mailSmtpAuth = mailSmtpAuth;
+	}
+
+	@Override
+	public Boolean getMailSmtpStartTlsEnable() {
+		return mailSmtpStartTlsEnable;
+	}
+
+	public void setMailSmtpStartTlsEnable(Boolean mailSmtpStartTlsEnable) {
+		this.mailSmtpStartTlsEnable = mailSmtpStartTlsEnable;
+	}
+
+	@Override
+	public Boolean getMailSmtpSslEnable() {
+		return mailSmtpSslEnable;
+	}
+
+	public void setMailSmtpSslEnable(Boolean mailSmtpSslEnable) {
+		this.mailSmtpSslEnable = mailSmtpSslEnable;
+	}
+
+	@Override
+	public Integer getMailSmtpConnTimeout() {
+		return mailSmtpConnTimeout;
+	}
+
+	public void setMailSmtpConnTimeout(Integer mailSmtpConnTimeout) {
+		this.mailSmtpConnTimeout = mailSmtpConnTimeout;
+	}
+
+	@Override
+	public Integer getMailSmtpTimeout() {
+		return mailSmtpTimeout;
+	}
+
+	public void setMailSmtpTimeout(Integer mailSmtpTimeout) {
+		this.mailSmtpTimeout = mailSmtpTimeout;
+	}
+
+	@Override
+	public Integer getMailSmtpWriteTimeout() {
+		return mailSmtpWriteTimeout;
+	}
+
+	public void setMailSmtpWriteTimeout(Integer mailSmtpWriteTimeout) {
+		this.mailSmtpWriteTimeout = mailSmtpWriteTimeout;
+	}
+
+	@Override
 	public String getHotDeploymentPath() {
 		return hotDeploymentPath;
 	}

@@ -209,8 +209,74 @@ public interface IConfigurationService {
 	 * @return true if xmpp message logs enabled
 	 */
 	Boolean getTaskManagerLogXmppMessagesEnabled();
-	
-	
-	String getHotDeploymentPath();
 
+	//
+	// Mail configuration
+	//
+
+	/**
+	 * 
+	 * @return
+	 */
+	String getMailAddress();
+
+	/**
+	 * 
+	 * @return
+	 */
+	String getMailPassword();
+
+	/**
+	 * 
+	 * @return
+	 */
+	String getMailHost();
+
+	/**
+	 * 
+	 * @return
+	 */
+	Integer getMailSmtpPort();
+
+	/**
+	 * 
+	 * @return
+	 */
+	Boolean getMailSmtpAuth();
+
+	/**
+	 * 
+	 * @return
+	 */
+	Boolean getMailSmtpStartTlsEnable();
+
+	/**
+	 * 
+	 * @return
+	 */
+	Boolean getMailSmtpSslEnable();
+
+	/**
+	 * 
+	 * @return
+	 */
+	Integer getMailSmtpConnTimeout();
+
+	/**
+	 * 
+	 * @return
+	 */
+	Integer getMailSmtpTimeout();
+
+	/**
+	 * 
+	 * @return
+	 */
+	Integer getMailSmtpWriteTimeout();
+
+	/**
+	 * 
+	 * @return hot deployment path which is used to hold plugin files.
+	 */
+	String getHotDeploymentPath();
 }
