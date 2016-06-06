@@ -1,5 +1,7 @@
 package tr.org.liderahenk.lider.core.api.configuration;
 
+import tr.org.liderahenk.lider.core.api.messaging.enums.Protocol;
+
 /**
  * 
  * Provides configuration service for all Lider core and plugin bundles.
@@ -273,6 +275,22 @@ public interface IConfigurationService {
 	 * @return
 	 */
 	Integer getMailSmtpWriteTimeout();
+
+	//
+	// Hot deployment & plugin distribution configuration
+	//
+
+	Protocol getAgentPluginDistroProtocol();
+
+	String getAgentPluginDistroHost();
+
+	String getAgentPluginDistroUsername();
+
+	String getAgentPluginDistroPassword();
+
+	String getAgentPluginDistroPath();
+
+	String getAgentPluginDistroUrl();
 
 	/**
 	 * 

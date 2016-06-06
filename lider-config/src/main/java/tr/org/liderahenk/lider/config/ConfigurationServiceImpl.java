@@ -1,10 +1,13 @@
 package tr.org.liderahenk.lider.config;
 
+import java.util.Locale;
+
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
+import tr.org.liderahenk.lider.core.api.messaging.enums.Protocol;
 
 /**
  * This class provides configurations throughout the system. Configurations are
@@ -72,7 +75,15 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 	private Integer mailSmtpConnTimeout;
 	private Integer mailSmtpTimeout;
 	private Integer mailSmtpWriteTimeout;
+
+	// Hot deployment & plugin distribution configuration
 	private String hotDeploymentPath;
+	private Protocol agentPluginDistroProtocol;
+	private String agentPluginDistroHost;
+	private String agentPluginDistroUsername;
+	private String agentPluginDistroPassword;
+	private String agentPluginDistroPath;
+	private String agentPluginDistroUrl;
 
 	public void refresh() {
 		logger.info("Configuration updated using blueprint: {}", prettyPrintConfig());
@@ -100,7 +111,11 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 				+ mailSmtpPort + ", mailSmtpAuth=" + mailSmtpAuth + ", mailSmtpStartTlsEnable=" + mailSmtpStartTlsEnable
 				+ ", mailSmtpSslEnable=" + mailSmtpSslEnable + ", mailSmtpConnTimeout=" + mailSmtpConnTimeout
 				+ ", mailSmtpTimeout=" + mailSmtpTimeout + ", mailSmtpWriteTimeout=" + mailSmtpWriteTimeout
-				+ ", hotDeploymentPath=" + hotDeploymentPath + "]";
+				+ ", hotDeploymentPath=" + hotDeploymentPath + ", agentPluginDistroProtocol="
+				+ agentPluginDistroProtocol + ", agentPluginDistroHost=" + agentPluginDistroHost
+				+ ", agentPluginDistroUsername=" + agentPluginDistroUsername + ", agentPluginDistroPassword="
+				+ agentPluginDistroPassword + ", agentPluginDistroPath=" + agentPluginDistroPath
+				+ ", agentPluginDistroUrl=" + agentPluginDistroUrl + "]";
 	}
 
 	public String prettyPrintConfig() {
@@ -469,6 +484,61 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 
 	public void setMailSmtpWriteTimeout(Integer mailSmtpWriteTimeout) {
 		this.mailSmtpWriteTimeout = mailSmtpWriteTimeout;
+	}
+
+	@Override
+	public Protocol getAgentPluginDistroProtocol() {
+		return agentPluginDistroProtocol;
+	}
+
+	public void setAgentPluginDistroProtocol(String agentPluginDistroProtocol) {
+		this.agentPluginDistroProtocol = agentPluginDistroProtocol != null
+				? Protocol.valueOf(agentPluginDistroProtocol.toUpperCase(Locale.ENGLISH)) : null;
+	}
+
+	@Override
+	public String getAgentPluginDistroHost() {
+		return agentPluginDistroHost;
+	}
+
+	public void setAgentPluginDistroHost(String agentPluginDistroHost) {
+		this.agentPluginDistroHost = agentPluginDistroHost;
+	}
+
+	@Override
+	public String getAgentPluginDistroUsername() {
+		return agentPluginDistroUsername;
+	}
+
+	public void setAgentPluginDistroUsername(String agentPluginDistroUsername) {
+		this.agentPluginDistroUsername = agentPluginDistroUsername;
+	}
+
+	@Override
+	public String getAgentPluginDistroPassword() {
+		return agentPluginDistroPassword;
+	}
+
+	public void setAgentPluginDistroPassword(String agentPluginDistroPassword) {
+		this.agentPluginDistroPassword = agentPluginDistroPassword;
+	}
+
+	@Override
+	public String getAgentPluginDistroPath() {
+		return agentPluginDistroPath;
+	}
+
+	public void setAgentPluginDistroPath(String agentPluginDistroPath) {
+		this.agentPluginDistroPath = agentPluginDistroPath;
+	}
+
+	@Override
+	public String getAgentPluginDistroUrl() {
+		return agentPluginDistroUrl;
+	}
+
+	public void setAgentPluginDistroUrl(String agentPluginDistroUrl) {
+		this.agentPluginDistroUrl = agentPluginDistroUrl;
 	}
 
 	@Override
