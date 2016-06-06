@@ -15,8 +15,7 @@
 
 	<service ref="messageFactory"
 		interface="tr.org.liderahenk.lider.core.api.messaging.IMessageFactory" />
-	<bean id="messageFactory" class="tr.org.liderahenk.lider.messaging.MessageFactoryImpl">
-	</bean>
+	<bean id="messageFactory" class="tr.org.liderahenk.lider.messaging.MessageFactoryImpl" />
 
 	<bean id="xmppClient" class="tr.org.liderahenk.lider.messaging.XMPPClientImpl"
 		init-method="init" destroy-method="destroy">

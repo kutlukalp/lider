@@ -64,7 +64,8 @@
 		<aries.blueprint.version>1.1.0</aries.blueprint.version>
 		<commons.codec.version>1.10</commons.codec.version>
 		<commons.lang.version>2.6</commons.lang.version>
-
+		<javax.mail.version>1.5.5</javax.mail.version>
+		<javax.mail.api.version>1.5.5</javax.mail.api.version>
 
 		<!--JPA -->
 		<ariesEbaMavenPluginVersion>1.0.0</ariesEbaMavenPluginVersion>
@@ -86,13 +87,6 @@
 		<ariesApplicationRuntimeIsolatedVersion>1.0.0</ariesApplicationRuntimeIsolatedVersion>
 		<ariesApplicationRuntimeRepositoryVersion>1.0.0</ariesApplicationRuntimeRepositoryVersion>
 		<ariesApplicationUtilsVersion>1.0.0</ariesApplicationUtilsVersion>
-		<!-- Aries Blueprint Versions -->
-		<ariesBlueprintAnnotationApiVersion>1.0.0</ariesBlueprintAnnotationApiVersion>
-		<ariesBlueprintAnnotationImplVersion>1.0.0</ariesBlueprintAnnotationImplVersion>
-		<ariesBlueprintApiVersion>1.0.0</ariesBlueprintApiVersion>
-		<ariesBlueprintVersion>1.0.0</ariesBlueprintVersion>
-		<ariesBlueprintCmVersion>1.0.0</ariesBlueprintCmVersion>
-		<ariesBlueprintCoreVersion>1.0.0</ariesBlueprintCoreVersion>
 		<!-- Aries Jmx Versions -->
 		<ariesJmxiApiVersion>1.0.0</ariesJmxiApiVersion>
 		<ariesJmxBlueprintApiVersion>1.0.0</ariesJmxBlueprintApiVersion>
@@ -177,6 +171,7 @@
 		<module>lider-policymanager-impl</module>
 		<module>lider-report-impl</module>
 		<module>lider-deployer</module>
+		<module>lider-mail-notification</module>
 	</modules>
 
 	<build>
@@ -186,7 +181,7 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>${maven.javadoc.plugin.version}</version>
 				<configuration>
-<!-- 					<stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile> -->
+					<!-- <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile> -->
 					<show>protected</show>
 				</configuration>
 			</plugin>
@@ -490,7 +485,18 @@
 				<version>${osgi.core.version}</version>
 				<scope>provided</scope>
 			</dependency>
-
+			<!-- Mail Dependencies -->
+			<dependency>
+				<groupId>javax.mail</groupId>
+				<artifactId>javax.mail-api</artifactId>
+				<version>${javax.mail.api.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.sun.mail</groupId>
+				<artifactId>javax.mail</artifactId>
+				<version>${javax.mail.version}</version>
+			</dependency>
+			<!-- End of Mail Dependencies -->
 			<dependency>
 				<groupId>org.apache.geronimo.specs</groupId>
 				<artifactId>geronimo-jsp_2.1_spec</artifactId>
@@ -556,37 +562,6 @@
 				<groupId>org.apache.aries.jpa</groupId>
 				<artifactId>org.apache.aries.jpa.container.context</artifactId>
 				<version>${ariesJpaContainerContextVersion}</version>
-			</dependency>
-			<!-- blueprint -->
-			<dependency>
-				<groupId>org.apache.aries.blueprint</groupId>
-				<artifactId>org.apache.aries.blueprint.annotation.api</artifactId>
-				<version>${ariesBlueprintAnnotationApiVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.aries.blueprint</groupId>
-				<artifactId>org.apache.aries.blueprint.annotation.impl</artifactId>
-				<version>${ariesBlueprintAnnotationImplVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.aries.blueprint</groupId>
-				<artifactId>org.apache.aries.blueprint.api</artifactId>
-				<version>${ariesBlueprintApiVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.aries.blueprint</groupId>
-				<artifactId>org.apache.aries.blueprint</artifactId>
-				<version>${ariesBlueprintVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.aries.blueprint</groupId>
-				<artifactId>org.apache.aries.blueprint.cm</artifactId>
-				<version>${ariesBlueprintCmVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.aries.blueprint</groupId>
-				<artifactId>org.apache.aries.blueprint.core</artifactId>
-				<version>${ariesBlueprintCoreVersion}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
