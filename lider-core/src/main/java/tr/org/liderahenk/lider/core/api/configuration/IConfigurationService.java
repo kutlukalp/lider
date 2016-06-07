@@ -1,5 +1,7 @@
 package tr.org.liderahenk.lider.core.api.configuration;
 
+import java.util.Map;
+
 import tr.org.liderahenk.lider.core.api.messaging.enums.Protocol;
 
 /**
@@ -292,9 +294,12 @@ public interface IConfigurationService {
 
 	String getAgentPluginDistroUrl();
 
+	Map<String, Object> getAgentPluginDistoParams();
+
 	/**
 	 * 
 	 * @return hot deployment path which is used to hold plugin files.
 	 */
 	String getHotDeploymentPath();
+
 }

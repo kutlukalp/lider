@@ -144,15 +144,15 @@ public class EntityFactoryImpl implements IEntityFactory {
 	@Override
 	public IPlugin createPlugin(IPluginInfo info) throws Exception {
 		return new PluginImpl(null, info.getPluginName(), info.getPluginVersion(), info.getDescription(), true, false,
-				info.getMachineOriented(), info.getUserOriented(), info.getPolicyPlugin(), info.getXbased(),
-				info.getDistro().getProtocol(), info.getDistro().getParams(), null, new Date(), null);
+				info.getMachineOriented(), info.getUserOriented(), info.getPolicyPlugin(), info.getXbased(), null,
+				new Date(), null);
 	}
 
 	@Override
 	public IPlugin createPlugin(IPlugin plugin, IPluginInfo info) throws Exception {
 		return new PluginImpl(plugin.getId(), plugin.getName(), plugin.getVersion(), info.getDescription(), true, false,
-				info.getMachineOriented(), info.getUserOriented(), info.getPolicyPlugin(), info.getXbased(),
-				info.getDistro().getProtocol(), info.getDistro().getParams(), null, plugin.getCreateDate(), new Date());
+				info.getMachineOriented(), info.getUserOriented(), info.getPolicyPlugin(), info.getXbased(), null,
+				plugin.getCreateDate(), new Date());
 	}
 
 	@Override
@@ -273,14 +273,13 @@ public class EntityFactoryImpl implements IEntityFactory {
 		return agentImpl;
 	}
 
-	
-	public IPluginPart createPluginPart(Long id,String fileName,String type,String fullPath){
+	public IPluginPart createPluginPart(Long id, String fileName, String type, String fullPath) {
 		return new PluginPart(id, fileName, type, fullPath);
 	}
-	
-	public IManagedPlugin createManagedPlugin(Long id,String name,String version,Date installationDate,Boolean active,List<IPluginPart> parts){
+
+	public IManagedPlugin createManagedPlugin(Long id, String name, String version, Date installationDate,
+			Boolean active, List<IPluginPart> parts) {
 		return new ManagedPlugin(id, name, version, installationDate, active, parts);
 	}
-	
-	
+
 }

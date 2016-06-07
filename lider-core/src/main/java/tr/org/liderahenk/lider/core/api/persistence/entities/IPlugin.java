@@ -2,9 +2,6 @@ package tr.org.liderahenk.lider.core.api.persistence.entities;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-
-import tr.org.liderahenk.lider.core.api.messaging.enums.Protocol;
 
 /**
  * IPlugin entity class is responsible for storing plugin definitions.
@@ -93,23 +90,5 @@ public interface IPlugin extends IEntity {
 	 * @return JSON string representation of this instance
 	 */
 	String toJson();
-
-	/**
-	 * 
-	 * @return protocol used for plugin distribution
-	 */
-	Protocol getDistroProtocol();
-
-	/**
-	 * 
-	 * @return distribution parameters
-	 */
-	byte[] getDistroParamsBlob();
-
-	/**
-	 * 
-	 * @return distribution parameters
-	 */
-	Map<String, Object> getDistroParams();
 
 }

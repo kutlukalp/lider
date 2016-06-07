@@ -1,7 +1,5 @@
 package tr.org.liderahenk.lider.core.api.plugin;
 
-import tr.org.liderahenk.lider.core.api.pluginmanager.IPluginDistro;
-
 /**
  * Plugin info interface is used to register new plugins to the system.
  * 
@@ -51,14 +49,5 @@ public interface IPluginInfo {
 	 * @return true if the plugin needs/uses X
 	 */
 	Boolean getXbased();
-
-	/**
-	 * Indicates how this plugin can be distributed to agents.
-	 * 
-	 * @see tr.org.liderahenk.lider.core.api.pluginmanager.PluginDistroHTTP
-	 * @see tr.org.liderahenk.lider.core.api.pluginmanager.PluginDistroSSH
-	 * @return info about plugin distro
-	 */
-	IPluginDistro getDistro();
 
 }

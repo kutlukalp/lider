@@ -1,6 +1,8 @@
 package tr.org.liderahenk.lider.config;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
@@ -539,6 +541,30 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 
 	public void setAgentPluginDistroUrl(String agentPluginDistroUrl) {
 		this.agentPluginDistroUrl = agentPluginDistroUrl;
+	}
+
+	@Override
+	public Map<String, Object> getAgentPluginDistoParams() {
+		Map<String, Object> params = new HashMap<String, Object>();
+		/*
+		 * If you change one of the parameter keys, DO NOT forget to change key
+		 * in MissingPluginSubscriberImpl.java as well
+		 */
+		switch (agentPluginDistroProtocol) {
+		case HTTP:
+			params.put("url", agentPluginDistroUrl);
+			break;
+		case SSH:
+			params.put("host", agentPluginDistroHost);
+			params.put("username", agentPluginDistroUsername);
+			params.put("password", agentPluginDistroPassword);
+			params.put("path", agentPluginDistroPath);
+			// TODO 'port' & 'publicKey'
+			break;
+		default:
+			// TODO TORRENT
+		}
+		return params;
 	}
 
 	@Override

@@ -2,11 +2,13 @@ package tr.org.liderahenk.lider.messaging.subscribers;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.messaging.IMessageFactory;
 import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IMissingPluginMessage;
@@ -29,6 +31,9 @@ public class MissingPluginSubscriberImpl implements IMissingPluginSubscriber {
 
 	private IMessageFactory messageFactory;
 	private IPluginDao pluginDao;
+	private IConfigurationService configurationService;
+
+	private final static String DEB_FILE_FORMAT = "{0}_{1}_amd64.deb";
 
 	@Override
 	public ILiderMessage messageReceived(IMissingPluginMessage message) throws Exception {
@@ -49,12 +54,42 @@ public class MissingPluginSubscriberImpl implements IMissingPluginSubscriber {
 			logger.warn("Missing plugin not found. Plugin name: {} version: {}", message.getPluginName(),
 					message.getPluginVersion());
 		} else {
+			appendDebFileName(plugin);
 			response = messageFactory.createInstallPluginMessage(message.getFrom(), message.getPluginName(),
-					message.getPluginVersion(), plugin.getDistroParams(), plugin.getDistroProtocol());
+					message.getPluginVersion(), configurationService.getAgentPluginDistoParams(),
+					configurationService.getAgentPluginDistroProtocol());
 			logger.info("Missing plugin found. Sending plugin installation info: {}", response);
 		}
 
 		return response;
+	}
+
+	/**
+	 * Append DEB file name to either URL or file path according to selected
+	 * distro protocol.
+	 * 
+	 * @param plugin
+	 */
+	private void appendDebFileName(IPlugin plugin) {
+		String debFileName = DEB_FILE_FORMAT.replace("{0}", plugin.getName().toLowerCase(Locale.ENGLISH)).replace("{1}",
+				plugin.getVersion());
+		switch (configurationService.getAgentPluginDistroProtocol()) {
+		case HTTP:
+			String url = (String) configurationService.getAgentPluginDistoParams().get("url");
+			if (!url.endsWith("/"))
+				url += "/";
+			url += debFileName;
+			configurationService.getAgentPluginDistoParams().put("url", url);
+			break;
+		case SSH:
+			String path = (String) configurationService.getAgentPluginDistoParams().get("path");
+			if (!path.endsWith("/"))
+				path += "/";
+			path += debFileName;
+			configurationService.getAgentPluginDistoParams().put("path", path);
+		default:
+			break;
+		}
 	}
 
 	/**
@@ -71,6 +106,14 @@ public class MissingPluginSubscriberImpl implements IMissingPluginSubscriber {
 	 */
 	public void setPluginDao(IPluginDao pluginDao) {
 		this.pluginDao = pluginDao;
+	}
+
+	/**
+	 * 
+	 * @param configurationService
+	 */
+	public void setConfigurationService(IConfigurationService configurationService) {
+		this.configurationService = configurationService;
 	}
 
 }
