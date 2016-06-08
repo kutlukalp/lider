@@ -87,6 +87,12 @@ public interface IConfigurationService {
 	String getXmppPassword();
 
 	/**
+	 * 
+	 * @return XMPP resource is appended to user JID to ensure uniquness.
+	 */
+	String getXmppResource();
+
+	/**
 	 * @return XMPP service name / domain.
 	 */
 	String getXmppServiceName();

@@ -26,6 +26,7 @@
 		<property name="xmppPort" value="${xmpp.port}" />
 		<property name="xmppUsername" value="${xmpp.username}" />
 		<property name="xmppPassword" value="${xmpp.password}" />
+		<property name="xmppResource" value="${xmpp.resource}" />
 		<property name="xmppServiceName" value="${xmpp.service.name}" />
 		<property name="xmppMaxRetryConnectionCount" value="${xmpp.max.retry.connection.count}" />
 		<property name="xmppPacketReplayTimeout" value="${xmpp.packet.replay.timeout}" />

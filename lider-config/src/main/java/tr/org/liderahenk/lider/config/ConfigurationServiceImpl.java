@@ -40,6 +40,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 	private Integer xmppPort;
 	private String xmppUsername;
 	private String xmppPassword;
+	private String xmppResource;
 	private String xmppServiceName; // service name / XMPP domain
 	private int xmppMaxRetryConnectionCount;
 	private int xmppPacketReplayTimeout;
@@ -97,10 +98,10 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 				+ ldapUsername + ", ldapPassword=" + ldapPassword + ", ldapRootDn=" + ldapRootDn + ", ldapUseSsl="
 				+ ldapUseSsl + ", ldapSearchAttributes=" + ldapSearchAttributes + ", xmppHost=" + xmppHost
 				+ ", xmppPort=" + xmppPort + ", xmppUsername=" + xmppUsername + ", xmppPassword=" + xmppPassword
-				+ ", xmppServiceName=" + xmppServiceName + ", xmppMaxRetryConnectionCount="
-				+ xmppMaxRetryConnectionCount + ", xmppPacketReplayTimeout=" + xmppPacketReplayTimeout
-				+ ", xmppPingTimeout=" + xmppPingTimeout + ", xmppUseSsl=" + xmppUseSsl + ", xmppFilePath="
-				+ xmppFilePath + ", agentLdapBaseDn=" + agentLdapBaseDn + ", agentLdapIdAttribute="
+				+ ", xmppResource=" + xmppResource + ", xmppServiceName=" + xmppServiceName
+				+ ", xmppMaxRetryConnectionCount=" + xmppMaxRetryConnectionCount + ", xmppPacketReplayTimeout="
+				+ xmppPacketReplayTimeout + ", xmppPingTimeout=" + xmppPingTimeout + ", xmppUseSsl=" + xmppUseSsl
+				+ ", xmppFilePath=" + xmppFilePath + ", agentLdapBaseDn=" + agentLdapBaseDn + ", agentLdapIdAttribute="
 				+ agentLdapIdAttribute + ", agentLdapJidAttribute=" + agentLdapJidAttribute
 				+ ", agentLdapObjectClasses=" + agentLdapObjectClasses + ", userLdapBaseDn=" + userLdapBaseDn
 				+ ", userLdapUidAttribute=" + userLdapUidAttribute + ", userLdapPrivilegeAttribute="
@@ -216,6 +217,15 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 
 	public void setXmppPassword(String xmppPassword) {
 		this.xmppPassword = xmppPassword;
+	}
+
+	@Override
+	public String getXmppResource() {
+		return xmppResource;
+	}
+
+	public void setXmppResource(String xmppResource) {
+		this.xmppResource = xmppResource;
 	}
 
 	@Override
