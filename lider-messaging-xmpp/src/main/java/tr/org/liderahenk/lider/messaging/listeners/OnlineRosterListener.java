@@ -64,7 +64,7 @@ public class OnlineRosterListener implements RosterListener {
 				logger.error(e.getMessage(), e);
 			}
 		} else if (presenceType.equals(Presence.Type.unavailable)) {
-			logger.info("User {} is offline.", jid);
+			logger.warn("User {} is offline.", jid);
 			for (IPresenceSubscriber subscriber : presenceSubscribers) {
 				subscriber.onAgentOffline(jid);
 			}
@@ -74,10 +74,6 @@ public class OnlineRosterListener implements RosterListener {
 				logger.error(e.getMessage(), e);
 			}
 		}
-
-		Roster roster = Roster.getInstanceFor(connection);
-		logger.warn("Actual roster presence for {} => {}", roster.getPresence(jid).getFrom(),
-				roster.getPresence(jid).toString());
 	}
 
 	/**

@@ -184,7 +184,14 @@ public class XMPPClientImpl {
 	private void login() {
 		if (connection != null && connection.isConnected()) {
 			try {
-				connection.login(username, password);
+				// Use resource if it is provided! Otherwise default resource is
+				// 'smack'
+				if (configurationService.getXmppResource() != null
+						&& !configurationService.getXmppResource().isEmpty()) {
+					connection.login(username, password, configurationService.getXmppResource());
+				} else {
+					connection.login(username, password);
+				}
 				logger.debug("Successfully logged in to XMPP server: {}", username);
 			} catch (XMPPException e) {
 				logger.error(e.getMessage(), e);
@@ -511,7 +518,8 @@ public class XMPPClientImpl {
 	 */
 	public void setPresenceSubscribers(List<IPresenceSubscriber> presenceSubscribers) {
 		this.presenceSubscribers = presenceSubscribers;
-		logger.info("Presence subscribers updated: {}", presenceSubscribers != null ? presenceSubscribers.size() : "empty");
+		logger.info("Presence subscribers updated: {}",
+				presenceSubscribers != null ? presenceSubscribers.size() : "empty");
 		if (onlineRosterListener != null) {
 			onlineRosterListener.setPresenceSubscribers(presenceSubscribers);
 		}
@@ -523,7 +531,8 @@ public class XMPPClientImpl {
 	 */
 	public void setTaskStatusSubscribers(List<ITaskStatusSubscriber> taskStatusSubscribers) {
 		this.taskStatusSubscribers = taskStatusSubscribers;
-		logger.info("Task status subscribers updated: {}", taskStatusSubscribers != null ? taskStatusSubscribers.size() : "empty");
+		logger.info("Task status subscribers updated: {}",
+				taskStatusSubscribers != null ? taskStatusSubscribers.size() : "empty");
 		if (taskStatusListener != null) {
 			taskStatusListener.setSubscribers(taskStatusSubscribers);
 		}
@@ -535,7 +544,8 @@ public class XMPPClientImpl {
 	 */
 	public void setPolicyStatusSubscribers(List<IPolicyStatusSubscriber> policyStatusSubscribers) {
 		this.policyStatusSubscribers = policyStatusSubscribers;
-		logger.info("Policy status subscribers updated: {}", policyStatusSubscribers != null ? policyStatusSubscribers.size() : "empty");
+		logger.info("Policy status subscribers updated: {}",
+				policyStatusSubscribers != null ? policyStatusSubscribers.size() : "empty");
 		if (policyStatusListener != null) {
 			policyStatusListener.setSubscribers(policyStatusSubscribers);
 		}
@@ -547,7 +557,8 @@ public class XMPPClientImpl {
 	 */
 	public void setRegistrationSubscribers(List<IRegistrationSubscriber> registrationSubscribers) {
 		this.registrationSubscribers = registrationSubscribers;
-		logger.info("Registration subscribers updated: {}", registrationSubscribers != null ? registrationSubscribers.size() : "empty");
+		logger.info("Registration subscribers updated: {}",
+				registrationSubscribers != null ? registrationSubscribers.size() : "empty");
 		if (registrationListener != null) {
 			registrationListener.setSubscribers(registrationSubscribers);
 		}
