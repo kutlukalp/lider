@@ -32,8 +32,8 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateColu
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateParameter;
 import tr.org.liderahenk.lider.core.api.persistence.enums.OrderType;
 import tr.org.liderahenk.lider.core.api.persistence.enums.ParameterType;
+import tr.org.liderahenk.lider.core.api.utils.RandomStringGenerator;
 import tr.org.liderahenk.lider.persistence.entities.ReportTemplateImpl;
-import tr.org.liderahenk.lider.persistence.utils.RandomStringGenerator;
 
 /**
  * Provides database access for reports and report templates. CRUD operations

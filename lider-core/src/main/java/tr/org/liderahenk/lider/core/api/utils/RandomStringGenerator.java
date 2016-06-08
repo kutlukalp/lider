@@ -1,4 +1,4 @@
-package tr.org.liderahenk.lider.persistence.utils;
+package tr.org.liderahenk.lider.core.api.utils;
 
 import java.util.Random;
 
