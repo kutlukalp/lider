@@ -76,6 +76,10 @@ public class LiderHotDeployListener implements ILiderHotDeployListener,Runnable{
 		try {
 			this.watcher = FileSystems.getDefault().newWatchService();
 			this.keys = new HashMap<WatchKey,Path>();
+			File hotDeploymentPath = new File("configurationService.getHotDeploymentPath()");
+			if(! hotDeploymentPath.exists()){
+				hotDeploymentPath.mkdirs();
+			}
 			Path dir = Paths.get(configurationService.getHotDeploymentPath()); 
 			register(dir);
 			new Thread(this).start(); //TODO do something better
