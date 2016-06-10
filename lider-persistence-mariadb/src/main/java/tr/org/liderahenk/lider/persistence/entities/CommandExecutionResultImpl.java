@@ -51,6 +51,7 @@ public class CommandExecutionResultImpl implements ICommandExecutionResult {
 	@Column(name = "RESPONSE_CODE", nullable = false, length = 3)
 	private Integer responseCode;
 
+	@Lob
 	@Column(name = "RESPONSE_MESSAGE")
 	private String responseMessage;
 
