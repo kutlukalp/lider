@@ -110,6 +110,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 									new Object[] { task.toJson(), entry.getDistinguishedName() });
 							continue;
 						}
+						logger.info("Sending task to agent with JID: {}", jid);
 						message = messageFactory.createExecuteTaskMessage(task, jid);
 						// Send message to agent. Responses will be handled by
 						// TaskStatusUpdateListener in XMPPClientImpl class
