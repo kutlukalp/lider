@@ -15,6 +15,19 @@ import tr.org.liderahenk.lider.core.api.messaging.enums.Protocol;
 public interface IConfigurationService {
 
 	//
+	// Lider configuration
+	//
+
+	/**
+	 * Debug mode affects Lider in various way, if it is enabled, plugin manager
+	 * no longer deletes plugins not installed, also Karaf container sets log
+	 * level to DEBUG.
+	 * 
+	 * @return true if debug mode is enabled, false otherwise.
+	 */
+	Boolean getLiderDebugEnabled();
+
+	//
 	// LDAP configuration
 	//
 

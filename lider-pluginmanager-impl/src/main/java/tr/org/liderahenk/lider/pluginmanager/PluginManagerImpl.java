@@ -8,6 +8,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.persistence.IQueryCriteria;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IPluginDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin;
@@ -30,6 +31,7 @@ public class PluginManagerImpl {
 	private List<IPluginInfo> pluginInfoList;
 	private IPluginDao pluginDao;
 	private IEntityFactory entityFactory;
+	private IConfigurationService configurationService;
 
 	/**
 	 * Register plugins which provided by plugin info list.<br/>
@@ -86,38 +88,41 @@ public class PluginManagerImpl {
 
 		}
 
-		// Mark unused plugins as deleted!
-		if (pluginIdList.isEmpty()) {
-			// There is not any registered plugins, mark all plugins as deleted
-			Map<String, Object> propertiesMap = new HashMap<String, Object>();
-			propertiesMap.put("deleted", true);
-			pluginDao.updateByProperties(propertiesMap, null);
-		} else {
-			// Mark all plugins as deleted except for registered plugins.
-			Map<String, Object> propertiesMap = new HashMap<String, Object>();
-			propertiesMap.put("deleted", true);
-			List<IQueryCriteria> criterias = new ArrayList<IQueryCriteria>();
-			criterias.add(new IQueryCriteria() {
+		if (configurationService.getLiderDebugEnabled() == null
+				|| !configurationService.getLiderDebugEnabled().booleanValue()) {
+			// Mark unused plugins as deleted!
+			if (pluginIdList.isEmpty()) {
+				// There is not any registered plugins, mark all plugins as
+				// deleted
+				Map<String, Object> propertiesMap = new HashMap<String, Object>();
+				propertiesMap.put("deleted", true);
+				pluginDao.updateByProperties(propertiesMap, null);
+			} else {
+				// Mark all plugins as deleted except for registered plugins.
+				Map<String, Object> propertiesMap = new HashMap<String, Object>();
+				propertiesMap.put("deleted", true);
+				List<IQueryCriteria> criterias = new ArrayList<IQueryCriteria>();
+				criterias.add(new IQueryCriteria() {
 
-				@Override
-				public Object getValues() {
-					return pluginIdList;
-				}
+					@Override
+					public Object getValues() {
+						return pluginIdList;
+					}
 
-				@Override
-				public CriteriaOperator getOperator() {
-					return CriteriaOperator.NOT_IN;
-				}
+					@Override
+					public CriteriaOperator getOperator() {
+						return CriteriaOperator.NOT_IN;
+					}
 
-				@Override
-				public String getField() {
-					return "id";
-				}
+					@Override
+					public String getField() {
+						return "id";
+					}
 
-			});
+				});
 
-			pluginDao.updateByProperties(propertiesMap, criterias);
-
+				pluginDao.updateByProperties(propertiesMap, criterias);
+			}
 		}
 
 	}
@@ -147,6 +152,14 @@ public class PluginManagerImpl {
 	 */
 	public void setEntityFactory(IEntityFactory entityFactory) {
 		this.entityFactory = entityFactory;
+	}
+
+	/**
+	 * 
+	 * @param configurationService
+	 */
+	public void setConfigurationService(IConfigurationService configurationService) {
+		this.configurationService = configurationService;
 	}
 
 }

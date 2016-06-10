@@ -26,6 +26,9 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 
 	private static Logger logger = LoggerFactory.getLogger(ConfigurationServiceImpl.class);
 
+	// Lider configuration
+	private Boolean liderDebugEnabled;
+
 	// LDAP configuration
 	private String ldapServer;
 	private String ldapPort;
@@ -94,14 +97,15 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 
 	@Override
 	public String toString() {
-		return "ConfigurationServiceImpl [ldapServer=" + ldapServer + ", ldapPort=" + ldapPort + ", ldapUsername="
-				+ ldapUsername + ", ldapPassword=" + ldapPassword + ", ldapRootDn=" + ldapRootDn + ", ldapUseSsl="
-				+ ldapUseSsl + ", ldapSearchAttributes=" + ldapSearchAttributes + ", xmppHost=" + xmppHost
-				+ ", xmppPort=" + xmppPort + ", xmppUsername=" + xmppUsername + ", xmppPassword=" + xmppPassword
-				+ ", xmppResource=" + xmppResource + ", xmppServiceName=" + xmppServiceName
-				+ ", xmppMaxRetryConnectionCount=" + xmppMaxRetryConnectionCount + ", xmppPacketReplayTimeout="
-				+ xmppPacketReplayTimeout + ", xmppPingTimeout=" + xmppPingTimeout + ", xmppUseSsl=" + xmppUseSsl
-				+ ", xmppFilePath=" + xmppFilePath + ", agentLdapBaseDn=" + agentLdapBaseDn + ", agentLdapIdAttribute="
+		return "ConfigurationServiceImpl [liderDebugEnabled=" + liderDebugEnabled + ", ldapServer=" + ldapServer
+				+ ", ldapPort=" + ldapPort + ", ldapUsername=" + ldapUsername + ", ldapPassword=" + ldapPassword
+				+ ", ldapRootDn=" + ldapRootDn + ", ldapUseSsl=" + ldapUseSsl + ", ldapSearchAttributes="
+				+ ldapSearchAttributes + ", xmppHost=" + xmppHost + ", xmppPort=" + xmppPort + ", xmppUsername="
+				+ xmppUsername + ", xmppPassword=" + xmppPassword + ", xmppResource=" + xmppResource
+				+ ", xmppServiceName=" + xmppServiceName + ", xmppMaxRetryConnectionCount="
+				+ xmppMaxRetryConnectionCount + ", xmppPacketReplayTimeout=" + xmppPacketReplayTimeout
+				+ ", xmppPingTimeout=" + xmppPingTimeout + ", xmppUseSsl=" + xmppUseSsl + ", xmppFilePath="
+				+ xmppFilePath + ", agentLdapBaseDn=" + agentLdapBaseDn + ", agentLdapIdAttribute="
 				+ agentLdapIdAttribute + ", agentLdapJidAttribute=" + agentLdapJidAttribute
 				+ ", agentLdapObjectClasses=" + agentLdapObjectClasses + ", userLdapBaseDn=" + userLdapBaseDn
 				+ ", userLdapUidAttribute=" + userLdapUidAttribute + ", userLdapPrivilegeAttribute="
@@ -127,6 +131,15 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		} catch (Exception e) {
 		}
 		return toString();
+	}
+
+	@Override
+	public Boolean getLiderDebugEnabled() {
+		return liderDebugEnabled;
+	}
+
+	public void setLiderDebugEnabled(Boolean liderDebugEnabled) {
+		this.liderDebugEnabled = liderDebugEnabled;
 	}
 
 	@Override

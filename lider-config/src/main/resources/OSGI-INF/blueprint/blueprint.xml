@@ -14,6 +14,8 @@
 	<service ref="configurationService"
 		interface="tr.org.liderahenk.lider.core.api.configuration.IConfigurationService" />
 	<bean id="configurationService" class="tr.org.liderahenk.lider.config.ConfigurationServiceImpl" init-method="refresh">
+		<property name="liderDebugEnabled" value="${lider.debug.enabled}" />
+		
 		<property name="ldapServer" value="${ldap.server}" />
 		<property name="ldapPort" value="${ldap.port}" />
 		<property name="ldapUsername" value="${ldap.username}" />
