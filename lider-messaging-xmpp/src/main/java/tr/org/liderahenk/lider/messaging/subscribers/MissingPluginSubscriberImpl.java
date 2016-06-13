@@ -57,7 +57,7 @@ public class MissingPluginSubscriberImpl implements IMissingPluginSubscriber {
 			appendDebFileName(plugin);
 			response = messageFactory.createInstallPluginMessage(message.getFrom(), message.getPluginName(),
 					message.getPluginVersion(), configurationService.getAgentPluginDistoParams(),
-					configurationService.getAgentPluginDistroProtocol());
+					configurationService.getAgentPluginDistroProtocolEnum());
 			logger.info("Missing plugin found. Sending plugin installation info: {}", response);
 		}
 
@@ -73,7 +73,7 @@ public class MissingPluginSubscriberImpl implements IMissingPluginSubscriber {
 	private void appendDebFileName(IPlugin plugin) {
 		String debFileName = DEB_FILE_FORMAT.replace("{0}", plugin.getName().toLowerCase(Locale.ENGLISH)).replace("{1}",
 				plugin.getVersion());
-		switch (configurationService.getAgentPluginDistroProtocol()) {
+		switch (configurationService.getAgentPluginDistroProtocolEnum()) {
 		case HTTP:
 			String url = (String) configurationService.getAgentPluginDistoParams().get("url");
 			if (!url.endsWith("/"))
