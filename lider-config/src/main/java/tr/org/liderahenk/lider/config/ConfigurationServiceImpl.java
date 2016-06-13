@@ -512,8 +512,13 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 	}
 
 	@Override
-	public Protocol getAgentPluginDistroProtocol() {
+	public Protocol getAgentPluginDistroProtocolEnum() {
 		return agentPluginDistroProtocol;
+	}
+	
+	@Override
+	public String getAgentPluginDistroProtocol() {
+		return agentPluginDistroProtocol != null ? agentPluginDistroProtocol.toString() : null;
 	}
 
 	public void setAgentPluginDistroProtocol(String agentPluginDistroProtocol) {

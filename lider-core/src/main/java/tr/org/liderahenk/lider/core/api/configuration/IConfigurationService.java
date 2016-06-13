@@ -301,7 +301,9 @@ public interface IConfigurationService {
 	// Hot deployment & plugin distribution configuration
 	//
 
-	Protocol getAgentPluginDistroProtocol();
+	Protocol getAgentPluginDistroProtocolEnum();
+
+	String getAgentPluginDistroProtocol();
 
 	String getAgentPluginDistroHost();
 

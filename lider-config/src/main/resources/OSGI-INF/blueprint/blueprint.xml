@@ -64,6 +64,12 @@
 		<property name="mailSmtpWriteTimeout" value="${mail.smtp.writetimeout}" />
 		
 		<property name="hotDeploymentPath" value="${hot.deployment.path}" />
+		<property name="agentPluginDistroProtocol" value="${agent.plugin.distro.protocol}" />
+		<property name="agentPluginDistroHost" value="${agent.plugin.distro.host}" />
+		<property name="agentPluginDistroUsername" value="${agent.plugin.distro.username}" />
+		<property name="agentPluginDistroPassword" value="${agent.plugin.distro.password}" />
+		<property name="agentPluginDistroPath" value="${agent.plugin.distro.path}" />
+		<property name="agentPluginDistroUrl" value="${agent.plugin.distro.url}" />
 	</bean>
 
 	<service ref="getSystemConfigCommand" interface="tr.org.liderahenk.lider.core.api.plugin.ICommand" />
