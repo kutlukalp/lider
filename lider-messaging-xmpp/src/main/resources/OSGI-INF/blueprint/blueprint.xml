@@ -57,6 +57,7 @@
 		class="tr.org.liderahenk.lider.messaging.subscribers.MissingPluginSubscriberImpl">
 		<property name="messageFactory" ref="messageFactory" />
 		<property name="pluginDao" ref="pluginDao" />
+		<property name="configurationService" ref="configurationService" />
 	</bean>
 
 	<reference-list id="presenceSubscribers"
