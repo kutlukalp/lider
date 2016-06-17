@@ -19,35 +19,17 @@
       <service-properties>
       <entry key="osgi.jndi.service.name" value="jdbc/lider"/>
       <entry key="datasource.name" value="MySQL" />
+      <entry key="osgi.jdbc.driver.class" value="org.mariadb.jdbc.Driver" />
+      <entry key="osgi.jdbc.driver.name" value="mariadb" />
       </service-properties>
   </service>
-  
-  <service 
-      ref="mariadbXADataSource"
-      interface="javax.sql.XADataSource">
-      <service-properties>
-        <entry 
-          key="osgi.jndi.service.name"
-          value="jdbc/xalider"/>
-        <entry key="datasource.name" value="MySQL"/>
-      </service-properties>
-  </service>
-  
-   
-  <bean
-    id="mariadbXADataSource"
-    class="com.mysql.jdbc.jdbc2.optional.MysqlXADataSource">    
-    <property name="databaseName" value="${db.database}"/>    
-    <property name="url" value="jdbc:mysql://${db.server}:3306/${db.database}?characterEncoding=UTF-8"/>
-    <property name="user" value="${db.username}"/>
-    <property name="password" value="${db.password}"/>
-  </bean>
-  
+ 
+
   <bean
     id="mariadbConnectionPoolDataSource"
-    class="com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource">    
+    class="org.mariadb.jdbc.MariaDbDataSource">    
     <property name="databaseName" value="${db.database}"/>    
-    <property name="url" value="jdbc:mysql://${db.server}:3306/${db.database}?characterEncoding=UTF-8"/>    
+    <property name="url" value="jdbc:mariadb://${db.server}/${db.database}?characterEncoding=UTF-8"/>
     <property name="user" value="${db.username}"/>
     <property name="password" value="${db.password}"/>
   </bean>

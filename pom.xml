@@ -28,7 +28,6 @@
 		<mockito.version>1.10.19</mockito.version>
 		<log4j.version>1.2.17</log4j.version>
 		<slf4j.version>1.6.1</slf4j.version>
-		<mysql.version>5.1.31</mysql.version>
 		<hibernate.jpa.api.version>1.0.0.Final</hibernate.jpa.api.version>
 		<hibernate.entity.manager.version>4.3.6.Final</hibernate.entity.manager.version>
 		<geronimo.transaction.version>3.1.1</geronimo.transaction.version>
@@ -303,11 +302,6 @@
 				<artifactId>hibernate-entitymanager</artifactId>
 				<version>${hibernate.entity.manager.version}</version>
 				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>mysql</groupId>
-				<artifactId>mysql-connector-java</artifactId>
-				<version>${mysql.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.geronimo.components</groupId>
