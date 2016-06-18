@@ -1,5 +1,7 @@
 package tr.org.liderahenk.lider.persistence.entities;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -8,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
@@ -30,7 +34,7 @@ public class ReportTemplateColumnImpl implements IReportTemplateColumn {
 
 	@Id
 	@GeneratedValue
-	@Column(name = "COLUMN_ID", unique = true, nullable = false)
+	@Column(name = "TEMPLATE_COLUMN_ID", unique = true, nullable = false)
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -40,34 +44,30 @@ public class ReportTemplateColumnImpl implements IReportTemplateColumn {
 	@Column(name = "NAME", nullable = false)
 	private String name;
 
-	@Column(name = "VISIBLE")
-	private boolean visible;
-
-	@Column(name = "WIDTH")
-	private Integer width;
-
 	@Column(name = "COLUMN_ORDER", nullable = false)
 	private Integer columnOrder;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "CREATE_DATE", nullable = false)
+	private Date createDate;
 
 	public ReportTemplateColumnImpl() {
 	}
 
-	public ReportTemplateColumnImpl(Long id, ReportTemplateImpl template, String name, boolean visible, Integer width,
-			Integer columnOrder) {
+	public ReportTemplateColumnImpl(Long id, ReportTemplateImpl template, String name, Integer columnOrder,
+			Date createDate) {
 		this.id = id;
 		this.template = template;
 		this.name = name;
-		this.visible = visible;
-		this.width = width;
 		this.columnOrder = columnOrder;
+		this.createDate = createDate;
 	}
 
 	public ReportTemplateColumnImpl(IReportTemplateColumn column) {
 		this.id = column.getId();
 		this.name = column.getName();
-		this.visible = column.isVisible();
-		this.width = column.getWidth();
 		this.columnOrder = column.getColumnOrder();
+		this.createDate = column.getCreateDate();
 		if (column.getTemplate() instanceof ReportTemplateImpl) {
 			this.template = (ReportTemplateImpl) column.getTemplate();
 		}
@@ -101,24 +101,6 @@ public class ReportTemplateColumnImpl implements IReportTemplateColumn {
 	}
 
 	@Override
-	public boolean isVisible() {
-		return visible;
-	}
-
-	public void setVisible(boolean visible) {
-		this.visible = visible;
-	}
-
-	@Override
-	public Integer getWidth() {
-		return width;
-	}
-
-	public void setWidth(Integer width) {
-		this.width = width;
-	}
-
-	@Override
 	public Integer getColumnOrder() {
 		return columnOrder;
 	}
@@ -128,13 +110,21 @@ public class ReportTemplateColumnImpl implements IReportTemplateColumn {
 	}
 
 	@Override
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+
+	@Override
 	public String toString() {
-		return "ReportTemplateColumnImpl [id=" + id + ", name=" + name + ", visible=" + visible + ", width=" + width
-				+ ", columnOrder=" + columnOrder + "]";
+		return "ReportTemplateColumnImpl [id=" + id + ", name=" + name + ", columnOrder=" + columnOrder + "]";
 	}
 
 	/**
-	 * hashCode() & equals() are overrided to prevent duplicate records!
+	 * hashCode() & equals() are overridden to prevent duplicate records!
 	 */
 	@Override
 	public int hashCode() {
@@ -145,7 +135,7 @@ public class ReportTemplateColumnImpl implements IReportTemplateColumn {
 	}
 
 	/**
-	 * hashCode() & equals() are overrided to prevent duplicate records!
+	 * hashCode() & equals() are overridden to prevent duplicate records!
 	 */
 	@Override
 	public boolean equals(Object obj) {

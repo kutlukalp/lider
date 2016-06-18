@@ -1,7 +1,5 @@
 package tr.org.liderahenk.lider.core.api.persistence.entities;
 
-import java.io.Serializable;
-
 import tr.org.liderahenk.lider.core.api.persistence.enums.ParameterType;
 
 /**
@@ -10,7 +8,7 @@ import tr.org.liderahenk.lider.core.api.persistence.enums.ParameterType;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
-public interface IReportTemplateParameter extends Serializable {
+public interface IReportTemplateParameter extends IEntity {
 
 	Long getId();
 
@@ -26,5 +24,9 @@ public interface IReportTemplateParameter extends Serializable {
 	String getLabel();
 
 	IReportTemplate getTemplate();
+
+	String getDefaultValue();
+
+	boolean isMandatory();
 
 }

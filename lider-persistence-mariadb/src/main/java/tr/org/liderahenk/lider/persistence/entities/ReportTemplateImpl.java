@@ -22,7 +22,7 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateColu
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateParameter;
 
 /**
- * Entity class for IReportTemplate objects.
+ * Entity class for {@link IReportTemplate} objects.
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
@@ -53,12 +53,6 @@ public class ReportTemplateImpl implements IReportTemplate {
 	@OneToMany(mappedBy = "template", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<ReportTemplateColumnImpl> templateColumns = new HashSet<ReportTemplateColumnImpl>(0); // bidirectional
 
-	@Column(name = "REPORT_HEADER", length = 500)
-	private String reportHeader;
-
-	@Column(name = "REPORT_FOOTER", length = 500)
-	private String reportFooter;
-
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "CREATE_DATE", nullable = false)
 	private Date createDate;
@@ -72,15 +66,13 @@ public class ReportTemplateImpl implements IReportTemplate {
 
 	public ReportTemplateImpl(Long id, String name, String description, String query,
 			Set<ReportTemplateParameterImpl> templateParams, Set<ReportTemplateColumnImpl> templateColumns,
-			String reportHeader, String reportFooter, Date createDate, Date modifyDate) {
+			Date createDate, Date modifyDate) {
 		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.query = query;
 		this.templateParams = templateParams;
 		this.templateColumns = templateColumns;
-		this.reportHeader = reportHeader;
-		this.reportFooter = reportFooter;
 		this.createDate = createDate;
 		this.modifyDate = modifyDate;
 	}
@@ -90,8 +82,6 @@ public class ReportTemplateImpl implements IReportTemplate {
 		this.name = template.getName();
 		this.description = template.getDescription();
 		this.query = template.getQuery();
-		this.reportHeader = template.getReportHeader();
-		this.reportFooter = template.getReportFooter();
 		this.createDate = template.getCreateDate();
 		this.modifyDate = template.getModifyDate();
 
@@ -167,24 +157,6 @@ public class ReportTemplateImpl implements IReportTemplate {
 	}
 
 	@Override
-	public String getReportHeader() {
-		return reportHeader;
-	}
-
-	public void setReportHeader(String reportHeader) {
-		this.reportHeader = reportHeader;
-	}
-
-	@Override
-	public String getReportFooter() {
-		return reportFooter;
-	}
-
-	public void setReportFooter(String reportFooter) {
-		this.reportFooter = reportFooter;
-	}
-
-	@Override
 	public Date getCreateDate() {
 		return createDate;
 	}
@@ -250,9 +222,8 @@ public class ReportTemplateImpl implements IReportTemplate {
 	@Override
 	public String toString() {
 		return "ReportTemplateImpl [id=" + id + ", name=" + name + ", description=" + description + ", query=" + query
-				+ ", templateParams=" + templateParams + ", templateColumns=" + templateColumns + ", reportHeader="
-				+ reportHeader + ", reportFooter=" + reportFooter + ", createDate=" + createDate + ", modifyDate="
-				+ modifyDate + "]";
+				+ ", templateParams=" + templateParams + ", templateColumns=" + templateColumns + ", createDate="
+				+ createDate + ", modifyDate=" + modifyDate + "]";
 	}
 
 }

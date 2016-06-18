@@ -1,5 +1,7 @@
 package tr.org.liderahenk.lider.persistence.entities;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -8,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
@@ -31,7 +35,7 @@ public class ReportTemplateParameterImpl implements IReportTemplateParameter {
 
 	@Id
 	@GeneratedValue
-	@Column(name = "PARAMETER_ID", unique = true, nullable = false)
+	@Column(name = "TEMPLATE_PARAMETER_ID", unique = true, nullable = false)
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -41,22 +45,35 @@ public class ReportTemplateParameterImpl implements IReportTemplateParameter {
 	@Column(name = "PARAMETER_KEY", nullable = false)
 	private String key;
 
-	@Column(name = "LABEL", nullable = false)
+	@Column(name = "LABEL", nullable = false, length = 250)
 	private String label;
 
 	@Column(name = "PARAMETER_TYPE", nullable = false)
 	private Integer type;
 
+	@Column(name = "DEFAULT_VALUE", nullable = true, length = 4000)
+	private String defaultValue;
+
+	@Column(name = "MANDATORY")
+	private boolean mandatory;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "CREATE_DATE", nullable = false)
+	private Date createDate;
+
 	public ReportTemplateParameterImpl() {
 	}
 
 	public ReportTemplateParameterImpl(Long id, ReportTemplateImpl template, String key, String label,
-			ParameterType type) {
+			ParameterType type, String defaultValue, boolean mandatory, Date createDate) {
 		this.id = id;
 		this.template = template;
 		this.key = key;
 		this.label = label;
 		setType(type);
+		this.defaultValue = defaultValue;
+		this.mandatory = mandatory;
+		this.createDate = createDate;
 	}
 
 	public ReportTemplateParameterImpl(IReportTemplateParameter param) {
@@ -64,6 +81,9 @@ public class ReportTemplateParameterImpl implements IReportTemplateParameter {
 		this.key = param.getKey();
 		this.label = param.getLabel();
 		setType(param.getType());
+		this.defaultValue = param.getDefaultValue();
+		this.mandatory = param.isMandatory();
+		this.createDate = param.getCreateDate();
 		if (param.getTemplate() instanceof ReportTemplateImpl) {
 			this.template = (ReportTemplateImpl) param.getTemplate();
 		}
@@ -119,12 +139,39 @@ public class ReportTemplateParameterImpl implements IReportTemplateParameter {
 	}
 
 	@Override
+	public String getDefaultValue() {
+		return defaultValue;
+	}
+
+	public void setDefaultValue(String defaultValue) {
+		this.defaultValue = defaultValue;
+	}
+
+	@Override
+	public boolean isMandatory() {
+		return mandatory;
+	}
+
+	public void setMandatory(boolean mandatory) {
+		this.mandatory = mandatory;
+	}
+
+	@Override
+	public Date getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(Date createDate) {
+		this.createDate = createDate;
+	}
+
+	@Override
 	public String toString() {
 		return "ReportTemplateParameterImpl [id=" + id + ", key=" + key + ", label=" + label + ", type=" + type + "]";
 	}
 
 	/**
-	 * hashCode() & equals() are overrided to prevent duplicate records!
+	 * hashCode() & equals() are overridden to prevent duplicate records!
 	 */
 	@Override
 	public int hashCode() {
@@ -135,7 +182,7 @@ public class ReportTemplateParameterImpl implements IReportTemplateParameter {
 	}
 
 	/**
-	 * hashCode() & equals() are overrided to prevent duplicate records!
+	 * hashCode() & equals() are overridden to prevent duplicate records!
 	 */
 	@Override
 	public boolean equals(Object obj) {

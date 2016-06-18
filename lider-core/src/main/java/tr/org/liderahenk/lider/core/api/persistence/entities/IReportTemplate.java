@@ -31,10 +31,6 @@ public interface IReportTemplate extends IEntity {
 
 	Set<? extends IReportTemplateColumn> getTemplateColumns();
 
-	String getReportHeader();
-
-	String getReportFooter();
-
 	Date getCreateDate();
 
 	Date getModifyDate();
