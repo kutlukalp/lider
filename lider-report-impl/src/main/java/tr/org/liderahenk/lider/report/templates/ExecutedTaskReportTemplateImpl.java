@@ -1,5 +1,6 @@
 package tr.org.liderahenk.lider.report.templates;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -73,6 +74,21 @@ public class ExecutedTaskReportTemplateImpl extends BaseReportTemplate {
 			public Long getId() {
 				return null;
 			}
+
+			@Override
+			public String getDefaultValue() {
+				return null;
+			}
+
+			@Override
+			public boolean isMandatory() {
+				return true;
+			}
+
+			@Override
+			public Date getCreateDate() {
+				return null;
+			}
 		});
 		// Plugin version
 		params.add(new IReportTemplateParameter() {
@@ -103,6 +119,21 @@ public class ExecutedTaskReportTemplateImpl extends BaseReportTemplate {
 			public Long getId() {
 				return null;
 			}
+
+			@Override
+			public String getDefaultValue() {
+				return "1.0.0";
+			}
+
+			@Override
+			public boolean isMandatory() {
+				return true;
+			}
+
+			@Override
+			public Date getCreateDate() {
+				return null;
+			}
 		});
 		return params;
 	}
@@ -110,16 +141,6 @@ public class ExecutedTaskReportTemplateImpl extends BaseReportTemplate {
 	@Override
 	public Set<? extends IReportTemplateColumn> getTemplateColumns() {
 		// We want to display all columns!
-		return null;
-	}
-
-	@Override
-	public String getReportHeader() {
-		return null;
-	}
-
-	@Override
-	public String getReportFooter() {
 		return null;
 	}
 
