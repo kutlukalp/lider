@@ -24,10 +24,6 @@ public class ReportTemplateRequestImpl implements IReportTemplateRequest {
 
 	private List<ReportTemplateColReqImpl> templateColumns;
 
-	private String reportHeader;
-
-	private String reportFooter;
-
 	private Date timestamp;
 
 	@Override
@@ -82,24 +78,6 @@ public class ReportTemplateRequestImpl implements IReportTemplateRequest {
 
 	public void setTemplateColumns(List<ReportTemplateColReqImpl> templateColumns) {
 		this.templateColumns = templateColumns;
-	}
-
-	@Override
-	public String getReportHeader() {
-		return reportHeader;
-	}
-
-	public void setReportHeader(String reportHeader) {
-		this.reportHeader = reportHeader;
-	}
-
-	@Override
-	public String getReportFooter() {
-		return reportFooter;
-	}
-
-	public void setReportFooter(String reportFooter) {
-		this.reportFooter = reportFooter;
 	}
 
 	@Override

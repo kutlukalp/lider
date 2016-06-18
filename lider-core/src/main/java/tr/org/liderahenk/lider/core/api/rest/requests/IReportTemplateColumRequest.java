@@ -6,10 +6,6 @@ public interface IReportTemplateColumRequest extends IRequest {
 
 	String getName();
 
-	boolean isVisible();
-
-	Integer getWidth();
-
 	Integer getColumnOrder();
 
 }

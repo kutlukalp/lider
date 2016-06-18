@@ -12,4 +12,8 @@ public interface IReportTemplateParameterRequest extends IRequest {
 
 	ParameterType getType();
 
+	String getDefaultValue();
+
+	boolean isMandatory();
+
 }

@@ -17,6 +17,10 @@ public class ReportTemplateParamReqImpl implements IReportTemplateParameterReque
 
 	private ParameterType type;
 
+	private String defaultValue;
+
+	private boolean mandatory;
+
 	private Date timestamp;
 
 	@Override
@@ -53,6 +57,24 @@ public class ReportTemplateParamReqImpl implements IReportTemplateParameterReque
 
 	public void setType(ParameterType type) {
 		this.type = type;
+	}
+
+	@Override
+	public String getDefaultValue() {
+		return defaultValue;
+	}
+
+	public void setDefaultValue(String defaultValue) {
+		this.defaultValue = defaultValue;
+	}
+
+	@Override
+	public boolean isMandatory() {
+		return mandatory;
+	}
+
+	public void setMandatory(boolean mandatory) {
+		this.mandatory = mandatory;
 	}
 
 	@Override
