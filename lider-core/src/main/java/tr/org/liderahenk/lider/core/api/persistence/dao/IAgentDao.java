@@ -21,7 +21,6 @@ public interface IAgentDao extends IBaseDao<IAgent> {
 	 * @param agent
 	 * @return
 	 */
-	@Override
 	IAgent save(IAgent agent);
 
 	/**
@@ -29,22 +28,12 @@ public interface IAgentDao extends IBaseDao<IAgent> {
 	 * @param agent
 	 * @return
 	 */
-	@Override
 	IAgent update(IAgent agent);
-
-	/**
-	 * 
-	 * @param agent
-	 * @return
-	 */
-	@Override
-	IAgent saveOrUpdate(IAgent agent);
 
 	/**
 	 * 
 	 * @param agentId
 	 */
-	@Override
 	void delete(Long agentId);
 
 	/**
@@ -52,21 +41,18 @@ public interface IAgentDao extends IBaseDao<IAgent> {
 	 * @param agentId
 	 * @return
 	 */
-	@Override
 	IAgent find(Long agentId);
 
 	/**
 	 * 
 	 * @return
 	 */
-	@Override
 	List<? extends IAgent> findAll(Class<? extends IAgent> obj, Integer maxResults);
 
 	/**
 	 * 
 	 * @return
 	 */
-	@Override
 	List<? extends IAgent> findByProperty(Class<? extends IAgent> obj, String propertyName, Object propertyValue,
 			Integer maxResults);
 
@@ -74,7 +60,6 @@ public interface IAgentDao extends IBaseDao<IAgent> {
 	 * 
 	 * @return
 	 */
-	@Override
 	List<? extends IAgent> findByProperties(Class<? extends IAgent> obj, Map<String, Object> propertiesMap,
 			List<PropertyOrder> orders, Integer maxResults);
 

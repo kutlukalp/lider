@@ -26,13 +26,6 @@ public interface IPluginDao extends IBaseDao<IPlugin> {
 
 	/**
 	 * 
-	 * @param plugin
-	 * @return
-	 */
-	IPlugin saveOrUpdate(IPlugin plugin);
-
-	/**
-	 * 
 	 * @param pluginId
 	 */
 	void delete(Long pluginId);

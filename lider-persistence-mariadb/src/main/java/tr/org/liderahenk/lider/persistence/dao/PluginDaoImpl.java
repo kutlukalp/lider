@@ -69,15 +69,6 @@ public class PluginDaoImpl implements IPluginDao {
 	}
 
 	@Override
-	public IPlugin saveOrUpdate(IPlugin plugin) {
-		PluginImpl pluginImpl = new PluginImpl(plugin);
-		pluginImpl.setModifyDate(new Date());
-		pluginImpl = entityManager.merge(pluginImpl);
-		logger.debug("IPlugin object merged: {}", pluginImpl.toString());
-		return pluginImpl;
-	}
-
-	@Override
 	public void delete(Long pluginId) {
 		PluginImpl pluginImpl = entityManager.find(PluginImpl.class, pluginId);
 		// Never truly delete, just mark as deleted!
@@ -85,12 +76,6 @@ public class PluginDaoImpl implements IPluginDao {
 		pluginImpl.setModifyDate(new Date());
 		pluginImpl = entityManager.merge(pluginImpl);
 		logger.debug("IPlugin object marked as deleted: {}", pluginImpl.toString());
-	}
-
-	@Override
-	public long countAll() {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 	@Override

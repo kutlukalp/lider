@@ -65,26 +65,12 @@ public class AgentDaoImpl implements IAgentDao {
 	}
 
 	@Override
-	public AgentImpl saveOrUpdate(IAgent agent) {
-		AgentImpl agentImpl = new AgentImpl(agent);
-		agentImpl = entityManager.merge(agentImpl);
-		logger.debug("IAgent object merged: {}", agentImpl.toString());
-		return agentImpl;
-	}
-
-	@Override
 	public void delete(Long agentId) {
 		AgentImpl agentImpl = entityManager.find(AgentImpl.class, agentId);
 		// Never truly delete, just mark as deleted!
 		agentImpl.setDeleted(true);
 		agentImpl = entityManager.merge(agentImpl);
 		logger.debug("IAgent object marked as deleted: {}", agentImpl.toString());
-	}
-
-	@Override
-	public long countAll() {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 	@Override

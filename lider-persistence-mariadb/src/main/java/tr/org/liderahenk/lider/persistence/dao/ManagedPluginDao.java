@@ -23,7 +23,7 @@ import tr.org.liderahenk.lider.core.api.persistence.enums.OrderType;
 import tr.org.liderahenk.lider.core.api.plugin.deployer.IManagedPlugin;
 import tr.org.liderahenk.lider.persistence.entities.ManagedPlugin;
 
-public class ManagedPluginDao implements IManagedPluginDao{
+public class ManagedPluginDao implements IManagedPluginDao {
 	private static Logger logger = LoggerFactory.getLogger(PluginDaoImpl.class);
 
 	private EntityManager entityManager;
@@ -56,28 +56,12 @@ public class ManagedPluginDao implements IManagedPluginDao{
 	}
 
 	@Override
-	public IManagedPlugin saveOrUpdate(IManagedPlugin plugin) {
-		ManagedPlugin mplugin = new ManagedPlugin(plugin);
-		mplugin.setInstallationDate(new Date());
-		mplugin.setActive(true);
-		mplugin = entityManager.merge(mplugin);
-		logger.debug("IPlugin object merged: {}", mplugin.toString());
-		return mplugin;
-	}
-
-	@Override
 	public void delete(Long pluginId) {
 		ManagedPlugin mplugin = entityManager.find(ManagedPlugin.class, pluginId);
 		// Never truly delete, just mark as deleted!
 		mplugin.setActive(false);
 		mplugin = entityManager.merge(mplugin);
 		logger.debug("IPlugin object marked as deleted: {}", mplugin.toString());
-	}
-
-	@Override
-	public long countAll() {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 	@Override
@@ -99,9 +83,10 @@ public class ManagedPluginDao implements IManagedPluginDao{
 	@Override
 	public List<? extends IManagedPlugin> findByProperty(Class<? extends IManagedPlugin> obj, String propertyName,
 			Object propertyValue, Integer maxResults) {
-		TypedQuery<ManagedPlugin> query = entityManager.createQuery(
-				"select t from " + ManagedPlugin.class.getSimpleName() + " t where t." + propertyName + "= :propertyValue",
-				ManagedPlugin.class).setParameter("propertyValue", propertyValue);
+		TypedQuery<ManagedPlugin> query = entityManager
+				.createQuery("select t from " + ManagedPlugin.class.getSimpleName() + " t where t." + propertyName
+						+ "= :propertyValue", ManagedPlugin.class)
+				.setParameter("propertyValue", propertyValue);
 		if (maxResults > 0) {
 			query = query.setMaxResults(maxResults);
 		}
@@ -111,8 +96,8 @@ public class ManagedPluginDao implements IManagedPluginDao{
 	}
 
 	@Override
-	public List<? extends IManagedPlugin> findByProperties(Class<? extends IManagedPlugin> obj, Map<String, Object> propertiesMap,
-			List<PropertyOrder> orders, Integer maxResults) {
+	public List<? extends IManagedPlugin> findByProperties(Class<? extends IManagedPlugin> obj,
+			Map<String, Object> propertiesMap, List<PropertyOrder> orders, Integer maxResults) {
 		orders = new ArrayList<PropertyOrder>();
 		// TODO
 		// PropertyOrder ord = new PropertyOrder("name", OrderType.ASC);
@@ -152,8 +137,6 @@ public class ManagedPluginDao implements IManagedPluginDao{
 
 		return list;
 	}
-
-
 
 	public void setEntityManager(EntityManager entityManager) {
 		this.entityManager = entityManager;

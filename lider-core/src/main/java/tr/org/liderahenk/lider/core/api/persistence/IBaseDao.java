@@ -18,11 +18,7 @@ public interface IBaseDao<T> {
 
 	T update(T t) throws Exception;
 
-	T saveOrUpdate(T t) throws Exception;
-
 	void delete(Long id);
-
-	long countAll();
 
 	T find(Long id);
 

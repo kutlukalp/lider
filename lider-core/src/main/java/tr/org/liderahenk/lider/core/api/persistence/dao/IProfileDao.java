@@ -20,7 +20,6 @@ public interface IProfileDao extends IBaseDao<IProfile> {
 	 * @param profile
 	 * @return
 	 */
-	@Override
 	IProfile save(IProfile profile);
 
 	/**
@@ -28,22 +27,12 @@ public interface IProfileDao extends IBaseDao<IProfile> {
 	 * @param profile
 	 * @return
 	 */
-	@Override
 	IProfile update(IProfile profile);
-
-	/**
-	 * 
-	 * @param profile
-	 * @return
-	 */
-	@Override
-	IProfile saveOrUpdate(IProfile profile);
 
 	/**
 	 * 
 	 * @param profileId
 	 */
-	@Override
 	void delete(Long profileId);
 
 	/**
@@ -51,21 +40,18 @@ public interface IProfileDao extends IBaseDao<IProfile> {
 	 * @param profileId
 	 * @return
 	 */
-	@Override
 	IProfile find(Long profileId);
 
 	/**
 	 * 
 	 * @return
 	 */
-	@Override
 	List<? extends IProfile> findAll(Class<? extends IProfile> obj, Integer maxResults);
 
 	/**
 	 * 
 	 * @return
 	 */
-	@Override
 	List<? extends IProfile> findByProperty(Class<? extends IProfile> obj, String propertyName, Object propertyValue,
 			Integer maxResults);
 
@@ -73,7 +59,6 @@ public interface IProfileDao extends IBaseDao<IProfile> {
 	 * 
 	 * @return
 	 */
-	@Override
 	List<? extends IProfile> findByProperties(Class<? extends IProfile> obj, Map<String, Object> propertiesMap,
 			List<PropertyOrder> orders, Integer maxResults);
 

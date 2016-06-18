@@ -57,15 +57,6 @@ public class TaskDaoImpl implements ITaskDao {
 	}
 
 	@Override
-	public TaskImpl saveOrUpdate(ITask task) {
-		TaskImpl taskImpl = new TaskImpl(task);
-		taskImpl.setModifyDate(new Date());
-		taskImpl = entityManager.merge(taskImpl);
-		logger.debug("ITask object merged: {}", taskImpl.toString());
-		return taskImpl;
-	}
-
-	@Override
 	public void delete(Long taskId) {
 		TaskImpl taskImpl = entityManager.find(TaskImpl.class, taskId);
 		// Never truly delete, just mark as deleted!
@@ -73,12 +64,6 @@ public class TaskDaoImpl implements ITaskDao {
 		taskImpl.setModifyDate(new Date());
 		taskImpl = entityManager.merge(taskImpl);
 		logger.debug("ITask object marked as deleted: {}", taskImpl.toString());
-	}
-
-	@Override
-	public long countAll() {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 	@Override
@@ -91,18 +76,17 @@ public class TaskDaoImpl implements ITaskDao {
 	@Override
 	public List<? extends ITask> findAll(Class<? extends ITask> obj, Integer maxResults) {
 		List<TaskImpl> taskList = entityManager
-				.createQuery("select t from " + TaskImpl.class.getSimpleName() + " t", TaskImpl.class)
-				.getResultList();
+				.createQuery("select t from " + TaskImpl.class.getSimpleName() + " t", TaskImpl.class).getResultList();
 		logger.debug("ITask objects found: {}", taskList);
 		return taskList;
 	}
 
 	@Override
-	public List<? extends ITask> findByProperty(Class<? extends ITask> obj, String propertyName,
-			Object propertyValue, Integer maxResults) {
-		TypedQuery<TaskImpl> query = entityManager.createQuery("select t from " + TaskImpl.class.getSimpleName()
-				+ " t where t." + propertyName + "= :propertyValue", TaskImpl.class)
-				.setParameter("propertyValue", propertyValue);
+	public List<? extends ITask> findByProperty(Class<? extends ITask> obj, String propertyName, Object propertyValue,
+			Integer maxResults) {
+		TypedQuery<TaskImpl> query = entityManager.createQuery(
+				"select t from " + TaskImpl.class.getSimpleName() + " t where t." + propertyName + "= :propertyValue",
+				TaskImpl.class).setParameter("propertyValue", propertyValue);
 		if (maxResults > 0) {
 			query = query.setMaxResults(maxResults);
 		}

@@ -75,15 +75,6 @@ public class PolicyDaoImpl implements IPolicyDao {
 	}
 
 	@Override
-	public PolicyImpl saveOrUpdate(IPolicy policy) {
-		PolicyImpl policyImpl = new PolicyImpl(policy);
-		policyImpl.setModifyDate(new Date());
-		policyImpl = entityManager.merge(policyImpl);
-		logger.debug("IPolicy object merged: {}", policyImpl.toString());
-		return policyImpl;
-	}
-
-	@Override
 	public void delete(Long policyId) {
 		PolicyImpl policyImpl = entityManager.find(PolicyImpl.class, policyId);
 		// Never truly delete, just mark as deleted!
@@ -91,12 +82,6 @@ public class PolicyDaoImpl implements IPolicyDao {
 		policyImpl.setModifyDate(new Date());
 		policyImpl = entityManager.merge(policyImpl);
 		logger.debug("IPolicy object marked as deleted: {}", policyImpl.toString());
-	}
-
-	@Override
-	public long countAll() {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 	@Override
@@ -185,11 +170,8 @@ public class PolicyDaoImpl implements IPolicyDao {
 		return list;
 	}
 
-	private static final String LATEST_USER_POLICY = 
-			"SELECT DISTINCT pol, ce.id "
-			+ "FROM CommandImpl c "
-			+ "INNER JOIN c.policy pol "
-			+ "INNER JOIN c.commandExecutions ce "
+	private static final String LATEST_USER_POLICY = "SELECT DISTINCT pol, ce.id " + "FROM CommandImpl c "
+			+ "INNER JOIN c.policy pol " + "INNER JOIN c.commandExecutions ce "
 			+ "WHERE ((ce.dnType = :sDnType AND ce.dn = :sDn)##WHERE##) AND (c.activationDate IS NULL OR c.activationDate < :today) "
 			+ "ORDER BY ce.createDate DESC";
 	private static final String GROUP_CONDITION = " OR (ce.dnType = :gDnType AND ce.dn IN :gDnList)";

@@ -66,15 +66,6 @@ public class ProfileDaoImpl implements IProfileDao {
 	}
 
 	@Override
-	public ProfileImpl saveOrUpdate(IProfile profile) {
-		ProfileImpl profileImpl = new ProfileImpl(profile);
-		profileImpl.setModifyDate(new Date());
-		profileImpl = entityManager.merge(profileImpl);
-		logger.debug("IProfile object merged: {}", profileImpl.toString());
-		return profileImpl;
-	}
-
-	@Override
 	public void delete(Long profileId) {
 		ProfileImpl profileImpl = entityManager.find(ProfileImpl.class, profileId);
 		// Never truly delete, just mark as deleted!
@@ -82,12 +73,6 @@ public class ProfileDaoImpl implements IProfileDao {
 		profileImpl.setModifyDate(new Date());
 		profileImpl = entityManager.merge(profileImpl);
 		logger.debug("IProfile object marked as deleted: {}", profileImpl.toString());
-	}
-
-	@Override
-	public long countAll() {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 	@Override
@@ -143,9 +128,8 @@ public class ProfileDaoImpl implements IProfileDao {
 						for (int i = 0; i < key.length - 1; i++) {
 							join = join != null ? join.join(key[i]) : from.join(key[i]);
 						}
-						pred = builder.equal(join.get(key[key.length-1]), entry.getValue());
-					}
-					else {
+						pred = builder.equal(join.get(key[key.length - 1]), entry.getValue());
+					} else {
 						pred = builder.equal(from.get(entry.getKey()), entry.getValue());
 					}
 					predicate = predicate == null ? pred : builder.and(predicate, pred);

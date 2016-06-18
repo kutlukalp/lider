@@ -55,22 +55,8 @@ public class OperationLogDaoImpl implements IOperationLogDao {
 	}
 
 	@Override
-	public OperationLogImpl saveOrUpdate(IOperationLog log) {
-		OperationLogImpl logImpl = new OperationLogImpl(log);
-		logImpl = entityManager.merge(logImpl);
-		logger.debug("IOperationLog object merged: {}", logImpl.toString());
-		return logImpl;
-	}
-
-	@Override
 	public void delete(Long logId) {
 		throw new NotImplementedException();
-	}
-
-	@Override
-	public long countAll() {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 	@Override

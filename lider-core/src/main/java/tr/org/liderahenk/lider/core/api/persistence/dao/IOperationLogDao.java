@@ -15,32 +15,19 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IOperationLog;
  */
 public interface IOperationLogDao extends IBaseDao<IOperationLog> {
 
-	@Override
 	IOperationLog save(IOperationLog o) throws Exception;
 
-	@Override
 	IOperationLog update(IOperationLog t) throws Exception;
 
-	@Override
-	IOperationLog saveOrUpdate(IOperationLog t) throws Exception;
-
-	@Override
 	void delete(Long id);
 
-	@Override
-	long countAll();
-
-	@Override
 	IOperationLog find(Long id);
 
-	@Override
 	List<? extends IOperationLog> findAll(Class<? extends IOperationLog> obj, Integer maxResults);
 
-	@Override
 	List<? extends IOperationLog> findByProperty(Class<? extends IOperationLog> obj, String propertyName, Object value,
 			Integer maxResults);
 
-	@Override
 	List<? extends IOperationLog> findByProperties(Class<? extends IOperationLog> obj,
 			Map<String, Object> propertiesMap, List<PropertyOrder> orders, Integer maxResults);
 
