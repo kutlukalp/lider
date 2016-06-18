@@ -9,18 +9,28 @@ import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
  */
 public interface IReportRequestProcessor {
 
-	IRestResponse add(String json);
+	IRestResponse addTemplate(String json);
 
-	IRestResponse update(String json);
+	IRestResponse updateTemplate(String json);
 
-	IRestResponse list(String name);
+	IRestResponse listTemplates(String name);
 
-	IRestResponse get(Long id);
+	IRestResponse getTemplate(Long id);
 
-	IRestResponse delete(Long id);
+	IRestResponse deleteTemplate(Long id);
 
-	IRestResponse validate(String json);
+	IRestResponse validateTemplate(String json);
 
-	IRestResponse generate(String json);
+	IRestResponse generateView(String json);
+
+	IRestResponse addView(String json);
+
+	IRestResponse updateView(String json);
+
+	IRestResponse listViews(String name);
+
+	IRestResponse getView(Long id);
+
+	IRestResponse deleteView(Long id);
 
 }
