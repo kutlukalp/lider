@@ -67,7 +67,7 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 
 			IProfile profile = profileDao.find(request.getId());
 			profile = entityFactory.createProfile(profile, request);
-			profile = profileDao.saveOrUpdate(profile);
+			profile = profileDao.update(profile);
 
 			Map<String, Object> propertiesMap = new HashMap<String, Object>();
 			propertiesMap.put("profiles.id", profile.getId());
@@ -172,7 +172,7 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 			String oldVersion = policy.getPolicyVersion().split("-")[1];
 			Integer newVersion = new Integer(oldVersion) + 1;
 			policy.setPolicyVersion(policy.getId() + "-" + newVersion);
-			policyDao.saveOrUpdate(policy);
+			policyDao.update(policy);
 			logger.debug(
 					"Version of policy: " + policy.getId() + " is increased from " + oldVersion + " to " + newVersion);
 		}

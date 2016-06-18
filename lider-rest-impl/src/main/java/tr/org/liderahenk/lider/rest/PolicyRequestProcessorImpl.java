@@ -50,9 +50,9 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 
 	@Override
 	public IRestResponse execute(String json) {
-		
+
 		// TODO delegate request to policy manager!
-		
+
 		try {
 			logger.debug("Creating IPolicyExecutionRequest object.");
 			IPolicyExecutionRequest request = requestFactory.createPolicyExecutionRequest(json);
@@ -145,7 +145,7 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 					policy.addProfile(profile);
 				}
 			}
-			policy = policyDao.saveOrUpdate(policy);
+			policy = policyDao.update(policy);
 
 			Map<String, Object> resultMap = new HashMap<String, Object>();
 			resultMap.put("policy", policy.toJson());
