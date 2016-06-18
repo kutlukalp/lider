@@ -87,7 +87,7 @@ public class ExecutedTaskReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public Date getCreateDate() {
-				return null;
+				return new Date();
 			}
 		});
 		// Plugin version
@@ -132,7 +132,7 @@ public class ExecutedTaskReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public Date getCreateDate() {
-				return null;
+				return new Date();
 			}
 		});
 		return params;

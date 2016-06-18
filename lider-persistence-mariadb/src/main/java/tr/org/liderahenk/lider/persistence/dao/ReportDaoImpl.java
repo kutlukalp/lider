@@ -70,7 +70,7 @@ public class ReportDaoImpl implements IReportDao {
 		ReportTemplateImpl templateImpl = new ReportTemplateImpl(template);
 		templateImpl.setCreateDate(new Date());
 		templateImpl.setModifyDate(null);
-		return (IReportTemplate) save(ReportTemplateImpl.class, template);
+		return (IReportTemplate) save(ReportTemplateImpl.class, templateImpl);
 	}
 
 	@Override
@@ -78,11 +78,11 @@ public class ReportDaoImpl implements IReportDao {
 		ReportViewImpl viewImpl = new ReportViewImpl(view);
 		viewImpl.setCreateDate(new Date());
 		viewImpl.setModifyDate(null);
-		return (IReportView) save(ReportViewImpl.class, view);
+		return (IReportView) save(ReportViewImpl.class, viewImpl);
 	}
 
 	private IEntity save(Class cls, IEntity entity) {
-		entityManager.persist(entity);
+		entityManager.persist(cls.cast(entity));
 		logger.debug("{} object persisted: {}", new Object[] { cls.getSimpleName(), entity.toString() });
 		return entity;
 	}
@@ -102,7 +102,7 @@ public class ReportDaoImpl implements IReportDao {
 	}
 
 	private IEntity update(Class cls, IEntity entity) {
-		IEntity e = entityManager.merge(entity);
+		IEntity e = (IEntity) entityManager.merge(cls.cast(entity));
 		logger.debug("{} object merged: {}", new Object[] { cls.getSimpleName(), entity.toString() });
 		return e;
 	}
