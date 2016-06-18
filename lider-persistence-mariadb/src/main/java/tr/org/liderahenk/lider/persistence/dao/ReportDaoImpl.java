@@ -1,6 +1,5 @@
 package tr.org.liderahenk.lider.persistence.dao;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,13 +26,20 @@ import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.persistence.PropertyOrder;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IReportDao;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IEntity;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateColumn;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateParameter;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IReportView;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IReportViewColumn;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IReportViewParameter;
 import tr.org.liderahenk.lider.core.api.persistence.enums.OrderType;
 import tr.org.liderahenk.lider.core.api.persistence.enums.ParameterType;
 import tr.org.liderahenk.lider.core.api.utils.RandomStringGenerator;
+import tr.org.liderahenk.lider.persistence.entities.ReportTemplateColumnImpl;
 import tr.org.liderahenk.lider.persistence.entities.ReportTemplateImpl;
+import tr.org.liderahenk.lider.persistence.entities.ReportTemplateParameterImpl;
+import tr.org.liderahenk.lider.persistence.entities.ReportViewImpl;
 
 /**
  * Provides database access for reports and report templates. CRUD operations
@@ -43,11 +49,13 @@ import tr.org.liderahenk.lider.persistence.entities.ReportTemplateImpl;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class ReportDaoImpl implements IReportDao {
 
 	private static Logger logger = LoggerFactory.getLogger(ReportDaoImpl.class);
 
 	private EntityManager entityManager;
+	private static final Random rand = new Random();
 
 	public void init() {
 		logger.info("Initializing report DAO.");
@@ -58,91 +66,157 @@ public class ReportDaoImpl implements IReportDao {
 	}
 
 	@Override
-	public IReportTemplate save(IReportTemplate template) {
+	public IReportTemplate saveTemplate(IReportTemplate template) {
 		ReportTemplateImpl templateImpl = new ReportTemplateImpl(template);
 		templateImpl.setCreateDate(new Date());
 		templateImpl.setModifyDate(null);
-		entityManager.persist(templateImpl);
-		logger.debug("IReportTemplate object persisted: {}", templateImpl.toString());
-		return templateImpl;
+		return (IReportTemplate) save(ReportTemplateImpl.class, template);
 	}
 
 	@Override
-	public IReportTemplate update(IReportTemplate template) {
+	public IReportView saveView(IReportView view) {
+		ReportViewImpl viewImpl = new ReportViewImpl(view);
+		viewImpl.setCreateDate(new Date());
+		viewImpl.setModifyDate(null);
+		return (IReportView) save(ReportViewImpl.class, view);
+	}
+
+	private IEntity save(Class cls, IEntity entity) {
+		entityManager.persist(entity);
+		logger.debug("{} object persisted: {}", new Object[] { cls.getSimpleName(), entity.toString() });
+		return entity;
+	}
+
+	@Override
+	public IReportTemplate updateTemplate(IReportTemplate template) {
 		ReportTemplateImpl templateImpl = new ReportTemplateImpl(template);
 		templateImpl.setModifyDate(new Date());
-		templateImpl = entityManager.merge(templateImpl);
-		logger.debug("IReportTemplate object merged: {}", templateImpl.toString());
-		return templateImpl;
+		return (IReportTemplate) update(ReportTemplateImpl.class, templateImpl);
 	}
 
 	@Override
-	public IReportTemplate saveOrUpdate(IReportTemplate template) {
-		ReportTemplateImpl templateImpl = new ReportTemplateImpl(template);
-		templateImpl.setModifyDate(new Date());
-		templateImpl = entityManager.merge(templateImpl);
-		logger.debug("IReportTemplate object merged: {}", templateImpl.toString());
-		return templateImpl;
+	public IReportView updateView(IReportView view) {
+		ReportViewImpl viewImpl = new ReportViewImpl(view);
+		viewImpl.setModifyDate(new Date());
+		return (IReportView) update(ReportViewImpl.class, viewImpl);
+	}
+
+	private IEntity update(Class cls, IEntity entity) {
+		IEntity e = entityManager.merge(entity);
+		logger.debug("{} object merged: {}", new Object[] { cls.getSimpleName(), entity.toString() });
+		return e;
 	}
 
 	@Override
-	public void delete(Long templateId) {
-		ReportTemplateImpl templateImpl = entityManager.find(ReportTemplateImpl.class, templateId);
-		entityManager.remove(templateImpl);
-		logger.debug("IReportTemplate object deleted: {}", templateId.toString());
+	public void deleteTemplate(Long id) {
+		delete(ReportTemplateImpl.class, id);
 	}
 
 	@Override
-	public long countAll() {
-		// TODO Auto-generated method stub
-		return 0;
+	public void deleteView(Long id) {
+		delete(ReportViewImpl.class, id);
+	}
+
+	private void delete(Class cls, Long id) {
+		Object object = entityManager.find(cls, id);
+		entityManager.remove(object);
+		logger.debug("{} object deleted: {}", new Object[] { cls.getSimpleName(), id });
 	}
 
 	@Override
-	public ReportTemplateImpl find(Long templateId) {
-		ReportTemplateImpl ReportTemplateImpl = entityManager.find(ReportTemplateImpl.class, templateId);
-		logger.debug("IReportTemplate object found: {}", ReportTemplateImpl.toString());
-		return ReportTemplateImpl;
+	public ReportTemplateImpl findTemplate(Long id) {
+		return (ReportTemplateImpl) find(ReportTemplateImpl.class, id);
 	}
 
 	@Override
-	public List<? extends IReportTemplate> findAll(Class<? extends IReportTemplate> obj, Integer maxResults) {
-		List<ReportTemplateImpl> templateList = entityManager
-				.createQuery("select t from " + ReportTemplateImpl.class.getSimpleName() + " t",
-						ReportTemplateImpl.class)
-				.getResultList();
-		logger.debug("IReportTemplate objects found: {}", templateList);
-		return templateList;
+	public ReportViewImpl findView(Long id) {
+		return (ReportViewImpl) find(ReportViewImpl.class, id);
 	}
 
 	@Override
-	public List<? extends IReportTemplate> findByProperty(Class<? extends IReportTemplate> obj, String propertyName,
-			Object propertyValue, Integer maxResults) {
-		TypedQuery<ReportTemplateImpl> query = entityManager
-				.createQuery("select t from " + ReportTemplateImpl.class.getSimpleName() + " t where t." + propertyName
-						+ "= :propertyValue", ReportTemplateImpl.class)
+	public IReportTemplateColumn findTemplateColumn(Long id) {
+		return (IReportTemplateColumn) find(ReportTemplateColumnImpl.class, id);
+	}
+
+	@Override
+	public IReportTemplateParameter findTemplateParameter(Long id) {
+		return (IReportTemplateParameter) find(ReportTemplateParameterImpl.class, id);
+	}
+
+	private IEntity find(Class cls, Long id) {
+		Object entity = entityManager.find(cls, id);
+		logger.debug("{} object found: {}",
+				new Object[] { cls.getSimpleName(), entity != null ? entity.toString() : "null" });
+		return (IEntity) entity;
+	}
+
+	@Override
+	public List<? extends IReportTemplate> findTemplates(Integer maxResults) {
+		return (List<? extends IReportTemplate>) findAll(ReportTemplateImpl.class, maxResults);
+	}
+
+	@Override
+	public List<? extends IReportView> findViews(Integer maxResults) {
+		return (List<? extends IReportView>) findAll(ReportViewImpl.class, maxResults);
+	}
+
+	private List<?> findAll(Class cls, Integer maxResults) {
+		TypedQuery query = entityManager.createQuery("select t from " + cls.getSimpleName() + " t", cls);
+		if (maxResults != null) {
+			query.setMaxResults(maxResults.intValue());
+		}
+		List list = query.getResultList();
+		logger.debug("{} objects found: {}", new Object[] { cls.getSimpleName(), list });
+		return list;
+	}
+
+	@Override
+	public List<? extends IReportTemplate> findTemplates(String propertyName, Object propertyValue,
+			Integer maxResults) {
+		return (List<? extends IReportTemplate>) findByProperty(ReportTemplateImpl.class, propertyName, propertyValue,
+				maxResults);
+	}
+
+	@Override
+	public List<? extends IReportView> findViews(String propertyName, Object propertyValue, Integer maxResults) {
+		return (List<? extends IReportView>) findByProperty(ReportViewImpl.class, propertyName, propertyValue,
+				maxResults);
+	}
+
+	private List<?> findByProperty(Class cls, String propertyName, Object propertyValue, Integer maxResults) {
+		TypedQuery query = entityManager
+				.createQuery("select t from " + cls.getSimpleName() + " t where t." + propertyName + "= :propertyValue",
+						cls)
 				.setParameter("propertyValue", propertyValue);
 		if (maxResults > 0) {
-			query = query.setMaxResults(maxResults);
+			query.setMaxResults(maxResults);
 		}
-		List<ReportTemplateImpl> templateList = query.getResultList();
-		logger.debug("IReportTemplate objects found: {}", templateList);
-		return templateList;
+		List list = query.getResultList();
+		logger.debug("{} objects found: {}", new Object[] { cls.getSimpleName(), list });
+		return list;
 	}
 
 	@Override
-	public List<? extends IReportTemplate> findByProperties(Class<? extends IReportTemplate> obj,
-			Map<String, Object> propertiesMap, List<PropertyOrder> orders, Integer maxResults) {
+	public List<? extends IReportTemplate> findTemplates(Map<String, Object> propertiesMap, List<PropertyOrder> orders,
+			Integer maxResults) {
+		return (List<? extends IReportTemplate>) findByProperties(ReportTemplateImpl.class, propertiesMap, orders,
+				maxResults);
+	}
+
+	@Override
+	public List<? extends IReportView> findViews(Map<String, Object> propertiesMap, List<PropertyOrder> orders,
+			Integer maxResults) {
+		return (List<? extends IReportView>) findByProperties(ReportViewImpl.class, propertiesMap, orders, maxResults);
+	}
+
+	private List<?> findByProperties(Class cls, Map<String, Object> propertiesMap, List<PropertyOrder> orders,
+			Integer maxResults) {
 		orders = new ArrayList<PropertyOrder>();
-		// TODO
-		// PropertyOrder ord = new PropertyOrder("name", OrderType.ASC);
-		// orders.add(ord);
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-		CriteriaQuery<ReportTemplateImpl> criteria = (CriteriaQuery<ReportTemplateImpl>) builder
-				.createQuery(ReportTemplateImpl.class);
+		CriteriaQuery criteria = builder.createQuery(cls);
 		Metamodel metamodel = entityManager.getMetamodel();
-		EntityType<ReportTemplateImpl> entityType = metamodel.entity(ReportTemplateImpl.class);
-		Root<ReportTemplateImpl> from = (Root<ReportTemplateImpl>) criteria.from(entityType);
+		EntityType entityType = metamodel.entity(cls);
+		Root from = (Root) criteria.from(entityType);
 		criteria.select(from);
 		Predicate predicate = null;
 
@@ -177,20 +251,17 @@ public class ReportDaoImpl implements IReportDao {
 			criteria.orderBy(orderList);
 		}
 
-		List<ReportTemplateImpl> list = null;
-		if (null != maxResults) {
-			list = entityManager.createQuery(criteria).setMaxResults(maxResults).getResultList();
-		} else {
-			list = entityManager.createQuery(criteria).getResultList();
+		TypedQuery query = entityManager.createQuery(criteria);
+		if (maxResults != null) {
+			query.setMaxResults(maxResults.intValue());
 		}
-
+		List list = query.getResultList();
+		logger.debug("{} objects found: {}", new Object[] { cls.getSimpleName(), list });
 		return list;
 	}
 
-	private static final Random rand = new Random();
-
 	@Override
-	public void validate(String query, Set<? extends IReportTemplateParameter> params) throws Exception {
+	public void validateTemplate(String query, Set<? extends IReportTemplateParameter> params) throws Exception {
 		Query q = entityManager.createQuery(query);
 		// Set query parameter with random values!
 		if (params != null) {
@@ -218,43 +289,50 @@ public class ReportDaoImpl implements IReportDao {
 		q.getResultList();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<Object[]> generate(String query, Set<? extends IReportTemplateParameter> params, Map<String, Object> values,
-			Set<? extends IReportTemplateColumn> columns) throws Exception {
+	public List<Object[]> generateView(String query, Set<? extends IReportViewParameter> params,
+			Map<String, Object> values, Set<? extends IReportViewColumn> columns) throws Exception {
 		Query q = entityManager.createQuery(query);
+		// TODO
+		// TODO
+		// TODO
+		// TODO
 		// Set query parameters!
-		if (params != null) {
-			for (IReportTemplateParameter param : params) {
-				if (isInteger(param.getKey())) {
-					if (param.getType() == ParameterType.DATE) {
-						// TODO date pattern
-						q.setParameter(Integer.parseInt(param.getKey()),
-								new SimpleDateFormat().parse(values.get(param.getKey()).toString()), TemporalType.DATE);
-					} else if (param.getType() == ParameterType.NUMBER) {
-						q.setParameter(Integer.parseInt(param.getKey()), values.get(param.getKey()));
-					} else {
-						q.setParameter(Integer.parseInt(param.getKey()), values.get(param.getKey()));
-					}
-				} else {
-					if (param.getType() == ParameterType.DATE) {
-						// TODO date pattern
-						q.setParameter(param.getKey(),
-								new SimpleDateFormat().parse(values.get(param.getKey()).toString()), TemporalType.DATE);
-					} else if (param.getType() == ParameterType.NUMBER) {
-						q.setParameter(param.getKey(), values.get(param.getKey()));
-					} else {
-						q.setParameter(param.getKey(), values.get(param.getKey()));
-					}
-				}
-			}
-		}
+		// if (params != null) {
+		// for (IReportTemplateParameter param : params) {
+		// if (isInteger(param.getKey())) {
+		// if (param.getType() == ParameterType.DATE) {
+		// // TODO date pattern
+		// q.setParameter(Integer.parseInt(param.getKey()),
+		// new SimpleDateFormat().parse(values.get(param.getKey()).toString()),
+		// TemporalType.DATE);
+		// } else if (param.getType() == ParameterType.NUMBER) {
+		// q.setParameter(Integer.parseInt(param.getKey()),
+		// values.get(param.getKey()));
+		// } else {
+		// q.setParameter(Integer.parseInt(param.getKey()),
+		// values.get(param.getKey()));
+		// }
+		// } else {
+		// if (param.getType() == ParameterType.DATE) {
+		// // TODO date pattern
+		// q.setParameter(param.getKey(),
+		// new SimpleDateFormat().parse(values.get(param.getKey()).toString()),
+		// TemporalType.DATE);
+		// } else if (param.getType() == ParameterType.NUMBER) {
+		// q.setParameter(param.getKey(), values.get(param.getKey()));
+		// } else {
+		// q.setParameter(param.getKey(), values.get(param.getKey()));
+		// }
+		// }
+		// }
+		// }
 		// Execute query
 		List<Object[]> resultList = q.getResultList();
 		return resultList;
 	}
 
-	public static boolean isInteger(String s) {
+	private static boolean isInteger(String s) {
 		if (s.isEmpty())
 			return false;
 		for (int i = 0; i < s.length(); i++) {

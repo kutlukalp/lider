@@ -4,37 +4,53 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import tr.org.liderahenk.lider.core.api.persistence.IBaseDao;
 import tr.org.liderahenk.lider.core.api.persistence.PropertyOrder;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateColumn;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateParameter;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IReportView;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IReportViewColumn;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IReportViewParameter;
 
-public interface IReportDao extends IBaseDao<IReportTemplate> {
+public interface IReportDao {
 
-	IReportTemplate save(IReportTemplate template);
+	IReportTemplate saveTemplate(IReportTemplate template);
 
-	IReportTemplate update(IReportTemplate template);
+	IReportView saveView(IReportView view);
 
-	IReportTemplate saveOrUpdate(IReportTemplate template);
+	IReportTemplate updateTemplate(IReportTemplate template);
 
-	void delete(Long templateId);
+	IReportView updateView(IReportView view);
 
-	long countAll();
+	void deleteTemplate(Long id);
 
-	IReportTemplate find(Long id);
+	void deleteView(Long id);
 
-	List<? extends IReportTemplate> findAll(Class<? extends IReportTemplate> obj, Integer maxResults);
+	IReportTemplate findTemplate(Long id);
 
-	List<? extends IReportTemplate> findByProperty(Class<? extends IReportTemplate> obj, String propertyName,
-			Object value, Integer maxResults);
+	IReportView findView(Long id);
+	
+	IReportTemplateColumn findTemplateColumn(Long id);
 
-	List<? extends IReportTemplate> findByProperties(Class<? extends IReportTemplate> obj,
-			Map<String, Object> propertiesMap, List<PropertyOrder> orders, Integer maxResults);
+	IReportTemplateParameter findTemplateParameter(Long id);
 
-	void validate(String query, Set<? extends IReportTemplateParameter> templateParams) throws Exception;
+	List<? extends IReportTemplate> findTemplates(Integer maxResults);
 
-	List<Object[]> generate(String query, Set<? extends IReportTemplateParameter> templateParams, Map<String, Object> map,
-			Set<? extends IReportTemplateColumn> templateColumns) throws Exception;
+	List<? extends IReportView> findViews(Integer maxResults);
+
+	List<? extends IReportTemplate> findTemplates(String propertyName, Object propertyValue, Integer maxResults);
+
+	List<? extends IReportView> findViews(String propertyName, Object propertyValue, Integer maxResults);
+
+	List<? extends IReportTemplate> findTemplates(Map<String, Object> propertiesMap, List<PropertyOrder> orders,
+			Integer maxResults);
+
+	List<? extends IReportView> findViews(Map<String, Object> propertiesMap, List<PropertyOrder> orders,
+			Integer maxResults);
+
+	void validateTemplate(String query, Set<? extends IReportTemplateParameter> params) throws Exception;
+
+	List<Object[]> generateView(String query, Set<? extends IReportViewParameter> params, Map<String, Object> values,
+			Set<? extends IReportViewColumn> columns) throws Exception;
 
 }
