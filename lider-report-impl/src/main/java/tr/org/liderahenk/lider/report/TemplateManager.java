@@ -29,14 +29,13 @@ public class TemplateManager {
 
 	public void init() {
 		// Check if task template already exists!
-		List<? extends IReportTemplate> templates = reportDao.findByProperty(IReportTemplate.class, "name",
-				taskTemplate.getName(), 1);
+		List<? extends IReportTemplate> templates = reportDao.findTemplates("name", taskTemplate.getName(), 1);
 		IReportTemplate existingTemplate = templates != null && !templates.isEmpty() ? templates.get(0) : null;
 		if (existingTemplate != null) {
 			existingTemplate = entityFactory.createReportTemplate(existingTemplate, taskTemplate);
-			reportDao.update(existingTemplate);
+			reportDao.updateTemplate(existingTemplate);
 		} else {
-			reportDao.save(taskTemplate);
+			reportDao.saveTemplate(taskTemplate);
 		}
 	}
 
@@ -54,18 +53,17 @@ public class TemplateManager {
 
 				try {
 					// Check if the template already exists
-					List<? extends IReportTemplate> templates = reportDao.findByProperty(IReportTemplate.class, "name",
-							template.getName(), 1);
+					List<? extends IReportTemplate> templates = reportDao.findTemplates("name", template.getName(), 1);
 					IReportTemplate temp = templates != null && !templates.isEmpty() ? templates.get(0) : null;
 
 					if (temp != null) {
 						// Template already exists! Update its properties
 						temp = entityFactory.createReportTemplate(temp, template);
-						temp = reportDao.update(temp);
+						temp = reportDao.updateTemplate(temp);
 					} else {
 						// Create new template!
 						temp = entityFactory.createReportTemplate(template);
-						temp = reportDao.save(temp);
+						temp = reportDao.saveTemplate(temp);
 					}
 
 				} catch (Exception e) {

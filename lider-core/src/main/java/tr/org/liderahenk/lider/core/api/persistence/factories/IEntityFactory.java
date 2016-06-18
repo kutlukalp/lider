@@ -15,6 +15,11 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateColumn;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateParameter;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IReportView;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IReportViewColumn;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IReportViewParameter;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IUserSession;
 import tr.org.liderahenk.lider.core.api.persistence.enums.CrudType;
@@ -26,6 +31,9 @@ import tr.org.liderahenk.lider.core.api.rest.requests.ICommandRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IProfileRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IReportTemplateRequest;
+import tr.org.liderahenk.lider.core.api.rest.requests.IReportViewColumnRequest;
+import tr.org.liderahenk.lider.core.api.rest.requests.IReportViewParameterRequest;
+import tr.org.liderahenk.lider.core.api.rest.requests.IReportViewRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.ITaskRequest;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
@@ -247,9 +255,17 @@ public interface IEntityFactory {
 	IAgent createAgent(IAgent existingAgent, String password, String hostname, String ipAddresses, String macAddresses,
 			Map<String, Object> data);
 
-	
-	IPluginPart createPluginPart(Long id,String fileName,String type,String fullPath);
-	
-	IManagedPlugin createManagedPlugin(Long id,String name,String version,Date installationDate,Boolean active,List<IPluginPart> parts);
-	
+	IPluginPart createPluginPart(Long id, String fileName, String type, String fullPath);
+
+	IManagedPlugin createManagedPlugin(Long id, String name, String version, Date installationDate, Boolean active,
+			List<IPluginPart> parts);
+
+	IReportView createReportView(IReportViewRequest request, IReportTemplate template);
+
+	IReportViewColumn createReportViewColumn(IReportViewColumnRequest c, IReportTemplateColumn tCol);
+
+	IReportViewParameter createReportViewParameter(IReportViewParameterRequest p, IReportTemplateParameter tParam);
+
+	IReportView createReportView(IReportView view, IReportViewRequest request, IReportTemplate template);
+
 }
