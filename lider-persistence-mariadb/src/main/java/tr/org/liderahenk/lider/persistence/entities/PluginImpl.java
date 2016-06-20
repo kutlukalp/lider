@@ -64,6 +64,9 @@ public class PluginImpl implements IPlugin {
 
 	@Column(name = "POLICY_PLUGIN")
 	private boolean policyPlugin;
+	
+	@Column(name = "TASK_PLUGIN")
+	private boolean taskPlugin;
 
 	@Column(name = "X_BASED")
 	private boolean xBased;
@@ -83,7 +86,7 @@ public class PluginImpl implements IPlugin {
 	}
 
 	public PluginImpl(Long id, String name, String version, String description, boolean active, boolean deleted,
-			boolean machineOriented, boolean userOriented, boolean policyPlugin, boolean xBased,
+			boolean machineOriented, boolean userOriented, boolean policyPlugin, boolean taskPlugin, boolean xBased,
 			List<ProfileImpl> profiles, Date createDate, Date modifyDate) {
 		this.id = id;
 		this.name = name;
@@ -94,6 +97,7 @@ public class PluginImpl implements IPlugin {
 		this.machineOriented = machineOriented;
 		this.userOriented = userOriented;
 		this.policyPlugin = policyPlugin;
+		this.taskPlugin = taskPlugin;
 		this.xBased = xBased;
 		this.profiles = profiles;
 		this.createDate = createDate;
@@ -110,6 +114,7 @@ public class PluginImpl implements IPlugin {
 		this.machineOriented = plugin.isMachineOriented();
 		this.userOriented = plugin.isUserOriented();
 		this.policyPlugin = plugin.isPolicyPlugin();
+		this.taskPlugin = plugin.isTaskPlugin();
 		this.xBased = plugin.isxBased();
 		this.createDate = plugin.getCreateDate();
 		this.modifyDate = plugin.getModifyDate();
@@ -257,6 +262,14 @@ public class PluginImpl implements IPlugin {
 		this.modifyDate = modifyDate;
 	}
 
+	public boolean isTaskPlugin() {
+		return taskPlugin;
+	}
+
+	public void setTaskPlugin(boolean taskPlugin) {
+		this.taskPlugin = taskPlugin;
+	}
+
 	@Override
 	public String toJson() {
 		ObjectMapper mapper = new ObjectMapper();
@@ -272,8 +285,8 @@ public class PluginImpl implements IPlugin {
 	public String toString() {
 		return "PluginImpl [id=" + id + ", name=" + name + ", version=" + version + ", description=" + description
 				+ ", active=" + active + ", deleted=" + deleted + ", machineOriented=" + machineOriented
-				+ ", userOriented=" + userOriented + ", policyPlugin=" + policyPlugin + ", profiles=" + profiles
-				+ ", createDate=" + createDate + ", modifyDate=" + modifyDate + "]";
+				+ ", userOriented=" + userOriented + ", policyPlugin=" + policyPlugin + ", taskPlugin=" + taskPlugin
+				+ ", profiles=" + profiles + ", createDate=" + createDate + ", modifyDate=" + modifyDate + "]";
 	}
 
 }

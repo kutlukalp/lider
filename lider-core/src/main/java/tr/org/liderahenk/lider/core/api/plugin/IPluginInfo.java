@@ -43,6 +43,12 @@ public interface IPluginInfo {
 	 * @return true if profiles of this plugin can be used in a policy.
 	 */
 	Boolean getPolicyPlugin();
+	
+	/**
+	 * 
+	 * @return true if profiles of this plugin can be used in a task.
+	 */
+	Boolean getTaskPlugin();
 
 	/**
 	 * 
