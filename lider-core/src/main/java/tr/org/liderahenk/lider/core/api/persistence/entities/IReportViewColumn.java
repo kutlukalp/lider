@@ -8,12 +8,12 @@ public interface IReportViewColumn extends IEntity {
 
 	IReportView getView();
 
-	IReportTemplateColumn getReferencedColumn();
-
 	ViewColumnType getType();
 
 	String getLegend();
 
 	Integer getWidth();
+
+	IReportTemplateColumn getReferencedCol();
 
 }
