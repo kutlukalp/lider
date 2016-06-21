@@ -42,14 +42,12 @@ public class ExecutedTaskReportTemplateImpl extends BaseReportTemplate {
 				+ "WHERE p.name LIKE :pluginName AND p.version LIKE :pluginVersion GROUP BY p.name, p.version, t.commandClsId, t.createDate";
 	}
 
+	@SuppressWarnings("serial")
 	@Override
 	public Set<? extends IReportTemplateParameter> getTemplateParams() {
 		Set<IReportTemplateParameter> params = new HashSet<IReportTemplateParameter>();
 		// Plugin name
 		params.add(new IReportTemplateParameter() {
-
-			private static final long serialVersionUID = -6579501320904978340L;
-
 			@Override
 			public ParameterType getType() {
 				return ParameterType.STRING;
@@ -92,9 +90,6 @@ public class ExecutedTaskReportTemplateImpl extends BaseReportTemplate {
 		});
 		// Plugin version
 		params.add(new IReportTemplateParameter() {
-
-			private static final long serialVersionUID = -8460266012427204991L;
-
 			@Override
 			public ParameterType getType() {
 				return ParameterType.STRING;
@@ -138,10 +133,115 @@ public class ExecutedTaskReportTemplateImpl extends BaseReportTemplate {
 		return params;
 	}
 
+	@SuppressWarnings("serial")
 	@Override
 	public Set<? extends IReportTemplateColumn> getTemplateColumns() {
-		// We want to display all columns!
-		return null;
+		Set<IReportTemplateColumn> columns = new HashSet<IReportTemplateColumn>();
+		columns.add(new IReportTemplateColumn() {
+			@Override
+			public Date getCreateDate() {
+				return new Date();
+			}
+
+			@Override
+			public IReportTemplate getTemplate() {
+				return getSelf();
+			}
+
+			@Override
+			public String getName() {
+				return "Görev kodu";
+			}
+
+			@Override
+			public Long getId() {
+				return null;
+			}
+
+			@Override
+			public Integer getColumnOrder() {
+				return 3;
+			}
+		});
+		columns.add(new IReportTemplateColumn() {
+			@Override
+			public Date getCreateDate() {
+				return new Date();
+			}
+
+			@Override
+			public IReportTemplate getTemplate() {
+				return getSelf();
+			}
+
+			@Override
+			public String getName() {
+				return "Görev tarihi";
+			}
+
+			@Override
+			public Long getId() {
+				return null;
+			}
+
+			@Override
+			public Integer getColumnOrder() {
+				return 4;
+			}
+		});
+		columns.add(new IReportTemplateColumn() {
+			@Override
+			public Date getCreateDate() {
+				return new Date();
+			}
+
+			@Override
+			public IReportTemplate getTemplate() {
+				return getSelf();
+			}
+
+			@Override
+			public String getName() {
+				return "Başarılı olanlar";
+			}
+
+			@Override
+			public Long getId() {
+				return null;
+			}
+
+			@Override
+			public Integer getColumnOrder() {
+				return 5;
+			}
+		});
+		columns.add(new IReportTemplateColumn() {
+			@Override
+			public Date getCreateDate() {
+				return new Date();
+			}
+
+			@Override
+			public IReportTemplate getTemplate() {
+				return getSelf();
+			}
+
+			@Override
+			public String getName() {
+				return "Başarısız olanlar";
+			}
+
+			@Override
+			public Long getId() {
+				return null;
+			}
+
+			@Override
+			public Integer getColumnOrder() {
+				return 7;
+			}
+		});
+		return columns;
 	}
 
 	@Override
