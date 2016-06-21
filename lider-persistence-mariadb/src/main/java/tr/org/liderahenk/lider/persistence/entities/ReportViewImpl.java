@@ -244,8 +244,8 @@ public class ReportViewImpl implements IReportView {
 	@Override
 	public String toString() {
 		return "ReportViewImpl [id=" + id + ", template=" + template + ", name=" + name + ", description=" + description
-				+ ", viewParams=" + viewParams + ", viewColumns=" + viewColumns + ", createDate=" + createDate
-				+ ", modifyDate=" + modifyDate + "]";
+				+ ", type=" + type + ", viewParams=" + viewParams + ", viewColumns=" + viewColumns + ", createDate="
+				+ createDate + ", modifyDate=" + modifyDate + "]";
 	}
 
 }

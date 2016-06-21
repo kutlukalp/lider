@@ -131,7 +131,8 @@ public class ReportViewParameterImpl implements IReportViewParameter {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((referencedParam == null) ? 0 : referencedParam.hashCode());
+		result = prime * result + ((value == null) ? 0 : value.hashCode());
 		return result;
 	}
 
@@ -144,17 +145,23 @@ public class ReportViewParameterImpl implements IReportViewParameter {
 		if (getClass() != obj.getClass())
 			return false;
 		ReportViewParameterImpl other = (ReportViewParameterImpl) obj;
-		if (id == null) {
-			if (other.id != null)
+		if (referencedParam == null) {
+			if (other.referencedParam != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (!referencedParam.equals(other.referencedParam))
+			return false;
+		if (value == null) {
+			if (other.value != null)
+				return false;
+		} else if (!value.equals(other.value))
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "ReportViewParameterImpl [id=" + id + ", label=" + label + ", value=" + value + "]";
+		return "ReportViewParameterImpl [id=" + id + ", referencedParam=" + referencedParam + ", label=" + label
+				+ ", value=" + value + ", createDate=" + createDate + "]";
 	}
 
 }

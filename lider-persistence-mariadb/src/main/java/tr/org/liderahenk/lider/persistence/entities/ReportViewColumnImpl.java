@@ -151,7 +151,8 @@ public class ReportViewColumnImpl implements IReportViewColumn {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((referencedColumn == null) ? 0 : referencedColumn.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
 
@@ -164,17 +165,23 @@ public class ReportViewColumnImpl implements IReportViewColumn {
 		if (getClass() != obj.getClass())
 			return false;
 		ReportViewColumnImpl other = (ReportViewColumnImpl) obj;
-		if (id == null) {
-			if (other.id != null)
+		if (referencedColumn == null) {
+			if (other.referencedColumn != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (!referencedColumn.equals(other.referencedColumn))
+			return false;
+		if (type == null) {
+			if (other.type != null)
+				return false;
+		} else if (!type.equals(other.type))
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "ReportViewColumnImpl [id=" + id + ", type=" + type + ", legend=" + legend + "]";
+		return "ReportViewColumnImpl [id=" + id + ", referencedColumn=" + referencedColumn + ", type=" + type
+				+ ", legend=" + legend + ", width=" + width + ", createDate=" + createDate + "]";
 	}
 
 }
