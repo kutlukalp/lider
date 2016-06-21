@@ -2,8 +2,11 @@ package tr.org.liderahenk.lider.service.requests;
 
 import java.util.Date;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 import tr.org.liderahenk.lider.core.api.rest.requests.IReportViewParameterRequest;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ReportViewParamReqImpl implements IReportViewParameterRequest {
 
 	private static final long serialVersionUID = 145384481533461250L;
