@@ -10,7 +10,7 @@ import java.util.Map;
  */
 public interface IReportGenerationRequest extends IRequest {
 
-	Long getTemplateId();
+	Long getViewId();
 
 	Map<String, Object> getParamValues();
 

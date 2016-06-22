@@ -12,19 +12,19 @@ public class ReportGenerationRequestImpl implements IReportGenerationRequest {
 
 	private static final long serialVersionUID = -5620268950586449608L;
 
-	private Long templateId;
+	private Long viewId;
 
 	private Map<String, Object> paramValues;
 
 	private Date timestamp;
 
 	@Override
-	public Long getTemplateId() {
-		return templateId;
+	public Long getViewId() {
+		return viewId;
 	}
 
-	public void setTemplateId(Long templateId) {
-		this.templateId = templateId;
+	public void setViewId(Long viewId) {
+		this.viewId = viewId;
 	}
 
 	@Override
