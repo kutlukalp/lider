@@ -37,7 +37,7 @@
         <bundle start-level="82">mvn:${groupId}/lider-datasource-mariadb/${project.version}</bundle>
         <configfile finalname="/etc/tr.org.liderahenk.datasource.cfg">mvn:${groupId}/lider-datasource-mariadb/${project.version}/cfg</configfile>
         <bundle start-level="83">mvn:${groupId}/lider-persistence-mariadb/${project.version}</bundle>
-        <bundle start-level="84">mvn:${groupId}/lider-web/${project.version}/war</bundle>
+       <!--  <bundle start-level="84">mvn:${groupId}/lider-web/${project.version}/war</bundle> -->
         <bundle start-level="84">mvn:${groupId}/lider-cache-impl/${project.version}</bundle>
         <bundle start-level="84">mvn:${groupId}/lider-ldap-impl/${project.version}</bundle>
         <bundle start-level="84">mvn:${groupId}/lider-log-impl/${project.version}</bundle>
@@ -56,6 +56,7 @@
     </feature>
     
     <feature name="lider-dependent-bundles" description="${project.name}" version="${project.version}">
+		<feature prerequisite="true">wrap</feature>
     	<feature>lider-deps-persistence</feature>
         <feature>war</feature>
         <feature>webconsole</feature>
