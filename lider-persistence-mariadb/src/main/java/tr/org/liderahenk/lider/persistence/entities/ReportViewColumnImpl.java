@@ -36,7 +36,7 @@ public class ReportViewColumnImpl implements IReportViewColumn {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "TEMPLATE_COLUMN_ID", nullable = false)
-	private ReportTemplateColumnImpl referencedColumn;
+	private ReportTemplateColumnImpl referencedCol;
 
 	@Column(name = "COLUMN_TYPE", nullable = false)
 	private Integer type;
@@ -54,11 +54,11 @@ public class ReportViewColumnImpl implements IReportViewColumn {
 	public ReportViewColumnImpl() {
 	}
 
-	public ReportViewColumnImpl(Long id, ReportViewImpl view, ReportTemplateColumnImpl referencedColumn,
+	public ReportViewColumnImpl(Long id, ReportViewImpl view, ReportTemplateColumnImpl referencedCol,
 			ViewColumnType type, String legend, Integer width, Date createDate) {
 		this.id = id;
 		this.view = view;
-		this.referencedColumn = referencedColumn;
+		this.referencedCol = referencedCol;
 		setType(type);
 		this.legend = legend;
 		this.width = width;
@@ -75,8 +75,8 @@ public class ReportViewColumnImpl implements IReportViewColumn {
 		if (column.getView() instanceof ReportViewImpl) {
 			this.view = (ReportViewImpl) column.getView();
 		}
-		if (column.getReferencedColumn() instanceof ReportTemplateColumnImpl) {
-			this.referencedColumn = (ReportTemplateColumnImpl) column.getReferencedColumn();
+		if (column.getReferencedCol() instanceof ReportTemplateColumnImpl) {
+			this.referencedCol = (ReportTemplateColumnImpl) column.getReferencedCol();
 		}
 	}
 
@@ -99,12 +99,12 @@ public class ReportViewColumnImpl implements IReportViewColumn {
 	}
 
 	@Override
-	public ReportTemplateColumnImpl getReferencedColumn() {
-		return referencedColumn;
+	public ReportTemplateColumnImpl getReferencedCol() {
+		return referencedCol;
 	}
 
-	public void setReferencedColumn(ReportTemplateColumnImpl referencedColumn) {
-		this.referencedColumn = referencedColumn;
+	public void setReferencedCol(ReportTemplateColumnImpl referencedCol) {
+		this.referencedCol = referencedCol;
 	}
 
 	@Override
@@ -151,7 +151,8 @@ public class ReportViewColumnImpl implements IReportViewColumn {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((referencedCol == null) ? 0 : referencedCol.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
 
@@ -164,17 +165,23 @@ public class ReportViewColumnImpl implements IReportViewColumn {
 		if (getClass() != obj.getClass())
 			return false;
 		ReportViewColumnImpl other = (ReportViewColumnImpl) obj;
-		if (id == null) {
-			if (other.id != null)
+		if (referencedCol == null) {
+			if (other.referencedCol != null)
 				return false;
-		} else if (!id.equals(other.id))
+		} else if (!referencedCol.equals(other.referencedCol))
+			return false;
+		if (type == null) {
+			if (other.type != null)
+				return false;
+		} else if (!type.equals(other.type))
 			return false;
 		return true;
 	}
 
 	@Override
 	public String toString() {
-		return "ReportViewColumnImpl [id=" + id + ", type=" + type + ", legend=" + legend + "]";
+		return "ReportViewColumnImpl [id=" + id + ", referencedCol=" + referencedCol + ", type=" + type + ", legend="
+				+ legend + ", width=" + width + ", createDate=" + createDate + "]";
 	}
 
 }

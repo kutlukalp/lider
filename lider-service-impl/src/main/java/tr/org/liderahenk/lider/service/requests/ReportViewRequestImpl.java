@@ -3,9 +3,12 @@ package tr.org.liderahenk.lider.service.requests;
 import java.util.Date;
 import java.util.List;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 import tr.org.liderahenk.lider.core.api.persistence.enums.ReportType;
 import tr.org.liderahenk.lider.core.api.rest.requests.IReportViewRequest;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ReportViewRequestImpl implements IReportViewRequest {
 
 	private static final long serialVersionUID = -4108148529037085304L;

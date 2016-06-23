@@ -2,9 +2,12 @@ package tr.org.liderahenk.lider.service.requests;
 
 import java.util.Date;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 import tr.org.liderahenk.lider.core.api.persistence.enums.ViewColumnType;
 import tr.org.liderahenk.lider.core.api.rest.requests.IReportViewColumnRequest;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ReportViewColReqImpl implements IReportViewColumnRequest {
 
 	private static final long serialVersionUID = 808547110927918705L;

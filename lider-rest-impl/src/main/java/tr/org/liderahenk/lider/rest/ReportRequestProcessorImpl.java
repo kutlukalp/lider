@@ -20,6 +20,7 @@ import tr.org.liderahenk.lider.core.api.rest.IRequestFactory;
 import tr.org.liderahenk.lider.core.api.rest.IResponseFactory;
 import tr.org.liderahenk.lider.core.api.rest.enums.RestResponseStatus;
 import tr.org.liderahenk.lider.core.api.rest.processors.IReportRequestProcessor;
+import tr.org.liderahenk.lider.core.api.rest.requests.IReportGenerationRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IReportTemplateRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IReportViewColumnRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IReportViewParameterRequest;
@@ -136,32 +137,23 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 
 	@Override
 	public IRestResponse generateView(String json) {
-		// TODO
-		// TODO
-		// TODO
-		// TODO
-		// try {
-		// IReportGenerationRequest request =
-		// requestFactory.createReportGenerationRequest(json);
-		// IReportTemplate template =
-		// reportDao.findTemplate(request.getTemplateId());
-		//
-		// // Generic type can be an entity class or an object array!
-		// List<Object[]> resultList =
-		// reportDao.generateView(template.getQuery(),
-		// template.getTemplateParams(),
-		// request.getParamValues(), template.getTemplateColumns());
-		//
-		// Map<String, Object> resultMap = new HashMap<String, Object>();
-		// resultMap.put("report", new
-		// ObjectMapper().writeValueAsString(resultList));
-		//
-		return responseFactory.createResponse(RestResponseStatus.OK, "Record saved.", null);
-		// } catch (Exception e) {
-		// logger.error(e.getMessage(), e);
-		// return responseFactory.createResponse(RestResponseStatus.ERROR,
-		// e.getMessage());
-		// }
+		try {
+			IReportGenerationRequest request = requestFactory.createReportGenerationRequest(json);
+			IReportView view = reportDao.findView(request.getViewId());
+
+			// Generic type can be an entity class or an object array!
+			List<Object[]> resultList = reportDao.generateView(view, request.getParamValues());
+
+			Map<String, Object> resultMap = new HashMap<String, Object>();
+			resultMap.put("data", new ObjectMapper().writeValueAsString(resultList));
+			resultMap.put("type", view.getType());
+			resultMap.put("columns", view.getViewColumns());
+
+			return responseFactory.createResponse(RestResponseStatus.OK, "Record retrieved.", resultMap);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			return responseFactory.createResponse(RestResponseStatus.ERROR, e.getMessage());
+		}
 	}
 
 	@Override

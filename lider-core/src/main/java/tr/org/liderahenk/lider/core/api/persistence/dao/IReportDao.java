@@ -9,8 +9,6 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateColumn;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateParameter;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportView;
-import tr.org.liderahenk.lider.core.api.persistence.entities.IReportViewColumn;
-import tr.org.liderahenk.lider.core.api.persistence.entities.IReportViewParameter;
 
 public interface IReportDao {
 
@@ -29,7 +27,7 @@ public interface IReportDao {
 	IReportTemplate findTemplate(Long id);
 
 	IReportView findView(Long id);
-	
+
 	IReportTemplateColumn findTemplateColumn(Long id);
 
 	IReportTemplateParameter findTemplateParameter(Long id);
@@ -50,7 +48,6 @@ public interface IReportDao {
 
 	void validateTemplate(String query, Set<? extends IReportTemplateParameter> params) throws Exception;
 
-	List<Object[]> generateView(String query, Set<? extends IReportViewParameter> params, Map<String, Object> values,
-			Set<? extends IReportViewColumn> columns) throws Exception;
+	List<Object[]> generateView(IReportView view, Map<String, Object> values) throws Exception;
 
 }

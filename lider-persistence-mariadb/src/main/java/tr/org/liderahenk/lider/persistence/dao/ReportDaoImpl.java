@@ -1,5 +1,6 @@
 package tr.org.liderahenk.lider.persistence.dao;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,7 +32,6 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateColumn;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateParameter;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportView;
-import tr.org.liderahenk.lider.core.api.persistence.entities.IReportViewColumn;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportViewParameter;
 import tr.org.liderahenk.lider.core.api.persistence.enums.OrderType;
 import tr.org.liderahenk.lider.core.api.persistence.enums.ParameterType;
@@ -290,46 +290,70 @@ public class ReportDaoImpl implements IReportDao {
 	}
 
 	@Override
-	public List<Object[]> generateView(String query, Set<? extends IReportViewParameter> params,
-			Map<String, Object> values, Set<? extends IReportViewColumn> columns) throws Exception {
-		Query q = entityManager.createQuery(query);
-		// TODO
-		// TODO
-		// TODO
-		// TODO
+	public List<Object[]> generateView(IReportView view, Map<String, Object> values) throws Exception {
+		Query q = entityManager.createQuery(view.getTemplate().getQuery());
 		// Set query parameters!
-		// if (params != null) {
-		// for (IReportTemplateParameter param : params) {
-		// if (isInteger(param.getKey())) {
-		// if (param.getType() == ParameterType.DATE) {
-		// // TODO date pattern
-		// q.setParameter(Integer.parseInt(param.getKey()),
-		// new SimpleDateFormat().parse(values.get(param.getKey()).toString()),
-		// TemporalType.DATE);
-		// } else if (param.getType() == ParameterType.NUMBER) {
-		// q.setParameter(Integer.parseInt(param.getKey()),
-		// values.get(param.getKey()));
-		// } else {
-		// q.setParameter(Integer.parseInt(param.getKey()),
-		// values.get(param.getKey()));
-		// }
-		// } else {
-		// if (param.getType() == ParameterType.DATE) {
-		// // TODO date pattern
-		// q.setParameter(param.getKey(),
-		// new SimpleDateFormat().parse(values.get(param.getKey()).toString()),
-		// TemporalType.DATE);
-		// } else if (param.getType() == ParameterType.NUMBER) {
-		// q.setParameter(param.getKey(), values.get(param.getKey()));
-		// } else {
-		// q.setParameter(param.getKey(), values.get(param.getKey()));
-		// }
-		// }
-		// }
-		// }
+		if (view.getTemplate().getTemplateParams() != null) {
+			for (IReportTemplateParameter param : view.getTemplate().getTemplateParams()) {
+				if (isInteger(param.getKey())) {
+					if (param.getType() == ParameterType.DATE) {
+						// TODO date pattern
+						q.setParameter(Integer.parseInt(param.getKey()),
+								new SimpleDateFormat().parse(findParameterValue(param, view.getViewParams(), values)),
+								TemporalType.DATE);
+					} else if (param.getType() == ParameterType.NUMBER) {
+						q.setParameter(Integer.parseInt(param.getKey()),
+								findParameterValue(param, view.getViewParams(), values));
+					} else {
+						q.setParameter(Integer.parseInt(param.getKey()),
+								findParameterValue(param, view.getViewParams(), values));
+					}
+				} else {
+					if (param.getType() == ParameterType.DATE) {
+						// TODO date pattern
+						q.setParameter(param.getKey(),
+								new SimpleDateFormat().parse(findParameterValue(param, view.getViewParams(), values)),
+								TemporalType.DATE);
+					} else if (param.getType() == ParameterType.NUMBER) {
+						q.setParameter(param.getKey(), findParameterValue(param, view.getViewParams(), values));
+					} else {
+						q.setParameter(param.getKey(), findParameterValue(param, view.getViewParams(), values));
+					}
+				}
+			}
+		}
 		// Execute query
 		List<Object[]> resultList = q.getResultList();
 		return resultList;
+	}
+
+	/**
+	 * 
+	 * @param tParam
+	 * @param vParams
+	 * @param values
+	 * @return
+	 */
+	private String findParameterValue(IReportTemplateParameter tParam, Set<? extends IReportViewParameter> vParams,
+			Map<String, Object> values) {
+		// Use the value provided by the request!
+		if (values.get(tParam.getKey()) != null) {
+			return values.get(tParam.getKey()).toString();
+		}
+		// Try to find view parameter which references to the current tParam
+		IReportViewParameter vParam = null;
+		for (IReportViewParameter tmp : vParams) {
+			if (tmp.getReferencedParam().getId().equals(tParam)) {
+				vParam = tmp;
+				break;
+			}
+		}
+		// Found the view parameter, return its value!
+		if (vParam != null && vParam.getValue() != null) {
+			return vParam.getValue();
+		}
+		// No value has been provided, use the default value!
+		return tParam.getDefaultValue();
 	}
 
 	private static boolean isInteger(String s) {
