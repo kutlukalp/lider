@@ -94,6 +94,33 @@
 		<property name="agentDao" ref="agentDao" />
 	</bean>
 	
+	<command-bundle xmlns="http://karaf.apache.org/xmlns/shell/v1.0.0">
+		<command name="profile/list">
+			<action
+				class="tr.org.liderahenk.lider.karaf.commands.ProfileListCommand">
+				<property name="profileDao" ref="profileDao" />
+			</action>
+		</command>
+		<command name="plugin/list">
+			<action
+				class="tr.org.liderahenk.lider.karaf.commands.PluginListCommand">
+				<property name="pluginDao" ref="pluginDao" />
+			</action>
+		</command>
+		<command name="policy/list">
+			<action
+				class="tr.org.liderahenk.lider.karaf.commands.PolicyListCommand">
+				<property name="policyDao" ref="policyDao" />
+			</action>
+		</command>
+		<command name="command/list">
+			<action
+				class="tr.org.liderahenk.lider.karaf.commands.CommandListCommand">
+				<property name="commandDao" ref="commandDao" />
+			</action>
+		</command>
+	</command-bundle>
+	
 	<reference id="resultFactory"
 		interface="tr.org.liderahenk.lider.core.api.service.ICommandResultFactory" />
 	<reference id="configurationService"
