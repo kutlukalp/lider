@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
 import tr.org.liderahenk.lider.core.api.ldap.LdapSearchFilterAttribute;
-import tr.org.liderahenk.lider.core.api.ldap.enums.LdapSearchFilterEnum;
+import tr.org.liderahenk.lider.core.api.ldap.enums.SearchFilterEnum;
 import tr.org.liderahenk.lider.core.api.ldap.exception.LdapException;
 import tr.org.liderahenk.lider.core.api.messaging.IMessageFactory;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecutePoliciesMessage;
@@ -114,9 +114,9 @@ public class PolicySubscriberImpl implements IPolicySubscriber {
 		String[] groupLdapObjectClasses = configurationService.getGroupLdapObjectClasses().split(",");
 		for (String groupObjCls : groupLdapObjectClasses) {
 			filterAttributesList
-					.add(new LdapSearchFilterAttribute("objectClass", groupObjCls, LdapSearchFilterEnum.EQ));
+					.add(new LdapSearchFilterAttribute("objectClass", groupObjCls, SearchFilterEnum.EQ));
 		}
-		filterAttributesList.add(new LdapSearchFilterAttribute("member", userDn, LdapSearchFilterEnum.EQ));
+		filterAttributesList.add(new LdapSearchFilterAttribute("member", userDn, SearchFilterEnum.EQ));
 		return ldapService.search(configurationService.getLdapRootDn(), filterAttributesList, null);
 	}
 

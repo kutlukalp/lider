@@ -43,7 +43,7 @@ import tr.org.liderahenk.lider.core.api.caching.ICacheService;
 import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
 import tr.org.liderahenk.lider.core.api.ldap.LdapSearchFilterAttribute;
-import tr.org.liderahenk.lider.core.api.ldap.enums.LdapSearchFilterEnum;
+import tr.org.liderahenk.lider.core.api.ldap.enums.SearchFilterEnum;
 import tr.org.liderahenk.lider.core.api.ldap.exception.LdapException;
 import tr.org.liderahenk.lider.core.api.rest.enums.DNType;
 import tr.org.liderahenk.lider.core.model.ldap.IUser;
@@ -588,7 +588,7 @@ public class LDAPServiceImpl implements ILDAPService {
 	public List<LdapEntry> search(String attributeName, String attributeValue, String[] returningAttributes)
 			throws LdapException {
 		List<LdapSearchFilterAttribute> filterAttributes = new ArrayList<LdapSearchFilterAttribute>();
-		filterAttributes.add(new LdapSearchFilterAttribute(attributeName, attributeValue, LdapSearchFilterEnum.EQ));
+		filterAttributes.add(new LdapSearchFilterAttribute(attributeName, attributeValue, SearchFilterEnum.EQ));
 		return search(configurationService.getLdapRootDn(), filterAttributes, returningAttributes);
 	}
 
@@ -637,7 +637,7 @@ public class LDAPServiceImpl implements ILDAPService {
 			String[] objectClsArr = objectClasses.split(",");
 			for (String objectClass : objectClsArr) {
 				LdapSearchFilterAttribute fAttr = new LdapSearchFilterAttribute("objectClass", objectClass,
-						LdapSearchFilterEnum.EQ);
+						SearchFilterEnum.EQ);
 				filterAttributes.add(fAttr);
 			}
 			logger.debug("Filtering attributes: {}", filterAttributes);

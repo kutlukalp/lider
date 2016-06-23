@@ -1,6 +1,6 @@
 package tr.org.liderahenk.lider.core.api.ldap;
 
-import tr.org.liderahenk.lider.core.api.ldap.enums.LdapSearchFilterEnum;
+import tr.org.liderahenk.lider.core.api.ldap.enums.SearchFilterEnum;
 
 /**
  * This class is used to filter LDAP entries during search operations.
@@ -14,12 +14,12 @@ public class LdapSearchFilterAttribute {
 
 	private String attributeName;
 	private String attributeValue;
-	private LdapSearchFilterEnum operator;
+	private SearchFilterEnum operator;
 
 	public LdapSearchFilterAttribute() {
 	}
 
-	public LdapSearchFilterAttribute(String attributeName, String attributeValue, LdapSearchFilterEnum operator) {
+	public LdapSearchFilterAttribute(String attributeName, String attributeValue, SearchFilterEnum operator) {
 		this.attributeName = attributeName;
 		this.attributeValue = attributeValue;
 		this.operator = operator;
@@ -41,11 +41,11 @@ public class LdapSearchFilterAttribute {
 		this.attributeValue = attributeValue;
 	}
 
-	public LdapSearchFilterEnum getOperator() {
+	public SearchFilterEnum getOperator() {
 		return operator;
 	}
 
-	public void setOperator(LdapSearchFilterEnum operator) {
+	public void setOperator(SearchFilterEnum operator) {
 		this.operator = operator;
 	}
 
