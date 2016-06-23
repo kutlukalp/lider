@@ -66,4 +66,8 @@ public class CommandListCommand implements Action {
 		return null;
 	}
 
+	public void setCommandDao(ICommandDao commandDao) {
+		this.commandDao = commandDao;
+	}
+
 }

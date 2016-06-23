@@ -63,4 +63,8 @@ public class ProfileListCommand implements Action {
 		return null;
 	}
 
+	public void setProfileDao(IProfileDao profileDao) {
+		this.profileDao = profileDao;
+	}
+
 }

@@ -65,4 +65,8 @@ public class PluginListCommand implements Action {
 		return null;
 	}
 
+	public void setPluginDao(IPluginDao pluginDao) {
+		this.pluginDao = pluginDao;
+	}
+
 }

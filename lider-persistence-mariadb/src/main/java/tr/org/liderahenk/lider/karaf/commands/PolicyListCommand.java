@@ -65,4 +65,8 @@ public class PolicyListCommand implements Action {
 		return null;
 	}
 
+	public void setPolicyDao(IPolicyDao policyDao) {
+		this.policyDao = policyDao;
+	}
+
 }
