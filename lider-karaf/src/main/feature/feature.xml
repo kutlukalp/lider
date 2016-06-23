@@ -56,6 +56,7 @@
     </feature>
     
     <feature name="lider-dependent-bundles" description="${project.name}" version="${project.version}">
+		<feature prerequisite="true">wrap</feature>
     	<feature>lider-deps-persistence</feature>
         <feature>war</feature>
         <feature>webconsole</feature>
