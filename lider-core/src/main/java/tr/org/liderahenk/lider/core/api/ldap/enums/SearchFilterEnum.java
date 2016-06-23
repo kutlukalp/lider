@@ -7,13 +7,13 @@ package tr.org.liderahenk.lider.core.api.ldap.enums;
  * @see tr.org.liderahenk.lider.core.api.ldap.LdapSearchFilterAttribute
  *
  */
-public enum LdapSearchFilterEnum {
+public enum SearchFilterEnum {
 
 	EQ("="), NOT_EQ("!=");
 
 	private String operator;
 
-	LdapSearchFilterEnum(String operator) {
+	SearchFilterEnum(String operator) {
 		this.operator = operator;
 	}
 
