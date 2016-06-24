@@ -84,6 +84,9 @@
 
 	<osgi:reference id="reportProcessor"
 		interface="tr.org.liderahenk.lider.core.api.rest.processors.IReportRequestProcessor" />
+
+	<osgi:reference id="searchGroupProcessor"
+		interface="tr.org.liderahenk.lider.core.api.rest.processors.ISearchGroupRequestProcessor" />
 		
 	<osgi:reference id="configurationService"
 		interface="tr.org.liderahenk.lider.core.api.configuration.IConfigurationService" />
