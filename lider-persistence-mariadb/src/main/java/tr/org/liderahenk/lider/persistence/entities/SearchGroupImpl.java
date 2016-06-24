@@ -1,10 +1,10 @@
 package tr.org.liderahenk.lider.persistence.entities;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -74,13 +74,13 @@ public class SearchGroupImpl implements ISearchGroup {
 	private Date createDate;
 
 	@OneToMany(mappedBy = "group", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-	private List<SearchGroupEntryImpl> entries = new ArrayList<SearchGroupEntryImpl>(); // bidirectional
+	private Set<SearchGroupEntryImpl> entries = new HashSet<SearchGroupEntryImpl>(); // bidirectional
 
 	public SearchGroupImpl() {
 	}
 
 	public SearchGroupImpl(Long id, String name, boolean searchAgents, boolean searchUsers, boolean searchGroups,
-			Map<String, String> criteria, Date createDate, List<SearchGroupEntryImpl> entries) {
+			Map<String, String> criteria, Date createDate, Set<SearchGroupEntryImpl> entries) {
 		this.id = id;
 		this.name = name;
 		this.searchAgents = searchAgents;
@@ -89,6 +89,23 @@ public class SearchGroupImpl implements ISearchGroup {
 		setCriteria(criteria);
 		this.createDate = createDate;
 		this.entries = entries;
+	}
+
+	public SearchGroupImpl(ISearchGroup searchGroup) {
+		this.id = searchGroup.getId();
+		this.name = searchGroup.getName();
+		this.searchAgents = searchGroup.isSearchAgents();
+		this.searchUsers = searchGroup.isSearchUsers();
+		this.searchGroups = searchGroup.isSearchGroups();
+		setCriteria(searchGroup.getCriteria());
+		this.createDate = searchGroup.getCreateDate();
+
+		Set<? extends ISearchGroupEntry> tmpEntries = searchGroup.getEntries();
+		if (tmpEntries != null) {
+			for (ISearchGroupEntry tmpEntry : tmpEntries) {
+				addEntry(tmpEntry);
+			}
+		}
 	}
 
 	@Override
@@ -206,17 +223,18 @@ public class SearchGroupImpl implements ISearchGroup {
 	}
 
 	@Override
-	public List<SearchGroupEntryImpl> getEntries() {
+	public Set<SearchGroupEntryImpl> getEntries() {
 		return entries;
 	}
 
-	public void setEntries(List<SearchGroupEntryImpl> entries) {
+	public void setEntries(Set<SearchGroupEntryImpl> entries) {
 		this.entries = entries;
 	}
 
+	@Override
 	public void addEntry(ISearchGroupEntry entry) {
 		if (entries == null) {
-			entries = new ArrayList<SearchGroupEntryImpl>();
+			entries = new HashSet<SearchGroupEntryImpl>();
 		}
 		SearchGroupEntryImpl entryImpl = null;
 		if (entry instanceof SearchGroupEntryImpl) {
@@ -228,6 +246,17 @@ public class SearchGroupImpl implements ISearchGroup {
 			entryImpl.setGroup(this);
 		}
 		entries.add(entryImpl);
+	}
+
+	@Override
+	public String toJson() {
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			return mapper.writeValueAsString(this);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	@Override

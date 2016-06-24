@@ -41,12 +41,12 @@ public class AgentRequestProcessorImpl implements IAgentRequestProcessor {
 
 		// Find desired agents
 		List<? extends IAgent> agents = agentDao.findByProperties(IAgent.class, propertiesMap, null, null);
+		logger.debug("Found agents: {}", agents);
 
 		// Construct result map
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		ObjectMapper mapper = new ObjectMapper();
 		try {
-			resultMap.put("agents", mapper.writeValueAsString(agents));
+			resultMap.put("agents", new ObjectMapper().writeValueAsString(agents));
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}

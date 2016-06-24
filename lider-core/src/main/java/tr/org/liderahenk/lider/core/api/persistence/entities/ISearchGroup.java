@@ -1,7 +1,7 @@
 package tr.org.liderahenk.lider.core.api.persistence.entities;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * ISearchGroup entity class is responsible for storing LDAP user & agent search
@@ -21,7 +21,7 @@ public interface ISearchGroup extends IEntity {
 	 */
 	String getName();
 
-	List<? extends ISearchGroupEntry> getEntries();
+	Set<? extends ISearchGroupEntry> getEntries();
 
 	boolean isSearchAgents();
 
@@ -32,5 +32,9 @@ public interface ISearchGroup extends IEntity {
 	byte[] getCriteriaBlob();
 
 	Map<String, String> getCriteria();
+
+	Object toJson();
+
+	void addEntry(ISearchGroupEntry entry);
 
 }

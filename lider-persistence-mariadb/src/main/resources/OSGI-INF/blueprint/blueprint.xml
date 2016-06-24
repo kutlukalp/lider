@@ -67,6 +67,13 @@
 		<jpa:context property="entityManager" unitname="lider" />
 	</bean>
 
+	<service ref="searchGroupDao"
+		interface="tr.org.liderahenk.lider.core.api.persistence.dao.ISearchGroupDao" />
+	<bean id="searchGroupDao" class="tr.org.liderahenk.lider.persistence.dao.SearchGroupDaoImpl">
+		<tx:transaction method="*" value="Required" />
+		<jpa:context property="entityManager" unitname="lider" />
+	</bean>
+
 	<service ref="managedPluginDao"
 		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IManagedPluginDao" />
 	<bean id="managedPluginDao" class="tr.org.liderahenk.lider.persistence.dao.ManagedPluginDao">
