@@ -3,6 +3,7 @@ package tr.org.liderahenk.lider.karaf.commands;
 import java.util.List;
 
 import org.apache.karaf.shell.api.action.Action;
+import org.apache.karaf.shell.api.action.Argument;
 import org.apache.karaf.shell.api.action.Command;
 import org.apache.karaf.shell.api.action.lifecycle.Reference;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
@@ -26,6 +27,9 @@ public class PluginListCommand implements Action {
 
 	@Reference
 	private IPluginDao pluginDao;
+
+	@Argument(name = "name", description = "Plugin name", required = false, multiValued = false)
+	private String name;
 
 	public PluginListCommand() {
 	}
@@ -55,6 +59,9 @@ public class PluginListCommand implements Action {
 		List<? extends IPlugin> list = pluginDao.findAll(IPlugin.class, null);
 		if (list != null) {
 			for (IPlugin plugin : list) {
+				if (name != null && !name.equalsIgnoreCase(plugin.getName())) {
+					continue;
+				}
 				Row row = table.addRow();
 				row.addContent(plugin.getId(), plugin.getName(), plugin.getVersion(), plugin.getCreateDate(),
 						plugin.getModifyDate() != null ? plugin.getModifyDate() : "", plugin.isDeleted() ? "x" : "");
