@@ -11,9 +11,7 @@ public interface ISearchGroupRequestProcessor {
 
 	IRestResponse add(String json);
 
-	IRestResponse update(String json);
-
-	IRestResponse list(String name);
+	IRestResponse list(String name, Boolean listOnlyEntries);
 
 	IRestResponse get(Long id);
 

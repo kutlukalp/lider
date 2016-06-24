@@ -58,25 +58,6 @@ public class SearchGroupController {
 	}
 
 	/**
-	 * Update given search group.
-	 * 
-	 * @param requestBody
-	 * @param request
-	 * @return
-	 * @throws UnsupportedEncodingException
-	 */
-	@RequestMapping(value = "/update", method = { RequestMethod.POST })
-	@ResponseBody
-	public IRestResponse updateSearchGroup(@RequestBody String requestBody, HttpServletRequest request)
-			throws UnsupportedEncodingException {
-		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
-		logger.info("Request received. URL: '/lider/searchgroup/update' Body: {}", requestBodyDecoded);
-		IRestResponse restResponse = searchGroupProcessor.update(requestBodyDecoded);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
-		return restResponse;
-	}
-
-	/**
 	 * List search groups according to given parameters.
 	 * 
 	 * @param name
@@ -91,7 +72,7 @@ public class SearchGroupController {
 					throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/searchgroup/list?name={}&listOnlyEntries={}'",
 				new Object[] { name, listOnlyEntries });
-		IRestResponse restResponse = searchGroupProcessor.list(name);
+		IRestResponse restResponse = searchGroupProcessor.list(name, listOnlyEntries);
 		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}

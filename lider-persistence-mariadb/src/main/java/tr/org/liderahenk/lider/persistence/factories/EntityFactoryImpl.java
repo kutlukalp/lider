@@ -24,6 +24,7 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplatePara
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportView;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportViewColumn;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportViewParameter;
+import tr.org.liderahenk.lider.core.api.persistence.entities.ISearchGroup;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IUserSession;
 import tr.org.liderahenk.lider.core.api.persistence.enums.CrudType;
@@ -41,6 +42,8 @@ import tr.org.liderahenk.lider.core.api.rest.requests.IReportTemplateRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IReportViewColumnRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IReportViewParameterRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IReportViewRequest;
+import tr.org.liderahenk.lider.core.api.rest.requests.ISearchGroupEntryRequest;
+import tr.org.liderahenk.lider.core.api.rest.requests.ISearchGroupRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.ITaskRequest;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 import tr.org.liderahenk.lider.persistence.entities.AgentImpl;
@@ -60,6 +63,8 @@ import tr.org.liderahenk.lider.persistence.entities.ReportTemplateParameterImpl;
 import tr.org.liderahenk.lider.persistence.entities.ReportViewColumnImpl;
 import tr.org.liderahenk.lider.persistence.entities.ReportViewImpl;
 import tr.org.liderahenk.lider.persistence.entities.ReportViewParameterImpl;
+import tr.org.liderahenk.lider.persistence.entities.SearchGroupEntryImpl;
+import tr.org.liderahenk.lider.persistence.entities.SearchGroupImpl;
 import tr.org.liderahenk.lider.persistence.entities.TaskImpl;
 import tr.org.liderahenk.lider.persistence.entities.UserSessionImpl;
 
@@ -153,15 +158,15 @@ public class EntityFactoryImpl implements IEntityFactory {
 	@Override
 	public IPlugin createPlugin(IPluginInfo info) throws Exception {
 		return new PluginImpl(null, info.getPluginName(), info.getPluginVersion(), info.getDescription(), true, false,
-				info.getMachineOriented(), info.getUserOriented(), info.getPolicyPlugin(), info.getTaskPlugin(), info.getXbased(), null,
-				new Date(), null);
+				info.getMachineOriented(), info.getUserOriented(), info.getPolicyPlugin(), info.getTaskPlugin(),
+				info.getXbased(), null, new Date(), null);
 	}
 
 	@Override
 	public IPlugin createPlugin(IPlugin plugin, IPluginInfo info) throws Exception {
 		return new PluginImpl(plugin.getId(), plugin.getName(), plugin.getVersion(), info.getDescription(), true, false,
-				info.getMachineOriented(), info.getUserOriented(), info.getPolicyPlugin(), info.getTaskPlugin(), info.getXbased(), null,
-				plugin.getCreateDate(), new Date());
+				info.getMachineOriented(), info.getUserOriented(), info.getPolicyPlugin(), info.getTaskPlugin(),
+				info.getXbased(), null, plugin.getCreateDate(), new Date());
 	}
 
 	@Override
@@ -313,6 +318,19 @@ public class EntityFactoryImpl implements IEntityFactory {
 	public IManagedPlugin createManagedPlugin(Long id, String name, String version, Date installationDate,
 			Boolean active, List<IPluginPart> parts) {
 		return new ManagedPlugin(id, name, version, installationDate, active, parts);
+	}
+
+	@Override
+	public ISearchGroup createSearchGroup(ISearchGroupRequest request) {
+		SearchGroupImpl searchGroupImpl = new SearchGroupImpl(null, request.getName(), request.isSearchAgents(),
+				request.isSearchUsers(), request.isSearchGroups(), request.getCriteria(), new Date(), null);
+		if (request.getEntries() != null) {
+			for (ISearchGroupEntryRequest entry : request.getEntries()) {
+				searchGroupImpl
+						.addEntry(new SearchGroupEntryImpl(null, null, entry.getDn(), entry.getDnType(), new Date()));
+			}
+		}
+		return searchGroupImpl;
 	}
 
 }

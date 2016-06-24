@@ -20,6 +20,7 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplatePara
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportView;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportViewColumn;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportViewParameter;
+import tr.org.liderahenk.lider.core.api.persistence.entities.ISearchGroup;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IUserSession;
 import tr.org.liderahenk.lider.core.api.persistence.enums.CrudType;
@@ -34,6 +35,7 @@ import tr.org.liderahenk.lider.core.api.rest.requests.IReportTemplateRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IReportViewColumnRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IReportViewParameterRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IReportViewRequest;
+import tr.org.liderahenk.lider.core.api.rest.requests.ISearchGroupRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.ITaskRequest;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
@@ -267,5 +269,7 @@ public interface IEntityFactory {
 	IReportViewParameter createReportViewParameter(IReportViewParameterRequest p, IReportTemplateParameter tParam);
 
 	IReportView createReportView(IReportView view, IReportViewRequest request, IReportTemplate template);
+
+	ISearchGroup createSearchGroup(ISearchGroupRequest request);
 
 }

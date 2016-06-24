@@ -113,11 +113,10 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 
 		// Construct result map
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		ObjectMapper mapper = new ObjectMapper();
 		try {
 			// Explicitly write object as json string, it will handled by
 			// related rest utility class in Lider Console
-			resultMap.put("profiles", mapper.writeValueAsString(profiles));
+			resultMap.put("profiles", new ObjectMapper().writeValueAsString(profiles));
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			return responseFactory.createResponse(RestResponseStatus.ERROR, e.getMessage());
@@ -149,6 +148,7 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 
 		Map<String, Object> propertiesMap = new HashMap<String, Object>();
 		propertiesMap.put("profiles.id", id);
+
 		logger.debug("Finding policies by given properties.");
 		List<? extends IPolicy> policies = policyDao.findByProperties(null, propertiesMap, null, null);
 		if (policies != null) {

@@ -75,6 +75,16 @@
 		<property name="requestFactory" ref="requestFactory" />
 		<property name="responseFactory" ref="responseFactory" />
 	</bean>
+	
+	<service ref="searchGroupRequestProcessor"
+		interface="tr.org.liderahenk.lider.core.api.rest.processors.ISearchGroupRequestProcessor" />
+	<bean id="searchGroupRequestProcessor"
+		class="tr.org.liderahenk.lider.rest.SearchGroupRequestProcessorImpl">
+		<property name="searchGroupDao" ref="searchGroupDao" />
+		<property name="requestFactory" ref="requestFactory" />
+		<property name="responseFactory" ref="responseFactory" />
+		<property name="entityFactory" ref="entityFactory" />
+	</bean>
 
 	<reference id="pluginDao"
 		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IPluginDao" />
@@ -88,6 +98,8 @@
 		interface="tr.org.liderahenk.lider.core.api.persistence.dao.ICommandDao" />
 	<reference id="reportDao"
 		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IReportDao" />
+	<reference id="searchGroupDao"
+		interface="tr.org.liderahenk.lider.core.api.persistence.dao.ISearchGroupDao" />
 	<reference id="requestFactory"
 		interface="tr.org.liderahenk.lider.core.api.rest.IRequestFactory" />
 	<reference id="responseFactory"
