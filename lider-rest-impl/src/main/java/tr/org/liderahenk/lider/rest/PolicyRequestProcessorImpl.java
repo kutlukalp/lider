@@ -1,5 +1,7 @@
 package tr.org.liderahenk.lider.rest;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +29,7 @@ import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyRequest;
 import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
 import tr.org.liderahenk.lider.core.model.ldap.IUser;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
+import tr.org.liderahenk.lider.rest.dto.ExecutedPolicy;
 
 /**
  * Processor class for handling/processing policy data.
@@ -220,30 +223,110 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 		return responseFactory.createResponse(RestResponseStatus.OK, "Record deleted.");
 	}
 
+	@Override
+	public IRestResponse listAppliedPolicies(String label, Date createDateRangeStart, Date createDateRangeEnd,
+			Integer status) {
+		// Try to find command results
+		List<Object[]> resultList = commandDao.findPolicyCommand(label, createDateRangeStart, createDateRangeEnd,
+				status);
+		List<ExecutedPolicy> policies = null;
+		// Convert SQL result to collection of tasks.
+		if (resultList != null) {
+			policies = new ArrayList<ExecutedPolicy>();
+			for (Object[] arr : resultList) {
+				if (arr.length != 4) {
+					continue;
+				}
+				ExecutedPolicy policy = new ExecutedPolicy((IPolicy) arr[0], (Integer) arr[1], (Integer) arr[2],
+						(Integer) arr[3]);
+				policies.add(policy);
+			}
+		}
+
+		// Construct result map
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			resultMap.put("policies", mapper.writeValueAsString(policies));
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+
+		return responseFactory.createResponse(RestResponseStatus.OK, "Records listed.", resultMap);
+	}
+
+	@Override
+	public IRestResponse listCommands(Long policyId) {
+		if (policyId == null) {
+			throw new IllegalArgumentException("ID was null.");
+		}
+		Map<String, Object> propertiesMap = new HashMap<String, Object>();
+		propertiesMap.put("policy.id", policyId);
+		List<? extends ICommand> commands = commandDao.findByProperties(ICommand.class, propertiesMap, null, null);
+		// Explicitly write object as json string, it will handled by
+		// related rest utility class in Lider Console
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			resultMap.put("commands", mapper.writeValueAsString(commands));
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+		return responseFactory.createResponse(RestResponseStatus.OK, "Record retrieved.", resultMap);
+	}
+
+	/**
+	 * 
+	 * @param policyDao
+	 */
 	public void setPolicyDao(IPolicyDao policyDao) {
 		this.policyDao = policyDao;
 	}
 
+	/**
+	 * 
+	 * @param profileDao
+	 */
 	public void setProfileDao(IProfileDao profileDao) {
 		this.profileDao = profileDao;
 	}
 
+	/**
+	 * 
+	 * @param requestFactory
+	 */
 	public void setRequestFactory(IRequestFactory requestFactory) {
 		this.requestFactory = requestFactory;
 	}
 
+	/**
+	 * 
+	 * @param responseFactory
+	 */
 	public void setResponseFactory(IResponseFactory responseFactory) {
 		this.responseFactory = responseFactory;
 	}
 
+	/**
+	 * 
+	 * @param ldapService
+	 */
 	public void setLdapService(ILDAPService ldapService) {
 		this.ldapService = ldapService;
 	}
 
+	/**
+	 * 
+	 * @param commandDao
+	 */
 	public void setCommandDao(ICommandDao commandDao) {
 		this.commandDao = commandDao;
 	}
 
+	/**
+	 * 
+	 * @param entityFactory
+	 */
 	public void setEntityFactory(IEntityFactory entityFactory) {
 		this.entityFactory = entityFactory;
 	}

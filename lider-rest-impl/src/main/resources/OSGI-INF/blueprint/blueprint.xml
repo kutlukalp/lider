@@ -56,13 +56,6 @@
 		<property name="authService" ref="authService" />
 		<property name="configService" ref="configService" />
 		<property name="ldapService" ref="ldapService" />
-	</bean>
-	
-	<service ref="commandRequestProcessor"
-		interface="tr.org.liderahenk.lider.core.api.rest.processors.ICommandRequestProcessor" />
-	<bean id="commandRequestProcessor"
-		class="tr.org.liderahenk.lider.rest.CommandRequestProcessorImpl">
-		<property name="responseFactory" ref="responseFactory" />
 		<property name="commandDao" ref="commandDao" />
 	</bean>
 	

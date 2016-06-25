@@ -1,6 +1,7 @@
 package tr.org.liderahenk.web.controller;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -148,6 +149,53 @@ public class PolicyController {
 			throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/policy/{}/delete'", id);
 		IRestResponse restResponse = policyProcessor.delete(id);
+		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		return restResponse;
+	}
+
+	/**
+	 * List commands according to given parameters.
+	 * 
+	 * @param pluginName
+	 * @param pluginVersion
+	 * @param createDateRangeStart
+	 * @param createDateRangeEnd
+	 * @param status
+	 * @param request
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
+	@RequestMapping(value = "/list/executed", method = { RequestMethod.GET })
+	@ResponseBody
+	public IRestResponse listAppliedPolicies(@RequestParam(value = "label", required = false) String label,
+			@RequestParam(value = "createDateRangeStart", required = false) Long createDateRangeStart,
+			@RequestParam(value = "createDateRangeEnd", required = false) Long createDateRangeEnd,
+			@RequestParam(value = "status", required = false) Integer status, HttpServletRequest request)
+					throws UnsupportedEncodingException {
+		logger.info(
+				"Request received. URL: '/lider/policy/list/executed?label={}&createDateRangeStart={}&createDateRangeEnd={}&status={}'",
+				new Object[] { label, createDateRangeStart, createDateRangeEnd, status });
+		IRestResponse restResponse = policyProcessor.listAppliedPolicies(label,
+				createDateRangeStart != null ? new Date(createDateRangeStart) : null,
+				createDateRangeEnd != null ? new Date(createDateRangeEnd) : null, status);
+		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		return restResponse;
+	}
+
+	/**
+	 * Retrieve command related to policy specified policy id.
+	 * 
+	 * @param id
+	 * @param request
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
+	@RequestMapping(value = "/command/{id:[\\d]+}/get", method = { RequestMethod.GET })
+	@ResponseBody
+	public IRestResponse listCommands(@PathVariable final Long id, HttpServletRequest request)
+			throws UnsupportedEncodingException {
+		logger.info("Request received. URL: '/lider/policy/command/{}/get'", id);
+		IRestResponse restResponse = policyProcessor.listCommands(id);
 		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}

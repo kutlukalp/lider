@@ -44,7 +44,7 @@ public class PolicyManagerImpl implements IPolicyStatusSubscriber {
 
 	/**
 	 * Triggered when a policy status message received. This method listens to
-	 * agent responses and creates new command execution resulsts accordingly.
+	 * agent responses and creates new command execution results accordingly.
 	 * It also throws a policy status event in order to notify plugins about
 	 * policy result.
 	 * 

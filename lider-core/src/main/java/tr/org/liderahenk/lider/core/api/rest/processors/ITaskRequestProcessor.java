@@ -1,5 +1,7 @@
 package tr.org.liderahenk.lider.core.api.rest.processors;
 
+import java.util.Date;
+
 import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
 
 /**
@@ -16,5 +18,24 @@ public interface ITaskRequestProcessor {
 	 * @return
 	 */
 	IRestResponse execute(String json);
+
+	/**
+	 * 
+	 * @param pluginName
+	 * @param pluginVersion
+	 * @param createDateRangeStart
+	 * @param createDateRangeEnd
+	 * @param status
+	 * @return
+	 */
+	IRestResponse listExecutedTasks(String pluginName, String pluginVersion, Date createDateRangeStart,
+			Date createDateRangeEnd, Integer status);
+
+	/**
+	 * 
+	 * @param taskId
+	 * @return
+	 */
+	IRestResponse getCommand(Long taskId);
 
 }
