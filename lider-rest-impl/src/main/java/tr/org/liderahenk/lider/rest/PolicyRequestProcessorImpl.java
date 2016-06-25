@@ -225,10 +225,10 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 
 	@Override
 	public IRestResponse listAppliedPolicies(String label, Date createDateRangeStart, Date createDateRangeEnd,
-			Integer status) {
+			Integer status, Integer maxResults) {
 		// Try to find command results
 		List<Object[]> resultList = commandDao.findPolicyCommand(label, createDateRangeStart, createDateRangeEnd,
-				status);
+				status, maxResults);
 		List<ExecutedPolicy> policies = null;
 		// Convert SQL result to collection of tasks.
 		if (resultList != null) {

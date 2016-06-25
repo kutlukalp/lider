@@ -161,6 +161,7 @@ public class PolicyController {
 	 * @param createDateRangeStart
 	 * @param createDateRangeEnd
 	 * @param status
+	 * @param maxResults
 	 * @param request
 	 * @return
 	 * @throws UnsupportedEncodingException
@@ -170,14 +171,15 @@ public class PolicyController {
 	public IRestResponse listAppliedPolicies(@RequestParam(value = "label", required = false) String label,
 			@RequestParam(value = "createDateRangeStart", required = false) Long createDateRangeStart,
 			@RequestParam(value = "createDateRangeEnd", required = false) Long createDateRangeEnd,
-			@RequestParam(value = "status", required = false) Integer status, HttpServletRequest request)
+			@RequestParam(value = "status", required = false) Integer status,
+			@RequestParam(value = "maxResults", required = false) Integer maxResults, HttpServletRequest request)
 					throws UnsupportedEncodingException {
 		logger.info(
-				"Request received. URL: '/lider/policy/list/executed?label={}&createDateRangeStart={}&createDateRangeEnd={}&status={}'",
-				new Object[] { label, createDateRangeStart, createDateRangeEnd, status });
+				"Request received. URL: '/lider/policy/list/executed?label={}&createDateRangeStart={}&createDateRangeEnd={}&status={}&maxResults={}'",
+				new Object[] { label, createDateRangeStart, createDateRangeEnd, status, maxResults });
 		IRestResponse restResponse = policyProcessor.listAppliedPolicies(label,
 				createDateRangeStart != null ? new Date(createDateRangeStart) : null,
-				createDateRangeEnd != null ? new Date(createDateRangeEnd) : null, status);
+				createDateRangeEnd != null ? new Date(createDateRangeEnd) : null, status, maxResults);
 		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}

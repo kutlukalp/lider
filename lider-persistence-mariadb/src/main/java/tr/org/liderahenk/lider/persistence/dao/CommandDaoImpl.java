@@ -204,12 +204,12 @@ public class CommandDaoImpl implements ICommandDao {
 			+ "SUM(CASE WHEN cer.responseCode = :resp_received THEN 1 ELSE 0 END) as received, "
 			+ "SUM(CASE WHEN cer.responseCode = :resp_error then 1 ELSE 0 END) as error "
 			+ "FROM CommandImpl c LEFT JOIN c.commandExecutions ce LEFT JOIN ce.commandExecutionResults cer INNER JOIN c.task t INNER JOIN t.plugin p "
-			+ "##WHERE## GROUP BY t";
+			+ "##WHERE## GROUP BY t ORDER BY t.createDate DESC";
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Object[]> findTaskCommand(String pluginName, String pluginVersion, Date createDateRangeStart,
-			Date createDateRangeEnd, Integer status) {
+			Date createDateRangeEnd, Integer status, Integer maxResults) {
 		String sql = FIND_TASK_COMMAND_WITH_DETAILS;
 		// Collect query conditions/parameters
 		List<String> whereConditions = new ArrayList<String>();
@@ -279,6 +279,9 @@ public class CommandDaoImpl implements ICommandDao {
 			}
 		}
 		// Execute query
+		if (maxResults != null) {
+			query.setMaxResults(maxResults);
+		}
 		List<Object[]> resultList = query.getResultList();
 		logger.debug("Command with details result list: {}",
 				resultList != null && !resultList.isEmpty() && resultList.get(0) != null && resultList.get(0).length > 0
@@ -292,12 +295,12 @@ public class CommandDaoImpl implements ICommandDao {
 			+ "SUM(CASE WHEN cer.responseCode = :resp_received THEN 1 ELSE 0 END) as received, "
 			+ "SUM(CASE WHEN cer.responseCode = :resp_error then 1 ELSE 0 END) as error "
 			+ "FROM CommandImpl c LEFT JOIN c.commandExecutions ce LEFT JOIN ce.commandExecutionResults cer INNER JOIN c.policy p "
-			+ "##WHERE## GROUP BY p";
+			+ "##WHERE## GROUP BY p ORDER BY p.createDate DESC";
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Object[]> findPolicyCommand(String label, Date createDateRangeStart, Date createDateRangeEnd,
-			Integer status) {
+			Integer status, Integer maxResults) {
 		String sql = FIND_POLICY_COMMAND_WITH_DETAILS;
 		// Collect query conditions/parameters
 		List<String> whereConditions = new ArrayList<String>();
@@ -363,12 +366,42 @@ public class CommandDaoImpl implements ICommandDao {
 			}
 		}
 		// Execute query
+		if (maxResults != null) {
+			query.setMaxResults(maxResults);
+		}
 		List<Object[]> resultList = query.getResultList();
 		logger.debug("Command with details result list: {}",
 				resultList != null && !resultList.isEmpty() && resultList.get(0) != null && resultList.get(0).length > 0
 						? (IPolicy) resultList.get(0)[0] : null);
 
 		return resultList;
+	}
+	
+	private static final String FIND_TASK_COMMANDS = 
+			"SELECT DISTINCT c "
+			+ "FROM CommandImpl c "
+			+ "LEFT JOIN c.commandExecutions ce "
+			+ "LEFT JOIN ce.commandExecutionResults cer "
+			+ "INNER JOIN c.task t "
+			+ "INNER JOIN t.plugin p "
+			+ "ORDER BY t.createDate DESC";
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<? extends ICommand> findTaskCommands(Integer maxResults) {
+		Query query = entityManager.createQuery(FIND_TASK_COMMANDS, CommandImpl.class);
+		if (maxResults != null) {
+			query.setMaxResults(maxResults);
+		}
+		return (List<CommandImpl>) query.getResultList();
+	}
+	
+	@Override
+	public ICommandExecutionResult save(ICommandExecutionResult result) throws Exception {
+		CommandExecutionResultImpl resultImpl = new CommandExecutionResultImpl(result);
+		entityManager.persist(resultImpl);
+		logger.debug("ICommandExecutionResult object persisted: {}", resultImpl.toString());
+		return resultImpl;
 	}
 
 	/**
@@ -396,14 +429,6 @@ public class CommandDaoImpl implements ICommandDao {
 	 */
 	public void setEntityManager(EntityManager entityManager) {
 		this.entityManager = entityManager;
-	}
-
-	@Override
-	public ICommandExecutionResult save(ICommandExecutionResult result) throws Exception {
-		CommandExecutionResultImpl resultImpl = new CommandExecutionResultImpl(result);
-		entityManager.persist(resultImpl);
-		logger.debug("ICommandExecutionResult object persisted: {}", resultImpl.toString());
-		return resultImpl;
 	}
 
 }

@@ -126,10 +126,10 @@ public class TaskRequestProcessorImpl implements ITaskRequestProcessor {
 
 	@Override
 	public IRestResponse listExecutedTasks(String pluginName, String pluginVersion, Date createDateRangeStart,
-			Date createDateRangeEnd, Integer status) {
+			Date createDateRangeEnd, Integer status, Integer maxResults) {
 		// Try to find command results
 		List<Object[]> resultList = commandDao.findTaskCommand(pluginName, pluginVersion, createDateRangeStart,
-				createDateRangeEnd, status);
+				createDateRangeEnd, status, maxResults);
 		List<ExecutedTask> tasks = null;
 		// Convert SQL result to collection of tasks.
 		if (resultList != null) {
@@ -173,6 +173,22 @@ public class TaskRequestProcessorImpl implements ITaskRequestProcessor {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		resultMap.put("command", command.toJson());
 		return responseFactory.createResponse(RestResponseStatus.OK, "Record retrieved.", resultMap);
+	}
+
+	@Override
+	public IRestResponse listCommands(Integer maxResults) {
+		// Try to find commands
+		List<? extends ICommand> commands = commandDao.findTaskCommands(maxResults);
+
+		// Construct result map
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			resultMap.put("commands", new ObjectMapper().writeValueAsString(commands));
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+
+		return responseFactory.createResponse(RestResponseStatus.OK, "Records listed.", resultMap);
 	}
 
 	/**

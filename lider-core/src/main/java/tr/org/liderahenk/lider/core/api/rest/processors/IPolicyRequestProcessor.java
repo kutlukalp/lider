@@ -60,9 +60,11 @@ public interface IPolicyRequestProcessor {
 	 * @param createDateRangeStart
 	 * @param createDateRangeEnd
 	 * @param status
+	 * @param maxResults
 	 * @return
 	 */
-	IRestResponse listAppliedPolicies(String label, Date createDateRangeStart, Date createDateRangeEnd, Integer status);
+	IRestResponse listAppliedPolicies(String label, Date createDateRangeStart, Date createDateRangeEnd, Integer status,
+			Integer maxResults);
 
 	/**
 	 * 

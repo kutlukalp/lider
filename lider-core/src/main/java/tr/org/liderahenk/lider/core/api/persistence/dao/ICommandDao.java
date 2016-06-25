@@ -109,10 +109,11 @@ public interface ICommandDao extends IBaseDao<ICommand> {
 	 * @param createDateRangeStart
 	 * @param createDateRangeEnd
 	 * @param status
+	 * @param maxResults
 	 * @return
 	 */
 	List<Object[]> findTaskCommand(String pluginName, String pluginVersion, Date createDateRangeStart,
-			Date createDateRangeEnd, Integer status);
+			Date createDateRangeEnd, Integer status, Integer maxResults);
 
 	/**
 	 * Find command with its details (policy, command execution, command
@@ -122,8 +123,17 @@ public interface ICommandDao extends IBaseDao<ICommand> {
 	 * @param createDateRangeStart
 	 * @param createDateRangeEnd
 	 * @param status
+	 * @param maxResults
 	 * @return
 	 */
-	List<Object[]> findPolicyCommand(String label, Date createDateRangeStart, Date createDateRangeEnd, Integer status);
+	List<Object[]> findPolicyCommand(String label, Date createDateRangeStart, Date createDateRangeEnd, Integer status,
+			Integer maxResults);
+
+	/**
+	 * 
+	 * @param maxResults
+	 * @return
+	 */
+	List<? extends ICommand> findTaskCommands(Integer maxResults);
 
 }

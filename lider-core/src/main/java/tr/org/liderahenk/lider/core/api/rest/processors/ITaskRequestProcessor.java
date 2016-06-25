@@ -26,10 +26,11 @@ public interface ITaskRequestProcessor {
 	 * @param createDateRangeStart
 	 * @param createDateRangeEnd
 	 * @param status
+	 * @param maxResults
 	 * @return
 	 */
 	IRestResponse listExecutedTasks(String pluginName, String pluginVersion, Date createDateRangeStart,
-			Date createDateRangeEnd, Integer status);
+			Date createDateRangeEnd, Integer status, Integer maxResults);
 
 	/**
 	 * 
@@ -37,5 +38,12 @@ public interface ITaskRequestProcessor {
 	 * @return
 	 */
 	IRestResponse getCommand(Long taskId);
+
+	/**
+	 * 
+	 * @param maxResults
+	 * @return
+	 */
+	IRestResponse listCommands(Integer maxResults);
 
 }
