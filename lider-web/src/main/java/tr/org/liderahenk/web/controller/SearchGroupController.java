@@ -68,11 +68,11 @@ public class SearchGroupController {
 	@RequestMapping(value = "/list", method = { RequestMethod.GET })
 	@ResponseBody
 	public IRestResponse listProfiles(@RequestParam(value = "name", required = false) String name,
-			@RequestParam(value = "name", required = false) Boolean listOnlyEntries, HttpServletRequest request)
+			@RequestParam(value = "maxResults", required = false) Integer maxResults, HttpServletRequest request)
 					throws UnsupportedEncodingException {
-		logger.info("Request received. URL: '/lider/searchgroup/list?name={}&listOnlyEntries={}'",
-				new Object[] { name, listOnlyEntries });
-		IRestResponse restResponse = searchGroupProcessor.list(name, listOnlyEntries);
+		logger.info("Request received. URL: '/lider/searchgroup/list?name={}&maxResults={}'",
+				new Object[] { name, maxResults });
+		IRestResponse restResponse = searchGroupProcessor.list(name, maxResults);
 		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}

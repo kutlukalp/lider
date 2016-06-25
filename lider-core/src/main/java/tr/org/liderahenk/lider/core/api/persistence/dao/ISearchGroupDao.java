@@ -9,7 +9,7 @@ public interface ISearchGroupDao {
 
 	ISearchGroup save(ISearchGroup searchGroup);
 
-	List<? extends ISearchGroup> findByProperties(Map<String, Object> propertiesMap, boolean b);
+	List<? extends ISearchGroup> findByProperties(Map<String, Object> propertiesMap, Integer maxResults);
 
 	ISearchGroup find(Long id);
 

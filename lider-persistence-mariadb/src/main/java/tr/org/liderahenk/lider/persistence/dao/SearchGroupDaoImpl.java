@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -48,7 +49,7 @@ public class SearchGroupDaoImpl implements ISearchGroupDao {
 	}
 
 	@Override
-	public List<? extends ISearchGroup> findByProperties(Map<String, Object> propertiesMap, boolean b) {
+	public List<? extends ISearchGroup> findByProperties(Map<String, Object> propertiesMap, Integer maxResults) {
 		CriteriaBuilder builder = entityManager.getCriteriaBuilder();
 		CriteriaQuery<SearchGroupImpl> criteria = (CriteriaQuery<SearchGroupImpl>) builder
 				.createQuery(SearchGroupImpl.class);
@@ -78,10 +79,15 @@ public class SearchGroupDaoImpl implements ISearchGroupDao {
 			}
 		}
 
-		List<SearchGroupImpl> list = null;
-		list = entityManager.createQuery(criteria).getResultList();
+		// Order
+		builder.desc(from.get("createDate"));
 
-		return list;
+		// Max results
+		TypedQuery<SearchGroupImpl> query = entityManager.createQuery(criteria);
+		if (null != maxResults) {
+			query.setMaxResults(maxResults);
+		}
+		return query.getResultList();
 	}
 
 	@Override

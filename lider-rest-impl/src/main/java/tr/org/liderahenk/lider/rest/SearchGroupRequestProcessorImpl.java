@@ -51,7 +51,7 @@ public class SearchGroupRequestProcessorImpl implements ISearchGroupRequestProce
 	}
 
 	@Override
-	public IRestResponse list(String name, Boolean listOnlyEntries) {
+	public IRestResponse list(String name, Integer maxResults) {
 
 		// Build search criteria
 		Map<String, Object> propertiesMap = new HashMap<String, Object>();
@@ -60,8 +60,7 @@ public class SearchGroupRequestProcessorImpl implements ISearchGroupRequestProce
 		}
 
 		// Find desired search groups
-		List<? extends ISearchGroup> searchGroups = searchGroupDao.findByProperties(propertiesMap,
-				listOnlyEntries != null && listOnlyEntries.booleanValue());
+		List<? extends ISearchGroup> searchGroups = searchGroupDao.findByProperties(propertiesMap, maxResults);
 		logger.debug("Found search groups: {}", searchGroups);
 
 		// Construct result map
