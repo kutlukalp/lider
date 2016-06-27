@@ -15,4 +15,11 @@ public interface IUserSessionMessage extends IAgentMessage {
 	 */
 	String getUsername();
 
+	/**
+	 * (Optional)
+	 * 
+	 * @return comma-separated IP addresses
+	 */
+	String getIpAddresses();
+
 }

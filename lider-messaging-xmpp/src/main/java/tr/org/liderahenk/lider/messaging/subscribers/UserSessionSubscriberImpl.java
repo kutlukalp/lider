@@ -46,12 +46,14 @@ public class UserSessionSubscriberImpl implements IUserSessionSubscriber {
 			IUserSession userSession = entityFactory.createUserSession(message.getUsername(),
 					getSessionEvent(message.getType()));
 			agent.addUserSession(userSession);
+			if (message.getIpAddresses() == null || message.getIpAddresses().isEmpty()) {
+				logger.warn("Couldn't find IP addresses of the agent with JID: {}", uid);
+			}
 			// Merge records
-			agentDao.update(agent);
-
-			logger.info("Added user session detail to agent: {}", agent);
+			agentDao.update(agent, message.getIpAddresses());
+			logger.info("Added user session detail to the agent: {}", agent);
 		} else {
-			logger.warn("Couldn't find agent with JID: {}", uid);
+			logger.warn("Couldn't find the agent with JID: {}", uid);
 		}
 	}
 

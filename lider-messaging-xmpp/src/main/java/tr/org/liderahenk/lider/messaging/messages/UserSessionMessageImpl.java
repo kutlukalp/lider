@@ -24,6 +24,8 @@ public class UserSessionMessageImpl implements IUserSessionMessage {
 
 	private String username;
 
+	private String ipAddresses;
+
 	private Date timestamp;
 
 	@Override
@@ -51,6 +53,15 @@ public class UserSessionMessageImpl implements IUserSessionMessage {
 
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	@Override
+	public String getIpAddresses() {
+		return ipAddresses;
+	}
+
+	public void setIpAddresses(String ipAddresses) {
+		this.ipAddresses = ipAddresses;
 	}
 
 	@Override

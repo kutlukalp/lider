@@ -32,6 +32,14 @@ public interface IAgentDao extends IBaseDao<IAgent> {
 
 	/**
 	 * 
+	 * @param agent
+	 * @param ipAddresses
+	 * @return
+	 */
+	IAgent update(IAgent agent, String ipAddresses);
+
+	/**
+	 * 
 	 * @param agentId
 	 */
 	void delete(Long agentId);

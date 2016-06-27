@@ -65,6 +65,17 @@ public class AgentDaoImpl implements IAgentDao {
 	}
 
 	@Override
+	public AgentImpl update(IAgent agent, String ipAddresses) {
+		AgentImpl agentImpl = new AgentImpl(agent);
+		if (ipAddresses != null && !ipAddresses.isEmpty()) {
+			agentImpl.setIpAddresses(ipAddresses);
+		}
+		agentImpl = entityManager.merge(agentImpl);
+		logger.debug("IAgent object merged: {}", agentImpl.toString());
+		return agentImpl;
+	}
+
+	@Override
 	public void delete(Long agentId) {
 		AgentImpl agentImpl = entityManager.find(AgentImpl.class, agentId);
 		// Never truly delete, just mark as deleted!
