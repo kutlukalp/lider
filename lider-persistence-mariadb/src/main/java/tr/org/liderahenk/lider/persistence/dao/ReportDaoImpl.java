@@ -299,7 +299,7 @@ public class ReportDaoImpl implements IReportDao {
 					if (param.getType() == ParameterType.DATE) {
 						// TODO date pattern
 						q.setParameter(Integer.parseInt(param.getKey()),
-								new SimpleDateFormat().parse(findParameterValue(param, view.getViewParams(), values)),
+								new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(findParameterValue(param, view.getViewParams(), values)),
 								TemporalType.DATE);
 					} else if (param.getType() == ParameterType.NUMBER) {
 						q.setParameter(Integer.parseInt(param.getKey()),
@@ -312,7 +312,7 @@ public class ReportDaoImpl implements IReportDao {
 					if (param.getType() == ParameterType.DATE) {
 						// TODO date pattern
 						q.setParameter(param.getKey(),
-								new SimpleDateFormat().parse(findParameterValue(param, view.getViewParams(), values)),
+								new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(findParameterValue(param, view.getViewParams(), values)),
 								TemporalType.DATE);
 					} else if (param.getType() == ParameterType.NUMBER) {
 						q.setParameter(param.getKey(), findParameterValue(param, view.getViewParams(), values));
