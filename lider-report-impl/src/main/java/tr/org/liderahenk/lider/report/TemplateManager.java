@@ -26,6 +26,7 @@ public class TemplateManager {
 	private IReportDao reportDao;
 	private IEntityFactory entityFactory;
 	private IReportTemplate taskTemplate;
+	private IReportTemplate userSessionTemplate;
 
 	public void init() {
 		// Check if task template already exists!
@@ -36,6 +37,15 @@ public class TemplateManager {
 			reportDao.updateTemplate(existingTemplate);
 		} else {
 			reportDao.saveTemplate(taskTemplate);
+		}
+		// Check if user session template already exists!
+		List<? extends IReportTemplate> usertemplates = reportDao.findTemplates("name", userSessionTemplate.getName(), 1);
+		IReportTemplate existingUserTemplate = usertemplates != null && !usertemplates.isEmpty() ? usertemplates.get(0) : null;
+		if (existingUserTemplate != null) {
+			existingUserTemplate = entityFactory.createReportTemplate(existingTemplate, userSessionTemplate);
+			reportDao.updateTemplate(existingUserTemplate);
+		} else {
+			reportDao.saveTemplate(userSessionTemplate);
 		}
 	}
 
@@ -107,6 +117,14 @@ public class TemplateManager {
 	 */
 	public void setTaskTemplate(IReportTemplate taskTemplate) {
 		this.taskTemplate = taskTemplate;
+	}
+	
+	/**
+	 * 
+	 * @param userSessionTemplate
+	 */
+	public void setUserSessionTemplate(IReportTemplate userSessionTemplate) {
+		this.userSessionTemplate = userSessionTemplate;
 	}
 
 }

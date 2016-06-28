@@ -1,5 +1,6 @@
 package tr.org.liderahenk.lider.rest;
 
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -145,7 +146,9 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 			List<Object[]> resultList = reportDao.generateView(view, request.getParamValues());
 
 			Map<String, Object> resultMap = new HashMap<String, Object>();
-			resultMap.put("data", new ObjectMapper().writeValueAsString(resultList));
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.setDateFormat(new SimpleDateFormat("dd-MM-yyyy HH:mm"));
+			resultMap.put("data", mapper.writeValueAsString(resultList));
 			resultMap.put("type", view.getType());
 			resultMap.put("columns", view.getViewColumns());
 

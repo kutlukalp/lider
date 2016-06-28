@@ -4,11 +4,15 @@
 	<bean id="taskTemplate"
 		class="tr.org.liderahenk.lider.report.templates.ExecutedTaskReportTemplateImpl" />
 
+	<bean id="userSessionTemplate"
+		class="tr.org.liderahenk.lider.report.templates.UserSessionReportTemplateImpl" />
+
 	<bean id="templateManager" class="tr.org.liderahenk.lider.report.TemplateManager" init-method="init">
 		<property name="reportDao" ref="reportDao" />
 		<property name="entityFactory" ref="entityFactory" />
 		<property name="templateList" ref="templateList" />
 		<property name="taskTemplate" ref="taskTemplate" />
+		<property name="userSessionTemplate" ref="userSessionTemplate" />
 	</bean>
 
 	<reference-list id="templateList" availability="optional"
