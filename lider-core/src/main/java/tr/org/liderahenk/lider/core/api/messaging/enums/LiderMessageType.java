@@ -20,7 +20,7 @@ package tr.org.liderahenk.lider.core.api.messaging.enums;
  */
 public enum LiderMessageType {
 	EXECUTE_TASK(1), EXECUTE_SCRIPT(2), EXECUTE_POLICY(3), REQUEST_FILE(4), MOVE_FILE(5), REGISTRATION_RESPONSE(
-			6), INSTALL_PLUGIN(7), PLUGIN_NOT_FOUND(8), SEND_FILE(9);
+			6), INSTALL_PLUGIN(7), PLUGIN_NOT_FOUND(8), SEND_FILE(9), RESPONSE_AGREEMENT(10);
 
 	private int id;
 
@@ -46,9 +46,9 @@ public enum LiderMessageType {
 		if (id == null) {
 			return null;
 		}
-		for (LiderMessageType position : LiderMessageType.values()) {
-			if (id.equals(position.getId())) {
-				return position;
+		for (LiderMessageType type : LiderMessageType.values()) {
+			if (id.equals(type.getId())) {
+				return type;
 			}
 		}
 		throw new IllegalArgumentException("No matching type for id: " + id);
