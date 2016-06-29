@@ -17,14 +17,13 @@ package tr.org.liderahenk.lider.core.api.messaging.enums;
  * <b>LOGOUT</b>: Agent sends this message for log purposes during user logout.
  * <br/>
  * 
- * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  * @author <a href="mailto:bm.volkansahin@gmail.com">Volkan Şahin</a>
  * 
  */
 public enum AgentMessageType {
 	TASK_STATUS(1), REGISTER(2), UNREGISTER(3), REGISTER_LDAP(4), GET_POLICIES(5), LOGIN(6), LOGOUT(7), POLICY_STATUS(
-			8), MISSING_PLUGIN(9);
+			8), MISSING_PLUGIN(9), REQUEST_AGREEMENT(10), AGREEMENT_STATUS(11);
 
 	private int id;
 
@@ -50,9 +49,9 @@ public enum AgentMessageType {
 		if (id == null) {
 			return null;
 		}
-		for (AgentMessageType position : AgentMessageType.values()) {
-			if (id.equals(position.getId())) {
-				return position;
+		for (AgentMessageType type : AgentMessageType.values()) {
+			if (id.equals(type.getId())) {
+				return type;
 			}
 		}
 		throw new IllegalArgumentException("No matching type for id: " + id);
