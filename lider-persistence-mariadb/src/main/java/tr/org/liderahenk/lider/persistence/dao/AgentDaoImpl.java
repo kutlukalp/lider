@@ -22,9 +22,11 @@ import org.slf4j.LoggerFactory;
 import tr.org.liderahenk.lider.core.api.persistence.PropertyOrder;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IAgentDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IAgent;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IAgreementStatus;
 import tr.org.liderahenk.lider.core.api.persistence.enums.OrderType;
 import tr.org.liderahenk.lider.persistence.entities.AgentImpl;
 import tr.org.liderahenk.lider.persistence.entities.AgentPropertyImpl;
+import tr.org.liderahenk.lider.persistence.entities.AgreementStatusImpl;
 
 /**
  * Provides database access for agents. CRUD operations for agents and their
@@ -54,6 +56,13 @@ public class AgentDaoImpl implements IAgentDao {
 		entityManager.persist(agentImpl);
 		logger.debug("IAgent object persisted: {}", agentImpl.toString());
 		return agentImpl;
+	}
+
+	@Override
+	public void addAgreementStatus(IAgreementStatus status) {
+		AgreementStatusImpl statusImpl = new AgreementStatusImpl(status);
+		entityManager.persist(statusImpl);
+		logger.debug("IAgreementStatus object persisted: {}", statusImpl.toString());
 	}
 
 	@Override

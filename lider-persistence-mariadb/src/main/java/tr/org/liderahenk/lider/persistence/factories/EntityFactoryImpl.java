@@ -11,6 +11,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IPolicyStatusMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.ITaskStatusMessage;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IAgent;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IAgreementStatus;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecution;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecutionResult;
@@ -48,6 +49,7 @@ import tr.org.liderahenk.lider.core.api.rest.requests.ITaskRequest;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 import tr.org.liderahenk.lider.persistence.entities.AgentImpl;
 import tr.org.liderahenk.lider.persistence.entities.AgentPropertyImpl;
+import tr.org.liderahenk.lider.persistence.entities.AgreementStatusImpl;
 import tr.org.liderahenk.lider.persistence.entities.CommandExecutionImpl;
 import tr.org.liderahenk.lider.persistence.entities.CommandExecutionResultImpl;
 import tr.org.liderahenk.lider.persistence.entities.CommandImpl;
@@ -331,6 +333,11 @@ public class EntityFactoryImpl implements IEntityFactory {
 			}
 		}
 		return searchGroupImpl;
+	}
+
+	@Override
+	public IAgreementStatus createAgreementStatus(IAgent agent, String username, String md5, boolean accepted) {
+		return new AgreementStatusImpl(null, (AgentImpl) agent, username, md5, accepted, new Date());
 	}
 
 }

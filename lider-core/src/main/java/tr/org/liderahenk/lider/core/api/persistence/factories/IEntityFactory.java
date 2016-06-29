@@ -7,6 +7,7 @@ import java.util.Map;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IPolicyStatusMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.ITaskStatusMessage;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IAgent;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IAgreementStatus;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecution;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecutionResult;
@@ -271,5 +272,7 @@ public interface IEntityFactory {
 	IReportView createReportView(IReportView view, IReportViewRequest request, IReportTemplate template);
 
 	ISearchGroup createSearchGroup(ISearchGroupRequest request);
+
+	IAgreementStatus createAgreementStatus(IAgent agent, String username, String md5, boolean accepted);
 
 }

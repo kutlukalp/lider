@@ -51,7 +51,7 @@ public class UserSessionSubscriberImpl implements IUserSessionSubscriber {
 			}
 			// Merge records
 			agentDao.update(agent, message.getIpAddresses());
-			logger.info("Added user session detail to the agent: {}", agent);
+			logger.info("Added user session to the agent: {}", agent);
 		} else {
 			logger.warn("Couldn't find the agent with JID: {}", uid);
 		}

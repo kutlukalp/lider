@@ -2,7 +2,6 @@ package tr.org.liderahenk.lider.messaging.subscribers;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -33,14 +32,12 @@ public class MissingPluginSubscriberImpl implements IMissingPluginSubscriber {
 	private IPluginDao pluginDao;
 	private IConfigurationService configurationService;
 
-	private final static String DEB_FILE_FORMAT = "{0}_{1}_amd64.deb";
-
 	@Override
 	public ILiderMessage messageReceived(IMissingPluginMessage message) throws Exception {
 
 		IPlugin plugin = null;
 
-		// Find desired plugin
+		// Find desired plug-in
 		Map<String, Object> propertiesMap = new HashMap<String, Object>();
 		propertiesMap.put("name", message.getPluginName());
 		propertiesMap.put("version", message.getPluginVersion());
@@ -54,42 +51,14 @@ public class MissingPluginSubscriberImpl implements IMissingPluginSubscriber {
 			logger.warn("Missing plugin not found. Plugin name: {} version: {}", message.getPluginName(),
 					message.getPluginVersion());
 		} else {
-			appendDebFileName(plugin);
 			response = messageFactory.createInstallPluginMessage(message.getFrom(), message.getPluginName(),
-					message.getPluginVersion(), configurationService.getAgentPluginDistoParams(),
-					configurationService.getAgentPluginDistroProtocolEnum());
+					message.getPluginVersion(),
+					configurationService.getFileServerPluginParams(plugin.getName(), plugin.getVersion()),
+					configurationService.getFileServerProtocolEnum());
 			logger.info("Missing plugin found. Sending plugin installation info: {}", response);
 		}
 
 		return response;
-	}
-
-	/**
-	 * Append DEB file name to either URL or file path according to selected
-	 * distro protocol.
-	 * 
-	 * @param plugin
-	 */
-	private void appendDebFileName(IPlugin plugin) {
-		String debFileName = DEB_FILE_FORMAT.replace("{0}", plugin.getName().toLowerCase(Locale.ENGLISH)).replace("{1}",
-				plugin.getVersion());
-		switch (configurationService.getAgentPluginDistroProtocolEnum()) {
-		case HTTP:
-			String url = (String) configurationService.getAgentPluginDistoParams().get("url");
-			if (!url.endsWith("/"))
-				url += "/";
-			url += debFileName;
-			configurationService.getAgentPluginDistoParams().put("url", url);
-			break;
-		case SSH:
-			String path = (String) configurationService.getAgentPluginDistoParams().get("path");
-			if (!path.endsWith("/"))
-				path += "/";
-			path += debFileName;
-			configurationService.getAgentPluginDistoParams().put("path", path);
-		default:
-			break;
-		}
 	}
 
 	/**

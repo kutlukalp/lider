@@ -11,6 +11,7 @@ import tr.org.liderahenk.lider.core.api.messaging.messages.IInstallPluginMessage
 import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IPluginNotFoundMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IRequestFileMessage;
+import tr.org.liderahenk.lider.core.api.messaging.messages.IResponseAgreementMessage;
 import tr.org.liderahenk.lider.core.api.messaging.notifications.ITaskNotification;
 import tr.org.liderahenk.lider.core.api.messaging.notifications.ITaskStatusNotification;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
@@ -117,5 +118,16 @@ public interface IMessageFactory {
 	 * @return
 	 */
 	ITaskStatusNotification createTaskStatusNotification(String recipient, ICommandExecutionResult result);
+
+	/**
+	 * Create agreement response message
+	 * 
+	 * @param from
+	 * @param parameterMap
+	 * @param protocol
+	 * @return
+	 */
+	IResponseAgreementMessage createResponseAgreementMessage(String from, Map<String, Object> parameterMap,
+			Protocol protocol);
 
 }

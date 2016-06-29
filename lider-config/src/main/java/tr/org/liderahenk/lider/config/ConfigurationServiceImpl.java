@@ -525,7 +525,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		return fileServerProtocol != null ? fileServerProtocol.toString() : null;
 	}
 
-	public void setAgentPluginDistroProtocol(String fileServerProtocol) {
+	public void setFileServerProtocol(String fileServerProtocol) {
 		this.fileServerProtocol = fileServerProtocol != null
 				? Protocol.valueOf(fileServerProtocol.toUpperCase(Locale.ENGLISH)) : null;
 	}

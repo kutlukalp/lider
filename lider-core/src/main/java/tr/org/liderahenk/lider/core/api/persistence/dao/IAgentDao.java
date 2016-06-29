@@ -6,6 +6,7 @@ import java.util.Map;
 import tr.org.liderahenk.lider.core.api.persistence.IBaseDao;
 import tr.org.liderahenk.lider.core.api.persistence.PropertyOrder;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IAgent;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IAgreementStatus;
 
 /**
  * Provides agent database operations.
@@ -76,5 +77,11 @@ public interface IAgentDao extends IBaseDao<IAgent> {
 	 * @return
 	 */
 	Map<String, String> getProperties();
+
+	/**
+	 * 
+	 * @param agreementStatus
+	 */
+	void addAgreementStatus(IAgreementStatus agreementStatus);
 
 }

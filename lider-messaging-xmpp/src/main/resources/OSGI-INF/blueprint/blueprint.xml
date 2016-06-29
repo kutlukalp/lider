@@ -28,6 +28,8 @@
 		<property name="userSessionSubscriber" ref="userSessionSubscriber" />
 		<property name="missingPluginSubscriber" ref="missingPluginSubscriber" />
 		<property name="policySubscriber" ref="policySubscriber" />
+		<property name="reqAggrementSubscriber" ref="reqAggrementSubscriber" />
+		<property name="aggrementStatusSubscriber" ref="aggrementStatusSubscriber" />
 	</bean>
 
 	<service ref="defaultRegistrationSubscriber" interface="tr.org.liderahenk.lider.core.api.messaging.subscribers.IRegistrationSubscriber" />
@@ -58,6 +60,18 @@
 		<property name="messageFactory" ref="messageFactory" />
 		<property name="pluginDao" ref="pluginDao" />
 		<property name="configurationService" ref="configurationService" />
+	</bean>
+	
+	<bean id="reqAggrementSubscriber"
+		class="tr.org.liderahenk.lider.messaging.subscribers.RequestAgreementSubscriberImpl">
+		<property name="messageFactory" ref="messageFactory" />
+		<property name="configurationService" ref="configurationService" />
+	</bean>
+	
+	<bean id="aggrementStatusSubscriber"
+		class="tr.org.liderahenk.lider.messaging.subscribers.AgreementStatusSubscriberImpl">
+		<property name="agentDao" ref="agentDao" />
+		<property name="entityFactory" ref="entityFactory" />
 	</bean>
 
 	<reference-list id="presenceSubscribers"

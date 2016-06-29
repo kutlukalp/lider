@@ -37,13 +37,16 @@ import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
+import tr.org.liderahenk.lider.core.api.messaging.subscribers.IAgreementStatusSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IMissingPluginSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IPolicyStatusSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IPolicySubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IPresenceSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IRegistrationSubscriber;
+import tr.org.liderahenk.lider.core.api.messaging.subscribers.IRequestAgreementSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.ITaskStatusSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IUserSessionSubscriber;
+import tr.org.liderahenk.lider.messaging.listeners.AgreementStatusListener;
 import tr.org.liderahenk.lider.messaging.listeners.FileListener;
 import tr.org.liderahenk.lider.messaging.listeners.MissingPluginListener;
 import tr.org.liderahenk.lider.messaging.listeners.OnlineRosterListener;
@@ -51,6 +54,7 @@ import tr.org.liderahenk.lider.messaging.listeners.PacketListener;
 import tr.org.liderahenk.lider.messaging.listeners.PolicyListener;
 import tr.org.liderahenk.lider.messaging.listeners.PolicyStatusListener;
 import tr.org.liderahenk.lider.messaging.listeners.RegistrationListener;
+import tr.org.liderahenk.lider.messaging.listeners.RequestAgreementListener;
 import tr.org.liderahenk.lider.messaging.listeners.TaskStatusListener;
 import tr.org.liderahenk.lider.messaging.listeners.UserSessionListener;
 import tr.org.liderahenk.lider.messaging.listeners.XMPPConnectionListener;
@@ -93,6 +97,8 @@ public class XMPPClientImpl {
 	private UserSessionListener userSessionListener;
 	private MissingPluginListener missingPluginListener;
 	private PolicyListener policyListener;
+	private RequestAgreementListener reqAggrementListener;
+	private AgreementStatusListener aggrementStatusListener;
 
 	/**
 	 * Packet subscribers
@@ -104,6 +110,8 @@ public class XMPPClientImpl {
 	private IUserSessionSubscriber userSessionSubscriber;
 	private IMissingPluginSubscriber missingPluginSubscriber;
 	private IPolicySubscriber policySubscriber;
+	private IRequestAgreementSubscriber reqAggrementSubscriber;
+	private IAgreementStatusSubscriber aggrementStatusSubscriber;
 
 	/**
 	 * Lider services
@@ -260,7 +268,13 @@ public class XMPPClientImpl {
 		missingPluginListener = new MissingPluginListener(this);
 		missingPluginListener.setSubscriber(missingPluginSubscriber);
 		connection.addAsyncStanzaListener(missingPluginListener, missingPluginListener);
-
+		// Hook listener for agreement messages
+		reqAggrementListener = new RequestAgreementListener(this);
+		reqAggrementListener.setSubscriber(reqAggrementSubscriber);
+		connection.addAsyncStanzaListener(reqAggrementListener, reqAggrementListener);
+		aggrementStatusListener = new AgreementStatusListener();
+		aggrementStatusListener.setSubscriber(aggrementStatusSubscriber);
+		connection.addAsyncStanzaListener(aggrementStatusListener, aggrementStatusListener);
 		logger.debug("Successfully added listeners for connection: {}", connection.toString());
 	}
 
@@ -303,6 +317,8 @@ public class XMPPClientImpl {
 			connection.removeAsyncStanzaListener(missingPluginListener);
 			connection.removeAsyncStanzaListener(policyListener);
 			connection.removeAsyncStanzaListener(connectionListener);
+			connection.removeAsyncStanzaListener(reqAggrementListener);
+			connection.removeAsyncStanzaListener(aggrementStatusListener);
 			connection.removeConnectionListener(connectionListener);
 			Socks5BytestreamManager bytestreamManager = Socks5BytestreamManager.getBytestreamManager(connection);
 			bytestreamManager.removeIncomingBytestreamListener(fileListener);
@@ -597,6 +613,30 @@ public class XMPPClientImpl {
 		logger.info("Policy subscriber updated: {}", policySubscriber != null);
 		if (policyListener != null) {
 			policyListener.setSubscriber(policySubscriber);
+		}
+	}
+
+	/**
+	 * 
+	 * @param reqAggrementSubscriber
+	 */
+	public void setReqAggrementSubscriber(IRequestAgreementSubscriber reqAggrementSubscriber) {
+		this.reqAggrementSubscriber = reqAggrementSubscriber;
+		logger.info("Request agreement subscriber updated: {}", reqAggrementSubscriber != null);
+		if (reqAggrementListener != null) {
+			reqAggrementListener.setSubscriber(reqAggrementSubscriber);
+		}
+	}
+
+	/**
+	 * 
+	 * @param aggrementStatusSubscriber
+	 */
+	public void setAggrementStatusSubscriber(IAgreementStatusSubscriber aggrementStatusSubscriber) {
+		this.aggrementStatusSubscriber = aggrementStatusSubscriber;
+		logger.info("Agreement status subscriber updated: {}", aggrementStatusSubscriber != null);
+		if (aggrementStatusListener != null) {
+			aggrementStatusListener.setSubscriber(aggrementStatusSubscriber);
 		}
 	}
 

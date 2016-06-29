@@ -15,6 +15,7 @@ import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteTaskMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IInstallPluginMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IPluginNotFoundMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IRequestFileMessage;
+import tr.org.liderahenk.lider.core.api.messaging.messages.IResponseAgreementMessage;
 import tr.org.liderahenk.lider.core.api.messaging.notifications.ITaskNotification;
 import tr.org.liderahenk.lider.core.api.messaging.notifications.ITaskStatusNotification;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
@@ -28,6 +29,7 @@ import tr.org.liderahenk.lider.messaging.messages.ExecuteTaskMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.InstallPluginMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.PluginNotFoundMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.RequestFileMessageImpl;
+import tr.org.liderahenk.lider.messaging.messages.ResponseAgreementMessageImpl;
 import tr.org.liderahenk.lider.messaging.notifications.TaskNotificationImpl;
 import tr.org.liderahenk.lider.messaging.notifications.TaskStatusNotificationImpl;
 
@@ -94,6 +96,12 @@ public class MessageFactoryImpl implements IMessageFactory {
 		return new TaskStatusNotificationImpl(recipient, p.getName(), p.getVersion(),
 				result.getCommandExecution().getCommand().getTask().getCommandClsId(), result.getCommandExecution(),
 				result, new Date());
+	}
+
+	@Override
+	public IResponseAgreementMessage createResponseAgreementMessage(String from, Map<String, Object> parameterMap,
+			Protocol protocol) {
+		return new ResponseAgreementMessageImpl(from, parameterMap, protocol, new Date());
 	}
 
 }
