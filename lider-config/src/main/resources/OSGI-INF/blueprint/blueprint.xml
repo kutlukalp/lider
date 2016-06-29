@@ -64,12 +64,15 @@
 		<property name="mailSmtpWriteTimeout" value="${mail.smtp.writetimeout}" />
 		
 		<property name="hotDeploymentPath" value="${hot.deployment.path}" />
-		<property name="agentPluginDistroProtocol" value="${agent.plugin.distro.protocol}" />
-		<property name="agentPluginDistroHost" value="${agent.plugin.distro.host}" />
-		<property name="agentPluginDistroUsername" value="${agent.plugin.distro.username}" />
-		<property name="agentPluginDistroPassword" value="${agent.plugin.distro.password}" />
-		<property name="agentPluginDistroPath" value="${agent.plugin.distro.path}" />
-		<property name="agentPluginDistroUrl" value="${agent.plugin.distro.url}" />
+		
+		<property name="fileServerProtocol" value="${file.server.protocol}" />
+		<property name="fileServerHost" value="${file.server.host}" />
+		<property name="fileServerUsername" value="${file.server.username}" />
+		<property name="fileServerPassword" value="${file.server.password}" />
+		<property name="fileServerPluginPath" value="${file.server.plugin.path}" />
+		<property name="fileServerAgreementPath" value="${file.server.agreement.path}" />
+		<property name="fileServerAgentFilePath" value="${file.server.agent.file.path}" />
+		<property name="fileServerUrl" value="${file.server.url}" />
 	</bean>
 
 	<service ref="getSystemConfigCommand" interface="tr.org.liderahenk.lider.core.api.plugin.ICommand" />

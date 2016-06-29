@@ -82,14 +82,18 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 	private Integer mailSmtpTimeout;
 	private Integer mailSmtpWriteTimeout;
 
-	// Hot deployment & plugin distribution configuration
+	// Hot deployment configuration
 	private String hotDeploymentPath;
-	private Protocol agentPluginDistroProtocol;
-	private String agentPluginDistroHost;
-	private String agentPluginDistroUsername;
-	private String agentPluginDistroPassword;
-	private String agentPluginDistroPath;
-	private String agentPluginDistroUrl;
+
+	// File server configuration
+	private Protocol fileServerProtocol;
+	private String fileServerHost;
+	private String fileServerUsername;
+	private String fileServerPassword;
+	private String fileServerPluginPath;
+	private String fileServerAgreementPath;
+	private String fileServerAgentFilePath;
+	private String fileServerUrl;
 
 	public void refresh() {
 		logger.info("Configuration updated using blueprint: {}", prettyPrintConfig());
@@ -118,11 +122,11 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 				+ mailSmtpPort + ", mailSmtpAuth=" + mailSmtpAuth + ", mailSmtpStartTlsEnable=" + mailSmtpStartTlsEnable
 				+ ", mailSmtpSslEnable=" + mailSmtpSslEnable + ", mailSmtpConnTimeout=" + mailSmtpConnTimeout
 				+ ", mailSmtpTimeout=" + mailSmtpTimeout + ", mailSmtpWriteTimeout=" + mailSmtpWriteTimeout
-				+ ", hotDeploymentPath=" + hotDeploymentPath + ", agentPluginDistroProtocol="
-				+ agentPluginDistroProtocol + ", agentPluginDistroHost=" + agentPluginDistroHost
-				+ ", agentPluginDistroUsername=" + agentPluginDistroUsername + ", agentPluginDistroPassword="
-				+ agentPluginDistroPassword + ", agentPluginDistroPath=" + agentPluginDistroPath
-				+ ", agentPluginDistroUrl=" + agentPluginDistroUrl + "]";
+				+ ", hotDeploymentPath=" + hotDeploymentPath + ", fileServerProtocol=" + fileServerProtocol
+				+ ", fileServerHost=" + fileServerHost + ", fileServerUsername=" + fileServerUsername
+				+ ", fileServerPassword=" + fileServerPassword + ", fileServerPluginPath=" + fileServerPluginPath
+				+ ", fileServerAgreementPath=" + fileServerAgreementPath + ", fileServerAgentFilePath="
+				+ fileServerAgentFilePath + ", fileServerUrl=" + fileServerUrl + "]";
 	}
 
 	public String prettyPrintConfig() {
@@ -512,87 +516,127 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 	}
 
 	@Override
-	public Protocol getAgentPluginDistroProtocolEnum() {
-		return agentPluginDistroProtocol;
-	}
-	
-	@Override
-	public String getAgentPluginDistroProtocol() {
-		return agentPluginDistroProtocol != null ? agentPluginDistroProtocol.toString() : null;
-	}
-
-	public void setAgentPluginDistroProtocol(String agentPluginDistroProtocol) {
-		this.agentPluginDistroProtocol = agentPluginDistroProtocol != null
-				? Protocol.valueOf(agentPluginDistroProtocol.toUpperCase(Locale.ENGLISH)) : null;
+	public Protocol getFileServerProtocolEnum() {
+		return fileServerProtocol;
 	}
 
 	@Override
-	public String getAgentPluginDistroHost() {
-		return agentPluginDistroHost;
+	public String getFileServerProtocol() {
+		return fileServerProtocol != null ? fileServerProtocol.toString() : null;
 	}
 
-	public void setAgentPluginDistroHost(String agentPluginDistroHost) {
-		this.agentPluginDistroHost = agentPluginDistroHost;
-	}
-
-	@Override
-	public String getAgentPluginDistroUsername() {
-		return agentPluginDistroUsername;
-	}
-
-	public void setAgentPluginDistroUsername(String agentPluginDistroUsername) {
-		this.agentPluginDistroUsername = agentPluginDistroUsername;
+	public void setAgentPluginDistroProtocol(String fileServerProtocol) {
+		this.fileServerProtocol = fileServerProtocol != null
+				? Protocol.valueOf(fileServerProtocol.toUpperCase(Locale.ENGLISH)) : null;
 	}
 
 	@Override
-	public String getAgentPluginDistroPassword() {
-		return agentPluginDistroPassword;
-	}
-
-	public void setAgentPluginDistroPassword(String agentPluginDistroPassword) {
-		this.agentPluginDistroPassword = agentPluginDistroPassword;
-	}
-
-	@Override
-	public String getAgentPluginDistroPath() {
-		return agentPluginDistroPath;
-	}
-
-	public void setAgentPluginDistroPath(String agentPluginDistroPath) {
-		this.agentPluginDistroPath = agentPluginDistroPath;
-	}
-
-	@Override
-	public String getAgentPluginDistroUrl() {
-		return agentPluginDistroUrl;
-	}
-
-	public void setAgentPluginDistroUrl(String agentPluginDistroUrl) {
-		this.agentPluginDistroUrl = agentPluginDistroUrl;
-	}
-
-	@Override
-	public Map<String, Object> getAgentPluginDistoParams() {
+	public Map<String, Object> getFileServerPluginParams(String pluginName, String pluginVersion) {
 		Map<String, Object> params = new HashMap<String, Object>();
 		/*
 		 * If you change one of the parameter keys, DO NOT forget to change key
 		 * in MissingPluginSubscriberImpl.java as well
 		 */
-		switch (agentPluginDistroProtocol) {
+		switch (fileServerProtocol) {
 		case HTTP:
-			params.put("url", agentPluginDistroUrl);
+			String url = fileServerUrl + fileServerPluginPath;
+			params.put("url",
+					url.replaceFirst("{0}", pluginName.toLowerCase(Locale.ENGLISH).replaceFirst("{1}", pluginVersion)));
 			break;
 		case SSH:
-			params.put("host", agentPluginDistroHost);
-			params.put("username", agentPluginDistroUsername);
-			params.put("password", agentPluginDistroPassword);
-			params.put("path", agentPluginDistroPath);
+			params.put("host", fileServerHost);
+			params.put("username", fileServerUsername);
+			params.put("password", fileServerPassword);
+			params.put("path", fileServerPluginPath.toLowerCase(Locale.ENGLISH).replaceFirst("{1}", pluginVersion));
 			// TODO 'port' & 'publicKey'
 			break;
 		default:
 			// TODO TORRENT
 		}
 		return params;
+	}
+
+	@Override
+	public Map<String, Object> getFileServerAgreementParams() {
+		Map<String, Object> params = new HashMap<String, Object>();
+		switch (fileServerProtocol) {
+		case HTTP:
+			params.put("url", fileServerUrl + fileServerAgreementPath);
+			break;
+		case SSH:
+			params.put("host", fileServerHost);
+			params.put("username", fileServerUsername);
+			params.put("password", fileServerPassword);
+			params.put("path", fileServerAgreementPath);
+			// TODO 'port' & 'publicKey'
+			break;
+		default:
+			// TODO TORRENT
+		}
+		return params;
+	}
+
+	@Override
+	public String getFileServerHost() {
+		return fileServerHost;
+	}
+
+	public void setFileServerHost(String fileServerHost) {
+		this.fileServerHost = fileServerHost;
+	}
+
+	@Override
+	public String getFileServerUsername() {
+		return fileServerUsername;
+	}
+
+	public void setFileServerUsername(String fileServerUsername) {
+		this.fileServerUsername = fileServerUsername;
+	}
+
+	@Override
+	public String getFileServerPassword() {
+		return fileServerPassword;
+	}
+
+	public void setFileServerPassword(String fileServerPassword) {
+		this.fileServerPassword = fileServerPassword;
+	}
+
+	@Override
+	public String getFileServerPluginPath() {
+		return fileServerPluginPath;
+	}
+
+	public void setFileServerPluginPath(String fileServerPluginPath) {
+		this.fileServerPluginPath = fileServerPluginPath;
+	}
+
+	@Override
+	public String getFileServerAgreementPath() {
+		return fileServerAgreementPath;
+	}
+
+	public void setFileServerAgreementPath(String fileServerAgreementPath) {
+		this.fileServerAgreementPath = fileServerAgreementPath;
+	}
+
+	@Override
+	public String getFileServerAgentFilePath() {
+		return fileServerAgentFilePath;
+	}
+
+	public void setFileServerAgentFilePath(String fileServerAgentFilePath) {
+		this.fileServerAgentFilePath = fileServerAgentFilePath;
+	}
+
+	@Override
+	public String getFileServerUrl() {
+		return fileServerUrl;
+	}
+
+	public void setFileServerUrl(String fileServerUrl) {
+		this.fileServerUrl = fileServerUrl;
 	}
 
 	@Override

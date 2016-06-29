@@ -301,21 +301,27 @@ public interface IConfigurationService {
 	// Hot deployment & plugin distribution configuration
 	//
 
-	Protocol getAgentPluginDistroProtocolEnum();
+	Protocol getFileServerProtocolEnum();
 
-	String getAgentPluginDistroProtocol();
+	String getFileServerProtocol();
 
-	String getAgentPluginDistroHost();
+	Map<String, Object> getFileServerPluginParams(String pluginName, String pluginVersion);
 
-	String getAgentPluginDistroUsername();
+	Map<String, Object> getFileServerAgreementParams();
 
-	String getAgentPluginDistroPassword();
+	String getFileServerHost();
 
-	String getAgentPluginDistroPath();
+	String getFileServerUsername();
 
-	String getAgentPluginDistroUrl();
+	String getFileServerPassword();
 
-	Map<String, Object> getAgentPluginDistoParams();
+	String getFileServerUrl();
+
+	String getFileServerPluginPath();
+
+	String getFileServerAgreementPath();
+
+	String getFileServerAgentFilePath();
 
 	/**
 	 * 
