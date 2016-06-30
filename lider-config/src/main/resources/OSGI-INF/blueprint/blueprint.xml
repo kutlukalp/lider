@@ -67,6 +67,7 @@
 		
 		<property name="fileServerProtocol" value="${file.server.protocol}" />
 		<property name="fileServerHost" value="${file.server.host}" />
+		<property name="fileServerPort" value="${file.server.port}" />
 		<property name="fileServerUsername" value="${file.server.username}" />
 		<property name="fileServerPassword" value="${file.server.password}" />
 		<property name="fileServerPluginPath" value="${file.server.plugin.path}" />

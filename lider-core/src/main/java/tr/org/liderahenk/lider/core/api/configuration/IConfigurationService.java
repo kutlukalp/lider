@@ -323,6 +323,8 @@ public interface IConfigurationService {
 
 	String getFileServerAgentFilePath();
 
+	Integer getFileServerPort();
+
 	/**
 	 * 
 	 * @return hot deployment path which is used to hold plugin files.

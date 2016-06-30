@@ -94,6 +94,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 	private String fileServerAgreementPath;
 	private String fileServerAgentFilePath;
 	private String fileServerUrl;
+	private Integer fileServerPort;
 
 	public void refresh() {
 		logger.info("Configuration updated using blueprint: {}", prettyPrintConfig());
@@ -126,7 +127,8 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 				+ ", fileServerHost=" + fileServerHost + ", fileServerUsername=" + fileServerUsername
 				+ ", fileServerPassword=" + fileServerPassword + ", fileServerPluginPath=" + fileServerPluginPath
 				+ ", fileServerAgreementPath=" + fileServerAgreementPath + ", fileServerAgentFilePath="
-				+ fileServerAgentFilePath + ", fileServerUrl=" + fileServerUrl + "]";
+				+ fileServerAgentFilePath + ", fileServerUrl=" + fileServerUrl + ", fileServerPort=" + fileServerPort
+				+ "]";
 	}
 
 	public String prettyPrintConfig() {
@@ -548,6 +550,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 			params.put("username", fileServerUsername);
 			params.put("password", fileServerPassword);
 			params.put("path", fileServerPluginPath.toLowerCase(Locale.ENGLISH).replaceFirst("{1}", pluginVersion));
+			params.put("port", fileServerPort);
 			// TODO 'port' & 'publicKey'
 			break;
 		default:
@@ -568,6 +571,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 			params.put("username", fileServerUsername);
 			params.put("password", fileServerPassword);
 			params.put("path", fileServerAgreementPath);
+			params.put("port", fileServerPort);
 			// TODO 'port' & 'publicKey'
 			break;
 		default:
@@ -637,6 +641,15 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 
 	public void setFileServerUrl(String fileServerUrl) {
 		this.fileServerUrl = fileServerUrl;
+	}
+
+	@Override
+	public Integer getFileServerPort() {
+		return fileServerPort;
+	}
+
+	public void setFileServerPort(Integer fileServerPort) {
+		this.fileServerPort = fileServerPort;
 	}
 
 	@Override
