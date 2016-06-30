@@ -41,10 +41,10 @@ import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.caching.ICacheService;
 import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
+import tr.org.liderahenk.lider.core.api.exceptions.LdapException;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
 import tr.org.liderahenk.lider.core.api.ldap.LdapSearchFilterAttribute;
 import tr.org.liderahenk.lider.core.api.ldap.enums.SearchFilterEnum;
-import tr.org.liderahenk.lider.core.api.ldap.exception.LdapException;
 import tr.org.liderahenk.lider.core.api.rest.enums.DNType;
 import tr.org.liderahenk.lider.core.model.ldap.IUser;
 import tr.org.liderahenk.lider.core.model.ldap.IUserPrivilege;

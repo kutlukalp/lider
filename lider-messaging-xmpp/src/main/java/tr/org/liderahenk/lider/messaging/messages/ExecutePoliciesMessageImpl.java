@@ -6,6 +6,7 @@ import java.util.List;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import tr.org.liderahenk.lider.core.api.messaging.enums.LiderMessageType;
+import tr.org.liderahenk.lider.core.api.messaging.messages.FileServerConf;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecutePoliciesMessage;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
 
@@ -43,9 +44,11 @@ public class ExecutePoliciesMessageImpl implements IExecutePoliciesMessage {
 
 	private Date timestamp;
 
+	private FileServerConf fileServerConf;
+
 	public ExecutePoliciesMessageImpl(String recipient, String username, List<IProfile> userPolicyProfiles,
 			String userPolicyVersion, Long userCommandExecutionId, List<IProfile> agentPolicyProfiles,
-			String agentPolicyVersion, Long agentCommandExecutionId, Date timestamp) {
+			String agentPolicyVersion, Long agentCommandExecutionId, Date timestamp, FileServerConf fileServerConf) {
 		this.recipient = recipient;
 		this.username = username;
 		this.userPolicyProfiles = userPolicyProfiles;
@@ -55,6 +58,7 @@ public class ExecutePoliciesMessageImpl implements IExecutePoliciesMessage {
 		this.agentPolicyVersion = agentPolicyVersion;
 		this.agentCommandExecutionId = agentCommandExecutionId;
 		this.timestamp = timestamp;
+		this.fileServerConf = fileServerConf;
 	}
 
 	@Override
@@ -145,6 +149,15 @@ public class ExecutePoliciesMessageImpl implements IExecutePoliciesMessage {
 
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
+	}
+
+	@Override
+	public FileServerConf getFileServerConf() {
+		return fileServerConf;
+	}
+
+	public void setFileServerConf(FileServerConf fileServerConf) {
+		this.fileServerConf = fileServerConf;
 	}
 
 }

@@ -7,10 +7,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
+import tr.org.liderahenk.lider.core.api.exceptions.LdapException;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
 import tr.org.liderahenk.lider.core.api.ldap.LdapSearchFilterAttribute;
 import tr.org.liderahenk.lider.core.api.ldap.enums.SearchFilterEnum;
-import tr.org.liderahenk.lider.core.api.ldap.exception.LdapException;
 import tr.org.liderahenk.lider.core.api.messaging.IMessageFactory;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecutePoliciesMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IGetPoliciesMessage;
@@ -80,12 +80,32 @@ public class PolicySubscriberImpl implements IPolicySubscriber {
 		boolean sendAgentPolicy = agentPolicy != null && agentPolicy.getPolicyVersion() != null
 				&& !agentPolicy.getPolicyVersion().equalsIgnoreCase(agentPolicyVersion);
 
+		// Check if one of the plugins use file transfer
+		boolean usesFileTransfer = false;
+		if (sendUserPolicy) {
+			for (IProfile profile : userPolicy.getProfiles()) {
+				if (profile.getPlugin() != null && profile.getPlugin().isUsesFileTransfer()) {
+					usesFileTransfer = true;
+					break;
+				}
+			}
+		}
+		if (!usesFileTransfer && sendAgentPolicy) {
+			for (IProfile profile : agentPolicy.getProfiles()) {
+				if (profile.getPlugin() != null && profile.getPlugin().isUsesFileTransfer()) {
+					usesFileTransfer = true;
+					break;
+				}
+			}
+		}
+
 		// Create message
 		IExecutePoliciesMessage response = messageFactory.createExecutePoliciesMessage(null, userUid,
 				sendUserPolicy ? new ArrayList<IProfile>(userPolicy.getProfiles()) : null,
 				userPolicy != null ? userPolicy.getPolicyVersion() : null, userCommandExecutionId,
 				sendAgentPolicy ? new ArrayList<IProfile>(agentPolicy.getProfiles()) : null,
-				agentPolicy != null ? agentPolicy.getPolicyVersion() : null, agentCommandExecutionId);
+				agentPolicy != null ? agentPolicy.getPolicyVersion() : null, agentCommandExecutionId,
+				usesFileTransfer ? configurationService.getFileServerConf(agentUid) : null);
 		logger.debug("Execute policies message: {}", response);
 		return response;
 	}
@@ -113,8 +133,7 @@ public class PolicySubscriberImpl implements IPolicySubscriber {
 		List<LdapSearchFilterAttribute> filterAttributesList = new ArrayList<LdapSearchFilterAttribute>();
 		String[] groupLdapObjectClasses = configurationService.getGroupLdapObjectClasses().split(",");
 		for (String groupObjCls : groupLdapObjectClasses) {
-			filterAttributesList
-					.add(new LdapSearchFilterAttribute("objectClass", groupObjCls, SearchFilterEnum.EQ));
+			filterAttributesList.add(new LdapSearchFilterAttribute("objectClass", groupObjCls, SearchFilterEnum.EQ));
 		}
 		filterAttributesList.add(new LdapSearchFilterAttribute("member", userDn, SearchFilterEnum.EQ));
 		return ldapService.search(configurationService.getLdapRootDn(), filterAttributesList, null);

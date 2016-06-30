@@ -64,9 +64,12 @@ public class PluginImpl implements IPlugin {
 
 	@Column(name = "POLICY_PLUGIN")
 	private boolean policyPlugin;
-	
+
 	@Column(name = "TASK_PLUGIN")
 	private boolean taskPlugin;
+
+	@Column(name = "USES_FILE_TRANSFER")
+	private boolean usesFileTransfer;
 
 	@Column(name = "X_BASED")
 	private boolean xBased;
@@ -86,8 +89,8 @@ public class PluginImpl implements IPlugin {
 	}
 
 	public PluginImpl(Long id, String name, String version, String description, boolean active, boolean deleted,
-			boolean machineOriented, boolean userOriented, boolean policyPlugin, boolean taskPlugin, boolean xBased,
-			List<ProfileImpl> profiles, Date createDate, Date modifyDate) {
+			boolean machineOriented, boolean userOriented, boolean policyPlugin, boolean taskPlugin,
+			boolean usesFileTransfer, boolean xBased, List<ProfileImpl> profiles, Date createDate, Date modifyDate) {
 		this.id = id;
 		this.name = name;
 		this.version = version;
@@ -98,6 +101,7 @@ public class PluginImpl implements IPlugin {
 		this.userOriented = userOriented;
 		this.policyPlugin = policyPlugin;
 		this.taskPlugin = taskPlugin;
+		this.usesFileTransfer = usesFileTransfer;
 		this.xBased = xBased;
 		this.profiles = profiles;
 		this.createDate = createDate;
@@ -115,6 +119,7 @@ public class PluginImpl implements IPlugin {
 		this.userOriented = plugin.isUserOriented();
 		this.policyPlugin = plugin.isPolicyPlugin();
 		this.taskPlugin = plugin.isTaskPlugin();
+		this.usesFileTransfer = plugin.isUsesFileTransfer();
 		this.xBased = plugin.isxBased();
 		this.createDate = plugin.getCreateDate();
 		this.modifyDate = plugin.getModifyDate();
@@ -262,12 +267,22 @@ public class PluginImpl implements IPlugin {
 		this.modifyDate = modifyDate;
 	}
 
+	@Override
 	public boolean isTaskPlugin() {
 		return taskPlugin;
 	}
 
 	public void setTaskPlugin(boolean taskPlugin) {
 		this.taskPlugin = taskPlugin;
+	}
+
+	@Override
+	public boolean isUsesFileTransfer() {
+		return usesFileTransfer;
+	}
+
+	public void setUsesFileTransfer(boolean usesFileTransfer) {
+		this.usesFileTransfer = usesFileTransfer;
 	}
 
 	@Override
@@ -286,7 +301,8 @@ public class PluginImpl implements IPlugin {
 		return "PluginImpl [id=" + id + ", name=" + name + ", version=" + version + ", description=" + description
 				+ ", active=" + active + ", deleted=" + deleted + ", machineOriented=" + machineOriented
 				+ ", userOriented=" + userOriented + ", policyPlugin=" + policyPlugin + ", taskPlugin=" + taskPlugin
-				+ ", profiles=" + profiles + ", createDate=" + createDate + ", modifyDate=" + modifyDate + "]";
+				+ ", xBased=" + xBased + ", usesFileTransfer=" + usesFileTransfer + ", profiles=" + profiles
+				+ ", createDate=" + createDate + ", modifyDate=" + modifyDate + "]";
 	}
 
 }

@@ -5,6 +5,7 @@ import java.util.Date;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import tr.org.liderahenk.lider.core.api.messaging.enums.LiderMessageType;
+import tr.org.liderahenk.lider.core.api.messaging.messages.FileServerConf;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteTaskMessage;
 
 /**
@@ -26,11 +27,13 @@ public class ExecuteTaskMessageImpl implements IExecuteTaskMessage {
 
 	private Date timestamp;
 
-	public ExecuteTaskMessageImpl(String task, String recipient, Date timestamp) {
-		super();
+	private FileServerConf fileServerConf;
+
+	public ExecuteTaskMessageImpl(String task, String recipient, Date timestamp, FileServerConf fileServerConf) {
 		this.task = task;
 		this.recipient = recipient;
 		this.timestamp = timestamp;
+		this.fileServerConf = fileServerConf;
 	}
 
 	@Override
@@ -67,6 +70,15 @@ public class ExecuteTaskMessageImpl implements IExecuteTaskMessage {
 
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
+	}
+
+	@Override
+	public FileServerConf getFileServerConf() {
+		return fileServerConf;
+	}
+
+	public void setFileServerConf(FileServerConf fileServerConf) {
+		this.fileServerConf = fileServerConf;
 	}
 
 }

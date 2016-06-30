@@ -3,6 +3,7 @@ package tr.org.liderahenk.lider.core.api.configuration;
 import java.util.Map;
 
 import tr.org.liderahenk.lider.core.api.messaging.enums.Protocol;
+import tr.org.liderahenk.lider.core.api.messaging.messages.FileServerConf;
 
 /**
  * 
@@ -324,6 +325,8 @@ public interface IConfigurationService {
 	String getFileServerAgentFilePath();
 
 	Integer getFileServerPort();
+
+	FileServerConf getFileServerConf(String jid);
 
 	/**
 	 * 

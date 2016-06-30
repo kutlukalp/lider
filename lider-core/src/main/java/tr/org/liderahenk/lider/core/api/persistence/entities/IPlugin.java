@@ -59,12 +59,18 @@ public interface IPlugin extends IEntity {
 	 * @return true if this plugin can be used in a policy, false otherwise
 	 */
 	boolean isPolicyPlugin();
-	
+
 	/**
 	 * 
 	 * @return true if this plugin can be used in a task, false otherwise
 	 */
 	boolean isTaskPlugin();
+
+	/**
+	 * 
+	 * @return true if this plugin uses file transfer, false otherwise
+	 */
+	boolean isUsesFileTransfer();
 
 	/**
 	 * 

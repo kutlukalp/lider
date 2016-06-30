@@ -43,7 +43,7 @@ public interface IPluginInfo {
 	 * @return true if profiles of this plugin can be used in a policy.
 	 */
 	Boolean getPolicyPlugin();
-	
+
 	/**
 	 * 
 	 * @return true if profiles of this plugin can be used in a task.
@@ -55,5 +55,11 @@ public interface IPluginInfo {
 	 * @return true if the plugin needs/uses X
 	 */
 	Boolean getXbased();
+
+	/**
+	 * 
+	 * @return true if the plugin uses file transfer, false otherwise.
+	 */
+	Boolean usesFileTransfer();
 
 }

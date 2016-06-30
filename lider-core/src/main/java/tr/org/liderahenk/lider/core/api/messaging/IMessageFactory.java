@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import tr.org.liderahenk.lider.core.api.messaging.enums.Protocol;
+import tr.org.liderahenk.lider.core.api.messaging.messages.FileServerConf;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecutePoliciesMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteScriptMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteTaskMessage;
@@ -32,9 +33,10 @@ public interface IMessageFactory {
 	 * 
 	 * @param task
 	 * @param jid
+	 * @param fileServerConf
 	 * @return
 	 */
-	IExecuteTaskMessage createExecuteTaskMessage(ITask task, String jid);
+	IExecuteTaskMessage createExecuteTaskMessage(ITask task, String jid, FileServerConf fileServerConf);
 
 	/**
 	 * Create script execution message from provided file path and recipient.
@@ -70,11 +72,13 @@ public interface IMessageFactory {
 	 * @param agentPolicyProfiles
 	 * @param agentPolicyVersion
 	 * @param agentCommandExecutionId
+	 * @param fileServerConf
 	 * @return
 	 */
 	IExecutePoliciesMessage createExecutePoliciesMessage(String recipient, String username,
 			List<IProfile> userPolicyProfiles, String userPolicyVersion, Long userCommandExecutionId,
-			List<IProfile> agentPolicyProfiles, String agentPolicyVersion, Long agentCommandExecutionId);
+			List<IProfile> agentPolicyProfiles, String agentPolicyVersion, Long agentCommandExecutionId,
+			FileServerConf fileServerConf);
 
 	/**
 	 * Create plugin not found message for specified plugin name-version

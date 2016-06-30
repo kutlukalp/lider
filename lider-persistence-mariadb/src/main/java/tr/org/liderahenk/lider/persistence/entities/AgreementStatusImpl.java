@@ -39,7 +39,7 @@ public class AgreementStatusImpl implements IAgreementStatus {
 	@Column(name = "USERNAME", nullable = false)
 	private String username;
 
-	@Column(name = "MD5", nullable = false)
+	@Column(name = "MD5", nullable = true)
 	private String md5;
 
 	@Column(name = "ACCEPTED", nullable = false)
@@ -126,8 +126,8 @@ public class AgreementStatusImpl implements IAgreementStatus {
 
 	@Override
 	public String toString() {
-		return "AgreementStatusImpl [id=" + id + ", username=" + username + ", accepted=" + accepted + ", createDate="
-				+ createDate + "]";
+		return "AgreementStatusImpl [id=" + id + ", agent=" + agent + ", username=" + username + ", md5=" + md5
+				+ ", accepted=" + accepted + ", createDate=" + createDate + "]";
 	}
 
 }

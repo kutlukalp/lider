@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.messaging.IMessageFactory;
 import tr.org.liderahenk.lider.core.api.messaging.enums.Protocol;
+import tr.org.liderahenk.lider.core.api.messaging.messages.FileServerConf;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecutePoliciesMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteScriptMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteTaskMessage;
@@ -45,14 +46,14 @@ public class MessageFactoryImpl implements IMessageFactory {
 	private static Logger logger = LoggerFactory.getLogger(MessageFactoryImpl.class);
 
 	@Override
-	public IExecuteTaskMessage createExecuteTaskMessage(ITask task, String jid) {
+	public IExecuteTaskMessage createExecuteTaskMessage(ITask task, String jid, FileServerConf fileServerConf) {
 		String taskJsonString = null;
 		try {
 			taskJsonString = task.toJson();
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
-		return new ExecuteTaskMessageImpl(taskJsonString, jid, new Date());
+		return new ExecuteTaskMessageImpl(taskJsonString, jid, new Date(), fileServerConf);
 	}
 
 	@Override
@@ -68,9 +69,9 @@ public class MessageFactoryImpl implements IMessageFactory {
 	@Override
 	public IExecutePoliciesMessage createExecutePoliciesMessage(String recipient, String username,
 			List<IProfile> userPolicyProfiles, String userPolicyVersion, Long userCommandExecutionId,
-			List<IProfile> agentPolicyProfiles, String agentPolicyVersion, Long agentCommandExecutionId) {
+			List<IProfile> agentPolicyProfiles, String agentPolicyVersion, Long agentCommandExecutionId, FileServerConf fileServerConf) {
 		return new ExecutePoliciesMessageImpl(recipient, username, userPolicyProfiles, userPolicyVersion,
-				userCommandExecutionId, agentPolicyProfiles, agentPolicyVersion, agentCommandExecutionId, new Date());
+				userCommandExecutionId, agentPolicyProfiles, agentPolicyVersion, agentCommandExecutionId, new Date(), fileServerConf);
 	}
 
 	@Override

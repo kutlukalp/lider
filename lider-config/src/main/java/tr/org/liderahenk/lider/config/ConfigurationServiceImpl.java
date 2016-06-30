@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.messaging.enums.Protocol;
+import tr.org.liderahenk.lider.core.api.messaging.messages.FileServerConf;
 
 /**
  * This class provides configurations throughout the system. Configurations are
@@ -535,10 +536,6 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 	@Override
 	public Map<String, Object> getFileServerPluginParams(String pluginName, String pluginVersion) {
 		Map<String, Object> params = new HashMap<String, Object>();
-		/*
-		 * If you change one of the parameter keys, DO NOT forget to change key
-		 * in MissingPluginSubscriberImpl.java as well
-		 */
 		switch (fileServerProtocol) {
 		case HTTP:
 			String url = fileServerUrl + fileServerPluginPath;
@@ -551,7 +548,6 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 			params.put("password", fileServerPassword);
 			params.put("path", fileServerPluginPath.toLowerCase(Locale.ENGLISH).replaceFirst("{1}", pluginVersion));
 			params.put("port", fileServerPort);
-			// TODO 'port' & 'publicKey'
 			break;
 		default:
 			// TODO TORRENT
@@ -572,12 +568,31 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 			params.put("password", fileServerPassword);
 			params.put("path", fileServerAgreementPath);
 			params.put("port", fileServerPort);
-			// TODO 'port' & 'publicKey'
 			break;
 		default:
 			// TODO TORRENT
 		}
 		return params;
+	}
+
+	@Override
+	public FileServerConf getFileServerConf(String jid) {
+		Map<String, Object> params = new HashMap<String, Object>();
+		switch (fileServerProtocol) {
+		case HTTP:
+			params.put("url", fileServerUrl + fileServerAgentFilePath);
+			break;
+		case SSH:
+			params.put("host", fileServerHost);
+			params.put("username", fileServerUsername);
+			params.put("password", fileServerPassword);
+			params.put("path", fileServerAgentFilePath.replaceFirst("{0}", jid));
+			params.put("port", fileServerPort);
+			break;
+		default:
+			// TODO TORRENT
+		}
+		return new FileServerConf(params, fileServerProtocol);
 	}
 
 	@Override
