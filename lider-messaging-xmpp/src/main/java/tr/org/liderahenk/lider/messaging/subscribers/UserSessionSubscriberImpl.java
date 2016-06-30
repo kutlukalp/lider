@@ -46,7 +46,8 @@ public class UserSessionSubscriberImpl implements IUserSessionSubscriber {
 			IUserSession userSession = entityFactory.createUserSession(message.getUsername(),
 					getSessionEvent(message.getType()));
 			agent.addUserSession(userSession);
-			if (message.getIpAddresses() == null || message.getIpAddresses().isEmpty()) {
+			if (message.getType() == AgentMessageType.LOGIN
+					&& (message.getIpAddresses() == null || message.getIpAddresses().isEmpty())) {
 				logger.warn("Couldn't find IP addresses of the agent with JID: {}", uid);
 			}
 			// Merge records
