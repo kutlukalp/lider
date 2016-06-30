@@ -2,6 +2,8 @@ package tr.org.liderahenk.lider.core.api.plugin;
 
 import java.util.Date;
 
+import org.codehaus.jackson.map.ObjectMapper;
+
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateColumn;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateParameter;
@@ -38,6 +40,17 @@ public abstract class BaseReportTemplate implements IReportTemplate {
 
 	@Override
 	public void addTemplateColumn(IReportTemplateColumn column) {
+	}
+	
+	@Override
+	public String toJson() {
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			return mapper.writeValueAsString(this);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }

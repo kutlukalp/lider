@@ -4,8 +4,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.codehaus.jackson.map.ObjectMapper;
-
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateColumn;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateParameter;
@@ -30,12 +28,11 @@ public class UserSessionReportTemplateImpl extends BaseReportTemplate {
 
 	@Override
 	public String getQuery() {
-		return  "SELECT a.id, a.jid, us.username, us.createDate, a.ipAddresses, a.dn " +
-				"  FROM UserSessionImpl us INNER JOIN us.agent a" +
-				" WHERE us.sessionEvent = 1 " +
-				"	AND NOT EXISTS (select 1 from UserSessionImpl logout where logout.sessionEvent = 2 and logout.agent = us.agent " +
-				" 			and logout.username = us.username and logout.createDate > us.createDate)" +
-				" ORDER BY us.createDate, us.username";
+		return "SELECT a.id, a.jid, us.username, us.createDate, a.ipAddresses, a.dn "
+				+ "  FROM UserSessionImpl us INNER JOIN us.agent a" + " WHERE us.sessionEvent = 1 "
+				+ "	AND NOT EXISTS (select 1 from UserSessionImpl logout where logout.sessionEvent = 2 and logout.agent = us.agent "
+				+ " 			and logout.username = us.username and logout.createDate > us.createDate)"
+				+ " ORDER BY us.createDate, us.username";
 	}
 
 	@Override
@@ -52,22 +49,22 @@ public class UserSessionReportTemplateImpl extends BaseReportTemplate {
 			public Date getCreateDate() {
 				return new Date();
 			}
-			
+
 			@Override
 			public IReportTemplate getTemplate() {
 				return getSelf();
 			}
-			
+
 			@Override
 			public String getName() {
 				return "Sıra No.";
 			}
-			
+
 			@Override
 			public Long getId() {
 				return null;
 			}
-			
+
 			@Override
 			public Integer getColumnOrder() {
 				return 1;
@@ -178,17 +175,6 @@ public class UserSessionReportTemplateImpl extends BaseReportTemplate {
 			}
 		});
 		return columns;
-	}
-
-	@Override
-	public String toJson() {
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			return mapper.writeValueAsString(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
 	}
 
 	protected UserSessionReportTemplateImpl getSelf() {
