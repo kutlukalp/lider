@@ -10,6 +10,8 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
+import org.jivesoftware.smack.ReconnectionManager;
+import org.jivesoftware.smack.ReconnectionManager.ReconnectionPolicy;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.SmackException.NoResponseException;
@@ -121,7 +123,6 @@ public class XMPPClientImpl {
 
 	private XMPPTCPConnection connection;
 	private XMPPTCPConnectionConfiguration config;
-	private MultiUserChatManager mucManager;
 
 	public void init() {
 		logger.info("XMPP service initialization is started");
@@ -215,8 +216,13 @@ public class XMPPClientImpl {
 	 * Configure XMPP connection to use provided ping timeout and reply timeout.
 	 */
 	private void setServerSettings() {
+		// Enable auto-connect
+		ReconnectionManager.getInstanceFor(connection).enableAutomaticReconnection();
+		// Set reconnection policy to increasing delay
+		ReconnectionManager.getInstanceFor(connection)
+				.setReconnectionPolicy(ReconnectionPolicy.RANDOM_INCREASING_DELAY);
+		// Set ping interval
 		PingManager.getInstanceFor(connection).setPingInterval(pingTimeout);
-		mucManager = MultiUserChatManager.getInstanceFor(connection);
 		// Specifies when incoming message delivery receipt requests
 		// should be automatically acknowledged with a receipt.
 		DeliveryReceiptManager.getInstanceFor(connection).setAutoReceiptMode(AutoReceiptMode.always);
@@ -419,7 +425,7 @@ public class XMPPClientImpl {
 	 * @return
 	 */
 	public MultiUserChat createRoom(String roomJid, String nickName) {
-		MultiUserChat muc = mucManager.getMultiUserChat(roomJid);
+		MultiUserChat muc = MultiUserChatManager.getInstanceFor(connection).getMultiUserChat(roomJid);
 		try {
 			muc.create(nickName);
 			muc.sendConfigurationForm(new Form(DataForm.Type.submit));
