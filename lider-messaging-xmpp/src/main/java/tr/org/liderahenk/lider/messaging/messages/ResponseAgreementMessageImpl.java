@@ -83,4 +83,10 @@ public class ResponseAgreementMessageImpl implements IResponseAgreementMessage {
 		this.timestamp = timestamp;
 	}
 
+	@Override
+	public String toString() {
+		return "ResponseAgreementMessageImpl [type=" + type + ", recipient=" + recipient + ", parameterMap="
+				+ parameterMap + ", protocol=" + protocol + ", timestamp=" + timestamp + "]";
+	}
+
 }

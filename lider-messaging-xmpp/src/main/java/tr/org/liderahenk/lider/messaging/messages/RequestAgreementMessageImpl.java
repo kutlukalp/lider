@@ -51,4 +51,9 @@ public class RequestAgreementMessageImpl implements IRequestAgreementMessage {
 		this.timestamp = timestamp;
 	}
 
+	@Override
+	public String toString() {
+		return "RequestAgreementMessageImpl [type=" + type + ", from=" + from + ", timestamp=" + timestamp + "]";
+	}
+
 }

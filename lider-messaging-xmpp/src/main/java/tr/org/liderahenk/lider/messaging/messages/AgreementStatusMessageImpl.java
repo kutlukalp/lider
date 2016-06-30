@@ -84,4 +84,10 @@ public class AgreementStatusMessageImpl implements IAgreementStatusMessage {
 		this.timestamp = timestamp;
 	}
 
+	@Override
+	public String toString() {
+		return "AgreementStatusMessageImpl [type=" + type + ", from=" + from + ", accepted=" + accepted + ", username="
+				+ username + ", md5=" + md5 + ", timestamp=" + timestamp + "]";
+	}
+
 }
