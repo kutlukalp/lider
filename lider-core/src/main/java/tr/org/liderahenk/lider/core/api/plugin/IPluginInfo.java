@@ -60,6 +60,6 @@ public interface IPluginInfo {
 	 * 
 	 * @return true if the plugin uses file transfer, false otherwise.
 	 */
-	Boolean usesFileTransfer();
+	Boolean getUsesFileTransfer();
 
 }
