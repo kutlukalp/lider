@@ -1,9 +1,5 @@
 package tr.org.liderahenk.lider.taskmanager;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -45,6 +41,7 @@ import tr.org.liderahenk.lider.core.api.rest.enums.DNType;
 import tr.org.liderahenk.lider.core.api.rest.requests.ITaskRequest;
 import tr.org.liderahenk.lider.core.api.taskmanager.ITaskManager;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskSubmissionFailedException;
+import tr.org.liderahenk.lider.core.api.utils.FileCopyUtils;
 import tr.org.liderahenk.lider.core.model.ldap.IUser;
 import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
@@ -118,7 +115,6 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 						messagingService.sendMessage(message);
 					}
 
-					// TODO improvement. Use batch if possible!
 					commandDao.save(execution);
 					executions.add(execution);
 				}
@@ -154,9 +150,10 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 	public void messageReceived(ITaskStatusMessage message) throws Exception {
 		if (message != null) {
 			logger.debug("Task manager received message from {}", message.getFrom());
+			String jid = message.getFrom().split("@")[0];
 
 			// Find related agent
-			List<? extends IAgent> agents = agentDao.findByProperty(null, "jid", message.getFrom().split("@")[0], 1);
+			List<? extends IAgent> agents = agentDao.findByProperty(null, "jid", jid, 1);
 			if (agents != null) {
 
 				IAgent agent = agents.get(0);
@@ -172,18 +169,14 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 					if (ContentType.getFileContentTypes().contains(message.getContentType())) {
 						// Agent must have sent a file before this message! Find
 						// the file by its MD5 digest.
-						String path = getFileReceivePath(message.getFrom(),
-								message.getResponseData().get("md5").toString());
-						File file = new File(path);
-						int i = 0;
-						while (!file.exists()) {
-							Thread.sleep(100);
-							if (i > 1000) {
-								throw new RuntimeException("XMPP File transfer error. File=" + file.getAbsolutePath());
-							}
-							i++;
-						}
-						byte[] data = read(file);
+						String filePath = configurationService.getFileServerAgentFilePath().replace("\\{0\\}", jid);
+						if (!filePath.endsWith("/"))
+							filePath += "/";
+						filePath += message.getResponseData().get("md5").toString();
+						byte[] data = new FileCopyUtils().copyFile(configurationService.getFileServerHost(),
+								configurationService.getFileServerPort(), configurationService.getFileServerUsername(),
+								configurationService.getFileServerPassword(), filePath, "/tmp/lider");
+
 						result = entityFactory.createCommandExecutionResult(message, data, commandExecution,
 								agent.getId());
 					} else {
@@ -210,24 +203,6 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 				}
 			}
 		}
-	}
-
-	private byte[] read(File file) throws Exception {
-		byte[] buffer = new byte[(int) file.length()];
-		InputStream ios = null;
-		try {
-			ios = new FileInputStream(file);
-			if (ios.read(buffer) == -1) {
-				throw new IOException("EOF reached while trying to read the whole file");
-			}
-		} finally {
-			try {
-				if (ios != null)
-					ios.close();
-			} catch (IOException e) {
-			}
-		}
-		return buffer;
 	}
 
 	/**
@@ -263,23 +238,6 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 			return plugins.get(0);
 		}
 		return null;
-	}
-
-	/**
-	 * Get file path from ${xmpp.file.path}/${jid}/${filename}
-	 * 
-	 * @param fullJid
-	 * @param filename
-	 * @return full file path built from jid and filename.
-	 * @see tr.org.liderahenk.lider.core.api.configuration.IConfigurationService#getXmppFilePath()
-	 */
-	private String getFileReceivePath(String fullJid, String filename) {
-		String path = configurationService.getXmppFilePath();
-		if (!path.endsWith(File.separator)) {
-			path += File.separator;
-		}
-		path += fullJid.split("@")[0] + File.separator + filename;
-		return path;
 	}
 
 	/*
