@@ -540,13 +540,13 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		case HTTP:
 			String url = fileServerUrl + fileServerPluginPath;
 			params.put("url",
-					url.replaceFirst("{0}", pluginName.toLowerCase(Locale.ENGLISH).replaceFirst("{1}", pluginVersion)));
+					url.replaceFirst("\\{0\\}", pluginName.toLowerCase(Locale.ENGLISH).replaceFirst("\\{1\\}", pluginVersion)));
 			break;
 		case SSH:
 			params.put("host", fileServerHost);
 			params.put("username", fileServerUsername);
 			params.put("password", fileServerPassword);
-			params.put("path", fileServerPluginPath.toLowerCase(Locale.ENGLISH).replaceFirst("{1}", pluginVersion));
+			params.put("path", fileServerPluginPath.toLowerCase(Locale.ENGLISH).replaceFirst("\\{1\\}", pluginVersion));
 			params.put("port", fileServerPort);
 			break;
 		default:
@@ -586,7 +586,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 			params.put("host", fileServerHost);
 			params.put("username", fileServerUsername);
 			params.put("password", fileServerPassword);
-			params.put("path", fileServerAgentFilePath.replaceFirst("{0}", jid));
+			params.put("path", fileServerAgentFilePath.replaceFirst("\\{0\\}", jid));
 			params.put("port", fileServerPort);
 			break;
 		default:
