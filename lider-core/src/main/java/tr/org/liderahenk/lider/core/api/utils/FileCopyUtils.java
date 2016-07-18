@@ -5,8 +5,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 
 import org.slf4j.Logger;
@@ -35,22 +33,18 @@ public class FileCopyUtils {
 			System.out.println("Unexpected error occurred during execution: " + errorMessage);
 			return null;
 		}
+		logger.debug("Created target directory");
 
 		// Copy file
-		String[] cmd = new String[] { "rsync", "-az", "-e",
-				"ssh -q -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -oPubkeyAuthentication=no -p "
-						+ (port != null ? port : DEFAULT_PORT),
+		String[] cmd = new String[] { "rsync", "-az",
+				"--rsh=/usr/bin/sshpass -p " + password + " /usr/bin/ssh -p " + (port != null ? port : DEFAULT_PORT)
+						+ " -oUserKnownHostsFile=/dev/null -oPubkeyAuthentication=no -oStrictHostKeyChecking=no -l "
+						+ username,
 				username + "@" + host + ":" + filePath, destPath };
 		builder = new ProcessBuilder(cmd);
 		process = builder.start();
-		OutputStream outputStream = process.getOutputStream();
+
 		errorStream = process.getErrorStream();
-
-		// Pass password into command
-		if (outputStream != null && password != null) {
-			outputStream.write(password.getBytes(StandardCharsets.UTF_8));
-		}
-
 		exitValue = process.waitFor();
 		if (exitValue != 0) {
 			String errorMessage = read(errorStream);
@@ -67,6 +61,7 @@ public class FileCopyUtils {
 
 		File file = new File(path);
 		byte[] data = read(file);
+		logger.debug("File bytes received: {}", data != null ? data.length : 0);
 
 		return data;
 	}
@@ -112,11 +107,12 @@ public class FileCopyUtils {
 	}
 
 	public static void main(String[] args) {
-		String filePath = "/tmp/oner.txt";
+		String filePath = "/home/volkan/LICENSE";
 		try {
 			byte[] data = new FileCopyUtils().copyFile("192.168.1.121", new Integer(22), "volkan", "volkan5644",
-					filePath, "/tmp/lider");
-			System.out.println("DATA:" + new String(data));
+					filePath, "/tmp/");
+			if (data != null)
+				System.out.println("DATA:" + new String(data));
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (InterruptedException e) {
