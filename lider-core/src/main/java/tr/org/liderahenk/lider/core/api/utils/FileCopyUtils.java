@@ -106,18 +106,4 @@ public class FileCopyUtils {
 		return result.toString("UTF-8");
 	}
 
-	public static void main(String[] args) {
-		String filePath = "/home/volkan/LICENSE";
-		try {
-			byte[] data = new FileCopyUtils().copyFile("192.168.1.121", new Integer(22), "volkan", "volkan5644",
-					filePath, "/tmp/");
-			if (data != null)
-				System.out.println("DATA:" + new String(data));
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-
 }

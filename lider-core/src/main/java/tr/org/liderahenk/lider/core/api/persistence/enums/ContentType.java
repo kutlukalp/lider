@@ -49,7 +49,7 @@ public enum ContentType {
 
 	public static List<ContentType> getFileContentTypes() {
 		return Arrays.asList(new ContentType[] { APPLICATION_PDF, APPLICATION_VND_MS_EXCEL, APPLICATION_MS_WORD,
-				IMAGE_PNG, IMAGE_JPEG });
+				IMAGE_PNG, IMAGE_JPEG, TEXT_PLAIN, TEXT_HTML });
 	}
 
 }
