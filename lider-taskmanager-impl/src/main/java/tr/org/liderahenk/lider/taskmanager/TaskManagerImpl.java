@@ -169,7 +169,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 					if (ContentType.getFileContentTypes().contains(message.getContentType())) {
 						// Agent must have sent a file before this message! Find
 						// the file by its MD5 digest.
-						String filePath = configurationService.getFileServerAgentFilePath().replace("\\{0\\}", jid);
+						String filePath = configurationService.getFileServerAgentFilePath().replaceFirst("\\{0\\}", jid);
 						if (!filePath.endsWith("/"))
 							filePath += "/";
 						filePath += message.getResponseData().get("md5").toString();
