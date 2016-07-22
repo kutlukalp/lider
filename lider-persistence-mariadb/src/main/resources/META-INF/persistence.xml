@@ -35,6 +35,7 @@
 			<!-- Print only ERROR logs in production! -->
 			<!-- <property name="openjpa.Log" value="DefaultLevel=ERROR, Runtime=ERROR, 
 				Tool=ERROR, SQL=ERROR" /> -->
+			<property name="openjpa.jdbc.DBDictionary" value="blobTypeName=LONGBLOB"/>
 		</properties>
 	</persistence-unit>
 </persistence>
