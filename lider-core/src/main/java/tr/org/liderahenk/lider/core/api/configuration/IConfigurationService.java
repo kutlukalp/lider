@@ -132,6 +132,14 @@ public interface IConfigurationService {
 	 * @return true if XMPP uses SSL, false otherwise.
 	 */
 	Boolean getXmppUseSsl();
+	
+	
+	/**
+	 * 
+	 * @return true if XMPP uses Custom Trust Manager, false otherwise.
+	 */
+	
+	Boolean getXmppUseCustomSsl();
 
 	/**
 	 * 
