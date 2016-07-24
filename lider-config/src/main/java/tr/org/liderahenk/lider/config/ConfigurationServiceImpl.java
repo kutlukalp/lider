@@ -50,6 +50,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 	private int xmppPacketReplayTimeout;
 	private Integer xmppPingTimeout;
 	private Boolean xmppUseSsl;
+	private Boolean xmppUseCustomSsl;
 	private String xmppFilePath;
 
 	// Agent configuration
@@ -674,6 +675,14 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 
 	public void setHotDeploymentPath(String hotDeploymentPath) {
 		this.hotDeploymentPath = hotDeploymentPath;
+	}
+
+	public Boolean getXmppUseCustomSsl() {
+		return xmppUseCustomSsl;
+	}
+
+	public void setXmppUseCustomSsl(Boolean xmppUseCustomSsl) {
+		this.xmppUseCustomSsl = xmppUseCustomSsl;
 	}
 
 }
