@@ -25,31 +25,27 @@
 	<dependencies>
 
 
+
+
 		<dependency>
 			<groupId>tr.org.liderahenk</groupId>
 			<artifactId>lider-core</artifactId>
 			<version>${lider.version}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>tr.org.liderahenk</groupId>
 			<artifactId>lider-ldap-impl</artifactId>
 			<version>${lider.version}</version>
+			<scope>test</scope>
 		</dependency>
-		
 		<dependency>
 			<groupId>tr.org.liderahenk</groupId>
 			<artifactId>lider-messaging-xmpp</artifactId>
 			<version>${lider.version}</version>
-		</dependency>
-
-
-
-		<dependency>
-			<groupId>javax.inject</groupId>
-			<artifactId>javax.inject</artifactId>
-			<version>1</version>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>tr.org.liderahenk</groupId>
 			<artifactId>lider-pax-test</artifactId>
@@ -81,7 +77,6 @@
 			<artifactId>lider-embedded-xmpp</artifactId>
 			<version>${lider.test.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.apache.karaf.shell</groupId>
 			<artifactId>org.apache.karaf.shell.core</artifactId>
@@ -116,6 +111,13 @@
 			<version>${version.pax-exam}</version>
 			<scope>test</scope>
 		</dependency>
+
+
+
+
+
+
+
 	</dependencies>
 
 	<build>
@@ -171,7 +173,7 @@
 								<phase>test-compile</phase>
 								<configuration>
 									<tasks>
-										<echo taskname="embeddedservers" message="Starting Embedded Servers..." />
+										<echo taskname="fitnesse" message="Starting Server..." />
 										<java classname="embedded.liderahenk.resources.BuildTestEnvironment"
 											fork="true" failonerror="true" classpathref="maven.runtime.classpath">
 											<jvmarg value="-Xmx1024m" />

@@ -2,9 +2,15 @@ package tr.org.liderahenk.lider.messaging;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -154,9 +160,15 @@ public class XMPPClientImpl {
 	 * Configures XMPP connection parameters.
 	 */
 	private void createXmppTcpConfiguration() {
-		config = XMPPTCPConnectionConfiguration.builder().setServiceName(serviceName).setHost(host).setPort(port)
-				.setSecurityMode(configurationService.getXmppUseSsl() ? SecurityMode.required : SecurityMode.disabled)
-				.setDebuggerEnabled(logger.isDebugEnabled()).build();
+		if (configurationService.getXmppUseCustomSsl()){
+			config = XMPPTCPConnectionConfiguration.builder().setServiceName(serviceName).setHost(host).setPort(port)
+					.setSecurityMode(configurationService.getXmppUseSsl() ? SecurityMode.required : SecurityMode.disabled)
+					.setDebuggerEnabled(logger.isDebugEnabled()).setCustomSSLContext(createCustomSslContext()).build();
+		}else {
+			config = XMPPTCPConnectionConfiguration.builder().setServiceName(serviceName).setHost(host).setPort(port)
+					.setSecurityMode(configurationService.getXmppUseSsl() ? SecurityMode.required : SecurityMode.disabled)
+					.setDebuggerEnabled(logger.isDebugEnabled()).build();
+		}
 		logger.debug("XMPP configuration finished: {}", config.toString());
 	}
 
@@ -525,6 +537,43 @@ public class XMPPClientImpl {
 		}
 		return jidFinal;
 	}
+	
+	
+	/***
+	 * 
+	 * @return custom ssl context with x509 trust manager. 
+	 */
+	
+	public SSLContext createCustomSslContext(){
+		try {
+			SSLContext sslContext = SSLContext.getInstance("TLS");
+	        TrustManager tm = new X509TrustManager() {
+	            @Override
+	            public void checkClientTrusted(X509Certificate[] x509Certificates, String s)
+	                throws CertificateException {
+	            }
+
+	            @Override
+	            public void checkServerTrusted(X509Certificate[] x509Certificates, String s)
+	                throws CertificateException {
+	            }
+
+	            @Override
+	            public X509Certificate[] getAcceptedIssuers() {
+	                return new X509Certificate[0];
+	            }
+	        };
+	        sslContext.init(null, new TrustManager[] {tm}, null);
+	        
+	        return sslContext;
+	        
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+		return null;
+	}
+	
+	
 
 	/**
 	 * 
