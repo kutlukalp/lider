@@ -35,9 +35,9 @@ public enum DNType {
 		if (id == null) {
 			return null;
 		}
-		for (DNType position : DNType.values()) {
-			if (id.equals(position.getId())) {
-				return position;
+		for (DNType type : DNType.values()) {
+			if (id.equals(type.getId())) {
+				return type;
 			}
 		}
 		throw new IllegalArgumentException("No matching type for id: " + id);
