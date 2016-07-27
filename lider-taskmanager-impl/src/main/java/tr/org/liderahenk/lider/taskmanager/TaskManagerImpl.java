@@ -166,7 +166,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 							DNType.AHENK);
 
 					ICommandExecutionResult result = null;
-					if (ContentType.getFileContentTypes().contains(message.getContentType()) && message.getContentType()!=ContentType.APPLICATION_JSON) {
+					if (ContentType.getFileContentTypes().contains(message.getContentType())) {
 						// Agent must have sent a file before this message! Find
 						// the file by its MD5 digest.
 						String filePath = configurationService.getFileServerAgentFilePath().replaceFirst("\\{0\\}", jid);
