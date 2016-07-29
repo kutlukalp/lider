@@ -50,10 +50,10 @@ public class AgentController {
 	@ResponseBody
 	public IRestResponse listAgents(@RequestParam(value = "hostname", required = false) String hostname,
 			@RequestParam(value = "dn", required = false) String dn, HttpServletRequest request)
-					throws UnsupportedEncodingException {
+			throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/agent/list?hostname={}&dn={}'", new Object[] { hostname, dn });
 		IRestResponse restResponse = agentProcessor.list(hostname, dn);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
@@ -71,7 +71,23 @@ public class AgentController {
 			throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/agent/{}/get'", id);
 		IRestResponse restResponse = agentProcessor.get(id);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
+		return restResponse;
+	}
+
+	/**
+	 * List online users of an agent specified by DN.
+	 * 
+	 * @param dn
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/{dn}/onlineusers", method = { RequestMethod.GET })
+	@ResponseBody
+	public IRestResponse getOnlineUsers(@PathVariable final String dn, HttpServletRequest request) {
+		logger.info("Request received. URL: '/lider/agent/{}/onlineusers'", dn);
+		IRestResponse restResponse = agentProcessor.getOnlineUsers(dn);
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 

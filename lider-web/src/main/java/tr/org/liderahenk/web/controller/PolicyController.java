@@ -55,7 +55,7 @@ public class PolicyController {
 		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
 		logger.info("Request received. URL: '/lider/policy/execute' Body: {}", requestBodyDecoded);
 		IRestResponse restResponse = policyProcessor.execute(requestBodyDecoded);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
@@ -74,7 +74,7 @@ public class PolicyController {
 		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
 		logger.info("Request received. URL: '/lider/policy/add' Body: {}", requestBodyDecoded);
 		IRestResponse restResponse = policyProcessor.add(requestBodyDecoded);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
@@ -93,7 +93,7 @@ public class PolicyController {
 		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
 		logger.info("Request received. URL: '/lider/policy/update' Body: {}", requestBodyDecoded);
 		IRestResponse restResponse = policyProcessor.update(requestBodyDecoded);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
@@ -113,7 +113,7 @@ public class PolicyController {
 			HttpServletRequest request) throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/policy/list?label={}&active={}'", new Object[] { label, active });
 		IRestResponse restResponse = policyProcessor.list(label, active);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
@@ -131,7 +131,7 @@ public class PolicyController {
 			throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/policy/{}/get'", id);
 		IRestResponse restResponse = policyProcessor.get(id);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
@@ -149,7 +149,7 @@ public class PolicyController {
 			throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/policy/{}/delete'", id);
 		IRestResponse restResponse = policyProcessor.delete(id);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
@@ -180,7 +180,7 @@ public class PolicyController {
 		IRestResponse restResponse = policyProcessor.listAppliedPolicies(label,
 				createDateRangeStart != null ? new Date(createDateRangeStart) : null,
 				createDateRangeEnd != null ? new Date(createDateRangeEnd) : null, status, maxResults);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
@@ -198,7 +198,7 @@ public class PolicyController {
 			throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/policy/command/{}/get'", id);
 		IRestResponse restResponse = policyProcessor.listCommands(id);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 

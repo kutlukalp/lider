@@ -53,7 +53,7 @@ public class ProfileController {
 		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
 		logger.info("Request received. URL: '/lider/profile/add' Body: {}", requestBodyDecoded);
 		IRestResponse restResponse = profileProcessor.add(requestBodyDecoded);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
@@ -72,7 +72,7 @@ public class ProfileController {
 		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
 		logger.info("Request received. URL: '/lider/profile/update' Body: {}", requestBodyDecoded);
 		IRestResponse restResponse = profileProcessor.update(requestBodyDecoded);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
@@ -97,7 +97,7 @@ public class ProfileController {
 		logger.info("Request received. URL: '/lider/profile/list?pluginName={}&pluginVersion={}&label={}&active={}'",
 				new Object[] { pluginName, pluginVersion, label, active });
 		IRestResponse restResponse = profileProcessor.list(pluginName, pluginVersion, label, active);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
@@ -115,7 +115,7 @@ public class ProfileController {
 			throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/profile/{}/get'", id);
 		IRestResponse restResponse = profileProcessor.get(id);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
@@ -133,7 +133,7 @@ public class ProfileController {
 			throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/profile/{}/delete'", id);
 		IRestResponse restResponse = profileProcessor.delete(id);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 

@@ -53,7 +53,7 @@ public class SearchGroupController {
 		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
 		logger.info("Request received. URL: '/lider/searchgroup/add' Body: {}", requestBodyDecoded);
 		IRestResponse restResponse = searchGroupProcessor.add(requestBodyDecoded);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
@@ -73,7 +73,7 @@ public class SearchGroupController {
 		logger.info("Request received. URL: '/lider/searchgroup/list?name={}&maxResults={}'",
 				new Object[] { name, maxResults });
 		IRestResponse restResponse = searchGroupProcessor.list(name, maxResults);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
@@ -91,7 +91,7 @@ public class SearchGroupController {
 			throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/searchgroup/{}/get'", id);
 		IRestResponse restResponse = searchGroupProcessor.get(id);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
@@ -109,7 +109,7 @@ public class SearchGroupController {
 			throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/searchgroup/{}/delete'", id);
 		IRestResponse restResponse = searchGroupProcessor.delete(id);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 

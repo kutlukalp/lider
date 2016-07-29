@@ -44,7 +44,7 @@ public class TaskController {
 	public IRestResponse executeTask(@RequestBody String requestBody, HttpServletRequest request)
 			throws UnsupportedEncodingException {
 		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
-		logger.debug("Request received. URL: '/lider/task/execute' Body: {}", requestBodyDecoded);
+		logger.info("Request received. URL: '/lider/task/execute' Body: {}", requestBodyDecoded);
 		IRestResponse restResponse = taskProcessor.execute(requestBodyDecoded);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
@@ -71,15 +71,15 @@ public class TaskController {
 			@RequestParam(value = "createDateRangeEnd", required = false) Long createDateRangeEnd,
 			@RequestParam(value = "status", required = false) Integer status,
 			@RequestParam(value = "maxResults", required = false) Integer maxResults, HttpServletRequest request)
-					throws UnsupportedEncodingException {
-		logger.info(
+			throws UnsupportedEncodingException {
+		logger.debug(
 				"Request received. URL: '/lider/task/list/executed?pluginName={}&pluginVersion={}&createDateRangeStart={}&createDateRangeEnd={}&status={}&maxResults={}'",
 				new Object[] { pluginName, pluginVersion, createDateRangeStart, createDateRangeEnd, status,
 						maxResults });
 		IRestResponse restResponse = taskProcessor.listExecutedTasks(pluginName, pluginVersion,
 				createDateRangeStart != null ? new Date(createDateRangeStart) : null,
 				createDateRangeEnd != null ? new Date(createDateRangeEnd) : null, status, maxResults);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
@@ -97,7 +97,7 @@ public class TaskController {
 			throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/task/command/{}/get'", id);
 		IRestResponse restResponse = taskProcessor.getCommand(id);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
@@ -107,7 +107,7 @@ public class TaskController {
 			HttpServletRequest request) throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/task/command/list?maxResults={}'", maxResults);
 		IRestResponse restResponse = taskProcessor.listCommands(maxResults);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 

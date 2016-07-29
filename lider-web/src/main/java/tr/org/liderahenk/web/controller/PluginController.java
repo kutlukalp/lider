@@ -53,7 +53,7 @@ public class PluginController {
 					throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/plugin/list?name={}&version={}'", new Object[] { name, version });
 		IRestResponse restResponse = pluginProcessor.list(name, version);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
@@ -71,7 +71,7 @@ public class PluginController {
 			throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/plugin/{}/get'", id);
 		IRestResponse restResponse = pluginProcessor.get(id);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 

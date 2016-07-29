@@ -53,7 +53,7 @@ public class ReportController {
 		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
 		logger.info("Request received. URL: '/lider/report/template/validate' Body: {}", requestBodyDecoded);
 		IRestResponse restResponse = reportProcessor.validateTemplate(requestBodyDecoded);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
@@ -72,7 +72,7 @@ public class ReportController {
 		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
 		logger.info("Request received. URL: '/lider/report/template/add' Body: {}", requestBodyDecoded);
 		IRestResponse restResponse = reportProcessor.addTemplate(requestBodyDecoded);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
@@ -91,7 +91,7 @@ public class ReportController {
 		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
 		logger.info("Request received. URL: '/lider/report/template/update' Body: {}", requestBodyDecoded);
 		IRestResponse restResponse = reportProcessor.updateTemplate(requestBodyDecoded);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
@@ -110,7 +110,7 @@ public class ReportController {
 			HttpServletRequest request) throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/report/template/list?name={}'", name);
 		IRestResponse restResponse = reportProcessor.listTemplates(name);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
@@ -128,7 +128,7 @@ public class ReportController {
 			throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/report/template/{}/get'", id);
 		IRestResponse restResponse = reportProcessor.getTemplate(id);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
@@ -146,7 +146,7 @@ public class ReportController {
 			throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/report/template/{}/delete'", id);
 		IRestResponse restResponse = reportProcessor.deleteTemplate(id);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
@@ -165,7 +165,7 @@ public class ReportController {
 		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
 		logger.info("Request received. URL: '/lider/report/view/generate' Body: {}", requestBodyDecoded);
 		IRestResponse restResponse = reportProcessor.generateView(requestBodyDecoded);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
@@ -184,7 +184,7 @@ public class ReportController {
 		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
 		logger.info("Request received. URL: '/lider/report/view/add' Body: {}", requestBodyDecoded);
 		IRestResponse restResponse = reportProcessor.addView(requestBodyDecoded);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
@@ -203,7 +203,7 @@ public class ReportController {
 		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
 		logger.info("Request received. URL: '/lider/report/view/update' Body: {}", requestBodyDecoded);
 		IRestResponse restResponse = reportProcessor.updateView(requestBodyDecoded);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
@@ -222,7 +222,7 @@ public class ReportController {
 			HttpServletRequest request) throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/report/view/list?name={}'", name);
 		IRestResponse restResponse = reportProcessor.listViews(name);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
@@ -240,7 +240,7 @@ public class ReportController {
 			throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/report/view/{}/get'", id);
 		IRestResponse restResponse = reportProcessor.getView(id);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
@@ -258,7 +258,7 @@ public class ReportController {
 			throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/report/view/{}/delete'", id);
 		IRestResponse restResponse = reportProcessor.deleteView(id);
-		logger.info("Completed processing request, returning result: {}", restResponse.toJson());
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
 
