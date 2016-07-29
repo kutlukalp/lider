@@ -202,6 +202,25 @@ public class AgentDaoImpl implements IAgentDao {
 		}
 		return properties;
 	}
+	
+	private static final String FIND_ONLINE_USERS = 
+			"SELECT DISTINCT us.username "
+			+ "FROM UserSessionImpl us "
+			+ "INNER JOIN us.agent a "
+			+ "WHERE a.dn = :dn AND us.sessionEvent = 1 AND NOT EXISTS "
+			+ "(SELECT 1 FROM UserSessionImpl logout "
+			+ "WHERE logout.sessionEvent = 2 and logout.agent = us.agent "
+			+ "AND logout.username = us.username AND logout.createDate > us.createDate) "
+			+ "ORDER BY us.createDate, us.username";
+	
+	@Override
+	public List<String> findOnlineUsers(String dn) {
+		Query query = entityManager.createQuery(FIND_ONLINE_USERS);
+		query.setParameter("dn", dn);
+		@SuppressWarnings("unchecked")
+		List<String> resultList = query.getResultList();
+		return resultList;
+	}
 
 	public void setEntityManager(EntityManager entityManager) {
 		this.entityManager = entityManager;

@@ -24,4 +24,11 @@ public interface IAgentRequestProcessor {
 	 */
 	IRestResponse get(Long id);
 
+	/**
+	 * 
+	 * @param dn
+	 * @return
+	 */
+	IRestResponse getOnlineUsers(String dn);
+
 }

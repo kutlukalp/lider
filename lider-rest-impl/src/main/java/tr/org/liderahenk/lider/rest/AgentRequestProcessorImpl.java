@@ -65,6 +65,26 @@ public class AgentRequestProcessorImpl implements IAgentRequestProcessor {
 		return responseFactory.createResponse(RestResponseStatus.OK, "Record retrieved.", resultMap);
 	}
 
+	@Override
+	public IRestResponse getOnlineUsers(String dn) {
+		if (dn == null) {
+			throw new IllegalArgumentException("DN was null.");
+		}
+		// Find online users
+		List<String> onlineUsers = agentDao.findOnlineUsers(dn);
+		logger.debug("Found online users: {}", onlineUsers);
+
+		// Construct result map
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			resultMap.put("onlineUsers", new ObjectMapper().writeValueAsString(onlineUsers));
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+
+		return responseFactory.createResponse(RestResponseStatus.OK, "Records listed.", resultMap);
+	}
+
 	public void setAgentDao(IAgentDao agentDao) {
 		this.agentDao = agentDao;
 	}

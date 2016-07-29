@@ -84,4 +84,11 @@ public interface IAgentDao extends IBaseDao<IAgent> {
 	 */
 	void addAgreementStatus(IAgreementStatus agreementStatus);
 
+	/**
+	 * 
+	 * @param dn
+	 * @return
+	 */
+	List<String> findOnlineUsers(String dn);
+
 }
