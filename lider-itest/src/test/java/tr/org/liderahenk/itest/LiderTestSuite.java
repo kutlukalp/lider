@@ -6,7 +6,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 
 @RunWith(Suite.class)
-@SuiteClasses({LdapImplTest.class,FeatureListTest.class,MessagingTest.class})
+@SuiteClasses({LdapServiceIntegrationTest.class,FeatureListTest.class,MessagingServiceIntegrationTest.class})
 public class LiderTestSuite {
 
 }
