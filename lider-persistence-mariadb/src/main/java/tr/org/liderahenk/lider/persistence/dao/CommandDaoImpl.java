@@ -199,6 +199,13 @@ public class CommandDaoImpl implements ICommandDao {
 		return executionImpl;
 	}
 
+	@Override
+	public ICommandExecutionResult findExecutionResult(Long id) {
+		CommandExecutionResultImpl resultImpl = entityManager.find(CommandExecutionResultImpl.class, id);
+		logger.debug("CommandExecutionResultImpl object found: {}", resultImpl.toString());
+		return resultImpl;
+	}
+
 	private static final String FIND_TASK_COMMAND_WITH_DETAILS = "SELECT t, "
 			+ "SUM(CASE WHEN cer.responseCode = :resp_success then 1 ELSE 0 END) as success, "
 			+ "SUM(CASE WHEN cer.responseCode = :resp_received THEN 1 ELSE 0 END) as received, "
@@ -376,16 +383,11 @@ public class CommandDaoImpl implements ICommandDao {
 
 		return resultList;
 	}
-	
-	private static final String FIND_TASK_COMMANDS = 
-			"SELECT DISTINCT c "
-			+ "FROM CommandImpl c "
-			+ "LEFT JOIN c.commandExecutions ce "
-			+ "LEFT JOIN ce.commandExecutionResults cer "
-			+ "INNER JOIN c.task t "
-			+ "INNER JOIN t.plugin p "
-			+ "ORDER BY t.createDate DESC";
-	
+
+	private static final String FIND_TASK_COMMANDS = "SELECT DISTINCT c " + "FROM CommandImpl c "
+			+ "LEFT JOIN c.commandExecutions ce " + "LEFT JOIN ce.commandExecutionResults cer " + "INNER JOIN c.task t "
+			+ "INNER JOIN t.plugin p " + "ORDER BY t.createDate DESC";
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<? extends ICommand> findTaskCommands(Integer maxResults) {
@@ -395,7 +397,7 @@ public class CommandDaoImpl implements ICommandDao {
 		}
 		return (List<CommandImpl>) query.getResultList();
 	}
-	
+
 	@Override
 	public ICommandExecutionResult save(ICommandExecutionResult result) throws Exception {
 		CommandExecutionResultImpl resultImpl = new CommandExecutionResultImpl(result);

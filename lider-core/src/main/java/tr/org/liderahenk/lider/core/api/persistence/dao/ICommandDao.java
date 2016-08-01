@@ -136,4 +136,11 @@ public interface ICommandDao extends IBaseDao<ICommand> {
 	 */
 	List<? extends ICommand> findTaskCommands(Integer maxResults);
 
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
+	ICommandExecutionResult findExecutionResult(Long id);
+
 }

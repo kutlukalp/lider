@@ -102,6 +102,13 @@ public class EntityFactoryImpl implements IEntityFactory {
 	}
 
 	@Override
+	public ICommandExecutionResult createCommandExecutionResult(ITaskStatusMessage message, Long resultId,
+			ICommandExecution commandExecution, Long agentId) {
+		return new CommandExecutionResultImpl(resultId, (CommandExecutionImpl) commandExecution, agentId,
+				message.getResponseCode(), message.getResponseMessage(), null, message.getContentType(), new Date());
+	}
+
+	@Override
 	public IOperationLog createLog(String userId, CrudType crudType, Long taskId, Long policyId, Long profileId,
 			String message, byte[] requestData, String requestIp) {
 		return new OperationLogImpl(null, userId, crudType, taskId, policyId, profileId, message, requestData,

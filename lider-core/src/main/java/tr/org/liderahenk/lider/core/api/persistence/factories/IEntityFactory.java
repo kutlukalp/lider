@@ -275,4 +275,7 @@ public interface IEntityFactory {
 
 	IAgreementStatus createAgreementStatus(IAgent agent, String username, String md5, boolean accepted);
 
+	ICommandExecutionResult createCommandExecutionResult(ITaskStatusMessage message, Long resultId,
+			ICommandExecution commandExecution, Long agentId);
+
 }

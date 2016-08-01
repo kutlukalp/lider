@@ -169,7 +169,8 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 					if (ContentType.getFileContentTypes().contains(message.getContentType())) {
 						// Agent must have sent a file before this message! Find
 						// the file by its MD5 digest.
-						String filePath = configurationService.getFileServerAgentFilePath().replaceFirst("\\{0\\}", jid);
+						String filePath = configurationService.getFileServerAgentFilePath().replaceFirst("\\{0\\}",
+								jid);
 						if (!filePath.endsWith("/"))
 							filePath += "/";
 						filePath += message.getResponseData().get("md5").toString();
@@ -187,13 +188,21 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 
 					try {
 						// Save command execution with result
-						commandDao.save(result);
+						result = commandDao.save(result);
 						// Throw an event if the task processing finished
 						if (StatusCode.getTaskEndingStates().contains(message.getResponseCode())) {
 							Dictionary<String, Object> payload = new Hashtable<String, Object>();
 							// Task status message
 							payload.put("message", message);
-							// Resulting execution result
+							if (ContentType.getFileContentTypes().contains(message.getContentType())) {
+								// If result contains a file, ignore the file
+								// (we should not use XMPP for file transfer!)
+								// Instead, Lider Console can query the file by
+								// its result ID.
+								result = entityFactory.createCommandExecutionResult(message, result.getId(),
+										commandExecution, agent.getId());
+							}
+							// Execution result
 							payload.put("result", result);
 							eventAdmin.postEvent(new Event(LiderConstants.EVENTS.TASK_STATUS_RECEIVED, payload));
 						}
