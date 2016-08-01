@@ -33,9 +33,9 @@ public class ExecutedTaskReportTemplateImpl extends BaseReportTemplate {
 	@Override
 	public String getQuery() {
 		return "SELECT p.name, p.version, t.commandClsId, t.createDate, "
-				+ "SUM(CASE WHEN cer.responseCode = :resp_success then 1 ELSE 0 END) as success, "
-				+ "SUM(CASE WHEN cer.responseCode = :resp_received THEN 1 ELSE 0 END) as received, "
-				+ "SUM(CASE WHEN cer.responseCode = :resp_error then 1 ELSE 0 END) as error "
+				+ "SUM(CASE WHEN cer.responseCode = 6 then 1 ELSE 0 END) as success, "
+				+ "SUM(CASE WHEN cer.responseCode = 5 THEN 1 ELSE 0 END) as received, "
+				+ "SUM(CASE WHEN cer.responseCode = 8 then 1 ELSE 0 END) as error "
 				+ "FROM CommandImpl c LEFT JOIN c.commandExecutions ce LEFT JOIN ce.commandExecutionResults cer INNER JOIN c.task t INNER JOIN t.plugin p "
 				+ "WHERE p.name LIKE :pluginName AND p.version LIKE :pluginVersion GROUP BY p.name, p.version, t.commandClsId, t.createDate";
 	}
