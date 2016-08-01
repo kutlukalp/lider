@@ -111,6 +111,16 @@ public class TaskController {
 		return restResponse;
 	}
 
+	@RequestMapping(value = "/responsedata/{id:[\\d]+}/get", method = { RequestMethod.GET })
+	@ResponseBody
+	public IRestResponse getResponseData(@PathVariable final Long id, HttpServletRequest request)
+			throws UnsupportedEncodingException {
+		logger.info("Request received. URL: '/lider/task/responsedata/{}/get'", id);
+		IRestResponse restResponse = taskProcessor.getResponseData(id);
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
+		return restResponse;
+	}
+
 	/**
 	 * Handle predefined exceptions that we did not write and did not throw.
 	 * 

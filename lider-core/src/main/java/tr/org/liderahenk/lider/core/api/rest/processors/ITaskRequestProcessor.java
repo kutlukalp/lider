@@ -46,4 +46,11 @@ public interface ITaskRequestProcessor {
 	 */
 	IRestResponse listCommands(Integer maxResults);
 
+	/**
+	 * 
+	 * @param commandExecutionResultId
+	 * @return
+	 */
+	IRestResponse getResponseData(Long commandExecutionResultId);
+
 }

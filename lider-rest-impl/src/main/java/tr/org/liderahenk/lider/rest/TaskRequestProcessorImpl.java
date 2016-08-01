@@ -18,6 +18,7 @@ import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
 import tr.org.liderahenk.lider.core.api.persistence.dao.ICommandDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
+import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecutionResult;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 import tr.org.liderahenk.lider.core.api.rest.IRequestFactory;
 import tr.org.liderahenk.lider.core.api.rest.IResponseFactory;
@@ -184,6 +185,26 @@ public class TaskRequestProcessorImpl implements ITaskRequestProcessor {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		try {
 			resultMap.put("commands", new ObjectMapper().writeValueAsString(commands));
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+
+		return responseFactory.createResponse(RestResponseStatus.OK, "Records listed.", resultMap);
+	}
+
+	@Override
+	public IRestResponse getResponseData(Long commandExecutionResultId) {
+		if (commandExecutionResultId == null) {
+			throw new IllegalArgumentException("ID was null.");
+		}
+
+		// Try to find execution result
+		ICommandExecutionResult executionResult = commandDao.findExecutionResult(commandExecutionResultId);
+
+		// Construct result map
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			resultMap.put("responseData", new ObjectMapper().writeValueAsString(executionResult.getResponseData()));
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
