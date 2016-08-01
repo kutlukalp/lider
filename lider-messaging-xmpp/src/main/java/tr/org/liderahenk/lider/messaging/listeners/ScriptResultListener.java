@@ -12,30 +12,35 @@ import org.jivesoftware.smack.packet.Stanza;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tr.org.liderahenk.lider.core.api.messaging.subscribers.IAgreementStatusSubscriber;
-import tr.org.liderahenk.lider.messaging.messages.AgreementStatusMessageImpl;
+import tr.org.liderahenk.lider.core.api.messaging.subscribers.IScriptResultSubscriber;
+import tr.org.liderahenk.lider.messaging.messages.ScriptResultMessageImpl;
 
-public class AgreementStatusListener implements StanzaListener, StanzaFilter {
+/**
+ * 
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ *
+ */
+public class ScriptResultListener implements StanzaListener, StanzaFilter {
 
-	private static Logger logger = LoggerFactory.getLogger(AgreementStatusListener.class);
+	private static Logger logger = LoggerFactory.getLogger(ScriptResultListener.class);
 
 	/**
 	 * Pattern used to filter messages
 	 */
-	private static final Pattern messagePattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"AGREEMENT_STATUS\\\".*",
+	private static final Pattern messagePattern = Pattern.compile(".*\\\"type\\\"\\s*:\\s*\\\"SCRIPT_RESULT\\\".*",
 			Pattern.CASE_INSENSITIVE);
 
 	/**
 	 * Message subscriber
 	 */
-	private IAgreementStatusSubscriber subscriber;
+	private IScriptResultSubscriber subscriber;
 
 	@Override
 	public boolean accept(Stanza stanza) {
 		if (stanza instanceof Message) {
 			Message msg = (Message) stanza;
 			// All messages from agents are type normal
-			// Message body must contain => "type": "REQUEST_AGREEMENT"
+			// Message body must contain => "type": "SCRIPT_RESULT"
 			if (Message.Type.normal.equals(msg.getType()) && messagePattern.matcher(msg.getBody()).matches()) {
 				return true;
 			}
@@ -49,13 +54,13 @@ public class AgreementStatusListener implements StanzaListener, StanzaFilter {
 			if (packet instanceof Message) {
 
 				Message msg = (Message) packet;
-				logger.info("Agreement status message received from => {}, body => {}", msg.getFrom(), msg.getBody());
+				logger.info("Script result message received from => {}, body => {}", msg.getFrom(), msg.getBody());
 
 				ObjectMapper mapper = new ObjectMapper();
 				mapper.setDateFormat(new SimpleDateFormat("dd-MM-yyyy HH:mm"));
 
 				// Construct message
-				AgreementStatusMessageImpl message = mapper.readValue(msg.getBody(), AgreementStatusMessageImpl.class);
+				ScriptResultMessageImpl message = mapper.readValue(msg.getBody(), ScriptResultMessageImpl.class);
 				message.setFrom(msg.getFrom());
 
 				if (subscriber != null) {
@@ -68,7 +73,7 @@ public class AgreementStatusListener implements StanzaListener, StanzaFilter {
 		}
 	}
 
-	public void setSubscriber(IAgreementStatusSubscriber subscriber) {
+	public void setSubscriber(IScriptResultSubscriber subscriber) {
 		this.subscriber = subscriber;
 	}
 

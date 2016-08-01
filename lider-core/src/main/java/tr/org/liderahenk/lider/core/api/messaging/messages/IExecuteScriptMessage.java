@@ -10,8 +10,14 @@ public interface IExecuteScriptMessage extends ILiderMessage {
 
 	/**
 	 * 
-	 * @return requested file name
+	 * @return command to be executed
 	 */
-	String getFilePath();
+	String getCommand();
+
+	/**
+	 * 
+	 * @return configuration required to transfer file.
+	 */
+	FileServerConf getFileServerConf();
 
 }

@@ -16,29 +16,29 @@
 	<service ref="messageFactory"
 		interface="tr.org.liderahenk.lider.core.api.messaging.IMessageFactory" />
 	<bean id="messageFactory" class="tr.org.liderahenk.lider.messaging.MessageFactoryImpl" />
-
-	<bean id="xmppClient" class="tr.org.liderahenk.lider.messaging.XMPPClientImpl"
-		init-method="init" destroy-method="destroy">
-		<property name="configurationService" ref="configurationService" />
-		<property name="eventAdmin" ref="eventAdmin" />
-		<property name="presenceSubscribers" ref="presenceSubscribers" />
-		<property name="taskStatusSubscribers" ref="taskStatusSubscribers" />
-		<property name="policyStatusSubscribers" ref="policyStatusSubscribers" />
-		<property name="registrationSubscribers" ref="registrationSubscribers" />
-		<property name="userSessionSubscriber" ref="userSessionSubscriber" />
-		<property name="missingPluginSubscriber" ref="missingPluginSubscriber" />
-		<property name="policySubscriber" ref="policySubscriber" />
-		<property name="reqAggrementSubscriber" ref="reqAggrementSubscriber" />
-		<property name="aggrementStatusSubscriber" ref="aggrementStatusSubscriber" />
-	</bean>
-
-	<service ref="defaultRegistrationSubscriber" interface="tr.org.liderahenk.lider.core.api.messaging.subscribers.IRegistrationSubscriber" />
+	
 	<bean id="defaultRegistrationSubscriber"
 		class="tr.org.liderahenk.lider.messaging.subscribers.DefaultRegistrationSubscriberImpl">
 		<property name="ldapService" ref="ldapService" />
 		<property name="configurationService" ref="configurationService" />
 		<property name="agentDao" ref="agentDao" />
 		<property name="entityFactory" ref="entityFactory" />
+	</bean>
+
+	<bean id="xmppClient" class="tr.org.liderahenk.lider.messaging.XMPPClientImpl"
+		init-method="init" destroy-method="destroy">
+		<property name="configurationService" ref="configurationService" />
+		<property name="presenceSubscribers" ref="presenceSubscribers" />
+		<property name="taskStatusSubscribers" ref="taskStatusSubscribers" />
+		<property name="policyStatusSubscribers" ref="policyStatusSubscribers" />
+		<property name="registrationSubscriber" ref="registrationSubscriber" />
+		<property name="userSessionSubscriber" ref="userSessionSubscriber" />
+		<property name="missingPluginSubscriber" ref="missingPluginSubscriber" />
+		<property name="policySubscriber" ref="policySubscriber" />
+		<property name="reqAggrementSubscriber" ref="reqAggrementSubscriber" />
+		<property name="aggrementStatusSubscriber" ref="aggrementStatusSubscriber" />
+		<property name="scriptResultSubscriber" ref="scriptResultSubscriber" />
+		<property name="defaultRegistrationSubscriber" ref="defaultRegistrationSubscriber" />
 	</bean>
 
 	<bean id="userSessionSubscriber"
@@ -83,8 +83,11 @@
 	<reference-list id="policyStatusSubscribers"
 		interface="tr.org.liderahenk.lider.core.api.messaging.subscribers.IPolicyStatusSubscriber"
 		availability="optional" />
-	<reference-list id="registrationSubscribers"
+	<reference id="registrationSubscriber"
 		interface="tr.org.liderahenk.lider.core.api.messaging.subscribers.IRegistrationSubscriber"
+		availability="optional" />
+	<reference id="scriptResultSubscriber"
+		interface="tr.org.liderahenk.lider.core.api.messaging.subscribers.IScriptResultSubscriber"
 		availability="optional" />
 	<reference id="configurationService"
 		interface="tr.org.liderahenk.lider.core.api.configuration.IConfigurationService" />
@@ -98,6 +101,5 @@
 		interface="tr.org.liderahenk.lider.core.api.persistence.factories.IEntityFactory" />
 	<reference id="pluginDao"
 		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IPluginDao" />
-	<reference id="eventAdmin" interface="org.osgi.service.event.EventAdmin" />
 
 </blueprint>

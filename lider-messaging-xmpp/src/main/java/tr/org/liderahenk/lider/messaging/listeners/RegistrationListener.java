@@ -1,13 +1,8 @@
 package tr.org.liderahenk.lider.messaging.listeners;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 import java.util.regex.Pattern;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.StanzaListener;
@@ -17,13 +12,10 @@ import org.jivesoftware.smack.packet.Stanza;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import tr.org.liderahenk.lider.core.api.messaging.enums.StatusCode;
-import tr.org.liderahenk.lider.core.api.messaging.messages.IRegistrationResponseMessage;
+import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IRegistrationSubscriber;
 import tr.org.liderahenk.lider.messaging.XMPPClientImpl;
 import tr.org.liderahenk.lider.messaging.messages.RegistrationMessageImpl;
-import tr.org.liderahenk.lider.messaging.messages.RegistrationResponseMessageImpl;
-import tr.org.liderahenk.lider.messaging.subscribers.DefaultRegistrationSubscriberImpl;
 
 /**
  * RegistrationListener is responsible for listening to agent register messages.
@@ -45,9 +37,10 @@ public class RegistrationListener implements StanzaListener, StanzaFilter {
 			.compile(".*\\\"type\\\"\\s*:\\s*\\\"(REGISTER|UNREGISTER)\\\".*", Pattern.CASE_INSENSITIVE);
 
 	/**
-	 * Message subscribers
+	 * Message subscriber
 	 */
-	private List<IRegistrationSubscriber> subscribers;
+	private IRegistrationSubscriber subscriber;
+	private IRegistrationSubscriber defaultSubcriber;
 
 	// TODO IMPROVEMENT: separate xmpp client into two classes. one for
 	// configuration/setup, other for functional methods
@@ -74,7 +67,7 @@ public class RegistrationListener implements StanzaListener, StanzaFilter {
 	@Override
 	public void processPacket(Stanza packet) throws NotConnectedException {
 
-		IRegistrationResponseMessage responseMessage = null;
+		ILiderMessage responseMessage = null;
 		Message msg = null;
 
 		try {
@@ -88,71 +81,41 @@ public class RegistrationListener implements StanzaListener, StanzaFilter {
 				mapper.setDateFormat(new SimpleDateFormat("dd-MM-yyyy HH:mm"));
 
 				RegistrationMessageImpl message = mapper.readValue(msg.getBody(), RegistrationMessageImpl.class);
+				message.setFrom(msg.getFrom());
 
-				// Fall back to default register subscriber if reference
-				// list is empty.
-				if (subscribers == null || subscribers.isEmpty()) {
-					responseMessage = triggerDefaultSubscriber(message);
-				} else {
-					// Try to find subscriber other than the default one.
-					IRegistrationSubscriber subscriber = null;
-					for (IRegistrationSubscriber temp : subscribers) {
-						if (!(temp instanceof DefaultRegistrationSubscriberImpl)) {
-							subscriber = temp;
-							break;
-						}
+				try {
+					responseMessage = subscriber.messageReceived(message);
+					logger.debug("Notified subscriber => {}", subscriber);
+					// Send registration (successful/error) message
+					if (responseMessage != null) {
+						client.sendMessage(new ObjectMapper().writeValueAsString(responseMessage), msg.getFrom());
 					}
-					// Found another subscriber, notify it.
-					if (subscriber != null) {
-						responseMessage = subscriber.messageReceived(message);
-						logger.debug("Notified subscriber => {}", subscriber);
-					} else {
-						// We cannot find another subscriber, trigger the
-						// default.
-						responseMessage = triggerDefaultSubscriber(message);
+
+					// Send (optional) post-registration message
+					ILiderMessage postRegistrationMessage = subscriber.postRegistration();
+					if (postRegistrationMessage != null) {
+						client.sendMessage(postRegistrationMessage);
+					}
+				} catch (Exception e) {
+					logger.warn("Falling back to default subscriber.");
+					// Fall back to default subscriber if there is no other!
+					responseMessage = defaultSubcriber.messageReceived(message);
+					if (responseMessage != null) {
+						client.sendMessage(new ObjectMapper().writeValueAsString(responseMessage), msg.getFrom());
 					}
 				}
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
-			responseMessage = new RegistrationResponseMessageImpl(StatusCode.REGISTRATION_ERROR,
-					"Unexpected error occurred while registring agent, see Lider logs for more info.", null,
-					msg.getFrom(), new Date());
-		}
-
-		// Send registration info back to agent
-		try {
-			client.sendMessage(new ObjectMapper().writeValueAsString(responseMessage), msg.getFrom());
-		} catch (JsonGenerationException e) {
-			logger.error(e.getMessage(), e);
-		} catch (JsonMappingException e) {
-			logger.error(e.getMessage(), e);
-		} catch (IOException e) {
-			logger.error(e.getMessage(), e);
 		}
 	}
 
-	/**
-	 * Trigger default registration subscriber as a fallback plan.
-	 * 
-	 * @param message
-	 * @return
-	 * @throws Exception
-	 */
-	private IRegistrationResponseMessage triggerDefaultSubscriber(RegistrationMessageImpl message) throws Exception {
-		logger.info("Triggering default register subscriber.");
-		IRegistrationSubscriber subscriber = new DefaultRegistrationSubscriberImpl();
-		IRegistrationResponseMessage registrationInfo = subscriber.messageReceived(message);
-		logger.debug("Notified subscriber => {}", subscriber);
-		return registrationInfo;
+	public void setSubscriber(IRegistrationSubscriber subscriber) {
+		this.subscriber = subscriber;
 	}
 
-	/**
-	 * 
-	 * @param subscribers
-	 */
-	public void setSubscribers(List<IRegistrationSubscriber> subscribers) {
-		this.subscribers = subscribers;
+	public void setDefaultSubcriber(IRegistrationSubscriber defaultSubcriber) {
+		this.defaultSubcriber = defaultSubcriber;
 	}
 
 }

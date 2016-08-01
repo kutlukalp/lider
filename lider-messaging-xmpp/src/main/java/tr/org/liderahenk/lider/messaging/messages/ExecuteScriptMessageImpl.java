@@ -5,6 +5,7 @@ import java.util.Date;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import tr.org.liderahenk.lider.core.api.messaging.enums.LiderMessageType;
+import tr.org.liderahenk.lider.core.api.messaging.messages.FileServerConf;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteScriptMessage;
 
 /**
@@ -19,18 +20,21 @@ public class ExecuteScriptMessageImpl implements IExecuteScriptMessage {
 	private static final long serialVersionUID = -2825255461238352219L;
 
 	private LiderMessageType type = LiderMessageType.EXECUTE_SCRIPT;
-	
-	private String recipient;
 
-	private String filePath;
+	private String command;
+
+	private String recipient;
 
 	private Date timestamp;
 
-	public ExecuteScriptMessageImpl(String filePath, String recipient, Date timestamp) {
+	private FileServerConf fileServerConf;
+
+	public ExecuteScriptMessageImpl(String command, String recipient, Date timestamp, FileServerConf fileServerConf) {
 		super();
-		this.filePath = filePath;
+		this.command = command;
 		this.recipient = recipient;
 		this.timestamp = timestamp;
+		this.fileServerConf = fileServerConf;
 	}
 
 	@Override
@@ -43,21 +47,12 @@ public class ExecuteScriptMessageImpl implements IExecuteScriptMessage {
 	}
 
 	@Override
-	public Date getTimestamp() {
-		return timestamp;
+	public String getCommand() {
+		return command;
 	}
 
-	public void setTimestamp(Date timestamp) {
-		this.timestamp = timestamp;
-	}
-
-	@Override
-	public String getFilePath() {
-		return filePath;
-	}
-
-	public void setFilePath(String filePath) {
-		this.filePath = filePath;
+	public void setCommand(String command) {
+		this.command = command;
 	}
 
 	@Override
@@ -67,6 +62,24 @@ public class ExecuteScriptMessageImpl implements IExecuteScriptMessage {
 
 	public void setRecipient(String recipient) {
 		this.recipient = recipient;
+	}
+
+	@Override
+	public Date getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(Date timestamp) {
+		this.timestamp = timestamp;
+	}
+
+	@Override
+	public FileServerConf getFileServerConf() {
+		return fileServerConf;
+	}
+
+	public void setFileServerConf(FileServerConf fileServerConf) {
+		this.fileServerConf = fileServerConf;
 	}
 
 }

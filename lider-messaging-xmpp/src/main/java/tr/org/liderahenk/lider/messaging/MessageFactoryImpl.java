@@ -11,11 +11,9 @@ import tr.org.liderahenk.lider.core.api.messaging.IMessageFactory;
 import tr.org.liderahenk.lider.core.api.messaging.enums.Protocol;
 import tr.org.liderahenk.lider.core.api.messaging.messages.FileServerConf;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecutePoliciesMessage;
-import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteScriptMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteTaskMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IInstallPluginMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IPluginNotFoundMessage;
-import tr.org.liderahenk.lider.core.api.messaging.messages.IRequestFileMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IResponseAgreementMessage;
 import tr.org.liderahenk.lider.core.api.messaging.notifications.ITaskNotification;
 import tr.org.liderahenk.lider.core.api.messaging.notifications.ITaskStatusNotification;
@@ -25,11 +23,9 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 import tr.org.liderahenk.lider.messaging.messages.ExecutePoliciesMessageImpl;
-import tr.org.liderahenk.lider.messaging.messages.ExecuteScriptMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.ExecuteTaskMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.InstallPluginMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.PluginNotFoundMessageImpl;
-import tr.org.liderahenk.lider.messaging.messages.RequestFileMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.ResponseAgreementMessageImpl;
 import tr.org.liderahenk.lider.messaging.notifications.TaskNotificationImpl;
 import tr.org.liderahenk.lider.messaging.notifications.TaskStatusNotificationImpl;
@@ -57,21 +53,13 @@ public class MessageFactoryImpl implements IMessageFactory {
 	}
 
 	@Override
-	public IExecuteScriptMessage createExecuteScriptMessage(String filePath, String recipient) {
-		return new ExecuteScriptMessageImpl(filePath, recipient, new Date());
-	}
-
-	@Override
-	public IRequestFileMessage createRequestFileMessage(String filePath, String recipient) {
-		return new RequestFileMessageImpl(filePath, recipient, new Date());
-	}
-
-	@Override
 	public IExecutePoliciesMessage createExecutePoliciesMessage(String recipient, String username,
 			List<IProfile> userPolicyProfiles, String userPolicyVersion, Long userCommandExecutionId,
-			List<IProfile> agentPolicyProfiles, String agentPolicyVersion, Long agentCommandExecutionId, FileServerConf fileServerConf) {
+			List<IProfile> agentPolicyProfiles, String agentPolicyVersion, Long agentCommandExecutionId,
+			FileServerConf fileServerConf) {
 		return new ExecutePoliciesMessageImpl(recipient, username, userPolicyProfiles, userPolicyVersion,
-				userCommandExecutionId, agentPolicyProfiles, agentPolicyVersion, agentCommandExecutionId, new Date(), fileServerConf);
+				userCommandExecutionId, agentPolicyProfiles, agentPolicyVersion, agentCommandExecutionId, new Date(),
+				fileServerConf);
 	}
 
 	@Override

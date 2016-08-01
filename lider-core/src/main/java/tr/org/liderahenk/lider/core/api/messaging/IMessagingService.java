@@ -9,7 +9,6 @@ import tr.org.liderahenk.lider.core.api.messaging.notifications.INotification;
 /**
  * Provides messaging services throughout system.
  * 
- * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  * @author <a href="mailto:bm.volkansahin@gmail.com">Volkan Şahin</a>
  *
@@ -77,34 +76,6 @@ public interface IMessagingService {
 	 * @throws Exception
 	 */
 	void createAccount(String username, String password) throws Exception;
-
-	/**
-	 * Request a specific file from agent
-	 * 
-	 * @param filePath
-	 * @param jid
-	 * @throws Exception
-	 */
-	void requestFile(String filePath, String jid) throws Exception;
-
-	/**
-	 * Execute script on agent and get result as file.
-	 * 
-	 * @param filePath
-	 * @param jid
-	 * @throws Exception
-	 */
-	void executeScript(String filePath, String jid) throws Exception;
-
-	/**
-	 * Move file on agent and get result as file.
-	 * 
-	 * @param fileName
-	 * @param filePath
-	 * @param jid
-	 * @throws Exception
-	 */
-	void moveFile(String fileName, String filePath, String jid) throws Exception;
 
 	/**
 	 * 

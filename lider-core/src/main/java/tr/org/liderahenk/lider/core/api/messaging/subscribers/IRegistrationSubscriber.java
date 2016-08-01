@@ -1,7 +1,7 @@
 package tr.org.liderahenk.lider.core.api.messaging.subscribers;
 
+import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IRegistrationMessage;
-import tr.org.liderahenk.lider.core.api.messaging.messages.IRegistrationResponseMessage;
 
 /**
  * Agent registration interface, any bundle - exposing an implementation of this
@@ -22,6 +22,15 @@ public interface IRegistrationSubscriber {
 	 * @throws Exception
 	 * 
 	 */
-	IRegistrationResponseMessage messageReceived(IRegistrationMessage message) throws Exception;
+	ILiderMessage messageReceived(IRegistrationMessage message) throws Exception;
+
+	/**
+	 * Optional method which can be used to send another message to agent
+	 * immediately after the registration process completes.
+	 * 
+	 * @return
+	 * @throws Exception
+	 */
+	ILiderMessage postRegistration() throws Exception;
 
 }

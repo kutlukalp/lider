@@ -39,7 +39,6 @@ import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptManager.AutoReceiptMode;
 import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.xdata.packet.DataForm;
-import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,10 +51,10 @@ import tr.org.liderahenk.lider.core.api.messaging.subscribers.IPolicySubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IPresenceSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IRegistrationSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IRequestAgreementSubscriber;
+import tr.org.liderahenk.lider.core.api.messaging.subscribers.IScriptResultSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.ITaskStatusSubscriber;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IUserSessionSubscriber;
 import tr.org.liderahenk.lider.messaging.listeners.AgreementStatusListener;
-import tr.org.liderahenk.lider.messaging.listeners.FileListener;
 import tr.org.liderahenk.lider.messaging.listeners.MissingPluginListener;
 import tr.org.liderahenk.lider.messaging.listeners.OnlineRosterListener;
 import tr.org.liderahenk.lider.messaging.listeners.PacketListener;
@@ -63,6 +62,7 @@ import tr.org.liderahenk.lider.messaging.listeners.PolicyListener;
 import tr.org.liderahenk.lider.messaging.listeners.PolicyStatusListener;
 import tr.org.liderahenk.lider.messaging.listeners.RegistrationListener;
 import tr.org.liderahenk.lider.messaging.listeners.RequestAgreementListener;
+import tr.org.liderahenk.lider.messaging.listeners.ScriptResultListener;
 import tr.org.liderahenk.lider.messaging.listeners.TaskStatusListener;
 import tr.org.liderahenk.lider.messaging.listeners.UserSessionListener;
 import tr.org.liderahenk.lider.messaging.listeners.XMPPConnectionListener;
@@ -98,7 +98,6 @@ public class XMPPClientImpl {
 	private XMPPConnectionListener connectionListener;
 	private OnlineRosterListener onlineRosterListener;
 	private PacketListener packetListener;
-	private FileListener fileListener;
 	private TaskStatusListener taskStatusListener;
 	private PolicyStatusListener policyStatusListener;
 	private RegistrationListener registrationListener;
@@ -107,25 +106,27 @@ public class XMPPClientImpl {
 	private PolicyListener policyListener;
 	private RequestAgreementListener reqAggrementListener;
 	private AgreementStatusListener aggrementStatusListener;
+	private ScriptResultListener scriptResultListener;
 
 	/**
 	 * Packet subscribers
 	 */
 	private List<ITaskStatusSubscriber> taskStatusSubscribers;
 	private List<IPolicyStatusSubscriber> policyStatusSubscribers;
-	private List<IRegistrationSubscriber> registrationSubscribers;
 	private List<IPresenceSubscriber> presenceSubscribers;
 	private IUserSessionSubscriber userSessionSubscriber;
 	private IMissingPluginSubscriber missingPluginSubscriber;
 	private IPolicySubscriber policySubscriber;
 	private IRequestAgreementSubscriber reqAggrementSubscriber;
+	private IRegistrationSubscriber registrationSubscriber;
 	private IAgreementStatusSubscriber aggrementStatusSubscriber;
+	private IScriptResultSubscriber scriptResultSubscriber;
+	private IRegistrationSubscriber defaultRegistrationSubscriber;
 
 	/**
 	 * Lider services
 	 */
 	private IConfigurationService configurationService;
-	private EventAdmin eventAdmin;
 
 	private XMPPTCPConnection connection;
 	private XMPPTCPConnectionConfiguration config;
@@ -160,13 +161,15 @@ public class XMPPClientImpl {
 	 * Configures XMPP connection parameters.
 	 */
 	private void createXmppTcpConfiguration() {
-		if (configurationService.getXmppUseCustomSsl()){
+		if (configurationService.getXmppUseCustomSsl()) {
 			config = XMPPTCPConnectionConfiguration.builder().setServiceName(serviceName).setHost(host).setPort(port)
-					.setSecurityMode(configurationService.getXmppUseSsl() ? SecurityMode.required : SecurityMode.disabled)
+					.setSecurityMode(
+							configurationService.getXmppUseSsl() ? SecurityMode.required : SecurityMode.disabled)
 					.setDebuggerEnabled(logger.isDebugEnabled()).setCustomSSLContext(createCustomSslContext()).build();
-		}else {
+		} else {
 			config = XMPPTCPConnectionConfiguration.builder().setServiceName(serviceName).setHost(host).setPort(port)
-					.setSecurityMode(configurationService.getXmppUseSsl() ? SecurityMode.required : SecurityMode.disabled)
+					.setSecurityMode(
+							configurationService.getXmppUseSsl() ? SecurityMode.required : SecurityMode.disabled)
 					.setDebuggerEnabled(logger.isDebugEnabled()).build();
 		}
 		logger.debug("XMPP configuration finished: {}", config.toString());
@@ -272,16 +275,13 @@ public class XMPPClientImpl {
 		connection.addAsyncStanzaListener(policyStatusListener, policyStatusListener);
 		// Hook listener for registration messages
 		registrationListener = new RegistrationListener(this);
-		registrationListener.setSubscribers(registrationSubscribers);
+		registrationListener.setSubscriber(registrationSubscriber);
+		registrationListener.setDefaultSubcriber(defaultRegistrationSubscriber);
 		connection.addAsyncStanzaListener(registrationListener, registrationListener);
 		// Hook listener for user session messages
 		userSessionListener = new UserSessionListener();
 		userSessionListener.setSubscriber(userSessionSubscriber);
 		connection.addAsyncStanzaListener(userSessionListener, userSessionListener);
-		// Hook listener for file transfers
-		fileListener = new FileListener(configurationService, eventAdmin);
-		Socks5BytestreamManager bytestreamManager = Socks5BytestreamManager.getBytestreamManager(connection);
-		bytestreamManager.addIncomingBytestreamListener(fileListener);
 		// Hook listener for missing plugin messages
 		missingPluginListener = new MissingPluginListener(this);
 		missingPluginListener.setSubscriber(missingPluginSubscriber);
@@ -293,6 +293,11 @@ public class XMPPClientImpl {
 		aggrementStatusListener = new AgreementStatusListener();
 		aggrementStatusListener.setSubscriber(aggrementStatusSubscriber);
 		connection.addAsyncStanzaListener(aggrementStatusListener, aggrementStatusListener);
+		// Hook listener for script result messages
+		scriptResultListener = new ScriptResultListener();
+		scriptResultListener.setSubscriber(scriptResultSubscriber);
+		connection.addAsyncStanzaListener(scriptResultListener, scriptResultListener);
+
 		logger.debug("Successfully added listeners for connection: {}", connection.toString());
 	}
 
@@ -337,9 +342,8 @@ public class XMPPClientImpl {
 			connection.removeAsyncStanzaListener(connectionListener);
 			connection.removeAsyncStanzaListener(reqAggrementListener);
 			connection.removeAsyncStanzaListener(aggrementStatusListener);
+			connection.removeAsyncStanzaListener(scriptResultListener);
 			connection.removeConnectionListener(connectionListener);
-			Socks5BytestreamManager bytestreamManager = Socks5BytestreamManager.getBytestreamManager(connection);
-			bytestreamManager.removeIncomingBytestreamListener(fileListener);
 			logger.debug("Listeners are removed.");
 			PingManager.getInstanceFor(connection).setPingInterval(-1);
 			logger.debug("Disabled ping manager");
@@ -537,43 +541,40 @@ public class XMPPClientImpl {
 		}
 		return jidFinal;
 	}
-	
-	
+
 	/***
 	 * 
-	 * @return custom ssl context with x509 trust manager. 
+	 * @return custom ssl context with x509 trust manager.
 	 */
-	
-	public SSLContext createCustomSslContext(){
+
+	public SSLContext createCustomSslContext() {
 		try {
 			SSLContext sslContext = SSLContext.getInstance("TLS");
-	        TrustManager tm = new X509TrustManager() {
-	            @Override
-	            public void checkClientTrusted(X509Certificate[] x509Certificates, String s)
-	                throws CertificateException {
-	            }
+			TrustManager tm = new X509TrustManager() {
+				@Override
+				public void checkClientTrusted(X509Certificate[] x509Certificates, String s)
+						throws CertificateException {
+				}
 
-	            @Override
-	            public void checkServerTrusted(X509Certificate[] x509Certificates, String s)
-	                throws CertificateException {
-	            }
+				@Override
+				public void checkServerTrusted(X509Certificate[] x509Certificates, String s)
+						throws CertificateException {
+				}
 
-	            @Override
-	            public X509Certificate[] getAcceptedIssuers() {
-	                return new X509Certificate[0];
-	            }
-	        };
-	        sslContext.init(null, new TrustManager[] {tm}, null);
-	        
-	        return sslContext;
-	        
+				@Override
+				public X509Certificate[] getAcceptedIssuers() {
+					return new X509Certificate[0];
+				}
+			};
+			sslContext.init(null, new TrustManager[] { tm }, null);
+
+			return sslContext;
+
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
 		return null;
 	}
-	
-	
 
 	/**
 	 * 
@@ -619,19 +620,6 @@ public class XMPPClientImpl {
 				policyStatusSubscribers != null ? policyStatusSubscribers.size() : "empty");
 		if (policyStatusListener != null) {
 			policyStatusListener.setSubscribers(policyStatusSubscribers);
-		}
-	}
-
-	/**
-	 * 
-	 * @param registrationSubscribers
-	 */
-	public void setRegistrationSubscribers(List<IRegistrationSubscriber> registrationSubscribers) {
-		this.registrationSubscribers = registrationSubscribers;
-		logger.info("Registration subscribers updated: {}",
-				registrationSubscribers != null ? registrationSubscribers.size() : "empty");
-		if (registrationListener != null) {
-			registrationListener.setSubscribers(registrationSubscribers);
 		}
 	}
 
@@ -685,6 +673,18 @@ public class XMPPClientImpl {
 
 	/**
 	 * 
+	 * @param registrationSubscriber
+	 */
+	public void setRegistrationSubscriber(IRegistrationSubscriber registrationSubscriber) {
+		this.registrationSubscriber = registrationSubscriber;
+		logger.info("Registration subscriber updated: {}", registrationSubscriber != null);
+		if (registrationListener != null) {
+			registrationListener.setSubscriber(registrationSubscriber);
+		}
+	}
+
+	/**
+	 * 
 	 * @param aggrementStatusSubscriber
 	 */
 	public void setAggrementStatusSubscriber(IAgreementStatusSubscriber aggrementStatusSubscriber) {
@@ -692,6 +692,29 @@ public class XMPPClientImpl {
 		logger.info("Agreement status subscriber updated: {}", aggrementStatusSubscriber != null);
 		if (aggrementStatusListener != null) {
 			aggrementStatusListener.setSubscriber(aggrementStatusSubscriber);
+		}
+	}
+
+	/**
+	 * 
+	 * @param scriptResultSubscriber
+	 */
+	public void setScriptResultSubscriber(IScriptResultSubscriber scriptResultSubscriber) {
+		this.scriptResultSubscriber = scriptResultSubscriber;
+		logger.info("Script result subscriber updated: {}", scriptResultSubscriber != null);
+		if (scriptResultListener != null) {
+			scriptResultListener.setSubscriber(scriptResultSubscriber);
+		}
+	}
+
+	/**
+	 * 
+	 * @param defaultRegistrationSubscriber
+	 */
+	public void setDefaultRegistrationSubscriber(IRegistrationSubscriber defaultRegistrationSubscriber) {
+		this.defaultRegistrationSubscriber = defaultRegistrationSubscriber;
+		if (registrationListener != null) {
+			registrationListener.setDefaultSubcriber(defaultRegistrationSubscriber);
 		}
 	}
 
@@ -709,14 +732,6 @@ public class XMPPClientImpl {
 	 */
 	public XMPPTCPConnection getConnection() {
 		return connection;
-	}
-
-	/**
-	 * 
-	 * @param eventAdmin
-	 */
-	public void setEventAdmin(EventAdmin eventAdmin) {
-		this.eventAdmin = eventAdmin;
 	}
 
 }

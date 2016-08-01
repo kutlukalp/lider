@@ -12,8 +12,8 @@ import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
 import tr.org.liderahenk.lider.core.api.messaging.enums.AgentMessageType;
 import tr.org.liderahenk.lider.core.api.messaging.enums.StatusCode;
+import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IRegistrationMessage;
-import tr.org.liderahenk.lider.core.api.messaging.messages.IRegistrationResponseMessage;
 import tr.org.liderahenk.lider.core.api.messaging.subscribers.IRegistrationSubscriber;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IAgentDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IAgent;
@@ -58,21 +58,23 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 	private IAgentDao agentDao;
 	private IEntityFactory entityFactory;
 
+	private String jid;
+
 	/**
 	 * Check if agent defined in the received message is already registered, if
 	 * it is, update its values and properties. Otherwise create new agent LDAP
 	 * entry and new agent database record.
 	 */
 	@Override
-	public IRegistrationResponseMessage messageReceived(IRegistrationMessage message) throws Exception {
+	public ILiderMessage messageReceived(IRegistrationMessage message) throws Exception {
 
-		String uid = message.getFrom().split("@")[0];
+		jid = message.getFrom().split("@")[0];
 
 		// Register agent
 		if (AgentMessageType.REGISTER == message.getType()) {
 
 			// Check if agent LDAP entry already exists
-			final List<LdapEntry> entry = ldapService.search(configurationService.getAgentLdapJidAttribute(), uid,
+			final List<LdapEntry> entry = ldapService.search(configurationService.getAgentLdapJidAttribute(), jid,
 					new String[] { configurationService.getAgentLdapJidAttribute() });
 
 			if (entry != null && !entry.isEmpty()) {
@@ -84,7 +86,7 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 				logger.info("Agent DN {} updated successfully!", entry.get(0).getDistinguishedName());
 
 				// Find related agent database record.
-				List<? extends IAgent> agents = agentDao.findByProperty(IAgent.class, "jid", uid, 1);
+				List<? extends IAgent> agents = agentDao.findByProperty(IAgent.class, "jid", jid, 1);
 				IAgent agent = agents != null && !agents.isEmpty() ? agents.get(0) : null;
 
 				// Update the record
@@ -113,8 +115,8 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 				// Create new agent LDAP entry.
 				Map<String, String[]> attributes = new HashMap<String, String[]>();
 				attributes.put("objectClass", configurationService.getAgentLdapObjectClasses().split(","));
-				attributes.put(configurationService.getAgentLdapIdAttribute(), new String[] { uid });
-				attributes.put(configurationService.getAgentLdapJidAttribute(), new String[] { uid });
+				attributes.put(configurationService.getAgentLdapIdAttribute(), new String[] { jid });
+				attributes.put(configurationService.getAgentLdapJidAttribute(), new String[] { jid });
 				attributes.put("userPassword", new String[] { message.getPassword() });
 
 				// FIXME remove this line, after correcting LDAP schema!
@@ -124,7 +126,7 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 				String entryDN = createEntryDN(message);
 
 				// Create new agent database record
-				IAgent agent = entityFactory.createAgent(null, uid, entryDN, message.getPassword(),
+				IAgent agent = entityFactory.createAgent(null, jid, entryDN, message.getPassword(),
 						message.getHostname(), message.getIpAddresses(), message.getMacAddresses(), message.getData());
 				// Persist record
 				agentDao.save(agent);
@@ -138,7 +140,7 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 			}
 		} else if (AgentMessageType.UNREGISTER == message.getType()) {
 			// Check if agent LDAP entry already exists
-			final List<LdapEntry> entry = ldapService.search(configurationService.getAgentLdapJidAttribute(), uid,
+			final List<LdapEntry> entry = ldapService.search(configurationService.getAgentLdapJidAttribute(), jid,
 					new String[] { configurationService.getAgentLdapJidAttribute() });
 
 			// Delete agent LDAP entry
@@ -147,7 +149,7 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 			}
 
 			// Find related agent database record.
-			List<? extends IAgent> agents = agentDao.findByProperty(IAgent.class, "jid", uid, 1);
+			List<? extends IAgent> agents = agentDao.findByProperty(IAgent.class, "jid", jid, 1);
 			IAgent agent = agents != null && !agents.isEmpty() ? agents.get(0) : null;
 
 			// Mark the record as deleted.
@@ -161,6 +163,11 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 			return null;
 		}
 
+		return null;
+	}
+
+	@Override
+	public ILiderMessage postRegistration() throws Exception {
 		return null;
 	}
 

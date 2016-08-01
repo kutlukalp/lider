@@ -3,7 +3,6 @@ package tr.org.liderahenk.lider.messaging;
 import java.io.File;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -13,14 +12,10 @@ import org.slf4j.LoggerFactory;
 import tr.org.liderahenk.lider.core.api.messaging.IMessagingService;
 import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
 import tr.org.liderahenk.lider.core.api.messaging.notifications.INotification;
-import tr.org.liderahenk.lider.messaging.messages.ExecuteScriptMessageImpl;
-import tr.org.liderahenk.lider.messaging.messages.MoveFileMessageImpl;
-import tr.org.liderahenk.lider.messaging.messages.RequestFileMessageImpl;
 
 /**
  * Default implementation for {@link IMessagingService}
  * 
- * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  * @author <a href="mailto:bm.volkansahin@gmail.com">Volkan Şahin</a>
  * 
@@ -45,7 +40,7 @@ public class MessagingServiceImpl implements IMessagingService {
 	public void sendMessage(ILiderMessage message) throws Exception {
 		xmppClient.sendMessage(message);
 	}
-	
+
 	@Override
 	public void sendNotification(INotification notification) throws Exception {
 		ObjectMapper mapper = new ObjectMapper();
@@ -74,21 +69,6 @@ public class MessagingServiceImpl implements IMessagingService {
 				throw e; // Let the caller class handle it
 			}
 		}
-	}
-
-	@Override
-	public void executeScript(final String filePath, final String jid) throws Exception {
-		xmppClient.sendMessage(new ExecuteScriptMessageImpl(filePath, xmppClient.getFullJid(jid), new Date()));
-	}
-
-	@Override
-	public void moveFile(String fileName, String filePath, String jid) throws Exception {
-		xmppClient.sendMessage(new MoveFileMessageImpl(filePath, fileName, xmppClient.getFullJid(jid), new Date()));
-	}
-
-	@Override
-	public void requestFile(final String filePath, final String jid) throws Exception {
-		xmppClient.sendMessage(new RequestFileMessageImpl(filePath, xmppClient.getFullJid(jid), new Date()));
 	}
 
 	@Override
