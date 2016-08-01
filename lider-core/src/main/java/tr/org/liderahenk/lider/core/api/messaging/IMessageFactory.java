@@ -6,6 +6,7 @@ import java.util.Map;
 import tr.org.liderahenk.lider.core.api.messaging.enums.Protocol;
 import tr.org.liderahenk.lider.core.api.messaging.messages.FileServerConf;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecutePoliciesMessage;
+import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteScriptMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteTaskMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IInstallPluginMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
@@ -109,5 +110,15 @@ public interface IMessageFactory {
 	 */
 	IResponseAgreementMessage createResponseAgreementMessage(String from, Map<String, Object> parameterMap,
 			Protocol protocol);
+
+	/**
+	 * Create execute script message
+	 * 
+	 * @param recipient
+	 * @param command
+	 * @param fileServerConf
+	 * @return
+	 */
+	IExecuteScriptMessage createExecuteScriptMessage(String recipient, String command, FileServerConf fileServerConf);
 
 }

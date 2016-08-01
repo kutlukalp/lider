@@ -11,6 +11,7 @@ import tr.org.liderahenk.lider.core.api.messaging.IMessageFactory;
 import tr.org.liderahenk.lider.core.api.messaging.enums.Protocol;
 import tr.org.liderahenk.lider.core.api.messaging.messages.FileServerConf;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecutePoliciesMessage;
+import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteScriptMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteTaskMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IInstallPluginMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IPluginNotFoundMessage;
@@ -23,6 +24,7 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 import tr.org.liderahenk.lider.messaging.messages.ExecutePoliciesMessageImpl;
+import tr.org.liderahenk.lider.messaging.messages.ExecuteScriptMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.ExecuteTaskMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.InstallPluginMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.PluginNotFoundMessageImpl;
@@ -50,6 +52,12 @@ public class MessageFactoryImpl implements IMessageFactory {
 			logger.error(e.getMessage(), e);
 		}
 		return new ExecuteTaskMessageImpl(taskJsonString, jid, new Date(), fileServerConf);
+	}
+
+	@Override
+	public IExecuteScriptMessage createExecuteScriptMessage(String recipient, String command,
+			FileServerConf fileServerConf) {
+		return new ExecuteScriptMessageImpl(command, recipient, new Date(), fileServerConf);
 	}
 
 	@Override
