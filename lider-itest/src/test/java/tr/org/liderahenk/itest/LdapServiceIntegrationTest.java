@@ -13,7 +13,7 @@ import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
 
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerSuite.class)
-public class LdapImplTest extends LiderKarafTestContainer {
+public class LdapServiceIntegrationTest extends LiderKarafTestContainer {
 
 	@Test
 	public void checkService() {

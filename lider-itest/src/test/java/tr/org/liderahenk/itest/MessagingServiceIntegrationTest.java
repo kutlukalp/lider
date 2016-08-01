@@ -13,7 +13,7 @@ import tr.org.liderahenk.lider.core.api.messaging.IMessagingService;
 
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerSuite.class)
-public class MessagingTest extends LiderKarafTestContainer {
+public class MessagingServiceIntegrationTest extends LiderKarafTestContainer {
 	
 	
 	@Test
