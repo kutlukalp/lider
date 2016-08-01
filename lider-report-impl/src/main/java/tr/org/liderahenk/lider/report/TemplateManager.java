@@ -42,7 +42,7 @@ public class TemplateManager {
 		List<? extends IReportTemplate> usertemplates = reportDao.findTemplates("name", userSessionTemplate.getName(), 1);
 		IReportTemplate existingUserTemplate = usertemplates != null && !usertemplates.isEmpty() ? usertemplates.get(0) : null;
 		if (existingUserTemplate != null) {
-			existingUserTemplate = entityFactory.createReportTemplate(existingTemplate, userSessionTemplate);
+			existingUserTemplate = entityFactory.createReportTemplate(existingUserTemplate, userSessionTemplate);
 			reportDao.updateTemplate(existingUserTemplate);
 		} else {
 			reportDao.saveTemplate(userSessionTemplate);
