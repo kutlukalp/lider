@@ -1,13 +1,31 @@
 package tr.org.liderahenk.lider.rest;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Font.FontFamily;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
 
 import tr.org.liderahenk.lider.core.api.persistence.dao.IReportDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate;
@@ -134,6 +152,79 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 		reportDao.deleteTemplate(new Long(id));
 		logger.info("Report template record deleted: {}", id);
 		return responseFactory.createResponse(RestResponseStatus.OK, "Record deleted.");
+	}
+
+	@Override
+	public IRestResponse exportPdf(String json) {
+		try {
+			IReportGenerationRequest request = requestFactory.createReportGenerationRequest(json);
+			IReportView view = reportDao.findView(request.getViewId());
+			List<Object[]> resultList = reportDao.generateView(view, request.getParamValues());
+
+			// Determine temporary report path
+			String fileName = view.getName() + new Date().getTime() + ".pdf";
+			String filePath = Files.createTempDirectory("lidertmp-").toAbsolutePath() + "/" + fileName;
+
+			// Create report document
+			Document doc = new Document();
+			PdfWriter.getInstance(doc, new FileOutputStream(new File(filePath)));
+			doc.open();
+
+			// Fonts
+			Set<String> registeredFonts = FontFactory.getRegisteredFonts();
+			for (String f : registeredFonts) {
+				logger.error("Font: " + f);
+			}
+
+			FontFactory.defaultEncoding = "utf8";
+			Font titleFont = new Font(FontFamily.TIMES_ROMAN, 12, Font.BOLD);
+			Font headerFont = FontFactory.getFont("times-roman", "utf8", 10, Font.BOLD);
+			Font cellFont = new Font(FontFamily.TIMES_ROMAN, 7, Font.NORMAL);
+
+			// Title & header
+			doc.addTitle(view.getName());
+			Paragraph reportTitle = new Paragraph(view.getDescription(), titleFont);
+			reportTitle.setAlignment(Element.ALIGN_CENTER);
+			doc.add(reportTitle);
+			doc.add(new Paragraph(" "));
+
+			// Table headers
+			PdfPTable table = new PdfPTable(view.getViewColumns().size());
+			int[] colWidths = new int[view.getViewColumns().size()];
+			ArrayList<IReportViewColumn> columns = new ArrayList<IReportViewColumn>(view.getViewColumns());
+			for (int i = 0; i < columns.size(); i++) {
+				IReportViewColumn column = columns.get(i);
+				PdfPCell cell = new PdfPCell(new Phrase(column.getReferencedCol().getName(), headerFont));
+				cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+				table.addCell(cell);
+				colWidths[i] = column.getWidth();
+			}
+
+			// Table rows
+			for (Object[] row : resultList) {
+				for (Object cellValue : row) {
+					PdfPCell cell = new PdfPCell(new Phrase(cellValue != null ? cellValue.toString() : " ", cellFont));
+					cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+					table.addCell(cell);
+				}
+			}
+
+			// End table
+			table.setWidths(colWidths);
+			doc.add(table);
+			doc.add(new Paragraph(" "));
+			doc.close();
+
+			byte[] pdf = Files.readAllBytes(Paths.get(filePath));
+
+			Map<String, Object> resultMap = new HashMap<String, Object>();
+			resultMap.put("report", pdf);
+
+			return responseFactory.createResponse(RestResponseStatus.OK, "Record retrieved.", resultMap);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			return responseFactory.createResponse(RestResponseStatus.ERROR, e.getMessage());
+		}
 	}
 
 	@Override

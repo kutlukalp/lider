@@ -151,6 +151,25 @@ public class ReportController {
 	}
 
 	/**
+	 * Export report PDF from provided view ID.
+	 * 
+	 * @param requestBody
+	 * @param request
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
+	@RequestMapping(value = "/export/pdf", method = { RequestMethod.POST })
+	@ResponseBody
+	public IRestResponse exportPdf(@RequestBody String requestBody, HttpServletRequest request)
+			throws UnsupportedEncodingException {
+		String requestBodyDecoded = ControllerUtils.decodeRequestBody(requestBody);
+		logger.info("Request received. URL: '/lider/report/export/pdf' Body: {}", requestBodyDecoded);
+		IRestResponse restResponse = reportProcessor.exportPdf(requestBodyDecoded);
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
+		return restResponse;
+	}
+
+	/**
 	 * Generate report JSON from provided view ID.
 	 * 
 	 * @param requestBody

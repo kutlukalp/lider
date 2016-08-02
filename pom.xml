@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                              http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                              http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>tr.org.liderahenk</groupId>
@@ -67,6 +68,7 @@
 		<javax.mail.api.version>1.5.5</javax.mail.api.version>
 		<karaf.shell.core.version>4.0.5</karaf.shell.core.version>
 		<jsch.version>0.1.53</jsch.version>
+		<itext.version>5.5.9</itext.version>
 
 		<!--JPA -->
 		<ariesEbaMavenPluginVersion>1.0.0</ariesEbaMavenPluginVersion>
@@ -172,8 +174,8 @@
 		<module>lider-report-impl</module>
 		<module>lider-deployer</module>
 		<module>lider-mail-notification</module>
-    	<!-- <module>lider-itest</module> -->
-  </modules>
+		<!-- <module>lider-itest</module> -->
+	</modules>
 
 	<build>
 		<plugins>
@@ -554,6 +556,11 @@
 				<groupId>com.jcraft</groupId>
 				<artifactId>jsch</artifactId>
 				<version>${jsch.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.itextpdf</groupId>
+				<artifactId>itextpdf</artifactId>
+				<version>${itext.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

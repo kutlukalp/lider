@@ -33,4 +33,6 @@ public interface IReportRequestProcessor {
 
 	IRestResponse deleteView(Long id);
 
+	IRestResponse exportPdf(String json);
+
 }

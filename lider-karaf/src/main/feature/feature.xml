@@ -106,6 +106,7 @@
         <bundle start-level="45">wrap:mvn:javax.mail/javax.mail-api/1.5.5</bundle>
         <bundle start-level="45">wrap:mvn:com.sun.mail/javax.mail/1.5.5</bundle>
         <bundle start-level="45">wrap:mvn:com.jcraft/jsch/0.1.53</bundle>
+        <bundle start-level="45">wrap:mvn:com.itextpdf/itextpdf/5.5.9</bundle>
     </feature>
 
     <feature name="lider-deps-ldap" version="${project.version}">
