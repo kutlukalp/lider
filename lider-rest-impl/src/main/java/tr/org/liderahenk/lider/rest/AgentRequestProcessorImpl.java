@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +45,7 @@ public class AgentRequestProcessorImpl implements IAgentRequestProcessor {
 		// Construct result map
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		try {
-			resultMap.put("agents", new ObjectMapper().writeValueAsString(agents));
+			resultMap.put("agents", agents);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -61,7 +60,7 @@ public class AgentRequestProcessorImpl implements IAgentRequestProcessor {
 		}
 		IAgent agent = agentDao.find(id);
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		resultMap.put("agent", agent.toJson());
+		resultMap.put("agent", agent);
 		return responseFactory.createResponse(RestResponseStatus.OK, "Record retrieved.", resultMap);
 	}
 
@@ -77,7 +76,7 @@ public class AgentRequestProcessorImpl implements IAgentRequestProcessor {
 		// Construct result map
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		try {
-			resultMap.put("onlineUsers", new ObjectMapper().writeValueAsString(onlineUsers));
+			resultMap.put("onlineUsers", onlineUsers);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
