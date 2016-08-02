@@ -58,8 +58,6 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 	private IAgentDao agentDao;
 	private IEntityFactory entityFactory;
 
-	private String jid;
-
 	/**
 	 * Check if agent defined in the received message is already registered, if
 	 * it is, update its values and properties. Otherwise create new agent LDAP
@@ -68,75 +66,64 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 	@Override
 	public ILiderMessage messageReceived(IRegistrationMessage message) throws Exception {
 
-		jid = message.getFrom().split("@")[0];
+		String jid = message.getFrom().split("@")[0];
 
 		// Register agent
 		if (AgentMessageType.REGISTER == message.getType()) {
 
-			// Check if agent LDAP entry already exists
-			final List<LdapEntry> entry = ldapService.search(configurationService.getAgentLdapJidAttribute(), jid,
+			boolean alreadyExists = false;
+			String dn = null;
+
+			// Try to find agent LDAP entry
+			final List<LdapEntry> entries = ldapService.search(configurationService.getAgentLdapJidAttribute(), jid,
 					new String[] { configurationService.getAgentLdapJidAttribute() });
+			LdapEntry entry = entries != null && !entries.isEmpty() ? entries.get(0) : null;
 
-			if (entry != null && !entry.isEmpty()) {
-				logger.info("Updating account: {} with password: {}",
+			if (entry != null) {
+				alreadyExists = true;
+				dn = entry.getDistinguishedName();
+				logger.info("Updating LDAP entry: {} with password: {}",
 						new Object[] { message.getFrom(), message.getPassword() });
-
 				// Update agent LDAP entry.
-				ldapService.updateEntry(entry.get(0).getDistinguishedName(), "userPassword", message.getPassword());
-				logger.info("Agent DN {} updated successfully!", entry.get(0).getDistinguishedName());
-
-				// Find related agent database record.
-				List<? extends IAgent> agents = agentDao.findByProperty(IAgent.class, "jid", jid, 1);
-				IAgent agent = agents != null && !agents.isEmpty() ? agents.get(0) : null;
-
-				// Update the record
-				if (agent != null) {
-					agent = entityFactory.createAgent(agent, message.getPassword(), message.getHostname(),
-							message.getIpAddresses(), message.getMacAddresses(), message.getData());
-					agentDao.update(agent);
-				} else {
-					logger.error("Agent database record couldn't be found, see Lider logs for more info.");
-					return new RegistrationResponseMessageImpl(StatusCode.REGISTRATION_ERROR,
-							"Agent database record couldn't be found, see Lider logs for more info.", null, null,
-							new Date());
-				}
-
-				logger.warn(
-						"Agent DN {} already exists! Updated its password and database properties with the values submitted.",
-						entry.get(0).getDistinguishedName());
-				return new RegistrationResponseMessageImpl(StatusCode.ALREADY_EXISTS,
-						entry.get(0).getDistinguishedName()
-								+ " already exists! Updated its password and database properties with the values submitted.",
-						entry.get(0).getDistinguishedName(), null, new Date());
+				ldapService.updateEntry(dn, "userPassword", message.getPassword());
+				logger.info("Agent LDAP entry {} updated successfully!", dn);
 			} else {
-				logger.info("Creating account: {} with password: {}",
+				dn = createEntryDN(message);
+				logger.info("Creating LDAP entry: {} with password: {}",
 						new Object[] { message.getFrom(), message.getPassword() });
-
 				// Create new agent LDAP entry.
-				Map<String, String[]> attributes = new HashMap<String, String[]>();
-				attributes.put("objectClass", configurationService.getAgentLdapObjectClasses().split(","));
-				attributes.put(configurationService.getAgentLdapIdAttribute(), new String[] { jid });
-				attributes.put(configurationService.getAgentLdapJidAttribute(), new String[] { jid });
-				attributes.put("userPassword", new String[] { message.getPassword() });
+				ldapService.addEntry(dn, computeAttributes(jid, message.getPassword()));
+				logger.info("Agent LDAP entry {} created successfully!", dn);
+			}
 
-				// FIXME remove this line, after correcting LDAP schema!
-				attributes.put("owner", new String[] { "ou=Uncategorized,dc=mys,dc=pardus,dc=org" });
-				//
+			// Try to find related agent database record
+			List<? extends IAgent> agents = agentDao.findByProperty(IAgent.class, "jid", jid, 1);
+			IAgent agent = agents != null && !agents.isEmpty() ? agents.get(0) : null;
 
-				String entryDN = createEntryDN(message);
-
+			if (agent != null) {
+				alreadyExists = true;
+				// Update the record
+				agent = entityFactory.createAgent(agent, message.getPassword(), message.getHostname(),
+						message.getIpAddresses(), message.getMacAddresses(), message.getData());
+				agentDao.update(agent);
+			} else {
 				// Create new agent database record
-				IAgent agent = entityFactory.createAgent(null, jid, entryDN, message.getPassword(),
-						message.getHostname(), message.getIpAddresses(), message.getMacAddresses(), message.getData());
-				// Persist record
+				agent = entityFactory.createAgent(null, jid, dn, message.getPassword(), message.getHostname(),
+						message.getIpAddresses(), message.getMacAddresses(), message.getData());
 				agentDao.save(agent);
+			}
 
-				ldapService.addEntry(entryDN, attributes);
-				logger.info("Agent DN {} created successfully!", entryDN);
-
-				logger.info("{} and its related database record created successfully!", entryDN);
+			if (alreadyExists) {
+				logger.warn(
+						"Agent {} already exists! Updated its password and database properties with the values submitted.",
+						dn);
+				return new RegistrationResponseMessageImpl(StatusCode.ALREADY_EXISTS,
+						dn + " already exists! Updated its password and database properties with the values submitted.",
+						dn, null, new Date());
+			} else {
+				logger.info("Agent {} and its related database record created successfully!", dn);
 				return new RegistrationResponseMessageImpl(StatusCode.REGISTERED,
-						entryDN + " and its related database record created successfully!", entryDN, null, new Date());
+						dn + " and its related database record created successfully!", dn, null, new Date());
 			}
 		} else if (AgentMessageType.UNREGISTER == message.getType()) {
 			// Check if agent LDAP entry already exists
@@ -190,6 +177,23 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 		entryDN.append(configurationService.getAgentLdapBaseDn() == null ? configurationService.getAgentLdapBaseDn()
 				: configurationService.getAgentLdapBaseDn());
 		return entryDN.toString();
+	}
+
+	/**
+	 * 
+	 * @param jid
+	 * @param password
+	 * @return
+	 */
+	private Map<String, String[]> computeAttributes(final String jid, final String password) {
+		Map<String, String[]> attributes = new HashMap<String, String[]>();
+		attributes.put("objectClass", configurationService.getAgentLdapObjectClasses().split(","));
+		attributes.put(configurationService.getAgentLdapIdAttribute(), new String[] { jid });
+		attributes.put(configurationService.getAgentLdapJidAttribute(), new String[] { jid });
+		attributes.put("userPassword", new String[] { password });
+		// FIXME remove this line, after correcting LDAP schema!
+		attributes.put("owner", new String[] { "ou=Uncategorized,dc=mys,dc=pardus,dc=org" });
+		return attributes;
 	}
 
 	/**
