@@ -81,7 +81,6 @@ public class RegistrationListener implements StanzaListener, StanzaFilter {
 				mapper.setDateFormat(new SimpleDateFormat("dd-MM-yyyy HH:mm"));
 
 				RegistrationMessageImpl message = mapper.readValue(msg.getBody(), RegistrationMessageImpl.class);
-				message.setFrom(msg.getFrom());
 
 				try {
 					responseMessage = subscriber.messageReceived(message);
