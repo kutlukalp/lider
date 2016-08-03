@@ -23,7 +23,7 @@ public class UserSessionReportTemplateImpl extends BaseReportTemplate {
 
 	@Override
 	public String getDescription() {
-		return "Anlık Olarak, Sisteme Bağlı Bulunan Tüm Kullanıcılara Ait Bilgiler İçeren Rapor.";
+		return "Anlık olarak sisteme bağlı bulunan tüm kullanıcılara ait bilgiler içeren rapor.";
 	}
 
 	@Override
@@ -57,7 +57,7 @@ public class UserSessionReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public String getName() {
-				return "Sıra No.";
+				return "Ahenk JID";
 			}
 
 			@Override
@@ -67,7 +67,7 @@ public class UserSessionReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public Integer getColumnOrder() {
-				return 1;
+				return 2;
 			}
 		});
 		columns.add(new IReportTemplateColumn() {
@@ -93,7 +93,7 @@ public class UserSessionReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public Integer getColumnOrder() {
-				return 4;
+				return 3;
 			}
 		});
 		columns.add(new IReportTemplateColumn() {
@@ -119,7 +119,7 @@ public class UserSessionReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public Integer getColumnOrder() {
-				return 5;
+				return 4;
 			}
 		});
 		columns.add(new IReportTemplateColumn() {
@@ -145,7 +145,7 @@ public class UserSessionReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public Integer getColumnOrder() {
-				return 6;
+				return 5;
 			}
 		});
 		columns.add(new IReportTemplateColumn() {
@@ -171,7 +171,7 @@ public class UserSessionReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public Integer getColumnOrder() {
-				return 7;
+				return 6;
 			}
 		});
 		return columns;

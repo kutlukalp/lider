@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
-import com.itextpdf.text.Font.FontFamily;
 import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
@@ -176,10 +175,10 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 				logger.error("Font: " + f);
 			}
 
-			FontFactory.defaultEncoding = "utf8";
-			Font titleFont = new Font(FontFamily.TIMES_ROMAN, 12, Font.BOLD);
-			Font headerFont = FontFactory.getFont("times-roman", "utf8", 10, Font.BOLD);
-			Font cellFont = new Font(FontFamily.TIMES_ROMAN, 7, Font.NORMAL);
+			FontFactory.defaultEncoding = "cp1254";
+			Font titleFont = FontFactory.getFont("times-roman", "cp1254", 12, Font.BOLD);
+			Font headerFont = FontFactory.getFont("times-roman", "cp1254", 10, Font.BOLD);
+			Font cellFont = FontFactory.getFont("times-roman", "cp1254", 7, Font.NORMAL);
 
 			// Title & header
 			doc.addTitle(view.getName());
@@ -191,6 +190,7 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 			// Table headers
 			PdfPTable table = new PdfPTable(view.getViewColumns().size());
 			int[] colWidths = new int[view.getViewColumns().size()];
+			int[] colIndices = new int[view.getViewColumns().size()];
 			ArrayList<IReportViewColumn> columns = new ArrayList<IReportViewColumn>(view.getViewColumns());
 			for (int i = 0; i < columns.size(); i++) {
 				IReportViewColumn column = columns.get(i);
@@ -198,18 +198,21 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 				cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 				table.addCell(cell);
 				colWidths[i] = column.getWidth();
+				colIndices[i] = column.getReferencedCol().getColumnOrder() - 1;
 			}
 
 			// Table rows
 			for (Object[] row : resultList) {
-				for (Object cellValue : row) {
-					PdfPCell cell = new PdfPCell(new Phrase(cellValue != null ? cellValue.toString() : " ", cellFont));
+				for (int index : colIndices) {
+					Phrase phrase = new Phrase(
+							(index >= row.length || row[index] == null) ? " " : row[index].toString(), cellFont);
+					PdfPCell cell = new PdfPCell(phrase);
 					cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 					table.addCell(cell);
 				}
 			}
 
-			// End table
+			// Finalise table
 			table.setWidths(colWidths);
 			doc.add(table);
 			doc.add(new Paragraph(" "));

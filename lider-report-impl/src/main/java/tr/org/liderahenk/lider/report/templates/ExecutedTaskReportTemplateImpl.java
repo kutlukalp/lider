@@ -27,7 +27,7 @@ public class ExecutedTaskReportTemplateImpl extends BaseReportTemplate {
 
 	@Override
 	public String getDescription() {
-		return "Çalıştırılan görevler hakkında detay rapor";
+		return "Çalıştırılan görevler hakkında istatistiksel rapor";
 	}
 
 	@Override
