@@ -4,15 +4,23 @@
 	<bean id="taskTemplate"
 		class="tr.org.liderahenk.lider.report.templates.ExecutedTaskReportTemplateImpl" />
 
-	<bean id="userSessionTemplate"
-		class="tr.org.liderahenk.lider.report.templates.UserSessionReportTemplateImpl" />
+	<bean id="onlineUsersTemplate"
+		class="tr.org.liderahenk.lider.report.templates.OnlineUsersReportTemplateImpl" />
+
+	<bean id="agentInfoTemplate"
+		class="tr.org.liderahenk.lider.report.templates.AgentInfoReportTemplateImpl" />
+
+	<bean id="installedPluginsTemplate"
+		class="tr.org.liderahenk.lider.report.templates.InstalledPluginsReportTemplateImpl" />
 
 	<bean id="templateManager" class="tr.org.liderahenk.lider.report.TemplateManager" init-method="init">
 		<property name="reportDao" ref="reportDao" />
 		<property name="entityFactory" ref="entityFactory" />
 		<property name="templateList" ref="templateList" />
 		<property name="taskTemplate" ref="taskTemplate" />
-		<property name="userSessionTemplate" ref="userSessionTemplate" />
+		<property name="onlineUsersTemplate" ref="onlineUsersTemplate" />
+		<property name="agentInfoTemplate" ref="agentInfoTemplate" />
+		<property name="installedPluginsTemplate" ref="installedPluginsTemplate" />
 	</bean>
 
 	<reference-list id="templateList" availability="optional"

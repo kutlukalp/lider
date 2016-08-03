@@ -9,30 +9,28 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateColu
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateParameter;
 import tr.org.liderahenk.lider.core.api.plugin.BaseReportTemplate;
 
-public class UserSessionReportTemplateImpl extends BaseReportTemplate {
+public class InstalledPluginsReportTemplateImpl extends BaseReportTemplate {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 8330754495877362709L;
+	private static final long serialVersionUID = 9219770488255528753L;
 
 	@Override
 	public String getName() {
-		return "Çevrimiçi Kullanıcılar";
+		return "Yüklü eklentiler";
 	}
 
 	@Override
 	public String getDescription() {
-		return "Anlık olarak sisteme bağlı bulunan tüm kullanıcılara ait bilgiler içeren rapor.";
+		return "Lider üzerinde yüklü eklentilere dair rapor";
 	}
 
 	@Override
 	public String getQuery() {
-		return "SELECT a.id, a.jid, us.username, us.createDate, a.ipAddresses, a.dn "
-				+ "  FROM UserSessionImpl us INNER JOIN us.agent a" + " WHERE us.sessionEvent = 1 "
-				+ "	AND NOT EXISTS (select 1 from UserSessionImpl logout where logout.sessionEvent = 2 and logout.agent = us.agent "
-				+ " 			and logout.username = us.username and logout.createDate > us.createDate)"
-				+ " ORDER BY us.createDate, us.username";
+		return "SELECT p.name, p.version, " 
+				+ "CASE WHEN p.machineOriented IS NULL THEN 'Hayır' ELSE 'Evet' END, "
+				+ "CASE WHEN p.userOriented IS NULL THEN 'Hayır' ELSE 'Evet' END, "
+				+ "CASE WHEN p.policyPlugin IS NULL THEN 'Hayır' ELSE 'Evet' END, "
+				+ "CASE WHEN p.taskPlugin IS NULL THEN 'Hayır' ELSE 'Evet' END, " + "p.createDate "
+				+ "FROM PluginImpl p";
 	}
 
 	@Override
@@ -57,7 +55,33 @@ public class UserSessionReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public String getName() {
-				return "Ahenk JID";
+				return "Eklenti adı";
+			}
+
+			@Override
+			public Long getId() {
+				return null;
+			}
+
+			@Override
+			public Integer getColumnOrder() {
+				return 1;
+			}
+		});
+		columns.add(new IReportTemplateColumn() {
+			@Override
+			public Date getCreateDate() {
+				return new Date();
+			}
+
+			@Override
+			public IReportTemplate getTemplate() {
+				return getSelf();
+			}
+
+			@Override
+			public String getName() {
+				return "Eklenti sürümü";
 			}
 
 			@Override
@@ -83,7 +107,7 @@ public class UserSessionReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public String getName() {
-				return "Kullanıcı Adı";
+				return "Makina-odaklı";
 			}
 
 			@Override
@@ -109,7 +133,7 @@ public class UserSessionReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public String getName() {
-				return "Sisteme Giriş Tarihi";
+				return "Kullanıcı-odaklı";
 			}
 
 			@Override
@@ -135,7 +159,7 @@ public class UserSessionReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public String getName() {
-				return "IP Adresleri";
+				return "Politika eklentisi";
 			}
 
 			@Override
@@ -161,7 +185,7 @@ public class UserSessionReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public String getName() {
-				return "DN";
+				return "Görev eklentisi";
 			}
 
 			@Override
@@ -174,10 +198,37 @@ public class UserSessionReportTemplateImpl extends BaseReportTemplate {
 				return 6;
 			}
 		});
+		columns.add(new IReportTemplateColumn() {
+			@Override
+			public Date getCreateDate() {
+				return new Date();
+			}
+
+			@Override
+			public IReportTemplate getTemplate() {
+				return getSelf();
+			}
+
+			@Override
+			public String getName() {
+				return "Yüklenme tarihi";
+			}
+
+			@Override
+			public Long getId() {
+				return null;
+			}
+
+			@Override
+			public Integer getColumnOrder() {
+				return 7;
+			}
+		});
 		return columns;
 	}
 
-	protected UserSessionReportTemplateImpl getSelf() {
+	protected InstalledPluginsReportTemplateImpl getSelf() {
 		return this;
 	}
+
 }
