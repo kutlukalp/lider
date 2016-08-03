@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
@@ -70,7 +69,12 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 			return responseFactory.createResponse(RestResponseStatus.OK, "Query validated.");
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
-			return responseFactory.createResponse(RestResponseStatus.ERROR, e.getMessage());
+			List<String> messages = new ArrayList<String>();
+			messages.add(e.getMessage());
+			if (e.getCause() != null) {
+				messages.add(e.getCause().getMessage());
+			}
+			return responseFactory.createResponse(RestResponseStatus.ERROR, messages);
 		}
 	}
 
@@ -170,11 +174,6 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 			doc.open();
 
 			// Fonts
-			Set<String> registeredFonts = FontFactory.getRegisteredFonts();
-			for (String f : registeredFonts) {
-				logger.error("Font: " + f);
-			}
-
 			FontFactory.defaultEncoding = "cp1254";
 			Font titleFont = FontFactory.getFont("times-roman", "cp1254", 12, Font.BOLD);
 			Font headerFont = FontFactory.getFont("times-roman", "cp1254", 10, Font.BOLD);
