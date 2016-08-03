@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import tr.org.liderahenk.lider.core.api.messaging.enums.Protocol;
+import tr.org.liderahenk.lider.core.api.messaging.enums.StatusCode;
 import tr.org.liderahenk.lider.core.api.messaging.messages.FileServerConf;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecutePoliciesMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteScriptMessage;
@@ -11,6 +12,7 @@ import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteTaskMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IInstallPluginMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IPluginNotFoundMessage;
+import tr.org.liderahenk.lider.core.api.messaging.messages.IRegistrationResponseMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IResponseAgreementMessage;
 import tr.org.liderahenk.lider.core.api.messaging.notifications.ITaskNotification;
 import tr.org.liderahenk.lider.core.api.messaging.notifications.ITaskStatusNotification;
@@ -120,5 +122,16 @@ public interface IMessageFactory {
 	 * @return
 	 */
 	IExecuteScriptMessage createExecuteScriptMessage(String recipient, String command, FileServerConf fileServerConf);
+
+	/**
+	 * 
+	 * @param recipient
+	 * @param status
+	 * @param message
+	 * @param agentDn
+	 * @return
+	 */
+	IRegistrationResponseMessage createRegistrationResponseMessage(String recipient, StatusCode status, String message,
+			String agentDn);
 
 }
