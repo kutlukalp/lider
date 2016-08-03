@@ -12,26 +12,26 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplatePara
 import tr.org.liderahenk.lider.core.api.persistence.enums.ParameterType;
 import tr.org.liderahenk.lider.core.api.plugin.BaseReportTemplate;
 
-public class AgentInfoReportTemplateImpl extends BaseReportTemplate {
+public class AgentHardwareReportTemplateImpl extends BaseReportTemplate {
 
-	private static final long serialVersionUID = 4168546979440386632L;
+	private static final long serialVersionUID = -2134419589554780705L;
 
 	@Override
 	public String getName() {
-		return "Ahenk Bilgisi";
+		return "Ahenk Donanım Bilgisi";
 	}
 
 	@Override
 	public String getDescription() {
-		return "Ahenk yüklü bilgisayarlar hakkında rapor";
+		return "Ahenk yüklü bilgisayarlar hakkında donanımsal rapor";
 	}
 
 	@Override
 	public String getQuery() {
-		return "SELECT a.dn, a.hostname, a.ipAddresses, a.macAddresses, a.createDate " 
-				+ "FROM AgentImpl a "
-				+ "WHERE a.createDate BETWEEN :startDate AND :endDate "
-				+ "ORDER BY a.createDate DESC";
+		return "SELECT DISTINCT a.dn, a.hostname, p.propertyName, p.propertyValue "
+				+ "FROM AgentPropertyImpl p INNER JOIN p.agent a "
+				+ "WHERE p.propertyName IN ('os.distributionName', 'os.distributionVersion', 'hardware.memory.total', 'hardware.cpu.architecture', 'hardware.cpu.logicalCoreCount', 'hardware.cpu.physicalCoreCount', 'hardware.baseboard.manufacturer', 'hardware.baseboard.productName') "
+				+ "AND a.createDate BETWEEN :startDate AND :endDate";
 	}
 
 	@SuppressWarnings("serial")
@@ -201,7 +201,7 @@ public class AgentInfoReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public String getName() {
-				return "IP adres(ler)i";
+				return "Öznitelik adı";
 			}
 
 			@Override
@@ -227,7 +227,7 @@ public class AgentInfoReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public String getName() {
-				return "MAC adres(ler)i";
+				return "Öznitelik değeri";
 			}
 
 			@Override
@@ -240,36 +240,10 @@ public class AgentInfoReportTemplateImpl extends BaseReportTemplate {
 				return 4;
 			}
 		});
-		columns.add(new IReportTemplateColumn() {
-			@Override
-			public Date getCreateDate() {
-				return new Date();
-			}
-
-			@Override
-			public IReportTemplate getTemplate() {
-				return getSelf();
-			}
-
-			@Override
-			public String getName() {
-				return "Oluşturulma tarihi";
-			}
-
-			@Override
-			public Long getId() {
-				return null;
-			}
-
-			@Override
-			public Integer getColumnOrder() {
-				return 5;
-			}
-		});
 		return columns;
 	}
 
-	protected AgentInfoReportTemplateImpl getSelf() {
+	protected AgentHardwareReportTemplateImpl getSelf() {
 		return this;
 	}
 

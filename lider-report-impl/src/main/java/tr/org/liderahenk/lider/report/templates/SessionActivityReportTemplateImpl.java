@@ -12,26 +12,28 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplatePara
 import tr.org.liderahenk.lider.core.api.persistence.enums.ParameterType;
 import tr.org.liderahenk.lider.core.api.plugin.BaseReportTemplate;
 
-public class AgentInfoReportTemplateImpl extends BaseReportTemplate {
+public class SessionActivityReportTemplateImpl extends BaseReportTemplate {
 
-	private static final long serialVersionUID = 4168546979440386632L;
+	private static final long serialVersionUID = 6854143789818012538L;
 
 	@Override
 	public String getName() {
-		return "Ahenk Bilgisi";
+		return "Kullanıcı Giriş-Çıkış Logları";
 	}
 
 	@Override
 	public String getDescription() {
-		return "Ahenk yüklü bilgisayarlar hakkında rapor";
+		return "Ahenk yüklü bilgisayarlardaki kullanıcı giriş-çıkışlarına dair rapor";
 	}
 
 	@Override
 	public String getQuery() {
-		return "SELECT a.dn, a.hostname, a.ipAddresses, a.macAddresses, a.createDate " 
-				+ "FROM AgentImpl a "
-				+ "WHERE a.createDate BETWEEN :startDate AND :endDate "
-				+ "ORDER BY a.createDate DESC";
+		return "SELECT us.username, "
+				+ "CASE WHEN us.sessionEvent = 1 THEN 'Giriş' ELSE 'Çıkış' END, "
+				+ "us.createDate, a.ipAddresses, a.dn  "
+				+ "FROM UserSessionImpl us INNER JOIN us.agent a "
+				+ "WHERE us.createDate BETWEEN :startDate AND :endDate "
+				+ "ORDER BY us.createDate, us.username DESC";
 	}
 
 	@SuppressWarnings("serial")
@@ -149,7 +151,7 @@ public class AgentInfoReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public String getName() {
-				return "Ahenk LDAP DN";
+				return "Kullanıcı adı";
 			}
 
 			@Override
@@ -175,7 +177,7 @@ public class AgentInfoReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public String getName() {
-				return "Makina adı";
+				return "Oturum işlemi";
 			}
 
 			@Override
@@ -201,7 +203,7 @@ public class AgentInfoReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public String getName() {
-				return "IP adres(ler)i";
+				return "İşlem tarihi";
 			}
 
 			@Override
@@ -227,7 +229,7 @@ public class AgentInfoReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public String getName() {
-				return "MAC adres(ler)i";
+				return "IP adres(ler)i";
 			}
 
 			@Override
@@ -253,7 +255,7 @@ public class AgentInfoReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public String getName() {
-				return "Oluşturulma tarihi";
+				return "Ahenk LDAP DN";
 			}
 
 			@Override
@@ -269,7 +271,7 @@ public class AgentInfoReportTemplateImpl extends BaseReportTemplate {
 		return columns;
 	}
 
-	protected AgentInfoReportTemplateImpl getSelf() {
+	protected SessionActivityReportTemplateImpl getSelf() {
 		return this;
 	}
 

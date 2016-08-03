@@ -13,6 +13,12 @@
 	<bean id="installedPluginsTemplate"
 		class="tr.org.liderahenk.lider.report.templates.InstalledPluginsReportTemplateImpl" />
 
+	<bean id="agentHardwareTemplate"
+		class="tr.org.liderahenk.lider.report.templates.AgentHardwareReportTemplateImpl" />
+
+	<bean id="sessionActivityTemplate"
+		class="tr.org.liderahenk.lider.report.templates.SessionActivityReportTemplateImpl" />
+
 	<bean id="templateManager" class="tr.org.liderahenk.lider.report.TemplateManager" init-method="init">
 		<property name="reportDao" ref="reportDao" />
 		<property name="entityFactory" ref="entityFactory" />
@@ -21,6 +27,8 @@
 		<property name="onlineUsersTemplate" ref="onlineUsersTemplate" />
 		<property name="agentInfoTemplate" ref="agentInfoTemplate" />
 		<property name="installedPluginsTemplate" ref="installedPluginsTemplate" />
+		<property name="agentHardwareTemplate" ref="agentHardwareTemplate" />
+		<property name="sessionActivityTemplate" ref="sessionActivityTemplate" />
 	</bean>
 
 	<reference-list id="templateList" availability="optional"

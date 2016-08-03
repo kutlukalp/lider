@@ -26,10 +26,11 @@ public class OnlineUsersReportTemplateImpl extends BaseReportTemplate {
 	@Override
 	public String getQuery() {
 		return "SELECT a.id, a.jid, us.username, us.createDate, a.ipAddresses, a.dn "
-				+ "  FROM UserSessionImpl us INNER JOIN us.agent a" + " WHERE us.sessionEvent = 1 "
+				+ "  FROM UserSessionImpl us INNER JOIN us.agent a" 
+				+ " WHERE us.sessionEvent = 1 "
 				+ "	AND NOT EXISTS (select 1 from UserSessionImpl logout where logout.sessionEvent = 2 and logout.agent = us.agent "
 				+ " 			and logout.username = us.username and logout.createDate > us.createDate)"
-				+ " ORDER BY us.createDate, us.username";
+				+ " ORDER BY us.createDate, us.username DESC";
 	}
 
 	@Override

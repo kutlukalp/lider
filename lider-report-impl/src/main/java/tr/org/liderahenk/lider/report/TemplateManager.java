@@ -29,6 +29,8 @@ public class TemplateManager {
 	private IReportTemplate onlineUsersTemplate;
 	private IReportTemplate agentInfoTemplate;
 	private IReportTemplate installedPluginsTemplate;
+	private IReportTemplate agentHardwareTemplate;
+	private IReportTemplate sessionActivityTemplate;
 
 	public void init() {
 		// Check if task template already exists!
@@ -74,6 +76,30 @@ public class TemplateManager {
 			reportDao.updateTemplate(existingInstalledPluginsTemplate);
 		} else {
 			reportDao.saveTemplate(installedPluginsTemplate);
+		}
+		// Check if agent hardware template already exists!
+		List<? extends IReportTemplate> agentHardwareTemplates = reportDao.findTemplates("name",
+				agentHardwareTemplate.getName(), 1);
+		IReportTemplate existingAgentHardwareTemplate = agentHardwareTemplates != null
+				&& !agentHardwareTemplates.isEmpty() ? agentHardwareTemplates.get(0) : null;
+		if (existingAgentHardwareTemplate != null) {
+			existingAgentHardwareTemplate = entityFactory.createReportTemplate(existingAgentHardwareTemplate,
+					agentHardwareTemplate);
+			reportDao.updateTemplate(existingAgentHardwareTemplate);
+		} else {
+			reportDao.saveTemplate(agentHardwareTemplate);
+		}
+		// Check if session activity template already exists!
+		List<? extends IReportTemplate> sessionActivityTemplates = reportDao.findTemplates("name",
+				sessionActivityTemplate.getName(), 1);
+		IReportTemplate existingSessionActivityTemplate = sessionActivityTemplates != null
+				&& !sessionActivityTemplates.isEmpty() ? sessionActivityTemplates.get(0) : null;
+		if (existingSessionActivityTemplate != null) {
+			existingSessionActivityTemplate = entityFactory.createReportTemplate(existingSessionActivityTemplate,
+					sessionActivityTemplate);
+			reportDao.updateTemplate(existingSessionActivityTemplate);
+		} else {
+			reportDao.saveTemplate(sessionActivityTemplate);
 		}
 	}
 
@@ -169,6 +195,22 @@ public class TemplateManager {
 	 */
 	public void setInstalledPluginsTemplate(IReportTemplate installedPluginsTemplate) {
 		this.installedPluginsTemplate = installedPluginsTemplate;
+	}
+
+	/**
+	 * 
+	 * @param agentHardwareTemplate
+	 */
+	public void setAgentHardwareTemplate(IReportTemplate agentHardwareTemplate) {
+		this.agentHardwareTemplate = agentHardwareTemplate;
+	}
+
+	/**
+	 * 
+	 * @param sessionActivityTemplate
+	 */
+	public void setSessionActivityTemplate(IReportTemplate sessionActivityTemplate) {
+		this.sessionActivityTemplate = sessionActivityTemplate;
 	}
 
 }
