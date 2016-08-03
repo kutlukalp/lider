@@ -15,6 +15,8 @@
 	<mvc:annotation-driven />
 	<ctx:component-scan base-package="tr.org.liderahenk.web" />
 
+	<bean id="corsFilter" class="tr.org.liderahenk.web.filters.CorsFilter" />
+
 	<bean
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="viewClass"
