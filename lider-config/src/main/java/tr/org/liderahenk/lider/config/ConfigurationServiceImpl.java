@@ -540,14 +540,17 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		switch (fileServerProtocol) {
 		case HTTP:
 			String url = fileServerUrl + fileServerPluginPath;
-			params.put("url",
-					url.replaceFirst("\\{0\\}", pluginName.toLowerCase(Locale.ENGLISH).replaceFirst("\\{1\\}", pluginVersion)));
+			url = url.replaceFirst("\\{0\\}", pluginName.toLowerCase(Locale.ENGLISH));
+			url = url.replaceFirst("\\{1\\}", pluginVersion);
+			params.put("url", url);
 			break;
 		case SSH:
 			params.put("host", fileServerHost);
 			params.put("username", fileServerUsername);
 			params.put("password", fileServerPassword);
-			params.put("path", fileServerPluginPath.toLowerCase(Locale.ENGLISH).replaceFirst("\\{1\\}", pluginVersion));
+			String path = fileServerPluginPath.replaceFirst("\\{0\\}", pluginName.toLowerCase(Locale.ENGLISH));
+			path = path.replaceFirst("\\{1\\}", pluginVersion);
+			params.put("path", path);
 			params.put("port", fileServerPort);
 			break;
 		default:
