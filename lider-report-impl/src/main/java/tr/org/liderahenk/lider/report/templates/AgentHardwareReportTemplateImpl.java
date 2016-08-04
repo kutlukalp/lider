@@ -30,7 +30,10 @@ public class AgentHardwareReportTemplateImpl extends BaseReportTemplate {
 	public String getQuery() {
 		return "SELECT DISTINCT a.dn, a.hostname, p.propertyName, p.propertyValue "
 				+ "FROM AgentPropertyImpl p INNER JOIN p.agent a "
-				+ "WHERE p.propertyName IN ('os.distributionName', 'os.distributionVersion', 'hardware.memory.total', 'hardware.cpu.architecture', 'hardware.cpu.logicalCoreCount', 'hardware.cpu.physicalCoreCount', 'hardware.baseboard.manufacturer', 'hardware.baseboard.productName') "
+				+ "WHERE p.propertyName IN ('os.distributionName', 'os.distributionVersion', "
+				+ "'hardware.memory.total', 'hardware.cpu.architecture', 'hardware.cpu.logicalCoreCount', "
+				+ "'hardware.cpu.physicalCoreCount', 'hardware.baseboard.manufacturer', "
+				+ "'hardware.baseboard.productName', 'hardware.disk.partitions', 'hardware.disk.total') "
 				+ "AND a.createDate BETWEEN :startDate AND :endDate";
 	}
 
