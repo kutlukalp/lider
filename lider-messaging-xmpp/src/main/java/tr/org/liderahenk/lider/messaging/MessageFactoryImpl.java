@@ -9,12 +9,14 @@ import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.messaging.IMessageFactory;
 import tr.org.liderahenk.lider.core.api.messaging.enums.Protocol;
+import tr.org.liderahenk.lider.core.api.messaging.enums.StatusCode;
 import tr.org.liderahenk.lider.core.api.messaging.messages.FileServerConf;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecutePoliciesMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteScriptMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecuteTaskMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IInstallPluginMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IPluginNotFoundMessage;
+import tr.org.liderahenk.lider.core.api.messaging.messages.IRegistrationResponseMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IResponseAgreementMessage;
 import tr.org.liderahenk.lider.core.api.messaging.notifications.ITaskNotification;
 import tr.org.liderahenk.lider.core.api.messaging.notifications.ITaskStatusNotification;
@@ -28,6 +30,7 @@ import tr.org.liderahenk.lider.messaging.messages.ExecuteScriptMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.ExecuteTaskMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.InstallPluginMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.PluginNotFoundMessageImpl;
+import tr.org.liderahenk.lider.messaging.messages.RegistrationResponseMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.ResponseAgreementMessageImpl;
 import tr.org.liderahenk.lider.messaging.notifications.TaskNotificationImpl;
 import tr.org.liderahenk.lider.messaging.notifications.TaskStatusNotificationImpl;
@@ -58,6 +61,12 @@ public class MessageFactoryImpl implements IMessageFactory {
 	public IExecuteScriptMessage createExecuteScriptMessage(String recipient, String command,
 			FileServerConf fileServerConf) {
 		return new ExecuteScriptMessageImpl(command, recipient, new Date(), fileServerConf);
+	}
+
+	@Override
+	public IRegistrationResponseMessage createRegistrationResponseMessage(String recipient, StatusCode status,
+			String message, String agentDn) {
+		return new RegistrationResponseMessageImpl(status, message, agentDn, recipient, new Date());
 	}
 
 	@Override
