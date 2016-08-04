@@ -26,7 +26,11 @@ public class TemplateManager {
 	private IReportDao reportDao;
 	private IEntityFactory entityFactory;
 	private IReportTemplate taskTemplate;
-	private IReportTemplate userSessionTemplate;
+	private IReportTemplate onlineUsersTemplate;
+	private IReportTemplate agentInfoTemplate;
+	private IReportTemplate installedPluginsTemplate;
+	private IReportTemplate agentHardwareTemplate;
+	private IReportTemplate sessionActivityTemplate;
 
 	public void init() {
 		// Check if task template already exists!
@@ -38,14 +42,64 @@ public class TemplateManager {
 		} else {
 			reportDao.saveTemplate(taskTemplate);
 		}
-		// Check if user session template already exists!
-		List<? extends IReportTemplate> usertemplates = reportDao.findTemplates("name", userSessionTemplate.getName(), 1);
-		IReportTemplate existingUserTemplate = usertemplates != null && !usertemplates.isEmpty() ? usertemplates.get(0) : null;
+		// Check if online users template already exists!
+		List<? extends IReportTemplate> onlineUserstemplates = reportDao.findTemplates("name",
+				onlineUsersTemplate.getName(), 1);
+		IReportTemplate existingUserTemplate = onlineUserstemplates != null && !onlineUserstemplates.isEmpty()
+				? onlineUserstemplates.get(0) : null;
 		if (existingUserTemplate != null) {
-			existingUserTemplate = entityFactory.createReportTemplate(existingUserTemplate, userSessionTemplate);
+			existingUserTemplate = entityFactory.createReportTemplate(existingUserTemplate, onlineUsersTemplate);
 			reportDao.updateTemplate(existingUserTemplate);
 		} else {
-			reportDao.saveTemplate(userSessionTemplate);
+			reportDao.saveTemplate(onlineUsersTemplate);
+		}
+		// Check if agent info template already exists!
+		List<? extends IReportTemplate> agentInfoTemplates = reportDao.findTemplates("name",
+				agentInfoTemplate.getName(), 1);
+		IReportTemplate existingAgentInfoTemplate = agentInfoTemplates != null && !agentInfoTemplates.isEmpty()
+				? agentInfoTemplates.get(0) : null;
+		if (existingAgentInfoTemplate != null) {
+			existingAgentInfoTemplate = entityFactory.createReportTemplate(existingAgentInfoTemplate,
+					agentInfoTemplate);
+			reportDao.updateTemplate(existingAgentInfoTemplate);
+		} else {
+			reportDao.saveTemplate(agentInfoTemplate);
+		}
+		// Check if installed plugins template already exists!
+		List<? extends IReportTemplate> installedPluginsTemplates = reportDao.findTemplates("name",
+				installedPluginsTemplate.getName(), 1);
+		IReportTemplate existingInstalledPluginsTemplate = installedPluginsTemplates != null
+				&& !installedPluginsTemplates.isEmpty() ? installedPluginsTemplates.get(0) : null;
+		if (existingInstalledPluginsTemplate != null) {
+			existingInstalledPluginsTemplate = entityFactory.createReportTemplate(existingInstalledPluginsTemplate,
+					installedPluginsTemplate);
+			reportDao.updateTemplate(existingInstalledPluginsTemplate);
+		} else {
+			reportDao.saveTemplate(installedPluginsTemplate);
+		}
+		// Check if agent hardware template already exists!
+		List<? extends IReportTemplate> agentHardwareTemplates = reportDao.findTemplates("name",
+				agentHardwareTemplate.getName(), 1);
+		IReportTemplate existingAgentHardwareTemplate = agentHardwareTemplates != null
+				&& !agentHardwareTemplates.isEmpty() ? agentHardwareTemplates.get(0) : null;
+		if (existingAgentHardwareTemplate != null) {
+			existingAgentHardwareTemplate = entityFactory.createReportTemplate(existingAgentHardwareTemplate,
+					agentHardwareTemplate);
+			reportDao.updateTemplate(existingAgentHardwareTemplate);
+		} else {
+			reportDao.saveTemplate(agentHardwareTemplate);
+		}
+		// Check if session activity template already exists!
+		List<? extends IReportTemplate> sessionActivityTemplates = reportDao.findTemplates("name",
+				sessionActivityTemplate.getName(), 1);
+		IReportTemplate existingSessionActivityTemplate = sessionActivityTemplates != null
+				&& !sessionActivityTemplates.isEmpty() ? sessionActivityTemplates.get(0) : null;
+		if (existingSessionActivityTemplate != null) {
+			existingSessionActivityTemplate = entityFactory.createReportTemplate(existingSessionActivityTemplate,
+					sessionActivityTemplate);
+			reportDao.updateTemplate(existingSessionActivityTemplate);
+		} else {
+			reportDao.saveTemplate(sessionActivityTemplate);
 		}
 	}
 
@@ -118,13 +172,45 @@ public class TemplateManager {
 	public void setTaskTemplate(IReportTemplate taskTemplate) {
 		this.taskTemplate = taskTemplate;
 	}
-	
+
 	/**
 	 * 
-	 * @param userSessionTemplate
+	 * @param onlineUsersTemplate
 	 */
-	public void setUserSessionTemplate(IReportTemplate userSessionTemplate) {
-		this.userSessionTemplate = userSessionTemplate;
+	public void setOnlineUsersTemplate(IReportTemplate onlineUsersTemplate) {
+		this.onlineUsersTemplate = onlineUsersTemplate;
+	}
+
+	/**
+	 * 
+	 * @param agentInfoTemplate
+	 */
+	public void setAgentInfoTemplate(IReportTemplate agentInfoTemplate) {
+		this.agentInfoTemplate = agentInfoTemplate;
+	}
+
+	/**
+	 * 
+	 * @param installedPluginsTemplate
+	 */
+	public void setInstalledPluginsTemplate(IReportTemplate installedPluginsTemplate) {
+		this.installedPluginsTemplate = installedPluginsTemplate;
+	}
+
+	/**
+	 * 
+	 * @param agentHardwareTemplate
+	 */
+	public void setAgentHardwareTemplate(IReportTemplate agentHardwareTemplate) {
+		this.agentHardwareTemplate = agentHardwareTemplate;
+	}
+
+	/**
+	 * 
+	 * @param sessionActivityTemplate
+	 */
+	public void setSessionActivityTemplate(IReportTemplate sessionActivityTemplate) {
+		this.sessionActivityTemplate = sessionActivityTemplate;
 	}
 
 }

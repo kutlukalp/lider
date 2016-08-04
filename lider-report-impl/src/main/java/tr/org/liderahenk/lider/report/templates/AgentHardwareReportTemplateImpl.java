@@ -1,5 +1,7 @@
 package tr.org.liderahenk.lider.report.templates;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -10,45 +12,48 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplatePara
 import tr.org.liderahenk.lider.core.api.persistence.enums.ParameterType;
 import tr.org.liderahenk.lider.core.api.plugin.BaseReportTemplate;
 
-/**
- * Default report template for executed tasks.
- * 
- * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
- *
- */
-public class ExecutedTaskReportTemplateImpl extends BaseReportTemplate {
+public class AgentHardwareReportTemplateImpl extends BaseReportTemplate {
 
-	private static final long serialVersionUID = -8026043224671892836L;
+	private static final long serialVersionUID = -2134419589554780705L;
 
 	@Override
 	public String getName() {
-		return "Çalıştırılan Görevler";
+		return "Ahenk Donanım Bilgisi";
 	}
 
 	@Override
 	public String getDescription() {
-		return "Çalıştırılan görevler hakkında istatistiksel rapor";
+		return "Ahenk yüklü bilgisayarlar hakkında donanımsal rapor";
 	}
 
 	@Override
 	public String getQuery() {
-		return "SELECT p.name, p.version, t.commandClsId, t.createDate, "
-				+ "SUM(CASE WHEN cer.responseCode = 6 then 1 ELSE 0 END) as success, "
-				+ "SUM(CASE WHEN cer.responseCode = 5 THEN 1 ELSE 0 END) as received, "
-				+ "SUM(CASE WHEN cer.responseCode = 8 then 1 ELSE 0 END) as error "
-				+ "FROM CommandImpl c LEFT JOIN c.commandExecutions ce LEFT JOIN ce.commandExecutionResults cer INNER JOIN c.task t INNER JOIN t.plugin p "
-				+ "WHERE p.name LIKE :pluginName AND p.version LIKE :pluginVersion GROUP BY p.name, p.version, t.commandClsId, t.createDate";
+		return "SELECT DISTINCT a.dn, a.hostname, p.propertyName, p.propertyValue "
+				+ "FROM AgentPropertyImpl p INNER JOIN p.agent a "
+				+ "WHERE p.propertyName IN ('os.distributionName', 'os.distributionVersion', 'hardware.memory.total', 'hardware.cpu.architecture', 'hardware.cpu.logicalCoreCount', 'hardware.cpu.physicalCoreCount', 'hardware.baseboard.manufacturer', 'hardware.baseboard.productName') "
+				+ "AND a.createDate BETWEEN :startDate AND :endDate";
 	}
 
 	@SuppressWarnings("serial")
 	@Override
 	public Set<? extends IReportTemplateParameter> getTemplateParams() {
 		Set<IReportTemplateParameter> params = new HashSet<IReportTemplateParameter>();
-		// Plugin name
+		// Start date
 		params.add(new IReportTemplateParameter() {
+
+			@Override
+			public Date getCreateDate() {
+				return new Date();
+			}
+
+			@Override
+			public boolean isMandatory() {
+				return true;
+			}
+
 			@Override
 			public ParameterType getType() {
-				return ParameterType.STRING;
+				return ParameterType.DATE;
 			}
 
 			@Override
@@ -58,12 +63,12 @@ public class ExecutedTaskReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public String getLabel() {
-				return "Eklenti adı";
+				return "Başlangıç tarih";
 			}
 
 			@Override
 			public String getKey() {
-				return "pluginName";
+				return "startDate";
 			}
 
 			@Override
@@ -73,24 +78,29 @@ public class ExecutedTaskReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public String getDefaultValue() {
-				return null;
-			}
-
-			@Override
-			public boolean isMandatory() {
-				return true;
-			}
-
-			@Override
-			public Date getCreateDate() {
-				return new Date();
+				Calendar prevYear = Calendar.getInstance();
+				prevYear.setTime(new Date());
+				prevYear.add(Calendar.DAY_OF_YEAR, -1);
+				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				return format.format(prevYear.getTime());
 			}
 		});
-		// Plugin version
+		// End year
 		params.add(new IReportTemplateParameter() {
+
+			@Override
+			public Date getCreateDate() {
+				return new Date();
+			}
+
+			@Override
+			public boolean isMandatory() {
+				return true;
+			}
+
 			@Override
 			public ParameterType getType() {
-				return ParameterType.STRING;
+				return ParameterType.DATE;
 			}
 
 			@Override
@@ -100,12 +110,12 @@ public class ExecutedTaskReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public String getLabel() {
-				return "Eklenti sürümü";
+				return "Bitiş tarihi";
 			}
 
 			@Override
 			public String getKey() {
-				return "pluginVersion";
+				return "endDate";
 			}
 
 			@Override
@@ -115,17 +125,8 @@ public class ExecutedTaskReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public String getDefaultValue() {
-				return "1.0.0";
-			}
-
-			@Override
-			public boolean isMandatory() {
-				return true;
-			}
-
-			@Override
-			public Date getCreateDate() {
-				return new Date();
+				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				return format.format(new Date());
 			}
 		});
 		return params;
@@ -148,7 +149,59 @@ public class ExecutedTaskReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public String getName() {
-				return "Görev kodu";
+				return "Ahenk LDAP DN";
+			}
+
+			@Override
+			public Long getId() {
+				return null;
+			}
+
+			@Override
+			public Integer getColumnOrder() {
+				return 1;
+			}
+		});
+		columns.add(new IReportTemplateColumn() {
+			@Override
+			public Date getCreateDate() {
+				return new Date();
+			}
+
+			@Override
+			public IReportTemplate getTemplate() {
+				return getSelf();
+			}
+
+			@Override
+			public String getName() {
+				return "Makina adı";
+			}
+
+			@Override
+			public Long getId() {
+				return null;
+			}
+
+			@Override
+			public Integer getColumnOrder() {
+				return 2;
+			}
+		});
+		columns.add(new IReportTemplateColumn() {
+			@Override
+			public Date getCreateDate() {
+				return new Date();
+			}
+
+			@Override
+			public IReportTemplate getTemplate() {
+				return getSelf();
+			}
+
+			@Override
+			public String getName() {
+				return "Öznitelik adı";
 			}
 
 			@Override
@@ -174,7 +227,7 @@ public class ExecutedTaskReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public String getName() {
-				return "Görev tarihi";
+				return "Öznitelik değeri";
 			}
 
 			@Override
@@ -187,62 +240,10 @@ public class ExecutedTaskReportTemplateImpl extends BaseReportTemplate {
 				return 4;
 			}
 		});
-		columns.add(new IReportTemplateColumn() {
-			@Override
-			public Date getCreateDate() {
-				return new Date();
-			}
-
-			@Override
-			public IReportTemplate getTemplate() {
-				return getSelf();
-			}
-
-			@Override
-			public String getName() {
-				return "Başarılı olanlar";
-			}
-
-			@Override
-			public Long getId() {
-				return null;
-			}
-
-			@Override
-			public Integer getColumnOrder() {
-				return 5;
-			}
-		});
-		columns.add(new IReportTemplateColumn() {
-			@Override
-			public Date getCreateDate() {
-				return new Date();
-			}
-
-			@Override
-			public IReportTemplate getTemplate() {
-				return getSelf();
-			}
-
-			@Override
-			public String getName() {
-				return "Başarısız olanlar";
-			}
-
-			@Override
-			public Long getId() {
-				return null;
-			}
-
-			@Override
-			public Integer getColumnOrder() {
-				return 7;
-			}
-		});
 		return columns;
 	}
 
-	protected ExecutedTaskReportTemplateImpl getSelf() {
+	protected AgentHardwareReportTemplateImpl getSelf() {
 		return this;
 	}
 

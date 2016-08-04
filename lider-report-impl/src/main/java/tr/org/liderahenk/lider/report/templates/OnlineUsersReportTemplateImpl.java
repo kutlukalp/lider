@@ -9,11 +9,8 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateColu
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateParameter;
 import tr.org.liderahenk.lider.core.api.plugin.BaseReportTemplate;
 
-public class UserSessionReportTemplateImpl extends BaseReportTemplate {
+public class OnlineUsersReportTemplateImpl extends BaseReportTemplate {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 8330754495877362709L;
 
 	@Override
@@ -23,16 +20,17 @@ public class UserSessionReportTemplateImpl extends BaseReportTemplate {
 
 	@Override
 	public String getDescription() {
-		return "Anlık Olarak, Sisteme Bağlı Bulunan Tüm Kullanıcılara Ait Bilgiler İçeren Rapor.";
+		return "Anlık olarak sisteme bağlı bulunan tüm kullanıcılara ait bilgiler içeren rapor.";
 	}
 
 	@Override
 	public String getQuery() {
 		return "SELECT a.id, a.jid, us.username, us.createDate, a.ipAddresses, a.dn "
-				+ "  FROM UserSessionImpl us INNER JOIN us.agent a" + " WHERE us.sessionEvent = 1 "
+				+ "  FROM UserSessionImpl us INNER JOIN us.agent a" 
+				+ " WHERE us.sessionEvent = 1 "
 				+ "	AND NOT EXISTS (select 1 from UserSessionImpl logout where logout.sessionEvent = 2 and logout.agent = us.agent "
 				+ " 			and logout.username = us.username and logout.createDate > us.createDate)"
-				+ " ORDER BY us.createDate, us.username";
+				+ " ORDER BY us.createDate, us.username DESC";
 	}
 
 	@Override
@@ -57,7 +55,7 @@ public class UserSessionReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public String getName() {
-				return "Sıra No.";
+				return "Ahenk JID";
 			}
 
 			@Override
@@ -67,7 +65,7 @@ public class UserSessionReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public Integer getColumnOrder() {
-				return 1;
+				return 2;
 			}
 		});
 		columns.add(new IReportTemplateColumn() {
@@ -93,7 +91,7 @@ public class UserSessionReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public Integer getColumnOrder() {
-				return 4;
+				return 3;
 			}
 		});
 		columns.add(new IReportTemplateColumn() {
@@ -119,7 +117,7 @@ public class UserSessionReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public Integer getColumnOrder() {
-				return 5;
+				return 4;
 			}
 		});
 		columns.add(new IReportTemplateColumn() {
@@ -145,7 +143,7 @@ public class UserSessionReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public Integer getColumnOrder() {
-				return 6;
+				return 5;
 			}
 		});
 		columns.add(new IReportTemplateColumn() {
@@ -161,7 +159,7 @@ public class UserSessionReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public String getName() {
-				return "DN";
+				return "Ahenk DN";
 			}
 
 			@Override
@@ -171,13 +169,13 @@ public class UserSessionReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public Integer getColumnOrder() {
-				return 7;
+				return 6;
 			}
 		});
 		return columns;
 	}
 
-	protected UserSessionReportTemplateImpl getSelf() {
+	protected OnlineUsersReportTemplateImpl getSelf() {
 		return this;
 	}
 }

@@ -1,5 +1,8 @@
 package tr.org.liderahenk.web.security;
 
+import java.nio.charset.Charset;
+import java.util.Base64;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -31,11 +34,30 @@ public class LiderAuthenticationFilter extends AuthenticatingFilter {
 
 	@Override
 	protected AuthenticationToken createToken(ServletRequest request, ServletResponse response) throws Exception {
+
 		logger.debug("parsing token from request header");
 		HttpServletRequest req = (HttpServletRequest) request;
 
+		final String authorization = req.getHeader("Authorization");
+//		logger.error("Auth: " + authorization);
+		if (authorization != null && authorization.startsWith("Basic")) {
+			// Authorization: Basic base64credentials
+			String base64Credentials = authorization.substring("Basic".length()).trim();
+			String credentials = new String(Base64.getDecoder().decode(base64Credentials), Charset.forName("UTF-8"));
+			// credentials = username:password
+			final String[] values = credentials.split(":", 2);
+//			logger.info("Username: " + values[0]);
+//			logger.info("Password: " + values[1]);
+			return new UsernamePasswordToken(values[0], values[1]);
+		}
+
 		String user = req.getHeader("username");
 		String pwd = req.getHeader("password");
+//		logger.error("User:" + user + " pwd: " + pwd);
+		if (user == null) {
+			user = req.getParameter("username");
+			pwd = req.getParameter("password");
+		}
 
 		logger.debug("creating usernamepassword token for user: {}, pwd: {}", user, "*****");
 		return new UsernamePasswordToken(user, pwd);

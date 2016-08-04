@@ -46,7 +46,7 @@ public class AgentController {
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 */
-	@RequestMapping(value = "/list", method = { RequestMethod.GET })
+	@RequestMapping(value = "/list", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public IRestResponse listAgents(@RequestParam(value = "hostname", required = false) String hostname,
 			@RequestParam(value = "dn", required = false) String dn, HttpServletRequest request)
@@ -65,7 +65,7 @@ public class AgentController {
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 */
-	@RequestMapping(value = "/{id:[\\d]+}/get", method = { RequestMethod.GET })
+	@RequestMapping(value = "/{id:[\\d]+}/get", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public IRestResponse getAgent(@PathVariable final long id, HttpServletRequest request)
 			throws UnsupportedEncodingException {

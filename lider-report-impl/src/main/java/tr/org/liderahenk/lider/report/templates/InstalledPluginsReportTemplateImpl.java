@@ -7,128 +7,35 @@ import java.util.Set;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateColumn;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateParameter;
-import tr.org.liderahenk.lider.core.api.persistence.enums.ParameterType;
 import tr.org.liderahenk.lider.core.api.plugin.BaseReportTemplate;
 
-/**
- * Default report template for executed tasks.
- * 
- * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
- *
- */
-public class ExecutedTaskReportTemplateImpl extends BaseReportTemplate {
+public class InstalledPluginsReportTemplateImpl extends BaseReportTemplate {
 
-	private static final long serialVersionUID = -8026043224671892836L;
+	private static final long serialVersionUID = 9219770488255528753L;
 
 	@Override
 	public String getName() {
-		return "Çalıştırılan Görevler";
+		return "Yüklü eklentiler";
 	}
 
 	@Override
 	public String getDescription() {
-		return "Çalıştırılan görevler hakkında istatistiksel rapor";
+		return "Lider üzerinde yüklü eklentilere dair rapor";
 	}
 
 	@Override
 	public String getQuery() {
-		return "SELECT p.name, p.version, t.commandClsId, t.createDate, "
-				+ "SUM(CASE WHEN cer.responseCode = 6 then 1 ELSE 0 END) as success, "
-				+ "SUM(CASE WHEN cer.responseCode = 5 THEN 1 ELSE 0 END) as received, "
-				+ "SUM(CASE WHEN cer.responseCode = 8 then 1 ELSE 0 END) as error "
-				+ "FROM CommandImpl c LEFT JOIN c.commandExecutions ce LEFT JOIN ce.commandExecutionResults cer INNER JOIN c.task t INNER JOIN t.plugin p "
-				+ "WHERE p.name LIKE :pluginName AND p.version LIKE :pluginVersion GROUP BY p.name, p.version, t.commandClsId, t.createDate";
+		return "SELECT p.name, p.version, " 
+				+ "CASE WHEN p.machineOriented IS NULL THEN 'Hayır' ELSE 'Evet' END, "
+				+ "CASE WHEN p.userOriented IS NULL THEN 'Hayır' ELSE 'Evet' END, "
+				+ "CASE WHEN p.policyPlugin IS NULL THEN 'Hayır' ELSE 'Evet' END, "
+				+ "CASE WHEN p.taskPlugin IS NULL THEN 'Hayır' ELSE 'Evet' END, " + "p.createDate "
+				+ "FROM PluginImpl p";
 	}
 
-	@SuppressWarnings("serial")
 	@Override
 	public Set<? extends IReportTemplateParameter> getTemplateParams() {
-		Set<IReportTemplateParameter> params = new HashSet<IReportTemplateParameter>();
-		// Plugin name
-		params.add(new IReportTemplateParameter() {
-			@Override
-			public ParameterType getType() {
-				return ParameterType.STRING;
-			}
-
-			@Override
-			public IReportTemplate getTemplate() {
-				return getSelf();
-			}
-
-			@Override
-			public String getLabel() {
-				return "Eklenti adı";
-			}
-
-			@Override
-			public String getKey() {
-				return "pluginName";
-			}
-
-			@Override
-			public Long getId() {
-				return null;
-			}
-
-			@Override
-			public String getDefaultValue() {
-				return null;
-			}
-
-			@Override
-			public boolean isMandatory() {
-				return true;
-			}
-
-			@Override
-			public Date getCreateDate() {
-				return new Date();
-			}
-		});
-		// Plugin version
-		params.add(new IReportTemplateParameter() {
-			@Override
-			public ParameterType getType() {
-				return ParameterType.STRING;
-			}
-
-			@Override
-			public IReportTemplate getTemplate() {
-				return getSelf();
-			}
-
-			@Override
-			public String getLabel() {
-				return "Eklenti sürümü";
-			}
-
-			@Override
-			public String getKey() {
-				return "pluginVersion";
-			}
-
-			@Override
-			public Long getId() {
-				return null;
-			}
-
-			@Override
-			public String getDefaultValue() {
-				return "1.0.0";
-			}
-
-			@Override
-			public boolean isMandatory() {
-				return true;
-			}
-
-			@Override
-			public Date getCreateDate() {
-				return new Date();
-			}
-		});
-		return params;
+		return null;
 	}
 
 	@SuppressWarnings("serial")
@@ -148,7 +55,59 @@ public class ExecutedTaskReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public String getName() {
-				return "Görev kodu";
+				return "Eklenti adı";
+			}
+
+			@Override
+			public Long getId() {
+				return null;
+			}
+
+			@Override
+			public Integer getColumnOrder() {
+				return 1;
+			}
+		});
+		columns.add(new IReportTemplateColumn() {
+			@Override
+			public Date getCreateDate() {
+				return new Date();
+			}
+
+			@Override
+			public IReportTemplate getTemplate() {
+				return getSelf();
+			}
+
+			@Override
+			public String getName() {
+				return "Eklenti sürümü";
+			}
+
+			@Override
+			public Long getId() {
+				return null;
+			}
+
+			@Override
+			public Integer getColumnOrder() {
+				return 2;
+			}
+		});
+		columns.add(new IReportTemplateColumn() {
+			@Override
+			public Date getCreateDate() {
+				return new Date();
+			}
+
+			@Override
+			public IReportTemplate getTemplate() {
+				return getSelf();
+			}
+
+			@Override
+			public String getName() {
+				return "Makina-odaklı";
 			}
 
 			@Override
@@ -174,7 +133,7 @@ public class ExecutedTaskReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public String getName() {
-				return "Görev tarihi";
+				return "Kullanıcı-odaklı";
 			}
 
 			@Override
@@ -200,7 +159,7 @@ public class ExecutedTaskReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public String getName() {
-				return "Başarılı olanlar";
+				return "Politika eklentisi";
 			}
 
 			@Override
@@ -226,7 +185,33 @@ public class ExecutedTaskReportTemplateImpl extends BaseReportTemplate {
 
 			@Override
 			public String getName() {
-				return "Başarısız olanlar";
+				return "Görev eklentisi";
+			}
+
+			@Override
+			public Long getId() {
+				return null;
+			}
+
+			@Override
+			public Integer getColumnOrder() {
+				return 6;
+			}
+		});
+		columns.add(new IReportTemplateColumn() {
+			@Override
+			public Date getCreateDate() {
+				return new Date();
+			}
+
+			@Override
+			public IReportTemplate getTemplate() {
+				return getSelf();
+			}
+
+			@Override
+			public String getName() {
+				return "Yüklenme tarihi";
 			}
 
 			@Override
@@ -242,7 +227,7 @@ public class ExecutedTaskReportTemplateImpl extends BaseReportTemplate {
 		return columns;
 	}
 
-	protected ExecutedTaskReportTemplateImpl getSelf() {
+	protected InstalledPluginsReportTemplateImpl getSelf() {
 		return this;
 	}
 
