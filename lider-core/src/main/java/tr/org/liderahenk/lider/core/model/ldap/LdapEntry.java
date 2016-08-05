@@ -7,7 +7,6 @@ import tr.org.liderahenk.lider.core.api.rest.enums.DNType;
 /**
  * LDAP entry mapping
  * 
- * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */

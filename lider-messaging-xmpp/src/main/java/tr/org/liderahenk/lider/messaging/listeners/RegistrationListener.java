@@ -81,7 +81,8 @@ public class RegistrationListener implements StanzaListener, StanzaFilter {
 				mapper.setDateFormat(new SimpleDateFormat("dd-MM-yyyy HH:mm"));
 
 				RegistrationMessageImpl message = mapper.readValue(msg.getBody(), RegistrationMessageImpl.class);
-				// DO NOT modify 'message.from' property here! It indicates non-anonymous JID to be registered.
+				// DO NOT modify 'message.from' property here! It indicates
+				// non-anonymous JID to be registered.
 
 				try {
 					responseMessage = subscriber.messageReceived(message);
@@ -97,6 +98,7 @@ public class RegistrationListener implements StanzaListener, StanzaFilter {
 						client.sendMessage(postRegistrationMessage);
 					}
 				} catch (Exception e) {
+					logger.error(e.getMessage(), e);
 					logger.warn("Falling back to default subscriber.");
 					// Fall back to default subscriber if there is no other!
 					responseMessage = defaultSubcriber.messageReceived(message);
