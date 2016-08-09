@@ -163,9 +163,8 @@ public class XMPPClientImpl {
 	private void createXmppTcpConfiguration() {
 		if (configurationService.getXmppUseCustomSsl()) {
 			config = XMPPTCPConnectionConfiguration.builder().setServiceName(serviceName).setHost(host).setPort(port)
-					.setSecurityMode(
-							configurationService.getXmppUseSsl() ? SecurityMode.required : SecurityMode.disabled)
-					.setDebuggerEnabled(logger.isDebugEnabled()).setCustomSSLContext(createCustomSslContext()).build();
+					.setSecurityMode(SecurityMode.ifpossible).setDebuggerEnabled(logger.isDebugEnabled())
+					.setCustomSSLContext(createCustomSslContext()).build();
 		} else {
 			config = XMPPTCPConnectionConfiguration.builder().setServiceName(serviceName).setHost(host).setPort(port)
 					.setSecurityMode(
