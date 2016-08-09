@@ -363,10 +363,8 @@ public class LDAPServiceImpl implements ILDAPService {
 		try {
 			entry = connection.lookup(entryDn);
 			if (entry != null) {
-
 				for (Attribute a : entry.getAttributes()) {
-
-					if (a.getAttributeType().getName().equalsIgnoreCase("owner")) {
+					if (a.getAttributeType().getName().equalsIgnoreCase(attribute)) {
 						entry.remove(a);
 					}
 				}
@@ -675,8 +673,8 @@ public class LDAPServiceImpl implements ILDAPService {
 	 *         otherwise.
 	 */
 	private boolean isValidType(DNType type, DNType desiredType) {
-		return type == desiredType || (desiredType == DNType.ALL
-				&& (type == DNType.AHENK || type == DNType.USER || type == DNType.GROUP));
+		return type == desiredType
+				|| (desiredType == DNType.ALL && (type == DNType.AHENK || type == DNType.USER || type == DNType.GROUP));
 	}
 
 	/**
