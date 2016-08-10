@@ -36,6 +36,7 @@ import tr.org.liderahenk.lider.persistence.entities.AgreementStatusImpl;
  * @see tr.org.liderahenk.lider.core.api.persistence.dao.IAgentDao
  *
  */
+@SuppressWarnings("unchecked")
 public class AgentDaoImpl implements IAgentDao {
 
 	private static Logger logger = LoggerFactory.getLogger(AgentDaoImpl.class);
@@ -177,7 +178,6 @@ public class AgentDaoImpl implements IAgentDao {
 		return list;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Map<String, String> getProperties() {
 		Query query = entityManager.createQuery("SELECT DISTINCT p.propertyName, p.propertyValue FROM "
@@ -217,13 +217,29 @@ public class AgentDaoImpl implements IAgentDao {
 	public List<String> findOnlineUsers(String dn) {
 		Query query = entityManager.createQuery(FIND_ONLINE_USERS);
 		query.setParameter("dn", dn);
-		@SuppressWarnings("unchecked")
 		List<String> resultList = query.getResultList();
 		return resultList;
 	}
 
 	public void setEntityManager(EntityManager entityManager) {
 		this.entityManager = entityManager;
+	}
+	
+	private static final String FIND_ALL_ONLINE_USERS = 
+			"SELECT DISTINCT a.hostname, a.ipAddresses, a.dn, us.username, us.createDate "
+			+ "FROM UserSessionImpl us "
+			+ "INNER JOIN us.agent a "
+			+ "WHERE us.sessionEvent = 1 AND NOT EXISTS "
+			+ "(SELECT 1 FROM UserSessionImpl logout "
+			+ "WHERE logout.sessionEvent = 2 and logout.agent = us.agent "
+			+ "AND logout.username = us.username AND logout.createDate > us.createDate) "
+			+ "ORDER BY us.createDate, us.username, a.dn";
+
+	@Override
+	public List<Object[]> findAllOnlineUsers() {
+		Query query = entityManager.createQuery(FIND_ALL_ONLINE_USERS);
+		List<Object[]> resultList = query.getResultList();
+		return resultList;
 	}
 
 }

@@ -92,6 +92,22 @@ public class AgentController {
 	}
 
 	/**
+	 * List ALL online users.
+	 * 
+	 * @param dn
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value = "/onlineusers", method = { RequestMethod.GET })
+	@ResponseBody
+	public IRestResponse getAllOnlineUsers(HttpServletRequest request) {
+		logger.info("Request received. URL: '/lider/agent/onlineusers'");
+		IRestResponse restResponse = agentProcessor.getAllOnlineUsers();
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
+		return restResponse;
+	}
+
+	/**
 	 * Handle predefined exceptions that we did not write and did not throw.
 	 * 
 	 * @param e

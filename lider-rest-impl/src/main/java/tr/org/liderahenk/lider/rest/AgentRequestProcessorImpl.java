@@ -1,9 +1,12 @@
 package tr.org.liderahenk.lider.rest;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Date;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +16,7 @@ import tr.org.liderahenk.lider.core.api.rest.IResponseFactory;
 import tr.org.liderahenk.lider.core.api.rest.enums.RestResponseStatus;
 import tr.org.liderahenk.lider.core.api.rest.processors.IAgentRequestProcessor;
 import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
+import tr.org.liderahenk.lider.rest.dto.OnlineUser;
 
 /**
  * Processor class for handling/processing agent data.
@@ -77,6 +81,37 @@ public class AgentRequestProcessorImpl implements IAgentRequestProcessor {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		try {
 			resultMap.put("onlineUsers", onlineUsers);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+
+		return responseFactory.createResponse(RestResponseStatus.OK, "Records listed.", resultMap);
+	}
+
+	@Override
+	public IRestResponse getAllOnlineUsers() {
+		// Find online users
+		List<Object[]> resultList = agentDao.findAllOnlineUsers();
+		List<OnlineUser> onlineUsers = null;
+		// Convert SQL result to collection of tasks.
+		if (resultList != null) {
+			onlineUsers = new ArrayList<OnlineUser>();
+			for (Object[] arr : resultList) {
+				if (arr.length != 5) {
+					continue;
+				}
+				OnlineUser policy = new OnlineUser((String) arr[0], (String) arr[1], (String) arr[2], (String) arr[3],
+						(Date) arr[4]);
+				onlineUsers.add(policy);
+			}
+		}
+
+		// Construct result map
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		try {
+			resultMap.put("onlineUsers", onlineUsers);
+			logger.error("Found online users: {}",
+					new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(resultMap));
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}

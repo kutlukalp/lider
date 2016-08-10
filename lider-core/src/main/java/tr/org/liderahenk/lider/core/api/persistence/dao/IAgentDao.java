@@ -91,4 +91,10 @@ public interface IAgentDao extends IBaseDao<IAgent> {
 	 */
 	List<String> findOnlineUsers(String dn);
 
+	/**
+	 * 
+	 * @return
+	 */
+	List<Object[]> findAllOnlineUsers();
+
 }

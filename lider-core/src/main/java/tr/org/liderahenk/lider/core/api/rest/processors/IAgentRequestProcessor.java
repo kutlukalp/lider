@@ -31,4 +31,10 @@ public interface IAgentRequestProcessor {
 	 */
 	IRestResponse getOnlineUsers(String dn);
 
+	/**
+	 * 
+	 * @return
+	 */
+	IRestResponse getAllOnlineUsers();
+
 }
