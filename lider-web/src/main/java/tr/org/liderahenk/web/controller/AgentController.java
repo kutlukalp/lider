@@ -82,7 +82,7 @@ public class AgentController {
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value = "/{dn}/onlineusers", method = { RequestMethod.GET })
+	@RequestMapping(value = "/{dn}/onlineusers", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public IRestResponse getOnlineUsers(@PathVariable final String dn, HttpServletRequest request) {
 		logger.info("Request received. URL: '/lider/agent/{}/onlineusers'", dn);
@@ -98,7 +98,7 @@ public class AgentController {
 	 * @param request
 	 * @return
 	 */
-	@RequestMapping(value = "/onlineusers", method = { RequestMethod.GET })
+	@RequestMapping(value = "/onlineusers", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public IRestResponse getAllOnlineUsers(HttpServletRequest request) {
 		logger.info("Request received. URL: '/lider/agent/onlineusers'");
