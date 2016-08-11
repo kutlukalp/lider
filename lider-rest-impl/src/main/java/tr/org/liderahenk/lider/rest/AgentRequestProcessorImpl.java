@@ -1,12 +1,11 @@
 package tr.org.liderahenk.lider.rest;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Date;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,11 +96,11 @@ public class AgentRequestProcessorImpl implements IAgentRequestProcessor {
 		if (resultList != null) {
 			onlineUsers = new ArrayList<OnlineUser>();
 			for (Object[] arr : resultList) {
-				if (arr.length != 5) {
+				if (arr.length != 6) {
 					continue;
 				}
-				OnlineUser policy = new OnlineUser((String) arr[0], (String) arr[1], (String) arr[2], (String) arr[3],
-						(Date) arr[4]);
+				OnlineUser policy = new OnlineUser((Long) arr[0], (String) arr[1], (String) arr[2], (String) arr[3],
+						(String) arr[4], (Date) arr[5]);
 				onlineUsers.add(policy);
 			}
 		}
@@ -110,8 +109,6 @@ public class AgentRequestProcessorImpl implements IAgentRequestProcessor {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		try {
 			resultMap.put("onlineUsers", onlineUsers);
-			logger.error("Found online users: {}",
-					new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(resultMap));
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}

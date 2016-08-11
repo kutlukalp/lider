@@ -226,7 +226,7 @@ public class AgentDaoImpl implements IAgentDao {
 	}
 	
 	private static final String FIND_ALL_ONLINE_USERS = 
-			"SELECT DISTINCT a.hostname, a.ipAddresses, a.dn, us.username, us.createDate "
+			"SELECT DISTINCT a.id, a.hostname, a.ipAddresses, a.dn, us.username, us.createDate "
 			+ "FROM UserSessionImpl us "
 			+ "INNER JOIN us.agent a "
 			+ "WHERE us.sessionEvent = 1 AND NOT EXISTS "

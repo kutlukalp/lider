@@ -7,6 +7,8 @@ public class OnlineUser implements Serializable {
 
 	private static final long serialVersionUID = -1532561934289814137L;
 
+	private Long agentId;
+
 	private String hostname;
 
 	private String ipAddresses; // Comma-separated IP addresses
@@ -17,13 +19,21 @@ public class OnlineUser implements Serializable {
 
 	private Date createDate;
 
-	public OnlineUser(String hostname, String ipAddresses, String dn, String username, Date createDate) {
-		super();
+	public OnlineUser(Long agentId, String hostname, String ipAddresses, String dn, String username, Date createDate) {
+		this.agentId = agentId;
 		this.hostname = hostname;
 		this.ipAddresses = ipAddresses;
 		this.dn = dn;
 		this.username = username;
 		this.createDate = createDate;
+	}
+
+	public Long getAgentId() {
+		return agentId;
+	}
+
+	public void setAgentId(Long agentId) {
+		this.agentId = agentId;
 	}
 
 	public String getHostname() {
