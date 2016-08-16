@@ -161,6 +161,8 @@ public class XMPPClientImpl {
 	 * Configures XMPP connection parameters.
 	 */
 	private void createXmppTcpConfiguration() {
+		PingManager.setDefaultPingInterval(pingTimeout);
+		ReconnectionManager.setEnabledPerDefault(true);
 		if (configurationService.getXmppUseCustomSsl()) {
 			config = XMPPTCPConnectionConfiguration.builder().setServiceName(serviceName).setHost(host).setPort(port)
 					.setSecurityMode(SecurityMode.ifpossible).setDebuggerEnabled(logger.isDebugEnabled())
