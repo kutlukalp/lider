@@ -31,7 +31,7 @@ public class AgentRequestProcessorImpl implements IAgentRequestProcessor {
 	private IResponseFactory responseFactory;
 
 	@Override
-	public IRestResponse list(String hostname, String dn) {
+	public IRestResponse list(String hostname, String dn, String uid) {
 		// Build search criteria
 		Map<String, Object> propertiesMap = new HashMap<String, Object>();
 		if (hostname != null && !hostname.isEmpty()) {
@@ -39,6 +39,9 @@ public class AgentRequestProcessorImpl implements IAgentRequestProcessor {
 		}
 		if (dn != null && !dn.isEmpty()) {
 			propertiesMap.put("dn", dn);
+		}
+		if (uid != null && !uid.isEmpty()) {
+			propertiesMap.put("jid", uid);
 		}
 
 		// Find desired agents

@@ -49,10 +49,11 @@ public class AgentController {
 	@RequestMapping(value = "/list", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
 	public IRestResponse listAgents(@RequestParam(value = "hostname", required = false) String hostname,
-			@RequestParam(value = "dn", required = false) String dn, HttpServletRequest request)
+			@RequestParam(value = "dn", required = false) String dn,
+			@RequestParam(value = "uid", required = false) String uid, HttpServletRequest request)
 			throws UnsupportedEncodingException {
-		logger.info("Request received. URL: '/lider/agent/list?hostname={}&dn={}'", new Object[] { hostname, dn });
-		IRestResponse restResponse = agentProcessor.list(hostname, dn);
+		logger.info("Request received. URL: '/lider/agent/list?hostname={}&dn={}&uid={}'", new Object[] { hostname, dn, uid });
+		IRestResponse restResponse = agentProcessor.list(hostname, dn, uid);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}

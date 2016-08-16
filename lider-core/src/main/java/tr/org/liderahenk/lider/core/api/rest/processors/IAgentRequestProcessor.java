@@ -15,7 +15,7 @@ public interface IAgentRequestProcessor {
 	 * @param dn
 	 * @return
 	 */
-	IRestResponse list(String hostname, String dn);
+	IRestResponse list(String hostname, String dn, String uid);
 
 	/**
 	 * 
