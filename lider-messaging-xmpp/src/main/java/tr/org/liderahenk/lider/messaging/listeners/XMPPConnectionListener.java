@@ -1,9 +1,9 @@
 package tr.org.liderahenk.lider.messaging.listeners;
 
 import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
-import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Stanza;
@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
+import tr.org.liderahenk.lider.messaging.XMPPClientImpl;
 
 /**
  * 
@@ -26,18 +27,25 @@ public class XMPPConnectionListener implements ConnectionListener, PingFailedLis
 
 	private IConfigurationService configurationService;
 
-	public XMPPConnectionListener(IConfigurationService configurationService) {
+	// TODO IMPROVEMENT: separate xmpp client into two classes. one for
+	// configuration/setup, other for functional methods
+	private XMPPClientImpl client;
+
+	public XMPPConnectionListener(IConfigurationService configurationService, XMPPClientImpl client) {
 		this.configurationService = configurationService;
+		this.client = client;
 	}
 
 	@Override
 	public void connectionClosed() {
 		logger.info("XMPP connection was closed.");
+		reconnect();
 	}
 
 	@Override
 	public void connectionClosedOnError(Exception e) {
 		logger.error("XMPP connection closed with an error", e.getMessage());
+		reconnect();
 	}
 
 	@Override
@@ -99,6 +107,11 @@ public class XMPPConnectionListener implements ConnectionListener, PingFailedLis
 	@Override
 	public boolean accept(Stanza stanza) {
 		return stanza instanceof IQ;
+	}
+
+	private void reconnect() {
+		client.disconnect();
+		client.init();
 	}
 
 }
