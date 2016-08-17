@@ -36,7 +36,7 @@ public class FileCopyUtils {
 		logger.debug("Created target directory");
 
 		// Copy file
-		String[] cmd = new String[] { "rsync", "-az",
+		String[] cmd = new String[] { "/usr/bin/rsync", "-az",
 				"--rsh=/usr/bin/sshpass -p " + password + " /usr/bin/ssh -p " + (port != null ? port : DEFAULT_PORT)
 						+ " -oUserKnownHostsFile=/dev/null -oPubkeyAuthentication=no -oStrictHostKeyChecking=no -l "
 						+ username,
