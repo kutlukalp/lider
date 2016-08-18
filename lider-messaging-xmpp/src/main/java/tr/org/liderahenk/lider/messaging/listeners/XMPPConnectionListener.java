@@ -1,5 +1,8 @@
 package tr.org.liderahenk.lider.messaging.listeners;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.StanzaListener;
@@ -24,12 +27,18 @@ public class XMPPConnectionListener implements ConnectionListener, PingFailedLis
 	private static Logger logger = LoggerFactory.getLogger(XMPPConnectionListener.class);
 
 	private int pingTimeoutCount = 0;
+	private int retryCount = 0;
+	private int maxRetryCount = 15;
 
 	private IConfigurationService configurationService;
 
 	// TODO IMPROVEMENT: separate xmpp client into two classes. one for
 	// configuration/setup, other for functional methods
 	private XMPPClientImpl client;
+
+	private Timer tExit;
+
+	private int logintime = 5000;
 
 	public XMPPConnectionListener(IConfigurationService configurationService, XMPPClientImpl client) {
 		this.configurationService = configurationService;
@@ -109,9 +118,33 @@ public class XMPPConnectionListener implements ConnectionListener, PingFailedLis
 		return stanza instanceof IQ;
 	}
 
+	/**
+	 * Force reconnection here if reconnection manager fails to do so.
+	 */
 	private void reconnect() {
 		client.disconnect();
-		client.init();
+		retryCount = 0;
+		tExit = new Timer();
+		tExit.schedule(new ForceReconnect(), logintime);
+	}
+
+	class ForceReconnect extends TimerTask {
+		@Override
+		public void run() {
+			if (maxRetryCount == retryCount) {
+				logger.error(
+						"Reached maximum connection retry count but still couldn't connected to XMPP server. Please check Karaf log or restart 'Lider XMPP client' bundle.");
+				return;
+			}
+			client.init();
+			retryCount++;
+			if (client.getConnection().isConnected() && client.getConnection().isAuthenticated()) {
+				logger.info("Successfully reconnected to the XMPP server.");
+			} else {
+				logger.error("Failed to reconnect to the XMPP server.");
+				tExit.schedule(new ForceReconnect(), logintime);
+			}
+		}
 	}
 
 }
