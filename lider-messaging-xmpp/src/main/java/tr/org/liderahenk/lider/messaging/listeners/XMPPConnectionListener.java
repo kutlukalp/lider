@@ -1,8 +1,5 @@
 package tr.org.liderahenk.lider.messaging.listeners;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.SmackException.NotConnectedException;
 import org.jivesoftware.smack.StanzaListener;
@@ -15,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
-import tr.org.liderahenk.lider.messaging.XMPPClientImpl;
 
 /**
  * 
@@ -27,34 +23,21 @@ public class XMPPConnectionListener implements ConnectionListener, PingFailedLis
 	private static Logger logger = LoggerFactory.getLogger(XMPPConnectionListener.class);
 
 	private int pingTimeoutCount = 0;
-	private int retryCount = 0;
-	private int maxRetryCount = 15;
 
 	private IConfigurationService configurationService;
 
-	// TODO IMPROVEMENT: separate xmpp client into two classes. one for
-	// configuration/setup, other for functional methods
-	private XMPPClientImpl client;
-
-	private Timer tExit;
-
-	private int logintime = 5000;
-
-	public XMPPConnectionListener(IConfigurationService configurationService, XMPPClientImpl client) {
+	public XMPPConnectionListener(IConfigurationService configurationService) {
 		this.configurationService = configurationService;
-		this.client = client;
 	}
 
 	@Override
 	public void connectionClosed() {
 		logger.info("XMPP connection was closed.");
-		reconnect();
 	}
 
 	@Override
 	public void connectionClosedOnError(Exception e) {
 		logger.error("XMPP connection closed with an error", e.getMessage());
-		reconnect();
 	}
 
 	@Override
@@ -116,35 +99,6 @@ public class XMPPConnectionListener implements ConnectionListener, PingFailedLis
 	@Override
 	public boolean accept(Stanza stanza) {
 		return stanza instanceof IQ;
-	}
-
-	/**
-	 * Force reconnection here if reconnection manager fails to do so.
-	 */
-	private void reconnect() {
-		client.disconnect();
-		retryCount = 0;
-		tExit = new Timer();
-		tExit.schedule(new ForceReconnect(), logintime);
-	}
-
-	class ForceReconnect extends TimerTask {
-		@Override
-		public void run() {
-			if (maxRetryCount == retryCount) {
-				logger.error(
-						"Reached maximum connection retry count but still couldn't connected to XMPP server. Please check Karaf log or restart 'Lider XMPP client' bundle.");
-				return;
-			}
-			client.init();
-			retryCount++;
-			if (client.getConnection().isConnected() && client.getConnection().isAuthenticated()) {
-				logger.info("Successfully reconnected to the XMPP server.");
-			} else {
-				logger.error("Failed to reconnect to the XMPP server.");
-				tExit.schedule(new ForceReconnect(), logintime);
-			}
-		}
 	}
 
 }

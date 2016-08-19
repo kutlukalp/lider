@@ -251,7 +251,7 @@ public class XMPPClientImpl {
 	 */
 	private void addListeners() {
 		// Hook listener for connection
-		connectionListener = new XMPPConnectionListener(configurationService, this);
+		connectionListener = new XMPPConnectionListener(configurationService);
 		connection.addConnectionListener(connectionListener);
 		PingManager.getInstanceFor(connection).registerPingFailedListener(connectionListener);
 		connection.addAsyncStanzaListener(connectionListener, connectionListener);
