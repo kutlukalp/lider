@@ -72,7 +72,7 @@ public class CommandImpl implements ICommand {
 	@Column(name = "COMMAND_OWNER_UID")
 	private String commandOwnerUid;
 
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "ACTIVATION_DATE", nullable = true)
 	private Date activationDate;
 

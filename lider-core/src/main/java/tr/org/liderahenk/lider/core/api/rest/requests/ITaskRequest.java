@@ -1,5 +1,6 @@
 package tr.org.liderahenk.lider.core.api.rest.requests;
 
+import java.util.Date;
 import java.util.Map;
 
 import tr.org.liderahenk.lider.core.api.rest.requests.ICommandRequest;
@@ -21,5 +22,7 @@ public interface ITaskRequest extends ICommandRequest {
 	Map<String, Object> getParameterMap();
 
 	String getCronExpression();
+
+	Date getActivationDate();
 
 }

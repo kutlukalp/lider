@@ -55,6 +55,12 @@ public class TaskRequestImpl implements ITaskRequest {
 	private String cronExpression;
 
 	/**
+	 * Optional parameter which can be used to activate the task on this date.
+	 * (Task will be sent to agents on this date)
+	 */
+	private Date activationDate;
+
+	/**
 	 * Timestamp of the request
 	 */
 	private Date timestamp;
@@ -63,7 +69,8 @@ public class TaskRequestImpl implements ITaskRequest {
 	}
 
 	public TaskRequestImpl(List<String> dnList, DNType dnType, String pluginName, String pluginVersion,
-			String commandId, Map<String, Object> parameterMap, String cronExpression, Date timestamp) {
+			String commandId, Map<String, Object> parameterMap, String cronExpression, Date activationDate,
+			Date timestamp) {
 		super();
 		this.dnList = dnList;
 		this.dnType = dnType;
@@ -72,6 +79,7 @@ public class TaskRequestImpl implements ITaskRequest {
 		this.commandId = commandId;
 		this.parameterMap = parameterMap;
 		this.cronExpression = cronExpression;
+		this.activationDate = activationDate;
 		this.timestamp = timestamp;
 	}
 
@@ -139,6 +147,15 @@ public class TaskRequestImpl implements ITaskRequest {
 	}
 
 	@Override
+	public Date getActivationDate() {
+		return activationDate;
+	}
+
+	public void setActivationDate(Date activationDate) {
+		this.activationDate = activationDate;
+	}
+
+	@Override
 	public Date getTimestamp() {
 		return timestamp;
 	}
@@ -151,7 +168,8 @@ public class TaskRequestImpl implements ITaskRequest {
 	public String toString() {
 		return "TaskRequestImpl [dnList=" + dnList + ", dnType=" + dnType + ", pluginName=" + pluginName
 				+ ", pluginVersion=" + pluginVersion + ", commandId=" + commandId + ", parameterMap=" + parameterMap
-				+ ", cronExpression=" + cronExpression + ", timestamp=" + timestamp + "]";
+				+ ", cronExpression=" + cronExpression + ", activationDate=" + activationDate + ", timestamp="
+				+ timestamp + "]";
 	}
 
 }

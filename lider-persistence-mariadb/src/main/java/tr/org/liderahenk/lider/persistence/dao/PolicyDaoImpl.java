@@ -198,7 +198,7 @@ public class PolicyDaoImpl implements IPolicyDao {
 			query.setParameter("gDnType", DNType.GROUP.getId());
 			query.setParameter("gDnList", list);
 		}
-		query.setParameter("today", new Date(), TemporalType.DATE);
+		query.setParameter("today", new Date(), TemporalType.TIMESTAMP);
 		List<Object[]> resultList = query.setMaxResults(1).getResultList();
 		logger.debug("User policy result list: {}",
 				resultList != null && !resultList.isEmpty() && resultList.get(0) != null && resultList.get(0).length > 0
@@ -229,7 +229,7 @@ public class PolicyDaoImpl implements IPolicyDao {
 		Query query = entityManager.createQuery(LATEST_MACHINE_POLICY);
 		query.setParameter("dnType", DNType.AHENK.getId());
 		query.setParameter("dn", agentDn);
-		query.setParameter("today", new Date(), TemporalType.DATE);
+		query.setParameter("today", new Date(), TemporalType.TIMESTAMP);
 		List<Object[]> resultList = query.setMaxResults(1).getResultList();
 		logger.debug("Agent policy result list: {}",
 				resultList != null && !resultList.isEmpty() && resultList.get(0) != null && resultList.get(0).length > 0

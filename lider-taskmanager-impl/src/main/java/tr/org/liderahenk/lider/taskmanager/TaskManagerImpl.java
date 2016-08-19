@@ -1,6 +1,7 @@
 package tr.org.liderahenk.lider.taskmanager;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -85,6 +86,11 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 			ICommand command = entityFactory.createCommand(task, request, findCommandOwnerJid());
 			command = commandDao.save(command);
 
+			// Task has an activation date, it will be sent to agent(s) on that date.
+			if (command.getActivationDate() != null && command.getActivationDate().compareTo(new Date()) > 0) {
+				return;
+			}
+			
 			// While persisting each command execution, send task message
 			// to agent, if necessary!
 			List<ICommandExecution> executions = null;
@@ -124,7 +130,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 			ITaskNotification notification = messageFactory.createTaskNotification(command.getCommandOwnerUid(),
 					command);
 			messagingService.sendNotification(notification);
-
+			
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			if (e instanceof TaskSubmissionFailedException) {

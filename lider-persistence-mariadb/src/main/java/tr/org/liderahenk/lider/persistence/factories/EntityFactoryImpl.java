@@ -35,6 +35,7 @@ import tr.org.liderahenk.lider.core.api.plugin.IPluginInfo;
 import tr.org.liderahenk.lider.core.api.plugin.deployer.IManagedPlugin;
 import tr.org.liderahenk.lider.core.api.plugin.deployer.IPluginPart;
 import tr.org.liderahenk.lider.core.api.rest.requests.ICommandRequest;
+import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyExecutionRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IProfileRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IReportTemplateColumRequest;
@@ -130,13 +131,13 @@ public class EntityFactoryImpl implements IEntityFactory {
 	@Override
 	public ICommand createCommand(ITask task, ICommandRequest request, String commandOwnerJid) throws Exception {
 		return new CommandImpl(null, null, (TaskImpl) task, request.getDnList(), request.getDnType(), commandOwnerJid,
-				null, new Date(), null);
+				((ITaskRequest) request).getActivationDate(), new Date(), null);
 	}
 
 	@Override
 	public ICommand createCommand(IPolicy policy, ICommandRequest request, String commandOwnerJid) throws Exception {
 		return new CommandImpl(null, (PolicyImpl) policy, null, request.getDnList(), request.getDnType(),
-				commandOwnerJid, null, new Date(), null);
+				commandOwnerJid, ((IPolicyExecutionRequest) request).getActivationDate(), new Date(), null);
 	}
 
 	@Override
