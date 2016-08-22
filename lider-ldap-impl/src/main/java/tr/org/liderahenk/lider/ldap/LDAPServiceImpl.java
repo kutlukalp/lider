@@ -453,7 +453,7 @@ public class LDAPServiceImpl implements ILDAPService {
 					try {
 						attributes.put(attr, entry.get(attr).getString());
 					} catch (Exception e) {
-						logger.error(e.getMessage(), e);
+						logger.error("Cannot find attribute: {} in entry: {}", new Object[] { attr, entry.getDn() });
 					}
 				}
 				return new LdapEntry(entryDn, attributes, convertObjectClass2DNType(entry.get("objectClass")));
