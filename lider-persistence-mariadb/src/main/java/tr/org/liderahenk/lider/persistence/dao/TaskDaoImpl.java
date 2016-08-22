@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
 
 import org.slf4j.Logger;
@@ -12,7 +14,9 @@ import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.persistence.PropertyOrder;
 import tr.org.liderahenk.lider.core.api.persistence.dao.ITaskDao;
+import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
+import tr.org.liderahenk.lider.persistence.entities.CommandImpl;
 import tr.org.liderahenk.lider.persistence.entities.TaskImpl;
 
 /**
@@ -23,6 +27,7 @@ import tr.org.liderahenk.lider.persistence.entities.TaskImpl;
  * @see tr.org.liderahenk.lider.core.api.persistence.entities.ITask
  *
  */
+@SuppressWarnings("unchecked")
 public class TaskDaoImpl implements ITaskDao {
 
 	private static Logger logger = LoggerFactory.getLogger(TaskDaoImpl.class);
@@ -78,6 +83,21 @@ public class TaskDaoImpl implements ITaskDao {
 		List<TaskImpl> taskList = entityManager
 				.createQuery("select t from " + TaskImpl.class.getSimpleName() + " t", TaskImpl.class).getResultList();
 		logger.debug("ITask objects found: {}", taskList);
+		return taskList;
+	}
+	
+	private static final String FIND_TASKS_WITH_ACTIVATION_DATE = 
+			"SELECT c "
+			+ "FROM CommandImpl c INNER JOIN c.task t "
+			+ "WHERE c.activationDate IS NOT NULL AND c.activationDate < :today AND "
+			+ "NOT EXISTS (SELECT 1 FROM CommandImpl c2 INNER JOIN c2.commandExecutions ce WHERE c2.id =  c.id) "
+			+ "ORDER BY c.activationDate, t.createDate, t.commandClsId DESC";
+	
+	@Override
+	public List<? extends ICommand> findFutureTasks() {
+		Query query = entityManager.createQuery(FIND_TASKS_WITH_ACTIVATION_DATE);
+		query.setParameter("today", new Date(), TemporalType.TIMESTAMP);
+		List<CommandImpl> taskList = query.getResultList();
 		return taskList;
 	}
 

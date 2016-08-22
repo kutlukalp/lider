@@ -1,12 +1,13 @@
 package tr.org.liderahenk.lider.taskmanager;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
@@ -67,9 +68,19 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 	private IConfigurationService configurationService;
 	private IAgentDao agentDao;
 	private IEntityFactory entityFactory;
+	private Timer timer;
 
 	public void init() {
 		logger.info("Initializing task manager.");
+		hookListener();
+	}
+
+	public void destroy() {
+		logger.info("Destroying task manager...");
+		if (timer != null) {
+			timer.cancel();
+			timer.purge();
+		}
 	}
 
 	@Override
@@ -86,51 +97,15 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 			ICommand command = entityFactory.createCommand(task, request, findCommandOwnerJid());
 			command = commandDao.save(command);
 
-			// Task has an activation date, it will be sent to agent(s) on that date.
-			if (command.getActivationDate() != null && command.getActivationDate().compareTo(new Date()) > 0) {
+			// Task has an activation date, it will be sent to agent(s) on that
+			// date.
+			if (command.getActivationDate() != null /*&& command.getActivationDate().compareTo(new Date()) > 0 */) {
+				logger.info("Future task received. It will be executed on its activation date.");
 				return;
 			}
-			
-			// While persisting each command execution, send task message
-			// to agent, if necessary!
-			List<ICommandExecution> executions = null;
-			if (entries != null && !entries.isEmpty()) {
-				executions = new ArrayList<ICommandExecution>();
-				for (final LdapEntry entry : entries) {
-					boolean isAhenk = ldapService.isAhenk(entry);
+			// Otherwise handle task
+			handleTaskExecution(task, command, plugin.isUsesFileTransfer(), entries);
 
-					// New command execution
-					ICommandExecution execution = entityFactory.createCommandExecution(entry, command);
-					command.addCommandExecution(execution);
-
-					// Task message
-					ILiderMessage message = null;
-					if (isAhenk) {
-						// Set agent JID
-						String jid = entry.get(configurationService.getAgentLdapJidAttribute());
-						if (jid == null || jid.isEmpty()) {
-							logger.error("JID was null. Ignoring task: {} for agent: {}",
-									new Object[] { task.toJson(), entry.getDistinguishedName() });
-							continue;
-						}
-						logger.info("Sending task to agent with JID: {}", jid);
-						message = messageFactory.createExecuteTaskMessage(task, jid,
-								plugin.isUsesFileTransfer() ? configurationService.getFileServerConf(jid) : null);
-						// Send message to agent. Responses will be handled by
-						// TaskStatusUpdateListener in XMPPClientImpl class
-						messagingService.sendMessage(message);
-					}
-
-					commandDao.save(execution);
-					executions.add(execution);
-				}
-			}
-
-			// Create & send notification to Lider Console
-			ITaskNotification notification = messageFactory.createTaskNotification(command.getCommandOwnerUid(),
-					command);
-			messagingService.sendNotification(notification);
-			
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			if (e instanceof TaskSubmissionFailedException) {
@@ -138,6 +113,55 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 			}
 			throw new TaskSubmissionFailedException(e);
 		}
+	}
+
+	/**
+	 * Handle task execution by creating command execution record for each entry
+	 * AND sending task message to agents.
+	 * 
+	 * @param task
+	 * @param command
+	 * @param usesFileTransfer
+	 * @param entries
+	 * @throws Exception
+	 */
+	private void handleTaskExecution(ITask task, ICommand command, boolean usesFileTransfer, List<LdapEntry> entries)
+			throws Exception {
+		// While persisting each command execution, send task message
+		// to agent, if necessary!
+		if (entries != null && !entries.isEmpty()) {
+			for (final LdapEntry entry : entries) {
+				boolean isAhenk = ldapService.isAhenk(entry);
+
+				// New command execution
+				ICommandExecution execution = entityFactory.createCommandExecution(entry, command);
+				command.addCommandExecution(execution);
+
+				// Task message
+				ILiderMessage message = null;
+				if (isAhenk) {
+					// Set agent JID
+					String jid = entry.get(configurationService.getAgentLdapJidAttribute());
+					if (jid == null || jid.isEmpty()) {
+						logger.error("JID was null. Ignoring task: {} for agent: {}",
+								new Object[] { task.toJson(), entry.getDistinguishedName() });
+						continue;
+					}
+					logger.info("Sending task to agent with JID: {}", jid);
+					message = messageFactory.createExecuteTaskMessage(task, jid,
+							usesFileTransfer ? configurationService.getFileServerConf(jid) : null);
+					// Send message to agent. Responses will be handled by
+					// TaskStatusUpdateListener in XMPPClientImpl class
+					messagingService.sendMessage(message);
+				}
+
+				commandDao.save(execution);
+			}
+		}
+
+		// Create & send notification to Lider Console
+		ITaskNotification notification = messageFactory.createTaskNotification(command.getCommandOwnerUid(), command);
+		messagingService.sendNotification(notification);
 	}
 
 	/**
@@ -221,6 +245,42 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 	}
 
 	/**
+	 * Periodically check 'future tasks' (task with an activation date). Send
+	 * them to agent(s) if activation date has arrived.
+	 *
+	 */
+	protected class FutureTaskListener extends TimerTask {
+		@Override
+		public void run() {
+			List<? extends ICommand> futureTasks = taskDao.findFutureTasks();
+			if (futureTasks != null && !futureTasks.isEmpty()) {
+				logger.info("Found future tasks which needs to be executed: {}", futureTasks.size());
+				for (ICommand relatedCommand : futureTasks) {
+					try {
+						ITask task = relatedCommand.getTask();
+						boolean usesFileTransfer = task.getPlugin().isUsesFileTransfer();
+						List<String> dnList = relatedCommand.getDnList();
+						List<LdapEntry> entries = null;
+						if (dnList != null && !dnList.isEmpty()) {
+							entries = new ArrayList<LdapEntry>();
+							for (String dn : dnList) {
+								LdapEntry entry = ldapService.getEntry(dn,
+										new String[] { configurationService.getAgentLdapJidAttribute() });
+								if (entry != null) {
+									entries.add(entry);
+								}
+							}
+						}
+						handleTaskExecution(task, relatedCommand, usesFileTransfer, entries);
+					} catch (Exception e) {
+						logger.error(e.getMessage(), e);
+					}
+				}
+			}
+		}
+	}
+
+	/**
 	 * This JID will be used to notify same user after task/policy execution.
 	 * 
 	 * @return JID of the user who sends the request
@@ -253,6 +313,13 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 			return plugins.get(0);
 		}
 		return null;
+	}
+
+	private void hookListener() {
+		// Listen to future tasks, send them to agent(s) if activation date has
+		// arrived.
+		timer = new Timer();
+		timer.schedule(new FutureTaskListener(), 1000, configurationService.getTaskManagerFutureTaskCheckPeriod());
 	}
 
 	/*

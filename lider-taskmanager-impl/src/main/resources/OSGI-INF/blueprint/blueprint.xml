@@ -13,7 +13,8 @@
 			<value>tr.org.liderahenk.lider.core.api.messaging.subscribers.ITaskStatusSubscriber</value>
 		</interfaces>
 	</service>
-	<bean id="taskManager" class="tr.org.liderahenk.lider.taskmanager.TaskManagerImpl">
+	<bean id="taskManager" class="tr.org.liderahenk.lider.taskmanager.TaskManagerImpl"
+		init-method="init" destroy-method="destroy">
 		<property name="pluginDao" ref="pluginDao" />
 		<property name="taskDao" ref="taskDao" />
 		<property name="commandDao" ref="commandDao" />

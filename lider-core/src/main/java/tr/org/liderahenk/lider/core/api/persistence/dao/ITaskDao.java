@@ -1,6 +1,9 @@
 package tr.org.liderahenk.lider.core.api.persistence.dao;
 
+import java.util.List;
+
 import tr.org.liderahenk.lider.core.api.persistence.IBaseDao;
+import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 
 /**
@@ -10,5 +13,7 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
  *
  */
 public interface ITaskDao extends IBaseDao<ITask> {
+
+	List<? extends ICommand> findFutureTasks();
 
 }
