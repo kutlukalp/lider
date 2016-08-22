@@ -71,6 +71,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 	private Long taskManagerTaskTimeout;
 	private Boolean taskManagerMulticastEnabled;
 	private Boolean taskManagerLogXmppMessagesEnabled;
+	private Long taskManagerFutureTaskCheckPeriod;
 
 	// Mail configuration
 	private String mailAddress;
@@ -111,16 +112,17 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 				+ xmppUsername + ", xmppPassword=" + xmppPassword + ", xmppResource=" + xmppResource
 				+ ", xmppServiceName=" + xmppServiceName + ", xmppMaxRetryConnectionCount="
 				+ xmppMaxRetryConnectionCount + ", xmppPacketReplayTimeout=" + xmppPacketReplayTimeout
-				+ ", xmppPingTimeout=" + xmppPingTimeout + ", xmppUseSsl=" + xmppUseSsl + ", xmppFilePath="
-				+ xmppFilePath + ", agentLdapBaseDn=" + agentLdapBaseDn + ", agentLdapIdAttribute="
-				+ agentLdapIdAttribute + ", agentLdapJidAttribute=" + agentLdapJidAttribute
+				+ ", xmppPingTimeout=" + xmppPingTimeout + ", xmppUseSsl=" + xmppUseSsl + ", xmppUseCustomSsl="
+				+ xmppUseCustomSsl + ", xmppFilePath=" + xmppFilePath + ", agentLdapBaseDn=" + agentLdapBaseDn
+				+ ", agentLdapIdAttribute=" + agentLdapIdAttribute + ", agentLdapJidAttribute=" + agentLdapJidAttribute
 				+ ", agentLdapObjectClasses=" + agentLdapObjectClasses + ", userLdapBaseDn=" + userLdapBaseDn
 				+ ", userLdapUidAttribute=" + userLdapUidAttribute + ", userLdapPrivilegeAttribute="
 				+ userLdapPrivilegeAttribute + ", userLdapObjectClasses=" + userLdapObjectClasses
 				+ ", userAuthorizationEnabled=" + userAuthorizationEnabled + ", groupLdapObjectClasses="
 				+ groupLdapObjectClasses + ", taskManagerTaskTimeout=" + taskManagerTaskTimeout
 				+ ", taskManagerMulticastEnabled=" + taskManagerMulticastEnabled
-				+ ", taskManagerLogXmppMessagesEnabled=" + taskManagerLogXmppMessagesEnabled + ", mailAddress="
+				+ ", taskManagerLogXmppMessagesEnabled=" + taskManagerLogXmppMessagesEnabled
+				+ ", taskManagerFutureTaskCheckPeriod=" + taskManagerFutureTaskCheckPeriod + ", mailAddress="
 				+ mailAddress + ", mailPassword=" + mailPassword + ", mailHost=" + mailHost + ", mailSmtpPort="
 				+ mailSmtpPort + ", mailSmtpAuth=" + mailSmtpAuth + ", mailSmtpStartTlsEnable=" + mailSmtpStartTlsEnable
 				+ ", mailSmtpSslEnable=" + mailSmtpSslEnable + ", mailSmtpConnTimeout=" + mailSmtpConnTimeout
@@ -418,6 +420,15 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 
 	public void setTaskManagerLogXmppMessagesEnabled(Boolean taskManagerLogXmppMessagesEnabled) {
 		this.taskManagerLogXmppMessagesEnabled = taskManagerLogXmppMessagesEnabled;
+	}
+
+	@Override
+	public Long getTaskManagerFutureTaskCheckPeriod() {
+		return taskManagerFutureTaskCheckPeriod;
+	}
+
+	public void setTaskManagerFutureTaskCheckPeriod(Long taskManagerFutureTaskCheckPeriod) {
+		this.taskManagerFutureTaskCheckPeriod = taskManagerFutureTaskCheckPeriod;
 	}
 
 	@Override

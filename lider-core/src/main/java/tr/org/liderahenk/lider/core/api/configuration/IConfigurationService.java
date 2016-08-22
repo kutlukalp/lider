@@ -132,13 +132,12 @@ public interface IConfigurationService {
 	 * @return true if XMPP uses SSL, false otherwise.
 	 */
 	Boolean getXmppUseSsl();
-	
-	
+
 	/**
 	 * 
 	 * @return true if XMPP uses Custom Trust Manager, false otherwise.
 	 */
-	
+
 	Boolean getXmppUseCustomSsl();
 
 	/**
@@ -241,6 +240,12 @@ public interface IConfigurationService {
 	 * @return true if xmpp message logs enabled
 	 */
 	Boolean getTaskManagerLogXmppMessagesEnabled();
+
+	/**
+	 * 
+	 * @return time in milliseconds between successive future task checks.
+	 */
+	Long getTaskManagerFutureTaskCheckPeriod();
 
 	//
 	// Mail configuration
