@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import tr.org.liderahenk.lider.core.api.ldap.model.LdapEntry;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IPolicyStatusMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.ITaskStatusMessage;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IAgent;
@@ -38,7 +39,6 @@ import tr.org.liderahenk.lider.core.api.rest.requests.IReportViewParameterReques
 import tr.org.liderahenk.lider.core.api.rest.requests.IReportViewRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.ISearchGroupRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.ITaskRequest;
-import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
 /**
  * Factory class for all entities.

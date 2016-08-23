@@ -2,13 +2,13 @@ package tr.org.liderahenk.lider.core.api.router;
 
 import java.util.List;
 
+import tr.org.liderahenk.lider.core.api.ldap.model.LdapEntry;
 import tr.org.liderahenk.lider.core.api.plugin.ICommand;
 import tr.org.liderahenk.lider.core.api.rest.exceptions.InvalidRequestException;
 import tr.org.liderahenk.lider.core.api.rest.requests.IRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.ITaskRequest;
 import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskSubmissionFailedException;
-import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
 /**
  * Routes {@link IRequest} to matching {@link ICommand} in

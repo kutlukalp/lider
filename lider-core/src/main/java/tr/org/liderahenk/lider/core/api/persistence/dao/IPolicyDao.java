@@ -3,10 +3,10 @@ package tr.org.liderahenk.lider.core.api.persistence.dao;
 import java.util.List;
 import java.util.Map;
 
+import tr.org.liderahenk.lider.core.api.ldap.model.LdapEntry;
 import tr.org.liderahenk.lider.core.api.persistence.IBaseDao;
 import tr.org.liderahenk.lider.core.api.persistence.PropertyOrder;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
-import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
 public interface IPolicyDao extends IBaseDao<IPolicy> {
 

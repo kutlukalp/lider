@@ -2,9 +2,9 @@ package tr.org.liderahenk.lider.core.api.taskmanager;
 
 import java.util.List;
 
+import tr.org.liderahenk.lider.core.api.ldap.model.LdapEntry;
 import tr.org.liderahenk.lider.core.api.rest.requests.IRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.ITaskRequest;
-import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
 /**
  * Provides {@link ITask} lifecycle management services

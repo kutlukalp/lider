@@ -1,44 +1,35 @@
-package tr.org.liderahenk.lider.ldap;
+package tr.org.liderahenk.lider.ldap.model;
 
-import tr.org.liderahenk.lider.core.model.ldap.IUserPrivilege;
+import tr.org.liderahenk.lider.core.api.ldap.model.ITaskPrivilege;
 
 /**
- * Default implementation of {@link IUserPrivilege}
+ * Default implementation of {@link ITaskPrivilege}
  * 
- * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
-public class UserPrivilegeImpl implements IUserPrivilege {
+public class TaskPrivilegeImpl implements ITaskPrivilege {
 
 	/**
-	 * 
+	 * DN of the target entry
 	 */
 	private String target;
 
 	/**
-	 * 
+	 * operation either contains 'command class ID' or 'ALL'
 	 */
 	private String operation;
 
 	/**
-	 *
-	 * @param target
-	 * @param operation
-	 * @param allowed
-	 */
-	private boolean allowed;
-
-	/**
 	 * 
 	 * @param target
 	 * @param operation
 	 * @param allowed
 	 */
-	public UserPrivilegeImpl(String target, String operation, boolean allowed) {
+	public TaskPrivilegeImpl(String target, String operation) {
 		super();
 		this.target = target;
 		this.operation = operation;
-		this.allowed = allowed;
 	}
 
 	@Override
@@ -52,14 +43,8 @@ public class UserPrivilegeImpl implements IUserPrivilege {
 	}
 
 	@Override
-	public boolean isAllowed() {
-		return allowed;
-	}
-
-	@Override
 	public String toString() {
-		return "[" + this.getClass().getSimpleName() + " target: " + target + ", operation: " + operation
-				+ ", allowed: " + allowed + " ]";
+		return "TaskPrivilegeImpl [target=" + target + ", operation=" + operation + "]";
 	}
 
 }

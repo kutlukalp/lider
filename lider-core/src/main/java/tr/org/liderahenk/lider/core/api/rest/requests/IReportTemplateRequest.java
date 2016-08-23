@@ -18,6 +18,8 @@ public interface IReportTemplateRequest extends IRequest {
 
 	String getQuery();
 
+	String getCode();
+
 	List<? extends IReportTemplateParameterRequest> getTemplateParams();
 
 	List<? extends IReportTemplateColumRequest> getTemplateColumns();

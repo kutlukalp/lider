@@ -1,10 +1,11 @@
-package tr.org.liderahenk.lider.ldap;
+package tr.org.liderahenk.lider.ldap.model;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import tr.org.liderahenk.lider.core.model.ldap.IUser;
-import tr.org.liderahenk.lider.core.model.ldap.IUserPrivilege;
+import tr.org.liderahenk.lider.core.api.ldap.model.IReportPrivilege;
+import tr.org.liderahenk.lider.core.api.ldap.model.ITaskPrivilege;
+import tr.org.liderahenk.lider.core.api.ldap.model.IUser;
 
 /**
  * Default implementation for {@link IUser}
@@ -30,18 +31,16 @@ public class UserImpl implements IUser {
 	private String uid;
 
 	/**
-	 * 
+	 * Collection of task privileges. Each privilege indicates whether the user
+	 * can execute operation on the indicated LDAP entry or not.
 	 */
-	private List<IUserPrivilege> targetDnPrivileges = new ArrayList<IUserPrivilege>(0);
+	private List<ITaskPrivilege> taskPrivileges = new ArrayList<ITaskPrivilege>(0);
 
-	@Override
-	public List<IUserPrivilege> getTargetDnPrivileges() {
-		return targetDnPrivileges;
-	}
-
-	public void setTargetDnPrivileges(List<IUserPrivilege> targetDnPrivillages) {
-		this.targetDnPrivileges = targetDnPrivillages;
-	}
+	/**
+	 * Collection of report privileges. Each privilege indicates whether the
+	 * user can view/generate the indicated report or not.
+	 */
+	private List<IReportPrivilege> reportPrivileges = new ArrayList<IReportPrivilege>(0);
 
 	@Override
 	public void setName(String name) {
@@ -72,9 +71,21 @@ public class UserImpl implements IUser {
 	}
 
 	@Override
-	public String toString() {
-		return "UserImpl [name=" + name + ", surname=" + surname + ", uid=" + uid + ", targetDnPrivileges="
-				+ targetDnPrivileges + "]";
+	public List<ITaskPrivilege> getTaskPrivileges() {
+		return taskPrivileges;
+	}
+
+	public void setTaskPrivileges(List<ITaskPrivilege> taskPrivileges) {
+		this.taskPrivileges = taskPrivileges;
+	}
+
+	@Override
+	public List<IReportPrivilege> getReportPrivileges() {
+		return reportPrivileges;
+	}
+
+	public void setReportPrivileges(List<IReportPrivilege> reportPrivileges) {
+		this.reportPrivileges = reportPrivileges;
 	}
 
 }
