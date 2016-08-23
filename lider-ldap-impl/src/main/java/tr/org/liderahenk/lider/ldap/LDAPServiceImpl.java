@@ -70,15 +70,15 @@ public class LDAPServiceImpl implements ILDAPService {
 	private LdapConnectionPool pool;
 
 	/**
-	 * Pattern for task privileges (e.g. [dc=mys,dc=pardus,dc=org:ALL],
-	 * [dc=mys,dc=pardus,dc=org:EXECUTE_SCRIPT] )
+	 * Pattern for task privileges (e.g. [TASK:dc=mys,dc=pardus,dc=org:ALL],
+	 * [TASK:dc=mys,dc=pardus,dc=org:EXECUTE_SCRIPT] )
 	 */
-	private static Pattern taskPriviligePattern = Pattern.compile("\\[(.+):(.+)\\]");
+	private static Pattern taskPriviligePattern = Pattern.compile("\\[TASK:(.+):(.+)\\]");
 
 	/**
-	 * Pattern for report privileges (e.g. [ONLINE-USERS-REPORT] , [ALL] )
+	 * Pattern for report privileges (e.g. [REPORT:ONLINE-USERS-REPORT] , [REPORT:ALL] )
 	 */
-	private static Pattern reportPriviligePattern = Pattern.compile("\\[([a-zA-Z0-9-]+)\\]");
+	private static Pattern reportPriviligePattern = Pattern.compile("\\[REPORT:([a-zA-Z0-9-]+)\\]");
 
 	public void init() throws Exception {
 
