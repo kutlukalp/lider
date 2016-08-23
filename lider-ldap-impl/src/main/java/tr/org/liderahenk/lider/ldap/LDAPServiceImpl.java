@@ -45,15 +45,18 @@ import tr.org.liderahenk.lider.core.api.exceptions.LdapException;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
 import tr.org.liderahenk.lider.core.api.ldap.LdapSearchFilterAttribute;
 import tr.org.liderahenk.lider.core.api.ldap.enums.SearchFilterEnum;
+import tr.org.liderahenk.lider.core.api.ldap.model.IReportPrivilege;
+import tr.org.liderahenk.lider.core.api.ldap.model.ITaskPrivilege;
+import tr.org.liderahenk.lider.core.api.ldap.model.IUser;
+import tr.org.liderahenk.lider.core.api.ldap.model.LdapEntry;
 import tr.org.liderahenk.lider.core.api.rest.enums.DNType;
-import tr.org.liderahenk.lider.core.model.ldap.IUser;
-import tr.org.liderahenk.lider.core.model.ldap.IUserPrivilege;
-import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
+import tr.org.liderahenk.lider.ldap.model.ReportPrivilegeImpl;
+import tr.org.liderahenk.lider.ldap.model.TaskPrivilegeImpl;
+import tr.org.liderahenk.lider.ldap.model.UserImpl;
 
 /**
  * Default implementation for {@link ILDAPService}
  * 
- * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  * 
  */
@@ -65,7 +68,17 @@ public class LDAPServiceImpl implements ILDAPService {
 	private ICacheService cacheService;
 
 	private LdapConnectionPool pool;
-	private Pattern pattern = Pattern.compile("\\[(.+):(.+):(true|false)\\]");
+
+	/**
+	 * Pattern for task privileges (e.g. [dc=mys,dc=pardus,dc=org:ALL],
+	 * [dc=mys,dc=pardus,dc=org:EXECUTE_SCRIPT] )
+	 */
+	private static Pattern taskPriviligePattern = Pattern.compile("\\[(.+):(.+)\\]");
+
+	/**
+	 * Pattern for report privileges (e.g. [ONLINE-USERS-REPORT] , [ALL] )
+	 */
+	private static Pattern reportPriviligePattern = Pattern.compile("\\[([a-zA-Z0-9-]+)\\]");
 
 	public void init() throws Exception {
 
@@ -127,23 +140,32 @@ public class LDAPServiceImpl implements ILDAPService {
 		}
 	}
 
+	/**
+	 * Find user LDAP entry from given DN parameter. Use this method only if you
+	 * want to <b>read his/her (task and report) privileges</b>, otherwise use
+	 * getEntry() or search() methods since they are more efficient.
+	 * 
+	 * @param userDn
+	 * @return
+	 * @throws LdapException
+	 */
 	@Override
-	public IUser getUser(String userDN) throws LdapException {
+	public IUser getUser(String userDn) throws LdapException {
 
 		LdapConnection connection = null;
 		UserImpl user = null;
 
-		user = (UserImpl) cacheService.get("ldap:getuser:" + userDN);
+		user = (UserImpl) cacheService.get("ldap:getuser:" + userDn);
 
 		if (user != null) {
-			logger.debug("Cache hit. User DN: {}", userDN);
+			logger.debug("Cache hit. User DN: {}", userDn);
 			return user;
 		}
 
-		logger.debug("Cache miss: user DN: {}, doing ldap search", userDN);
+		logger.debug("Cache miss: user DN: {}, doing ldap search", userDn);
 		try {
 			connection = getConnection();
-			Entry resultEntry = connection.lookup(userDN);
+			Entry resultEntry = connection.lookup(userDn);
 			if (null != resultEntry) {
 				user = new UserImpl();
 
@@ -153,28 +175,60 @@ public class LDAPServiceImpl implements ILDAPService {
 				}
 
 				if (null != resultEntry.get(configurationService.getUserLdapPrivilegeAttribute())) {
-					// Set target DN Privileges
-					user.setTargetDnPrivileges(new ArrayList<IUserPrivilege>());
+					// Set task & report privileges
+					user.setTaskPrivileges(new ArrayList<ITaskPrivilege>());
+					user.setReportPrivileges(new ArrayList<IReportPrivilege>());
 					Iterator<Value<?>> iter = resultEntry.get(configurationService.getUserLdapPrivilegeAttribute())
 							.iterator();
 					while (iter.hasNext()) {
 						String privilege = iter.next().getValue().toString();
-						logger.debug("Found user privilege: {}", privilege);
-						Matcher matcher = pattern.matcher(privilege);
-						if (matcher.matches()) {
-							user.getTargetDnPrivileges().add(new UserPrivilegeImpl(matcher.group(1), matcher.group(2),
-									Boolean.valueOf(matcher.group(3))));
-						} else {
-							logger.warn("Invalid pattern in privilege => {}, pattern => {}", privilege, pattern);
-						}
+						addUserPrivilege(user, privilege);
 					}
-					// adding privileges from user's groups
-					user.getTargetDnPrivileges().addAll(getGroupPrivileges(userDN));
+
+					// Find group privileges if this user belongs to a group
+					LdapConnection connection2 = null;
+					EntryCursor cursor = null;
+
+					try {
+						connection2 = getConnection();
+
+						String filter = "(&(objectClass=pardusLider)(member=$1))".replace("$1", userDn);
+						cursor = connection2.search(configurationService.getLdapRootDn(), filter, SearchScope.SUBTREE);
+						while (cursor.next()) {
+
+							Entry entry = cursor.get();
+							logger.debug("Found user group: {}", entry.getDn());
+
+							if (null != entry) {
+								if (null != entry.get("liderPrivilege")) {
+									Iterator<Value<?>> iter2 = entry.get("liderPrivilege").iterator();
+									while (iter2.hasNext()) {
+										String privilege = iter2.next().getValue().toString();
+										addUserPrivilege(user, privilege);
+									}
+								} else {
+									logger.debug("No privilege found in group => {}", entry.getDn());
+								}
+							}
+						}
+						logger.debug("Finished processing group privileges for user {}", userDn);
+					} catch (Exception e) {
+						logger.error(e.getMessage(), e);
+						throw new LdapException(e);
+					} finally {
+						if (cursor != null) {
+							cursor.close();
+						}
+						releaseConnection(connection2);
+					}
 				}
-				logger.debug("Putting user to cache: user DN: {}", userDN);
-				cacheService.put("ldap:getuser:" + userDN, user);
+
+				logger.debug("Putting user to cache: user DN: {}", userDn);
+				cacheService.put("ldap:getuser:" + userDn, user);
+
 				return user;
 			}
+
 			return null;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -185,60 +239,17 @@ public class LDAPServiceImpl implements ILDAPService {
 
 	}
 
-	// TODO
-	// TODO
-	// TODO
-	private List<IUserPrivilege> getGroupPrivileges(String userDn) throws LdapException {
-
-		List<IUserPrivilege> groupPrivileges = new ArrayList<IUserPrivilege>();
-		LdapConnection connection = null;
-		EntryCursor cursor = null;
-
-		try {
-			connection = getConnection();
-
-			String filter = "(&(objectClass=pardusLider)(member=$1))".replace("$1", userDn);
-			cursor = connection.search(configurationService.getLdapRootDn(), filter, SearchScope.SUBTREE);
-
-			while (cursor.next()) {
-
-				Entry entry = cursor.get();
-				logger.debug("found group => {}", entry.getDn());
-
-				if (null != entry) {
-
-					if (null != entry.get("liderPrivilege")) {
-
-						Iterator<Value<?>> iter = entry.get("liderPrivilege").iterator();
-						while (iter.hasNext()) {
-
-							String privilege = iter.next().getValue().toString();
-							logger.debug("found privilege => {}", privilege);
-							Matcher matcher = pattern.matcher(privilege);
-							if (matcher.matches()) {
-								groupPrivileges.add(new UserPrivilegeImpl(matcher.group(1), matcher.group(2),
-										Boolean.valueOf(matcher.group(3))));
-							} else {
-								logger.warn("Invalid pattern in privilege => {}, pattern => {}", privilege, pattern);
-							}
-						}
-					} else {
-						logger.debug("No privilege found in group => {}", entry.getDn());
-					}
-				}
-			}
-			logger.debug("Finished processing group privileges for user {}", userDn);
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-			throw new LdapException(e);
-		} finally {
-			if (cursor != null) {
-				cursor.close();
-			}
-			releaseConnection(connection);
+	private void addUserPrivilege(UserImpl user, String privilege) {
+		logger.debug("Found privilege: {}", privilege);
+		Matcher tMatcher = taskPriviligePattern.matcher(privilege);
+		Matcher rMatcher = reportPriviligePattern.matcher(privilege);
+		if (tMatcher.matches()) { // Task privilege
+			user.getTaskPrivileges().add(new TaskPrivilegeImpl(tMatcher.group(1), tMatcher.group(2)));
+		} else if (rMatcher.matches()) { // Report privilege
+			user.getReportPrivileges().add(new ReportPrivilegeImpl(rMatcher.group(1)));
+		} else {
+			logger.warn("Invalid pattern in privilege => {}, pattern => {}", privilege, taskPriviligePattern);
 		}
-
-		return groupPrivileges;
 	}
 
 	/**
@@ -590,13 +601,11 @@ public class LDAPServiceImpl implements ILDAPService {
 		return search(configurationService.getLdapRootDn(), filterAttributes, returningAttributes);
 	}
 
-	// TODO handle situation where entry.getType is null or invalid
 	@Override
 	public boolean isAhenk(LdapEntry entry) {
 		return entry.getType() == DNType.AHENK;
 	}
 
-	// TODO handle situation where entry.getType is null or invalid
 	@Override
 	public boolean isUser(LdapEntry entry) {
 		return entry.getType() == DNType.USER;
@@ -618,9 +627,6 @@ public class LDAPServiceImpl implements ILDAPService {
 	public List<LdapEntry> findTargetEntries(List<String> dnList, DNType dnType) {
 		List<LdapEntry> entries = null;
 		if (dnList != null && !dnList.isEmpty() && dnType != null) {
-
-			// TODO improvement returning attributes should be a parameter!
-
 			// Determine returning attributes
 			// User LDAP privilege is used during authorization and agent JID
 			// attribute is used during task execution
