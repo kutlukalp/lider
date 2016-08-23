@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import tr.org.liderahenk.lider.core.api.authorization.IAuthService;
 import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
+import tr.org.liderahenk.lider.core.api.ldap.model.LdapEntry;
 import tr.org.liderahenk.lider.core.api.persistence.dao.ICommandDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecutionResult;
@@ -29,7 +30,6 @@ import tr.org.liderahenk.lider.core.api.rest.requests.ITaskRequest;
 import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
 import tr.org.liderahenk.lider.core.api.router.IServiceRouter;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskSubmissionFailedException;
-import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 import tr.org.liderahenk.lider.rest.dto.ExecutedTask;
 
 /**
@@ -81,7 +81,7 @@ public class TaskRequestProcessorImpl implements ITaskRequestProcessor {
 				} catch (Exception e) {
 					logger.error(e.getMessage(), e);
 				}
-				if (currentUser.getPrincipal() != null) {
+				if (currentUser != null && currentUser.getPrincipal() != null) {
 					if (targetEntries != null) {
 						// Find only 'permitted' entries:
 						targetEntries = authService.getPermittedEntries(currentUser.getPrincipal().toString(),
@@ -99,10 +99,9 @@ public class TaskRequestProcessorImpl implements ITaskRequestProcessor {
 								Arrays.asList(new String[] { "NOT_AUTHORIZED" }));
 					}
 				} else {
-					// TODO can a subject exist without a principal?
-					// if it does, shouldn't we return ERROR response instead of
-					// delegating the request to the service router?
-					logger.warn("Unauthenticated user access, bypassing plugin authorization.");
+					logger.warn("Unauthenticated user access.");
+					return responseFactory.createResponse(request, RestResponseStatus.ERROR,
+							Arrays.asList(new String[] { "NOT_AUTHORIZED" }));
 				}
 			}
 		} catch (Exception e) {
