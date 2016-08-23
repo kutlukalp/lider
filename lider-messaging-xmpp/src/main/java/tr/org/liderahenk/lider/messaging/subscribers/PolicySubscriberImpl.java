@@ -11,6 +11,7 @@ import tr.org.liderahenk.lider.core.api.exceptions.LdapException;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
 import tr.org.liderahenk.lider.core.api.ldap.LdapSearchFilterAttribute;
 import tr.org.liderahenk.lider.core.api.ldap.enums.SearchFilterEnum;
+import tr.org.liderahenk.lider.core.api.ldap.model.LdapEntry;
 import tr.org.liderahenk.lider.core.api.messaging.IMessageFactory;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IExecutePoliciesMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IGetPoliciesMessage;
@@ -18,7 +19,6 @@ import tr.org.liderahenk.lider.core.api.messaging.subscribers.IPolicySubscriber;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IPolicyDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
-import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
 /**
  * Provides related agent and user policies according to specified username and

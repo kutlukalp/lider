@@ -20,6 +20,8 @@ public class ReportTemplateRequestImpl implements IReportTemplateRequest {
 
 	private String query;
 
+	private String code;
+
 	private List<ReportTemplateParamReqImpl> templateParams;
 
 	private List<ReportTemplateColReqImpl> templateColumns;
@@ -60,6 +62,14 @@ public class ReportTemplateRequestImpl implements IReportTemplateRequest {
 
 	public void setQuery(String query) {
 		this.query = query;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	@Override

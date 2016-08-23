@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
+import tr.org.liderahenk.lider.core.api.ldap.model.LdapEntry;
 import tr.org.liderahenk.lider.core.api.messaging.enums.AgentMessageType;
 import tr.org.liderahenk.lider.core.api.messaging.enums.StatusCode;
 import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
@@ -18,7 +19,6 @@ import tr.org.liderahenk.lider.core.api.messaging.subscribers.IRegistrationSubsc
 import tr.org.liderahenk.lider.core.api.persistence.dao.IAgentDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IAgent;
 import tr.org.liderahenk.lider.core.api.persistence.factories.IEntityFactory;
-import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 import tr.org.liderahenk.lider.messaging.messages.RegistrationResponseMessageImpl;
 
 /**

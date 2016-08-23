@@ -19,6 +19,8 @@ import org.slf4j.LoggerFactory;
 import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.constants.LiderConstants;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
+import tr.org.liderahenk.lider.core.api.ldap.model.IUser;
+import tr.org.liderahenk.lider.core.api.ldap.model.LdapEntry;
 import tr.org.liderahenk.lider.core.api.messaging.IMessageFactory;
 import tr.org.liderahenk.lider.core.api.messaging.IMessagingService;
 import tr.org.liderahenk.lider.core.api.messaging.enums.StatusCode;
@@ -44,8 +46,6 @@ import tr.org.liderahenk.lider.core.api.rest.requests.ITaskRequest;
 import tr.org.liderahenk.lider.core.api.taskmanager.ITaskManager;
 import tr.org.liderahenk.lider.core.api.taskmanager.TaskSubmissionFailedException;
 import tr.org.liderahenk.lider.core.api.utils.FileCopyUtils;
-import tr.org.liderahenk.lider.core.model.ldap.IUser;
-import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
 /**
  * Default implementation for {@link ITaskManager}. This class is responsible
