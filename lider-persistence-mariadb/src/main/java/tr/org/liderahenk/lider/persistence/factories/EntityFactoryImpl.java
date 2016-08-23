@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
+import tr.org.liderahenk.lider.core.api.ldap.model.LdapEntry;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IPolicyStatusMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.ITaskStatusMessage;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IAgent;
@@ -47,7 +48,6 @@ import tr.org.liderahenk.lider.core.api.rest.requests.IReportViewRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.ISearchGroupEntryRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.ISearchGroupRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.ITaskRequest;
-import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 import tr.org.liderahenk.lider.persistence.entities.AgentImpl;
 import tr.org.liderahenk.lider.persistence.entities.AgentPropertyImpl;
 import tr.org.liderahenk.lider.persistence.entities.AgreementStatusImpl;
@@ -187,8 +187,8 @@ public class EntityFactoryImpl implements IEntityFactory {
 	@Override
 	public IReportTemplate createReportTemplate(IReportTemplate existingTemplate, IReportTemplate template) {
 		ReportTemplateImpl templateImpl = new ReportTemplateImpl(existingTemplate.getId(), existingTemplate.getName(),
-				template.getDescription(), template.getQuery(), null, null, existingTemplate.getCreateDate(),
-				new Date());
+				template.getDescription(), template.getQuery(), template.getCode(), null, null,
+				existingTemplate.getCreateDate(), new Date());
 		Set<? extends IReportTemplateParameter> params = template.getTemplateParams();
 		if (params != null) {
 			for (IReportTemplateParameter param : params) {
@@ -212,7 +212,7 @@ public class EntityFactoryImpl implements IEntityFactory {
 	@Override
 	public IReportTemplate createReportTemplate(IReportTemplateRequest request) {
 		ReportTemplateImpl template = new ReportTemplateImpl(request.getId(), request.getName(),
-				request.getDescription(), request.getQuery(), null, null, new Date(), null);
+				request.getDescription(), request.getQuery(), request.getCode(), null, null, new Date(), null);
 
 		List<? extends IReportTemplateParameterRequest> params = request.getTemplateParams();
 		if (params != null) {
@@ -235,7 +235,8 @@ public class EntityFactoryImpl implements IEntityFactory {
 	@Override
 	public IReportTemplate createReportTemplate(IReportTemplate existingTemplate, IReportTemplateRequest request) {
 		ReportTemplateImpl template = new ReportTemplateImpl(existingTemplate.getId(), request.getName(),
-				request.getDescription(), request.getQuery(), null, null, existingTemplate.getCreateDate(), new Date());
+				request.getDescription(), request.getQuery(), request.getCode(), null, null,
+				existingTemplate.getCreateDate(), new Date());
 
 		List<? extends IReportTemplateParameterRequest> params = request.getTemplateParams();
 		if (params != null) {

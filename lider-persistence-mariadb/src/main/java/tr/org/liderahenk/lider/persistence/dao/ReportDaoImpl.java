@@ -298,9 +298,8 @@ public class ReportDaoImpl implements IReportDao {
 				if (isInteger(param.getKey())) {
 					if (param.getType() == ParameterType.DATE) {
 						// TODO date pattern
-						q.setParameter(Integer.parseInt(param.getKey()),
-								new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(findParameterValue(param, view.getViewParams(), values)),
-								TemporalType.DATE);
+						q.setParameter(Integer.parseInt(param.getKey()), new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+								.parse(findParameterValue(param, view.getViewParams(), values)), TemporalType.DATE);
 					} else if (param.getType() == ParameterType.NUMBER) {
 						q.setParameter(Integer.parseInt(param.getKey()),
 								findParameterValue(param, view.getViewParams(), values));
@@ -311,9 +310,8 @@ public class ReportDaoImpl implements IReportDao {
 				} else {
 					if (param.getType() == ParameterType.DATE) {
 						// TODO date pattern
-						q.setParameter(param.getKey(),
-								new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(findParameterValue(param, view.getViewParams(), values)),
-								TemporalType.DATE);
+						q.setParameter(param.getKey(), new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+								.parse(findParameterValue(param, view.getViewParams(), values)), TemporalType.DATE);
 					} else if (param.getType() == ParameterType.NUMBER) {
 						q.setParameter(param.getKey(), findParameterValue(param, view.getViewParams(), values));
 					} else {

@@ -47,6 +47,9 @@ public class ReportTemplateImpl implements IReportTemplate {
 	@Column(name = "QUERY", nullable = false, length = 4000)
 	private String query;
 
+	@Column(name = "REPORT_CODE", nullable = false, length = 100, unique = true)
+	private String code;
+
 	@OneToMany(mappedBy = "template", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<ReportTemplateParameterImpl> templateParams = new HashSet<ReportTemplateParameterImpl>(0); // bidirectional
 
@@ -64,13 +67,14 @@ public class ReportTemplateImpl implements IReportTemplate {
 	public ReportTemplateImpl() {
 	}
 
-	public ReportTemplateImpl(Long id, String name, String description, String query,
+	public ReportTemplateImpl(Long id, String name, String description, String query, String code,
 			Set<ReportTemplateParameterImpl> templateParams, Set<ReportTemplateColumnImpl> templateColumns,
 			Date createDate, Date modifyDate) {
 		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.query = query;
+		this.code = code;
 		this.templateParams = templateParams;
 		this.templateColumns = templateColumns;
 		this.createDate = createDate;
@@ -82,6 +86,7 @@ public class ReportTemplateImpl implements IReportTemplate {
 		this.name = template.getName();
 		this.description = template.getDescription();
 		this.query = template.getQuery();
+		this.code = template.getCode();
 		this.createDate = template.getCreateDate();
 		this.modifyDate = template.getModifyDate();
 
@@ -136,6 +141,15 @@ public class ReportTemplateImpl implements IReportTemplate {
 
 	public void setQuery(String query) {
 		this.query = query;
+	}
+
+	@Override
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	@Override
@@ -222,8 +236,7 @@ public class ReportTemplateImpl implements IReportTemplate {
 	@Override
 	public String toString() {
 		return "ReportTemplateImpl [id=" + id + ", name=" + name + ", description=" + description + ", query=" + query
-				+ ", templateParams=" + templateParams + ", templateColumns=" + templateColumns + ", createDate="
-				+ createDate + ", modifyDate=" + modifyDate + "]";
+				+ ", code=" + code + ", createDate=" + createDate + ", modifyDate=" + modifyDate + "]";
 	}
 
 }
