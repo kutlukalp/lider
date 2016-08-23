@@ -7,9 +7,9 @@ import org.apache.directory.api.ldap.model.entry.Entry;
 import org.apache.directory.ldap.client.api.LdapConnection;
 
 import tr.org.liderahenk.lider.core.api.exceptions.LdapException;
+import tr.org.liderahenk.lider.core.api.ldap.model.IUser;
+import tr.org.liderahenk.lider.core.api.ldap.model.LdapEntry;
 import tr.org.liderahenk.lider.core.api.rest.enums.DNType;
-import tr.org.liderahenk.lider.core.model.ldap.IUser;
-import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
 
 /**
  * Provides LDAP backend services
@@ -44,12 +44,14 @@ public interface ILDAPService {
 
 	String getDN(String baseDn, String attributeName, String attributeValue) throws LdapException;
 
-	List<LdapEntry> search(String baseDn, List<LdapSearchFilterAttribute> filterAttributes, String[] returningAttributes)
+	List<LdapEntry> search(String baseDn, List<LdapSearchFilterAttribute> filterAttributes,
+			String[] returningAttributes) throws LdapException;
+
+	List<LdapEntry> search(List<LdapSearchFilterAttribute> filterAttributes, String[] returningAttributes)
 			throws LdapException;
 
-	List<LdapEntry> search(List<LdapSearchFilterAttribute> filterAttributes, String[] returningAttributes) throws LdapException;
-	
-	List<LdapEntry> search(String attributeName, String attributeValue, String[] returningAttributes) throws LdapException;
+	List<LdapEntry> search(String attributeName, String attributeValue, String[] returningAttributes)
+			throws LdapException;
 
 	boolean isAhenk(LdapEntry entry);
 

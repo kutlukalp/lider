@@ -1,21 +1,14 @@
-package tr.org.liderahenk.lider.core.model.ldap;
+package tr.org.liderahenk.lider.core.api.ldap.model;
 
 import java.util.List;
 
 /**
  * Interface defines a user
  * 
- * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  * 
  */
 public interface IUser {
-
-	/**
-	 * 
-	 * @return user's privileges
-	 */
-	List<? extends IUserPrivilege> getTargetDnPrivileges();
 
 	/**
 	 * 
@@ -46,4 +39,20 @@ public interface IUser {
 	 * @return UID/JID
 	 */
 	String getUid();
+
+	/**
+	 * Collection of task privileges. Each privilege indicates whether the user
+	 * can execute operation on the indicated LDAP entry or not.
+	 * 
+	 * @return
+	 */
+	List<ITaskPrivilege> getTaskPrivileges();
+
+	/**
+	 * Collection of report privileges. Each privilege indicates whether the
+	 * user can view/generate the indicated report or not.
+	 * 
+	 * @return
+	 */
+	List<IReportPrivilege> getReportPrivileges();
 }

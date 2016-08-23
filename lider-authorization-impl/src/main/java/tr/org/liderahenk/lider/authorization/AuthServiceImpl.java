@@ -10,16 +10,16 @@ import tr.org.liderahenk.lider.core.api.authorization.IAuthService;
 import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.exceptions.LdapException;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
-import tr.org.liderahenk.lider.core.model.ldap.IUser;
-import tr.org.liderahenk.lider.core.model.ldap.IUserPrivilege;
-import tr.org.liderahenk.lider.core.model.ldap.LdapEntry;
+import tr.org.liderahenk.lider.core.api.ldap.model.IReportPrivilege;
+import tr.org.liderahenk.lider.core.api.ldap.model.ITaskPrivilege;
+import tr.org.liderahenk.lider.core.api.ldap.model.IUser;
+import tr.org.liderahenk.lider.core.api.ldap.model.LdapEntry;
 
 /**
  * Default implementation of {@link IAuthService}. AuthServiceImpl handles
  * authorization of the requests for specified user. Each user LDAP entry has
  * privilege attributes that defines
  * 
- * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
@@ -34,7 +34,8 @@ public class AuthServiceImpl implements IAuthService {
 	private IConfigurationService configurationService;
 
 	@Override
-	public List<LdapEntry> getPermittedEntries(String userDn, List<LdapEntry> targetEntries, String targetOperation) {
+	public List<LdapEntry> getPermittedEntries(final String userDn, final List<LdapEntry> targetEntries,
+			final String targetOperation) {
 
 		List<LdapEntry> permittedEntries = new ArrayList<LdapEntry>();
 
@@ -49,8 +50,8 @@ public class AuthServiceImpl implements IAuthService {
 			}
 
 			// Find user privileges from LDAP.
-			List<? extends IUserPrivilege> privileges = user.getTargetDnPrivileges();
-			for (IUserPrivilege privilege : privileges) {
+			List<? extends ITaskPrivilege> privileges = user.getTaskPrivileges();
+			for (ITaskPrivilege privilege : privileges) {
 
 				logger.debug("Checking privilege info: {}", privilege);
 
@@ -95,9 +96,39 @@ public class AuthServiceImpl implements IAuthService {
 			logger.error(e.getMessage(), e);
 		}
 
-		logger.warn("Authorization failed. Please check request parameters.");
-
 		return permittedEntries;
+	}
+
+	@Override
+	public boolean canGenerateReport(final String userDn, final String reportCode) {
+		try {
+
+			logger.debug("Authorization started for DN: {} and report: {}", new Object[] { userDn, reportCode });
+
+			IUser user = ldapService.getUser(userDn);
+			if (null == user) {
+				logger.warn("Authorization failed. User not found: {}", userDn);
+				return false;
+			}
+
+			List<IReportPrivilege> privileges = user.getReportPrivileges();
+			for (IReportPrivilege privilege : privileges) {
+
+				logger.debug("Checking privilege info: {}", privilege);
+
+				// If everything is permitted OR specified report code is one of
+				// the permitted ones, return true!
+				if (ALL_PERMISSION.equalsIgnoreCase(privilege.getReportCode())
+						|| privilege.getReportCode().equalsIgnoreCase(reportCode)) {
+					return true;
+				}
+			}
+
+		} catch (LdapException e) {
+			logger.error(e.getMessage(), e);
+		}
+
+		return false;
 	}
 
 	public void setLdapService(ILDAPService ldapService) {
