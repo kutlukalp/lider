@@ -67,6 +67,8 @@
 		<property name="entityFactory" ref="entityFactory" />
 		<property name="requestFactory" ref="requestFactory" />
 		<property name="responseFactory" ref="responseFactory" />
+		<property name="authService" ref="authService" />
+		<property name="configService" ref="configService" />
 	</bean>
 	
 	<service ref="searchGroupRequestProcessor"

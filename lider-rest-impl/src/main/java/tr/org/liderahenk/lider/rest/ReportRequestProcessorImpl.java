@@ -6,11 +6,14 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +28,8 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
+import tr.org.liderahenk.lider.core.api.authorization.IAuthService;
+import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IReportDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateColumn;
@@ -42,6 +47,7 @@ import tr.org.liderahenk.lider.core.api.rest.requests.IReportTemplateRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IReportViewColumnRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IReportViewParameterRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IReportViewRequest;
+import tr.org.liderahenk.lider.core.api.rest.requests.IRequest;
 import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
 
 /**
@@ -58,6 +64,11 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 	private IEntityFactory entityFactory;
 	private IRequestFactory requestFactory;
 	private IResponseFactory responseFactory;
+	private IAuthService authService;
+	private IConfigurationService configService;
+
+	private static final String DEFAULT_ENCODING = "cp1254";
+	private static final String DEFAULT_FONT = "times-roman";
 
 	@Override
 	public IRestResponse validateTemplate(String json) {
@@ -159,9 +170,17 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 
 	@Override
 	public IRestResponse exportPdf(String json) {
+
 		try {
 			IReportGenerationRequest request = requestFactory.createReportGenerationRequest(json);
 			IReportView view = reportDao.findView(request.getViewId());
+
+			// Authorize report action
+			IRestResponse response = authAction(view, request);
+			if (response != null) {
+				return response;
+			}
+
 			List<Object[]> resultList = reportDao.generateView(view, request.getParamValues());
 
 			// Determine temporary report path
@@ -174,10 +193,10 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 			doc.open();
 
 			// Fonts
-			FontFactory.defaultEncoding = "cp1254";
-			Font titleFont = FontFactory.getFont("times-roman", "cp1254", 12, Font.BOLD);
-			Font headerFont = FontFactory.getFont("times-roman", "cp1254", 10, Font.BOLD);
-			Font cellFont = FontFactory.getFont("times-roman", "cp1254", 7, Font.NORMAL);
+			FontFactory.defaultEncoding = DEFAULT_ENCODING;
+			Font titleFont = FontFactory.getFont(DEFAULT_FONT, DEFAULT_ENCODING, 12, Font.BOLD);
+			Font headerFont = FontFactory.getFont(DEFAULT_FONT, DEFAULT_ENCODING, 10, Font.BOLD);
+			Font cellFont = FontFactory.getFont(DEFAULT_FONT, DEFAULT_ENCODING, 7, Font.NORMAL);
 
 			// Title & header
 			doc.addTitle(view.getName());
@@ -235,6 +254,12 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 			IReportGenerationRequest request = requestFactory.createReportGenerationRequest(json);
 			IReportView view = reportDao.findView(request.getViewId());
 
+			// Authorize report action
+			IRestResponse response = authAction(view, request);
+			if (response != null) {
+				return response;
+			}
+
 			// Generic type can be an entity class or an object array!
 			List<Object[]> resultList = reportDao.generateView(view, request.getParamValues());
 
@@ -250,6 +275,30 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 			logger.error(e.getMessage(), e);
 			return responseFactory.createResponse(RestResponseStatus.ERROR, e.getMessage());
 		}
+	}
+
+	private IRestResponse authAction(IReportView view, IRequest request) {
+		if (configService.getUserAuthorizationEnabled()) {
+			Subject currentUser = null;
+			try {
+				currentUser = SecurityUtils.getSubject();
+			} catch (Exception e) {
+				logger.error(e.getMessage(), e);
+			}
+			if (currentUser != null && currentUser.getPrincipal() != null) {
+				String reportCode = view.getTemplate().getCode();
+				if (!authService.canGenerateReport(currentUser.getPrincipal().toString(), reportCode)) {
+					logger.error("User not authorized: {}", currentUser.getPrincipal().toString());
+					return responseFactory.createResponse(request, RestResponseStatus.ERROR,
+							Arrays.asList(new String[] { "NOT_AUTHORIZED" }));
+				}
+			} else {
+				logger.warn("Unauthenticated user access.");
+				return responseFactory.createResponse(request, RestResponseStatus.ERROR,
+						Arrays.asList(new String[] { "NOT_AUTHORIZED" }));
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -391,6 +440,22 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 	 */
 	public void setResponseFactory(IResponseFactory responseFactory) {
 		this.responseFactory = responseFactory;
+	}
+
+	/**
+	 * 
+	 * @param authService
+	 */
+	public void setAuthService(IAuthService authService) {
+		this.authService = authService;
+	}
+
+	/**
+	 * 
+	 * @param configService
+	 */
+	public void setConfigService(IConfigurationService configService) {
+		this.configService = configService;
 	}
 
 }
