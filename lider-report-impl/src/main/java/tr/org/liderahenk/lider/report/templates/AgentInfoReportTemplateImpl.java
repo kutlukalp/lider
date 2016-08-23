@@ -28,10 +28,8 @@ public class AgentInfoReportTemplateImpl extends BaseReportTemplate {
 
 	@Override
 	public String getQuery() {
-		return "SELECT a.dn, a.hostname, a.ipAddresses, a.macAddresses, a.createDate " 
-				+ "FROM AgentImpl a "
-				+ "WHERE a.createDate BETWEEN :startDate AND :endDate "
-				+ "ORDER BY a.createDate DESC";
+		return "SELECT a.dn, a.hostname, a.ipAddresses, a.macAddresses, a.createDate " + "FROM AgentImpl a "
+				+ "WHERE a.createDate BETWEEN :startDate AND :endDate " + "ORDER BY a.createDate DESC";
 	}
 
 	@SuppressWarnings("serial")
@@ -271,6 +269,11 @@ public class AgentInfoReportTemplateImpl extends BaseReportTemplate {
 
 	protected AgentInfoReportTemplateImpl getSelf() {
 		return this;
+	}
+
+	@Override
+	public String getCode() {
+		return "AGENT-INFO-REPORT";
 	}
 
 }

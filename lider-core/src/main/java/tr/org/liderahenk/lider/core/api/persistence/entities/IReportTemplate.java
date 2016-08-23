@@ -45,4 +45,11 @@ public interface IReportTemplate extends IEntity {
 	 */
 	String toJson();
 
+	/**
+	 * Unique report code
+	 * 
+	 * @return report code which is used in report privileges
+	 */
+	String getCode();
+
 }

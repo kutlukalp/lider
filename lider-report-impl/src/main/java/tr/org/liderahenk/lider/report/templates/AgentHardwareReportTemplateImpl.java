@@ -250,4 +250,9 @@ public class AgentHardwareReportTemplateImpl extends BaseReportTemplate {
 		return this;
 	}
 
+	@Override
+	public String getCode() {
+		return "AGENT-HARDWARE-REPORT";
+	}
+
 }

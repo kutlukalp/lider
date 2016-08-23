@@ -231,4 +231,9 @@ public class InstalledPluginsReportTemplateImpl extends BaseReportTemplate {
 		return this;
 	}
 
+	@Override
+	public String getCode() {
+		return "INSTALLED-PLUGIN-REPORT";
+	}
+
 }

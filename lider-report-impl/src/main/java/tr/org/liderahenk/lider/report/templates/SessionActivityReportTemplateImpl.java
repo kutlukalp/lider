@@ -275,4 +275,9 @@ public class SessionActivityReportTemplateImpl extends BaseReportTemplate {
 		return this;
 	}
 
+	@Override
+	public String getCode() {
+		return "SESSION-ACTIVITY-REPORT";
+	}
+
 }

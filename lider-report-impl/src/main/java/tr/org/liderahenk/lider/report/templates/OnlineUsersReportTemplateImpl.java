@@ -178,4 +178,9 @@ public class OnlineUsersReportTemplateImpl extends BaseReportTemplate {
 	protected OnlineUsersReportTemplateImpl getSelf() {
 		return this;
 	}
+
+	@Override
+	public String getCode() {
+		return "ONLINE-USERS-REPORT";
+	}
 }

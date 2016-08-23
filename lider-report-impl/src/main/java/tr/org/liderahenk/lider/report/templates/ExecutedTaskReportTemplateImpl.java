@@ -246,4 +246,9 @@ public class ExecutedTaskReportTemplateImpl extends BaseReportTemplate {
 		return this;
 	}
 
+	@Override
+	public String getCode() {
+		return "EXECUTED-TASK-REPORT";
+	}
+
 }
