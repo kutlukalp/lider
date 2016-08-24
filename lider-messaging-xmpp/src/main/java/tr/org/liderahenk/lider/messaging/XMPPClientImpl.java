@@ -174,11 +174,11 @@ public class XMPPClientImpl {
 		ReconnectionManager.setEnabledPerDefault(true);
 		if (configurationService.getXmppUseCustomSsl()) {
 			config = XMPPTCPConnectionConfiguration.builder().setServiceName(serviceName).setHost(host).setPort(port)
-					.setSecurityMode(SecurityMode.required).setDebuggerEnabled(logger.isDebugEnabled())
+					.setSecurityMode(SecurityMode.ifpossible).setDebuggerEnabled(logger.isDebugEnabled())
 					.setCustomSSLContext(createCustomSslContext()).build();
 		} else {
 			Builder builder = XMPPTCPConnectionConfiguration.builder().setServiceName(serviceName).setHost(host)
-					.setPort(port).setDebuggerEnabled(true);
+					.setPort(port).setDebuggerEnabled(logger.isDebugEnabled());
 			if (configurationService.getXmppUseSsl()) {
 				builder.setSecurityMode(SecurityMode.required);
 				SSLContext context = createCustomSslContext();
