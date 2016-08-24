@@ -2,14 +2,20 @@ package tr.org.liderahenk.lider.messaging;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.security.cert.CertificateException;
+import java.net.Socket;
+import java.security.NoSuchAlgorithmException;
+import java.security.Principal;
+import java.security.PrivateKey;
+import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509KeyManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.codehaus.jackson.JsonGenerationException;
@@ -29,6 +35,7 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
+import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration.Builder;
 import org.jivesoftware.smackx.bytestreams.socks5.Socks5BytestreamManager;
 import org.jivesoftware.smackx.bytestreams.socks5.Socks5BytestreamSession;
 import org.jivesoftware.smackx.iqregister.AccountManager;
@@ -131,7 +138,7 @@ public class XMPPClientImpl {
 	private XMPPTCPConnection connection;
 	private XMPPTCPConnectionConfiguration config;
 
-	public void init() {
+	public void init() throws Exception {
 		logger.info("XMPP service initialization is started");
 		setParameters();
 		createXmppTcpConfiguration();
@@ -159,19 +166,27 @@ public class XMPPClientImpl {
 
 	/**
 	 * Configures XMPP connection parameters.
+	 * 
+	 * @throws NoSuchAlgorithmException
 	 */
-	private void createXmppTcpConfiguration() {
+	private void createXmppTcpConfiguration() throws NoSuchAlgorithmException {
 		PingManager.setDefaultPingInterval(pingTimeout);
 		ReconnectionManager.setEnabledPerDefault(true);
 		if (configurationService.getXmppUseCustomSsl()) {
 			config = XMPPTCPConnectionConfiguration.builder().setServiceName(serviceName).setHost(host).setPort(port)
-					.setSecurityMode(SecurityMode.ifpossible).setDebuggerEnabled(logger.isDebugEnabled())
+					.setSecurityMode(SecurityMode.required).setDebuggerEnabled(logger.isDebugEnabled())
 					.setCustomSSLContext(createCustomSslContext()).build();
 		} else {
-			config = XMPPTCPConnectionConfiguration.builder().setServiceName(serviceName).setHost(host).setPort(port)
-					.setSecurityMode(
-							configurationService.getXmppUseSsl() ? SecurityMode.required : SecurityMode.disabled)
-					.setDebuggerEnabled(logger.isDebugEnabled()).build();
+			Builder builder = XMPPTCPConnectionConfiguration.builder().setServiceName(serviceName).setHost(host)
+					.setPort(port).setDebuggerEnabled(true);
+			if (configurationService.getXmppUseSsl()) {
+				builder.setSecurityMode(SecurityMode.required);
+				SSLContext context = createCustomSslContext();
+				builder.setCustomSSLContext(context);
+			} else {
+				builder.setSecurityMode(SecurityMode.disabled);
+			}
+			config = builder.build();
 		}
 		logger.debug("XMPP configuration finished: {}", config.toString());
 	}
@@ -550,27 +565,59 @@ public class XMPPClientImpl {
 
 	public SSLContext createCustomSslContext() {
 		try {
-			SSLContext sslContext = SSLContext.getInstance("TLS");
-			TrustManager tm = new X509TrustManager() {
-				@Override
-				public void checkClientTrusted(X509Certificate[] x509Certificates, String s)
-						throws CertificateException {
-				}
-
-				@Override
-				public void checkServerTrusted(X509Certificate[] x509Certificates, String s)
-						throws CertificateException {
-				}
-
-				@Override
+			TrustManager[] bypassTrustManagers = new TrustManager[] { new X509TrustManager() {
 				public X509Certificate[] getAcceptedIssuers() {
 					return new X509Certificate[0];
 				}
-			};
-			sslContext.init(null, new TrustManager[] { tm }, null);
 
-			return sslContext;
+				public void checkClientTrusted(X509Certificate[] chain, String authType) {
+				}
 
+				public void checkServerTrusted(X509Certificate[] chain, String authType) {
+				}
+			} };
+			KeyManager[] bypassKeyManagers = new KeyManager[] { new X509KeyManager() {
+
+				@Override
+				public String chooseClientAlias(String[] arg0, Principal[] arg1, Socket arg2) {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+				@Override
+				public String chooseServerAlias(String arg0, Principal[] arg1, Socket arg2) {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+				@Override
+				public X509Certificate[] getCertificateChain(String arg0) {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+				@Override
+				public String[] getClientAliases(String arg0, Principal[] arg1) {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+				@Override
+				public PrivateKey getPrivateKey(String arg0) {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+				@Override
+				public String[] getServerAliases(String arg0, Principal[] arg1) {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+			} };
+			SSLContext context = SSLContext.getInstance("TLS");
+			context.init(bypassKeyManagers, bypassTrustManagers, new SecureRandom());
+			return context;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
