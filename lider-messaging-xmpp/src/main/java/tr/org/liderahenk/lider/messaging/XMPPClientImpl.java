@@ -181,8 +181,7 @@ public class XMPPClientImpl {
 					.setPort(port).setDebuggerEnabled(logger.isDebugEnabled());
 			if (configurationService.getXmppUseSsl()) {
 				builder.setSecurityMode(SecurityMode.required);
-				SSLContext context = createCustomSslContext();
-				builder.setCustomSSLContext(context);
+				builder.setCustomSSLContext(createCustomSslContext());
 			} else {
 				builder.setSecurityMode(SecurityMode.disabled);
 			}
@@ -560,9 +559,8 @@ public class XMPPClientImpl {
 
 	/***
 	 * 
-	 * @return custom ssl context with x509 trust manager.
+	 * @return custom SSL context with x509 trust manager.
 	 */
-
 	public SSLContext createCustomSslContext() {
 		try {
 			TrustManager[] bypassTrustManagers = new TrustManager[] { new X509TrustManager() {
@@ -580,37 +578,31 @@ public class XMPPClientImpl {
 
 				@Override
 				public String chooseClientAlias(String[] arg0, Principal[] arg1, Socket arg2) {
-					// TODO Auto-generated method stub
 					return null;
 				}
 
 				@Override
 				public String chooseServerAlias(String arg0, Principal[] arg1, Socket arg2) {
-					// TODO Auto-generated method stub
 					return null;
 				}
 
 				@Override
 				public X509Certificate[] getCertificateChain(String arg0) {
-					// TODO Auto-generated method stub
 					return null;
 				}
 
 				@Override
 				public String[] getClientAliases(String arg0, Principal[] arg1) {
-					// TODO Auto-generated method stub
 					return null;
 				}
 
 				@Override
 				public PrivateKey getPrivateKey(String arg0) {
-					// TODO Auto-generated method stub
 					return null;
 				}
 
 				@Override
 				public String[] getServerAliases(String arg0, Principal[] arg1) {
-					// TODO Auto-generated method stub
 					return null;
 				}
 
