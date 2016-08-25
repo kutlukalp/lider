@@ -29,9 +29,14 @@ public class MailServiceImpl implements IMailService {
 	private Logger logger = LoggerFactory.getLogger(MailServiceImpl.class);
 
 	private IConfigurationService configurationService;
-
+	
 	@Override
 	public void sendMail(List<String> toList, String subject, String body) {
+		sendMail(toList, subject, body, "text/plain; charset=ISO-8859-9");
+	}
+
+	@Override
+	public void sendMail(List<String> toList, String subject, String body, String contentType) {
 		if (toList == null || toList.isEmpty()) {
 			throw new IllegalArgumentException("toList was null!");
 		}
@@ -66,7 +71,7 @@ public class MailServiceImpl implements IMailService {
 			}
 
 			message.setSubject(subject);
-			message.setContent(body, "text/plain; charset=ISO-8859-9");
+			message.setContent(body, contentType);
 
 			// Get SMTP transport
 			Transport transport = session.getTransport("smtp");
