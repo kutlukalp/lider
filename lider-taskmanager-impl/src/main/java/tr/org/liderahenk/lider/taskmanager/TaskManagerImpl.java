@@ -219,6 +219,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 					try {
 						// Save command execution with result
 						result = commandDao.save(result);
+						ICommandExecutionResult origResult = result;
 						// Throw an event if the task processing finished
 						if (StatusCode.getTaskEndingStates().contains(message.getResponseCode())) {
 							Dictionary<String, Object> payload = new Hashtable<String, Object>();
@@ -233,7 +234,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 										commandExecution, agent.getId());
 							}
 							// Execution result
-							payload.put("result", result);
+							payload.put("result", origResult);
 							eventAdmin.postEvent(new Event(LiderConstants.EVENTS.TASK_STATUS_RECEIVED, payload));
 						}
 					} catch (Exception e) {
@@ -316,10 +317,12 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 	}
 
 	private void hookListener() {
-		// Listen to future tasks, send them to agent(s) if activation date has
-		// arrived.
-		timer = new Timer();
-		timer.schedule(new FutureTaskListener(), 1000, configurationService.getTaskManagerFutureTaskCheckPeriod());
+		if (configurationService.getTaskManagerCheckFutureTask()) {
+			// Listen to future tasks, send them to agent(s) if activation date has
+			// arrived.
+			timer = new Timer();
+			timer.schedule(new FutureTaskListener(), 1000, configurationService.getTaskManagerFutureTaskCheckPeriod());
+		}
 	}
 
 	/*
