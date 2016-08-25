@@ -20,4 +20,10 @@ public interface IReportViewRequest extends IRequest {
 
 	List<? extends IReportViewColumnRequest> getViewColumns();
 
+	Long getAlarmCheckPeriod();
+
+	Long getAlarmRecordNumThreshold();
+
+	String getAlarmMail();
+
 }

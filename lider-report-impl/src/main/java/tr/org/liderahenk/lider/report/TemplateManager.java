@@ -103,6 +103,10 @@ public class TemplateManager {
 		}
 	}
 
+	public void destroy() {
+		logger.info("Destroying template manager...");
+	}
+
 	private void registerTemplates() {
 
 		if (templateList != null && !templateList.isEmpty()) {

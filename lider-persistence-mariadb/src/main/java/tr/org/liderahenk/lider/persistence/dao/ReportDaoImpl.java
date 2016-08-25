@@ -35,6 +35,7 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IReportView;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportViewParameter;
 import tr.org.liderahenk.lider.core.api.persistence.enums.OrderType;
 import tr.org.liderahenk.lider.core.api.persistence.enums.ParameterType;
+import tr.org.liderahenk.lider.core.api.utils.LiderCoreUtils;
 import tr.org.liderahenk.lider.core.api.utils.RandomStringGenerator;
 import tr.org.liderahenk.lider.persistence.entities.ReportTemplateColumnImpl;
 import tr.org.liderahenk.lider.persistence.entities.ReportTemplateImpl;
@@ -266,7 +267,7 @@ public class ReportDaoImpl implements IReportDao {
 		// Set query parameter with random values!
 		if (params != null) {
 			for (IReportTemplateParameter param : params) {
-				if (isInteger(param.getKey())) {
+				if (LiderCoreUtils.isInteger(param.getKey())) {
 					if (param.getType() == ParameterType.DATE) {
 						q.setParameter(Integer.parseInt(param.getKey()), new Date(), TemporalType.DATE);
 					} else if (param.getType() == ParameterType.NUMBER) {
@@ -295,7 +296,7 @@ public class ReportDaoImpl implements IReportDao {
 		// Set query parameters!
 		if (view.getTemplate().getTemplateParams() != null) {
 			for (IReportTemplateParameter param : view.getTemplate().getTemplateParams()) {
-				if (isInteger(param.getKey())) {
+				if (LiderCoreUtils.isInteger(param.getKey())) {
 					if (param.getType() == ParameterType.DATE) {
 						// TODO date pattern
 						q.setParameter(Integer.parseInt(param.getKey()), new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
@@ -335,7 +336,7 @@ public class ReportDaoImpl implements IReportDao {
 	private String findParameterValue(IReportTemplateParameter tParam, Set<? extends IReportViewParameter> vParams,
 			Map<String, Object> values) {
 		// Use the value provided by the request!
-		if (values.get(tParam.getKey()) != null) {
+		if (values != null && values.get(tParam.getKey()) != null) {
 			return values.get(tParam.getKey()).toString();
 		}
 		// Try to find view parameter which references to the current tParam
@@ -353,21 +354,18 @@ public class ReportDaoImpl implements IReportDao {
 		// No value has been provided, use the default value!
 		return tParam.getDefaultValue();
 	}
-
-	private static boolean isInteger(String s) {
-		if (s.isEmpty())
-			return false;
-		for (int i = 0; i < s.length(); i++) {
-			if (i == 0 && s.charAt(i) == '-') {
-				if (s.length() == 1)
-					return false;
-				else
-					continue;
-			}
-			if (Character.digit(s.charAt(i), 10) < 0)
-				return false;
-		}
-		return true;
+	
+	private static final String FIND_VIEWS_WITH_ALARM = 
+			"SELECT v "
+			+ "FROM ReportViewImpl v "
+			+ "WHERE v.alarmMail IS NOT NULL "
+			+ "ORDER BY v.createDate, v.name";
+	
+	@Override
+	public List<? extends IReportView> findViewsWithAlarm() {
+		Query query = entityManager.createQuery(FIND_VIEWS_WITH_ALARM);
+		List resultList = query.getResultList();
+		return resultList;
 	}
 
 	/**

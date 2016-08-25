@@ -8,13 +8,17 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +34,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 import tr.org.liderahenk.lider.core.api.authorization.IAuthService;
 import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
+import tr.org.liderahenk.lider.core.api.constants.LiderConstants;
 import tr.org.liderahenk.lider.core.api.persistence.dao.IReportDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateColumn;
@@ -66,6 +71,7 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 	private IResponseFactory responseFactory;
 	private IAuthService authService;
 	private IConfigurationService configService;
+	private EventAdmin eventAdmin;
 
 	private static final String DEFAULT_ENCODING = "cp1254";
 	private static final String DEFAULT_FONT = "times-roman";
@@ -170,7 +176,6 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 
 	@Override
 	public IRestResponse exportPdf(String json) {
-
 		try {
 			IReportGenerationRequest request = requestFactory.createReportGenerationRequest(json);
 			IReportView view = reportDao.findView(request.getViewId());
@@ -322,6 +327,10 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 				}
 			}
 			view = reportDao.saveView(view);
+			
+			Dictionary<String, Object> payload = new Hashtable<String, Object>();
+			payload.put("view", view);
+			eventAdmin.postEvent(new Event(LiderConstants.EVENTS.REPORT_VIEW_CREATED, payload));
 
 			Map<String, Object> resultMap = new HashMap<String, Object>();
 			resultMap.put("view", view.toJson());
@@ -355,6 +364,10 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 				}
 			}
 			view = reportDao.updateView(view);
+			
+			Dictionary<String, Object> payload = new Hashtable<String, Object>();
+			payload.put("view", view);
+			eventAdmin.postEvent(new Event(LiderConstants.EVENTS.REPORT_VIEW_UPDATED, payload));
 
 			Map<String, Object> resultMap = new HashMap<String, Object>();
 			resultMap.put("view", view.toJson());
@@ -405,6 +418,9 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 		if (id == null) {
 			throw new IllegalArgumentException("ID was null.");
 		}
+		Dictionary<String, Object> payload = new Hashtable<String, Object>();
+		payload.put("viewId", id);
+		eventAdmin.postEvent(new Event(LiderConstants.EVENTS.REPORT_VIEW_DELETED, payload));
 		reportDao.deleteView(new Long(id));
 		logger.info("Report view record deleted: {}", id);
 		return responseFactory.createResponse(RestResponseStatus.OK, "Record deleted.");
@@ -456,6 +472,14 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 	 */
 	public void setConfigService(IConfigurationService configService) {
 		this.configService = configService;
+	}
+
+	/**
+	 * 
+	 * @param eventAdmin
+	 */
+	public void setEventAdmin(EventAdmin eventAdmin) {
+		this.eventAdmin = eventAdmin;
 	}
 
 }

@@ -299,14 +299,16 @@ public class EntityFactoryImpl implements IEntityFactory {
 	@Override
 	public IReportView createReportView(IReportViewRequest request, IReportTemplate template) {
 		return new ReportViewImpl(request.getId(), (ReportTemplateImpl) template, request.getName(),
-				request.getDescription(), request.getType(), null, null, new Date(), null);
+				request.getDescription(), request.getType(), null, null, request.getAlarmCheckPeriod(),
+				request.getAlarmRecordNumThreshold(), request.getAlarmMail(), new Date(), null);
 	}
 
 	@Override
 	public IReportView createReportView(IReportView existingView, IReportViewRequest request,
 			IReportTemplate template) {
 		return new ReportViewImpl(existingView.getId(), (ReportTemplateImpl) template, request.getName(),
-				request.getDescription(), request.getType(), null, null, existingView.getCreateDate(), new Date());
+				request.getDescription(), request.getType(), null, null, request.getAlarmCheckPeriod(),
+				request.getAlarmRecordNumThreshold(), request.getAlarmMail(), existingView.getCreateDate(), new Date());
 	}
 
 	@Override

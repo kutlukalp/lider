@@ -50,4 +50,6 @@ public interface IReportDao {
 
 	List<Object[]> generateView(IReportView view, Map<String, Object> values) throws Exception;
 
+	List<? extends IReportView> findViewsWithAlarm();
+
 }

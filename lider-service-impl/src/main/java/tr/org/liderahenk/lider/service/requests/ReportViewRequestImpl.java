@@ -27,6 +27,12 @@ public class ReportViewRequestImpl implements IReportViewRequest {
 
 	private List<ReportViewColReqImpl> viewColumns;
 
+	private Long alarmCheckPeriod;
+
+	private Long alarmRecordNumThreshold;
+
+	private String alarmMail;
+
 	private Date timestamp;
 
 	@Override
@@ -90,6 +96,33 @@ public class ReportViewRequestImpl implements IReportViewRequest {
 
 	public void setViewColumns(List<ReportViewColReqImpl> viewColumns) {
 		this.viewColumns = viewColumns;
+	}
+
+	@Override
+	public Long getAlarmCheckPeriod() {
+		return alarmCheckPeriod;
+	}
+
+	public void setAlarmCheckPeriod(Long alarmCheckPeriod) {
+		this.alarmCheckPeriod = alarmCheckPeriod;
+	}
+
+	@Override
+	public Long getAlarmRecordNumThreshold() {
+		return alarmRecordNumThreshold;
+	}
+
+	public void setAlarmRecordNumThreshold(Long alarmRecordNumThreshold) {
+		this.alarmRecordNumThreshold = alarmRecordNumThreshold;
+	}
+
+	@Override
+	public String getAlarmMail() {
+		return alarmMail;
+	}
+
+	public void setAlarmMail(String alarmMail) {
+		this.alarmMail = alarmMail;
 	}
 
 	@Override

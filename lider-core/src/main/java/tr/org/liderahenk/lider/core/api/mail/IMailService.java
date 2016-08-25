@@ -18,4 +18,14 @@ public interface IMailService {
 	 */
 	void sendMail(List<String> toList, String subject, String body);
 
+	/**
+	 * Send mail with specified contenty type to provided list.
+	 * 
+	 * @param toList
+	 * @param subject
+	 * @param body
+	 * @param contentType
+	 */
+	void sendMail(List<String> toList, String subject, String body, String contentType);
+
 }

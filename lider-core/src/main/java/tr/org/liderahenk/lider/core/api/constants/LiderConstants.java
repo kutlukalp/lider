@@ -28,6 +28,18 @@ public class LiderConstants {
 		 * Thrown when policy status message received
 		 */
 		public static final String POLICY_STATUS_RECEIVED = "tr/org/liderahenk/policy/status/received";
+		/**
+		 * Thrown when new report view created
+		 */
+		public static final String REPORT_VIEW_CREATED = "tr/org/liderahenk/report/view/created";
+		/**
+		 * Thrown when existing report view updated
+		 */
+		public static final String REPORT_VIEW_UPDATED = "tr/org/liderahenk/report/view/updated";
+		/**
+		 * Thrown when repot view deleted
+		 */
+		public static final String REPORT_VIEW_DELETED = "tr/org/liderahenk/report/view/deleted";
 	}
 
 }

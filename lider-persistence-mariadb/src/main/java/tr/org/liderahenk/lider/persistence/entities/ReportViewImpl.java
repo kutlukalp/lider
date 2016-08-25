@@ -60,6 +60,15 @@ public class ReportViewImpl implements IReportView {
 	@OneToMany(mappedBy = "view", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<ReportViewColumnImpl> viewColumns = new HashSet<ReportViewColumnImpl>();
 
+	@Column(name = "ALARM_CHECK_PERIOD")
+	private Long alarmCheckPeriod;
+
+	@Column(name = "ALARM_RECORD_NUM_THRESHOLD")
+	private Long alarmRecordNumThreshold;
+
+	@Column(name = "ALARM_MAIL")
+	private String alarmMail;
+
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "CREATE_DATE", nullable = false)
 	private Date createDate;
@@ -72,8 +81,8 @@ public class ReportViewImpl implements IReportView {
 	}
 
 	public ReportViewImpl(Long id, ReportTemplateImpl template, String name, String description, ReportType type,
-			Set<ReportViewParameterImpl> viewParams, Set<ReportViewColumnImpl> viewColumns, Date createDate,
-			Date modifyDate) {
+			Set<ReportViewParameterImpl> viewParams, Set<ReportViewColumnImpl> viewColumns, Long alarmCheckPeriod,
+			Long alarmRecordNumThreshold, String alarmMail, Date createDate, Date modifyDate) {
 		this.id = id;
 		this.template = template;
 		this.name = name;
@@ -81,6 +90,9 @@ public class ReportViewImpl implements IReportView {
 		setType(type);
 		this.viewParams = viewParams;
 		this.viewColumns = viewColumns;
+		this.alarmCheckPeriod = alarmCheckPeriod;
+		this.alarmRecordNumThreshold = alarmRecordNumThreshold;
+		this.alarmMail = alarmMail;
 		this.createDate = createDate;
 		this.modifyDate = modifyDate;
 	}
@@ -91,6 +103,9 @@ public class ReportViewImpl implements IReportView {
 		this.name = view.getName();
 		this.description = view.getDescription();
 		setType(view.getType());
+		this.alarmCheckPeriod = view.getAlarmCheckPeriod();
+		this.alarmRecordNumThreshold = view.getAlarmRecordNumThreshold();
+		this.alarmMail = view.getAlarmMail();
 		this.createDate = view.getCreateDate();
 		this.modifyDate = view.getModifyDate();
 
@@ -176,6 +191,33 @@ public class ReportViewImpl implements IReportView {
 
 	public void setViewColumns(Set<ReportViewColumnImpl> viewColumns) {
 		this.viewColumns = viewColumns;
+	}
+
+	@Override
+	public Long getAlarmCheckPeriod() {
+		return alarmCheckPeriod;
+	}
+
+	public void setAlarmCheckPeriod(Long alarmCheckPeriod) {
+		this.alarmCheckPeriod = alarmCheckPeriod;
+	}
+
+	@Override
+	public Long getAlarmRecordNumThreshold() {
+		return alarmRecordNumThreshold;
+	}
+
+	public void setAlarmRecordNumThreshold(Long alarmRecordNumThreshold) {
+		this.alarmRecordNumThreshold = alarmRecordNumThreshold;
+	}
+
+	@Override
+	public String getAlarmMail() {
+		return alarmMail;
+	}
+
+	public void setAlarmMail(String alarmMail) {
+		this.alarmMail = alarmMail;
 	}
 
 	@Override
