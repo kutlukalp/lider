@@ -28,6 +28,15 @@ public interface IConfigurationService {
 	 */
 	Boolean getLiderDebugEnabled();
 
+	/**
+	 * Lider create log records for all (LOGIN operation and CRUD operations)
+	 * operations in C_OPERATION_LOG table.
+	 * 
+	 * @return true if we want to log all operations in the system, false
+	 *         otherwise.
+	 */
+	Boolean getLiderLogOperations();
+
 	//
 	// LDAP configuration
 	//
@@ -135,17 +144,17 @@ public interface IConfigurationService {
 
 	/**
 	 * 
+	 * @return true if XMPP client accepts self-signed certificates, false
+	 *         otherwise
+	 */
+	Boolean getXmppAllowSelfSignedCert();
+
+	/**
+	 * 
 	 * @return true if XMPP uses Custom Trust Manager, false otherwise.
 	 */
 
 	Boolean getXmppUseCustomSsl();
-
-	/**
-	 * 
-	 * @return File directory path that is used to store received files
-	 *         temporarily.
-	 */
-	String getXmppFilePath();
 
 	//
 	// Agent configuration
@@ -224,28 +233,31 @@ public interface IConfigurationService {
 	//
 
 	/**
+	 * This feature may affect performance so enable this only if necessary!
 	 * 
-	 * @return default task timeout (in milliseconds) for task manager
+	 * @return true if we want to check and handle future tasks periodically,
+	 *         false otherwise
 	 */
-	Long getTaskManagerTaskTimeout();
+	Boolean getTaskManagerCheckFutureTask();
 
 	/**
-	 * 
-	 * @return true if clustering enabled in task manager store
-	 */
-	Boolean getTaskManagerMulticastEnabled();
-
-	/**
-	 * 
-	 * @return true if xmpp message logs enabled
-	 */
-	Boolean getTaskManagerLogXmppMessagesEnabled();
-
-	/**
+	 * This feature may affect performance so make this period reasonably long!
 	 * 
 	 * @return time in milliseconds between successive future task checks.
 	 */
 	Long getTaskManagerFutureTaskCheckPeriod();
+
+	//
+	// Alarm configuration
+	//
+
+	/**
+	 * This feature may affect performance so enable this only if necessary!
+	 * 
+	 * @return true if we wan to check and handle reports defined with an alarm
+	 *         periodically, false otherwise.
+	 */
+	Boolean getAlarmCheckReport();
 
 	//
 	// Mail configuration

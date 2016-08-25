@@ -29,6 +29,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 
 	// Lider configuration
 	private Boolean liderDebugEnabled;
+	private Boolean liderLogOperations;
 
 	// LDAP configuration
 	private String ldapServer;
@@ -50,8 +51,8 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 	private int xmppPacketReplayTimeout;
 	private Integer xmppPingTimeout;
 	private Boolean xmppUseSsl;
+	private Boolean xmppAllowSelfSignedCert;
 	private Boolean xmppUseCustomSsl;
-	private String xmppFilePath;
 
 	// Agent configuration
 	private String agentLdapBaseDn;
@@ -68,10 +69,11 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 	private String groupLdapObjectClasses;
 
 	// Task manager configuration
-	private Long taskManagerTaskTimeout;
-	private Boolean taskManagerMulticastEnabled;
-	private Boolean taskManagerLogXmppMessagesEnabled;
+	private Boolean taskManagerCheckFutureTask;
 	private Long taskManagerFutureTaskCheckPeriod;
+
+	// Alarm configuration
+	private Boolean alarmCheckReport;
 
 	// Mail configuration
 	private String mailAddress;
@@ -105,24 +107,23 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 
 	@Override
 	public String toString() {
-		return "ConfigurationServiceImpl [liderDebugEnabled=" + liderDebugEnabled + ", ldapServer=" + ldapServer
-				+ ", ldapPort=" + ldapPort + ", ldapUsername=" + ldapUsername + ", ldapPassword=" + ldapPassword
-				+ ", ldapRootDn=" + ldapRootDn + ", ldapUseSsl=" + ldapUseSsl + ", ldapSearchAttributes="
-				+ ldapSearchAttributes + ", xmppHost=" + xmppHost + ", xmppPort=" + xmppPort + ", xmppUsername="
-				+ xmppUsername + ", xmppPassword=" + xmppPassword + ", xmppResource=" + xmppResource
-				+ ", xmppServiceName=" + xmppServiceName + ", xmppMaxRetryConnectionCount="
-				+ xmppMaxRetryConnectionCount + ", xmppPacketReplayTimeout=" + xmppPacketReplayTimeout
-				+ ", xmppPingTimeout=" + xmppPingTimeout + ", xmppUseSsl=" + xmppUseSsl + ", xmppUseCustomSsl="
-				+ xmppUseCustomSsl + ", xmppFilePath=" + xmppFilePath + ", agentLdapBaseDn=" + agentLdapBaseDn
-				+ ", agentLdapIdAttribute=" + agentLdapIdAttribute + ", agentLdapJidAttribute=" + agentLdapJidAttribute
-				+ ", agentLdapObjectClasses=" + agentLdapObjectClasses + ", userLdapBaseDn=" + userLdapBaseDn
-				+ ", userLdapUidAttribute=" + userLdapUidAttribute + ", userLdapPrivilegeAttribute="
-				+ userLdapPrivilegeAttribute + ", userLdapObjectClasses=" + userLdapObjectClasses
-				+ ", userAuthorizationEnabled=" + userAuthorizationEnabled + ", groupLdapObjectClasses="
-				+ groupLdapObjectClasses + ", taskManagerTaskTimeout=" + taskManagerTaskTimeout
-				+ ", taskManagerMulticastEnabled=" + taskManagerMulticastEnabled
-				+ ", taskManagerLogXmppMessagesEnabled=" + taskManagerLogXmppMessagesEnabled
-				+ ", taskManagerFutureTaskCheckPeriod=" + taskManagerFutureTaskCheckPeriod + ", mailAddress="
+		return "ConfigurationServiceImpl [liderDebugEnabled=" + liderDebugEnabled + ", liderLogOperations="
+				+ liderLogOperations + ", ldapServer=" + ldapServer + ", ldapPort=" + ldapPort + ", ldapUsername="
+				+ ldapUsername + ", ldapPassword=" + ldapPassword + ", ldapRootDn=" + ldapRootDn + ", ldapUseSsl="
+				+ ldapUseSsl + ", ldapSearchAttributes=" + ldapSearchAttributes + ", xmppHost=" + xmppHost
+				+ ", xmppPort=" + xmppPort + ", xmppUsername=" + xmppUsername + ", xmppPassword=" + xmppPassword
+				+ ", xmppResource=" + xmppResource + ", xmppServiceName=" + xmppServiceName
+				+ ", xmppMaxRetryConnectionCount=" + xmppMaxRetryConnectionCount + ", xmppPacketReplayTimeout="
+				+ xmppPacketReplayTimeout + ", xmppPingTimeout=" + xmppPingTimeout + ", xmppUseSsl=" + xmppUseSsl
+				+ ", xmppAllowSelfSignedCert=" + xmppAllowSelfSignedCert + ", xmppUseCustomSsl=" + xmppUseCustomSsl
+				+ ", agentLdapBaseDn=" + agentLdapBaseDn + ", agentLdapIdAttribute=" + agentLdapIdAttribute
+				+ ", agentLdapJidAttribute=" + agentLdapJidAttribute + ", agentLdapObjectClasses="
+				+ agentLdapObjectClasses + ", userLdapBaseDn=" + userLdapBaseDn + ", userLdapUidAttribute="
+				+ userLdapUidAttribute + ", userLdapPrivilegeAttribute=" + userLdapPrivilegeAttribute
+				+ ", userLdapObjectClasses=" + userLdapObjectClasses + ", userAuthorizationEnabled="
+				+ userAuthorizationEnabled + ", groupLdapObjectClasses=" + groupLdapObjectClasses
+				+ ", taskManagerCheckFutureTask=" + taskManagerCheckFutureTask + ", taskManagerFutureTaskCheckPeriod="
+				+ taskManagerFutureTaskCheckPeriod + ", alarmCheckReport=" + alarmCheckReport + ", mailAddress="
 				+ mailAddress + ", mailPassword=" + mailPassword + ", mailHost=" + mailHost + ", mailSmtpPort="
 				+ mailSmtpPort + ", mailSmtpAuth=" + mailSmtpAuth + ", mailSmtpStartTlsEnable=" + mailSmtpStartTlsEnable
 				+ ", mailSmtpSslEnable=" + mailSmtpSslEnable + ", mailSmtpConnTimeout=" + mailSmtpConnTimeout
@@ -150,6 +151,15 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 
 	public void setLiderDebugEnabled(Boolean liderDebugEnabled) {
 		this.liderDebugEnabled = liderDebugEnabled;
+	}
+
+	@Override
+	public Boolean getLiderLogOperations() {
+		return liderLogOperations;
+	}
+
+	public void setLiderLogOperations(Boolean liderLogOperations) {
+		this.liderLogOperations = liderLogOperations;
 	}
 
 	@Override
@@ -297,12 +307,12 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 	}
 
 	@Override
-	public String getXmppFilePath() {
-		return xmppFilePath;
+	public Boolean getXmppAllowSelfSignedCert() {
+		return xmppAllowSelfSignedCert;
 	}
 
-	public void setXmppFilePath(String xmppFilePath) {
-		this.xmppFilePath = xmppFilePath;
+	public void setXmppAllowSelfSignedCert(Boolean xmppAllowSelfSignedCert) {
+		this.xmppAllowSelfSignedCert = xmppAllowSelfSignedCert;
 	}
 
 	@Override
@@ -396,30 +406,12 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 	}
 
 	@Override
-	public Long getTaskManagerTaskTimeout() {
-		return taskManagerTaskTimeout;
+	public Boolean getTaskManagerCheckFutureTask() {
+		return taskManagerCheckFutureTask;
 	}
 
-	public void setTaskManagerTaskTimeout(Long taskManagerTaskTimeout) {
-		this.taskManagerTaskTimeout = taskManagerTaskTimeout;
-	}
-
-	@Override
-	public Boolean getTaskManagerMulticastEnabled() {
-		return taskManagerMulticastEnabled;
-	}
-
-	public void setTaskManagerMulticastEnabled(Boolean taskManagerMulticastEnabled) {
-		this.taskManagerMulticastEnabled = taskManagerMulticastEnabled;
-	}
-
-	@Override
-	public Boolean getTaskManagerLogXmppMessagesEnabled() {
-		return taskManagerLogXmppMessagesEnabled;
-	}
-
-	public void setTaskManagerLogXmppMessagesEnabled(Boolean taskManagerLogXmppMessagesEnabled) {
-		this.taskManagerLogXmppMessagesEnabled = taskManagerLogXmppMessagesEnabled;
+	public void setTaskManagerCheckFutureTask(Boolean taskManagerCheckFutureTask) {
+		this.taskManagerCheckFutureTask = taskManagerCheckFutureTask;
 	}
 
 	@Override
@@ -429,6 +421,15 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 
 	public void setTaskManagerFutureTaskCheckPeriod(Long taskManagerFutureTaskCheckPeriod) {
 		this.taskManagerFutureTaskCheckPeriod = taskManagerFutureTaskCheckPeriod;
+	}
+
+	@Override
+	public Boolean getAlarmCheckReport() {
+		return alarmCheckReport;
+	}
+
+	public void setAlarmCheckReport(Boolean alarmCheckReport) {
+		this.alarmCheckReport = alarmCheckReport;
 	}
 
 	@Override
