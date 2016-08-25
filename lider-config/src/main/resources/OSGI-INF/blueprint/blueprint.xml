@@ -15,6 +15,7 @@
 		interface="tr.org.liderahenk.lider.core.api.configuration.IConfigurationService" />
 	<bean id="configurationService" class="tr.org.liderahenk.lider.config.ConfigurationServiceImpl" init-method="refresh">
 		<property name="liderDebugEnabled" value="${lider.debug.enabled}" />
+		<property name="liderLogOperations" value="${lider.log.operations}" />
 		
 		<property name="ldapServer" value="${ldap.server}" />
 		<property name="ldapPort" value="${ldap.port}" />
@@ -34,8 +35,8 @@
 		<property name="xmppPacketReplayTimeout" value="${xmpp.packet.replay.timeout}" />
 		<property name="xmppPingTimeout" value="${xmpp.ping.timeout}" />
 		<property name="xmppUseSsl" value="${xmpp.use.ssl}" />
+		<property name="xmppAllowSelfSignedCert" value="${xmpp.allow.self.signed.cert}" />
 		<property name="xmppUseCustomSsl" value="${xmpp.use.custom.ssl}" />
-		<property name="xmppFilePath" value="${xmpp.file.path}" />
 
 		<property name="agentLdapBaseDn" value="${agent.ldap.base.dn}" />
 		<property name="agentLdapIdAttribute" value="${agent.ldap.id.attribute}" />
@@ -49,10 +50,10 @@
 		<property name="userAuthorizationEnabled" value="${user.authorization.enabled}" />
 		<property name="groupLdapObjectClasses" value="${group.ldap.object.classes}" />
 
-		<property name="taskManagerTaskTimeout" value="${taskmanager.task.timeout}" />
-		<property name="taskManagerMulticastEnabled" value="${taskmanager.multicast.enabled}" />
-		<property name="taskManagerLogXmppMessagesEnabled" value="${taskmanager.log.xmpp.messages.enabled}" />
+		<property name="taskManagerCheckFutureTask" value="${taskmanager.check.future.task}" />
 		<property name="taskManagerFutureTaskCheckPeriod" value="${taskmanager.future.task.check.period}" />
+		
+		<property name="alarmCheckReport" value="${alarm.check.report}" />
 		
 		<property name="mailAddress" value="${mail.address}" />
 		<property name="mailPassword" value="${mail.password}" />

@@ -69,6 +69,7 @@
 		<property name="responseFactory" ref="responseFactory" />
 		<property name="authService" ref="authService" />
 		<property name="configService" ref="configService" />
+		<property name="eventAdmin" ref="eventAdmin" />
 	</bean>
 	
 	<service ref="searchGroupRequestProcessor"
@@ -109,5 +110,6 @@
 		interface="tr.org.liderahenk.lider.core.api.ldap.ILDAPService" />
 	<reference id="entityFactory"
 		interface="tr.org.liderahenk.lider.core.api.persistence.factories.IEntityFactory" />
+	<reference id="eventAdmin" interface="org.osgi.service.event.EventAdmin" />
 
 </blueprint>
