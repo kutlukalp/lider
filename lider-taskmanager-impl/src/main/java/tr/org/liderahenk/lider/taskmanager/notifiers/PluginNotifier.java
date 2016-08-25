@@ -32,7 +32,7 @@ public class PluginNotifier implements EventHandler {
 		logger.debug("Started handling task status.");
 
 		ITaskStatusMessage message = (ITaskStatusMessage) event.getProperty("message");
-		ICommandExecutionResult result = (ICommandExecutionResult) event.getProperty("result");
+		ICommandExecutionResult result = (ICommandExecutionResult) event.getProperty("origResult");
 
 		logger.info("Sending task status message to plugins. Task: {} Status: {}",
 				new Object[] { message.getTaskId(), message.getResponseCode() });

@@ -234,7 +234,8 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 										commandExecution, agent.getId());
 							}
 							// Execution result
-							payload.put("result", origResult);
+							payload.put("result", result);
+							payload.put("origResult", origResult);
 							eventAdmin.postEvent(new Event(LiderConstants.EVENTS.TASK_STATUS_RECEIVED, payload));
 						}
 					} catch (Exception e) {
