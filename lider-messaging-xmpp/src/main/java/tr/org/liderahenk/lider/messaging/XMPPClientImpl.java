@@ -181,7 +181,9 @@ public class XMPPClientImpl {
 					.setPort(port).setDebuggerEnabled(logger.isDebugEnabled());
 			if (configurationService.getXmppUseSsl()) {
 				builder.setSecurityMode(SecurityMode.required);
-				builder.setCustomSSLContext(createCustomSslContext());
+				if (configurationService.getXmppAllowSelfSignedCert()) {
+					builder.setCustomSSLContext(createCustomSslContext());
+				}
 			} else {
 				builder.setSecurityMode(SecurityMode.disabled);
 			}
