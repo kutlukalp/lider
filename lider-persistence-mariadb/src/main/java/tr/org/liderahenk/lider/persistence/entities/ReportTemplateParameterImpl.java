@@ -1,7 +1,10 @@
 package tr.org.liderahenk.lider.persistence.entities;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -9,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -25,10 +29,10 @@ import tr.org.liderahenk.lider.core.api.persistence.enums.ParameterType;
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
-@JsonIgnoreProperties({ "template" })
+@JsonIgnoreProperties({ "template", "viewParams" })
 @Entity
 @Table(name = "R_REPORT_TEMPLATE_PARAMETER", uniqueConstraints = @UniqueConstraint(columnNames = { "REPORT_TEMPLATE_ID",
-		"PARAMETER_KEY" }) )
+		"PARAMETER_KEY" }))
 public class ReportTemplateParameterImpl implements IReportTemplateParameter {
 
 	private static final long serialVersionUID = -1361608449887309975L;
@@ -38,7 +42,7 @@ public class ReportTemplateParameterImpl implements IReportTemplateParameter {
 	@Column(name = "TEMPLATE_PARAMETER_ID", unique = true, nullable = false)
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = {})
 	@JoinColumn(name = "REPORT_TEMPLATE_ID", nullable = false)
 	private ReportTemplateImpl template; // bidirectional
 
@@ -60,6 +64,13 @@ public class ReportTemplateParameterImpl implements IReportTemplateParameter {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "CREATE_DATE", nullable = false)
 	private Date createDate;
+
+	/**
+	 * This lazy collection of report view parameters is only used to ensure cascade
+	 * remove operation.
+	 */
+	@OneToMany(mappedBy = "referencedParam", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	private Set<ReportViewParameterImpl> viewParams = new HashSet<ReportViewParameterImpl>();
 
 	public ReportTemplateParameterImpl() {
 	}
@@ -163,6 +174,14 @@ public class ReportTemplateParameterImpl implements IReportTemplateParameter {
 
 	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
+	}
+
+	public Set<ReportViewParameterImpl> getViewParams() {
+		return viewParams;
+	}
+
+	public void setViewParams(Set<ReportViewParameterImpl> viewParams) {
+		this.viewParams = viewParams;
 	}
 
 	@Override

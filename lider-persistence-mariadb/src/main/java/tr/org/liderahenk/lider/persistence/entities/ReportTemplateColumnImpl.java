@@ -1,7 +1,10 @@
 package tr.org.liderahenk.lider.persistence.entities;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -9,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -24,10 +28,10 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateColu
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
-@JsonIgnoreProperties({ "template" })
+@JsonIgnoreProperties({ "template", "viewColumns" })
 @Entity
 @Table(name = "R_REPORT_TEMPLATE_COLUMN", uniqueConstraints = @UniqueConstraint(columnNames = { "REPORT_TEMPLATE_ID",
-		"COLUMN_ORDER" }) )
+		"COLUMN_ORDER" }))
 public class ReportTemplateColumnImpl implements IReportTemplateColumn {
 
 	private static final long serialVersionUID = 7196785409916030894L;
@@ -50,6 +54,13 @@ public class ReportTemplateColumnImpl implements IReportTemplateColumn {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "CREATE_DATE", nullable = false)
 	private Date createDate;
+
+	/**
+	 * This lazy collection of report view columns is only used to ensure
+	 * cascade remove operation.
+	 */
+	@OneToMany(mappedBy = "referencedCol", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	private Set<ReportViewColumnImpl> viewColumns = new HashSet<ReportViewColumnImpl>();
 
 	public ReportTemplateColumnImpl() {
 	}
@@ -116,6 +127,14 @@ public class ReportTemplateColumnImpl implements IReportTemplateColumn {
 
 	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
+	}
+
+	public Set<ReportViewColumnImpl> getViewColumns() {
+		return viewColumns;
+	}
+
+	public void setViewColumns(Set<ReportViewColumnImpl> viewColumns) {
+		this.viewColumns = viewColumns;
 	}
 
 	@Override

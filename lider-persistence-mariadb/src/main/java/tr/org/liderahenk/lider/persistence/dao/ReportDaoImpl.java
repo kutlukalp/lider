@@ -354,13 +354,10 @@ public class ReportDaoImpl implements IReportDao {
 		// No value has been provided, use the default value!
 		return tParam.getDefaultValue();
 	}
-	
-	private static final String FIND_VIEWS_WITH_ALARM = 
-			"SELECT v "
-			+ "FROM ReportViewImpl v "
-			+ "WHERE v.alarmMail IS NOT NULL "
-			+ "ORDER BY v.createDate, v.name";
-	
+
+	private static final String FIND_VIEWS_WITH_ALARM = "SELECT v " + "FROM ReportViewImpl v "
+			+ "WHERE v.alarmMail IS NOT NULL " + "ORDER BY v.createDate, v.name";
+
 	@Override
 	public List<? extends IReportView> findViewsWithAlarm() {
 		Query query = entityManager.createQuery(FIND_VIEWS_WITH_ALARM);

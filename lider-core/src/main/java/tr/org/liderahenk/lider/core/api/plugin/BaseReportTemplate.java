@@ -41,7 +41,7 @@ public abstract class BaseReportTemplate implements IReportTemplate {
 	@Override
 	public void addTemplateColumn(IReportTemplateColumn column) {
 	}
-	
+
 	@Override
 	public String toJson() {
 		ObjectMapper mapper = new ObjectMapper();

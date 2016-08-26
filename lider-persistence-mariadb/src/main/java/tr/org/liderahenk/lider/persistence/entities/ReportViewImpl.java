@@ -41,7 +41,7 @@ public class ReportViewImpl implements IReportView {
 	@Column(name = "REPORT_VIEW_ID", unique = true, nullable = false)
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = {})
 	@JoinColumn(name = "REPORT_TEMPLATE_ID", nullable = false)
 	private ReportTemplateImpl template; // unidirectional
 
@@ -285,9 +285,9 @@ public class ReportViewImpl implements IReportView {
 
 	@Override
 	public String toString() {
-		return "ReportViewImpl [id=" + id + ", template=" + template + ", name=" + name + ", description=" + description
-				+ ", type=" + type + ", viewParams=" + viewParams + ", viewColumns=" + viewColumns + ", createDate="
-				+ createDate + ", modifyDate=" + modifyDate + "]";
+		return "ReportViewImpl [id=" + id + ", name=" + name + ", description=" + description + ", type=" + type
+				+ ", alarmCheckPeriod=" + alarmCheckPeriod + ", alarmRecordNumThreshold=" + alarmRecordNumThreshold
+				+ ", alarmMail=" + alarmMail + ", createDate=" + createDate + ", modifyDate=" + modifyDate + "]";
 	}
 
 }

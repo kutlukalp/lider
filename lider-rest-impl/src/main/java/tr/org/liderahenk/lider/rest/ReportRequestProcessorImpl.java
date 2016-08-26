@@ -327,7 +327,7 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 				}
 			}
 			view = reportDao.saveView(view);
-			
+
 			Dictionary<String, Object> payload = new Hashtable<String, Object>();
 			payload.put("view", view);
 			eventAdmin.postEvent(new Event(LiderConstants.EVENTS.REPORT_VIEW_CREATED, payload));
@@ -364,7 +364,7 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 				}
 			}
 			view = reportDao.updateView(view);
-			
+
 			Dictionary<String, Object> payload = new Hashtable<String, Object>();
 			payload.put("view", view);
 			eventAdmin.postEvent(new Event(LiderConstants.EVENTS.REPORT_VIEW_UPDATED, payload));

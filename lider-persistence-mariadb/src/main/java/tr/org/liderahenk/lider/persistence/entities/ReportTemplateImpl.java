@@ -15,6 +15,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate;
@@ -27,6 +28,7 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplatePara
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
  */
+@JsonIgnoreProperties({ "views" })
 @Entity
 @Table(name = "R_REPORT_TEMPLATE")
 public class ReportTemplateImpl implements IReportTemplate {
@@ -55,6 +57,13 @@ public class ReportTemplateImpl implements IReportTemplate {
 
 	@OneToMany(mappedBy = "template", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<ReportTemplateColumnImpl> templateColumns = new HashSet<ReportTemplateColumnImpl>(0); // bidirectional
+
+	/**
+	 * This lazy collection of report views is only used to ensure cascade
+	 * remove operation.
+	 */
+	@OneToMany(mappedBy = "template", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	private Set<ReportViewImpl> views = new HashSet<ReportViewImpl>(0); // bidirectional
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "CREATE_DATE", nullable = false)
@@ -188,6 +197,14 @@ public class ReportTemplateImpl implements IReportTemplate {
 		this.modifyDate = modifyDate;
 	}
 
+	public Set<ReportViewImpl> getViews() {
+		return views;
+	}
+
+	public void setViews(Set<ReportViewImpl> views) {
+		this.views = views;
+	}
+
 	@Override
 	public void addTemplateParameter(IReportTemplateParameter param) {
 		if (templateParams == null) {
@@ -236,7 +253,8 @@ public class ReportTemplateImpl implements IReportTemplate {
 	@Override
 	public String toString() {
 		return "ReportTemplateImpl [id=" + id + ", name=" + name + ", description=" + description + ", query=" + query
-				+ ", code=" + code + ", createDate=" + createDate + ", modifyDate=" + modifyDate + "]";
+				+ ", code=" + code + ", templateParams=" + templateParams + ", templateColumns=" + templateColumns
+				+ ", views=" + views + ", createDate=" + createDate + ", modifyDate=" + modifyDate + "]";
 	}
 
 }

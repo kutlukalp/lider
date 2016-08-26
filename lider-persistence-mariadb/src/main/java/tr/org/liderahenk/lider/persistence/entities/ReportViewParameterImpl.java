@@ -29,7 +29,7 @@ public class ReportViewParameterImpl implements IReportViewParameter {
 	@Column(name = "VIEW_PARAMETER_ID", unique = true, nullable = false)
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = {})
 	@JoinColumn(name = "REPORT_VIEW_ID", nullable = false)
 	private ReportViewImpl view;
 
