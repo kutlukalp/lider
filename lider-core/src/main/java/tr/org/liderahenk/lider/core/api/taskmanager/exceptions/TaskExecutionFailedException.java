@@ -1,4 +1,4 @@
-package tr.org.liderahenk.lider.core.api.taskmanager;
+package tr.org.liderahenk.lider.core.api.taskmanager.exceptions;
 
 /**
  * This exception is thrown when an error occurs
@@ -7,7 +7,7 @@ package tr.org.liderahenk.lider.core.api.taskmanager;
  * @author <a href="mailto:birkan.duman@gmail.com">Birkan Duman</a>
  *
  */
-public class TaskSubmissionFailedException extends Exception {
+public class TaskExecutionFailedException extends Exception {
 	
 	/**
 	 * 
@@ -19,7 +19,7 @@ public class TaskSubmissionFailedException extends Exception {
 	 * @param message
 	 * @param cause
 	 */
-	public TaskSubmissionFailedException( String message, Throwable cause) {
+	public TaskExecutionFailedException( String message, Throwable cause) {
 		super(message, cause);
 	}
 	
@@ -27,7 +27,7 @@ public class TaskSubmissionFailedException extends Exception {
 	 * 
 	 * @param cause
 	 */
-	public TaskSubmissionFailedException( Throwable cause) {
+	public TaskExecutionFailedException( Throwable cause) {
 		super(cause);
 	}
 	
@@ -35,7 +35,7 @@ public class TaskSubmissionFailedException extends Exception {
 	 * 
 	 * @param message
 	 */
-	public TaskSubmissionFailedException( String message ) {
+	public TaskExecutionFailedException( String message ) {
 		super(message);
 	}
 	

@@ -19,6 +19,9 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IReportView;
 import tr.org.liderahenk.lider.report.exporters.HTMLReportExporter;
 
 /**
+ * Manages report views defined with alarm by executing their report query
+ * periodically and checking if number of resulting records exceeds defined
+ * threshold. If it does, query results are sent to defined e-mail addresses.
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
  *
@@ -32,6 +35,8 @@ public class AlarmManager implements EventHandler {
 	private IMailService mailService;
 	private LinkedHashMap<Long, Timer> timers;
 
+	private static final long TIMER_DELAY = 10000;
+
 	public void init() {
 		logger.info("Initializing alarm manager...");
 		timers = new LinkedHashMap<Long, Timer>();
@@ -42,7 +47,7 @@ public class AlarmManager implements EventHandler {
 				for (IReportView view : views) {
 					try {
 						Timer timer = new Timer();
-						timer.schedule(new ReportAlarmListener(view), 1000, view.getAlarmCheckPeriod());
+						timer.schedule(new ReportAlarmListener(view), TIMER_DELAY, view.getAlarmCheckPeriod());
 						timers.put(view.getId(), timer);
 					} catch (Exception e) {
 						logger.error(e.getMessage(), e);
@@ -89,7 +94,7 @@ public class AlarmManager implements EventHandler {
 			IReportView view = (IReportView) event.getProperty("view");
 			if (view.getAlarmMail() != null && timers != null) {
 				Timer timer = new Timer();
-				timer.schedule(new ReportAlarmListener(view), 1000, view.getAlarmCheckPeriod());
+				timer.schedule(new ReportAlarmListener(view), TIMER_DELAY, view.getAlarmCheckPeriod());
 				timers.put(view.getId(), timer);
 			}
 		}
@@ -105,7 +110,7 @@ public class AlarmManager implements EventHandler {
 					timer.purge();
 				}
 				Timer newTimer = new Timer();
-				newTimer.schedule(new ReportAlarmListener(view), 1000, view.getAlarmCheckPeriod());
+				newTimer.schedule(new ReportAlarmListener(view), TIMER_DELAY, view.getAlarmCheckPeriod());
 				timers.put(view.getId(), newTimer);
 			}
 		}

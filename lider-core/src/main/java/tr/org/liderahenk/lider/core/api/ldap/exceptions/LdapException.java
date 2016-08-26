@@ -1,4 +1,4 @@
-package tr.org.liderahenk.lider.core.api.exceptions;
+package tr.org.liderahenk.lider.core.api.ldap.exceptions;
 
 /**
  * This exception is thrown when an error occurs during an LDAP operation

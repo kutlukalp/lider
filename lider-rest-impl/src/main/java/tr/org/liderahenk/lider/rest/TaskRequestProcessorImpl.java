@@ -29,7 +29,7 @@ import tr.org.liderahenk.lider.core.api.rest.processors.ITaskRequestProcessor;
 import tr.org.liderahenk.lider.core.api.rest.requests.ITaskRequest;
 import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
 import tr.org.liderahenk.lider.core.api.router.IServiceRouter;
-import tr.org.liderahenk.lider.core.api.taskmanager.TaskSubmissionFailedException;
+import tr.org.liderahenk.lider.core.api.taskmanager.exceptions.TaskExecutionFailedException;
 import tr.org.liderahenk.lider.rest.dto.ExecutedTask;
 
 /**
@@ -117,7 +117,7 @@ public class TaskRequestProcessorImpl implements ITaskRequestProcessor {
 			logger.error(e.getMessage(), e);
 			return responseFactory.createResponse(request, RestResponseStatus.ERROR,
 					Arrays.asList(new String[] { "No matching command found to process request!" }));
-		} catch (TaskSubmissionFailedException e) {
+		} catch (TaskExecutionFailedException e) {
 			logger.error(e.getMessage(), e);
 			return responseFactory.createResponse(request, RestResponseStatus.ERROR, Arrays.asList(
 					new String[] { "Cannot submit task for request!", e.getMessage(), e.getCause().getMessage() }));

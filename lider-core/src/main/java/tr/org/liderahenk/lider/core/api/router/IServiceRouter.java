@@ -8,7 +8,7 @@ import tr.org.liderahenk.lider.core.api.rest.exceptions.InvalidRequestException;
 import tr.org.liderahenk.lider.core.api.rest.requests.IRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.ITaskRequest;
 import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
-import tr.org.liderahenk.lider.core.api.taskmanager.TaskSubmissionFailedException;
+import tr.org.liderahenk.lider.core.api.taskmanager.exceptions.TaskExecutionFailedException;
 
 /**
  * Routes {@link IRequest} to matching {@link ICommand} in
@@ -30,11 +30,11 @@ public interface IServiceRouter {
 	 * @throws InvalidRequestException
 	 *             if no matching {@link ICommand} to handle
 	 *             {@link IRequest}
-	 * @throws TaskSubmissionFailedException
+	 * @throws TaskExecutionFailedException
 	 *             if sth goes wrong during task creation wrt
 	 *             {@link IRequest}
 	 */
 	IRestResponse delegateRequest(ITaskRequest request, List<LdapEntry> entries)
-			throws InvalidRequestException, TaskSubmissionFailedException;
+			throws InvalidRequestException, TaskExecutionFailedException;
 
 }

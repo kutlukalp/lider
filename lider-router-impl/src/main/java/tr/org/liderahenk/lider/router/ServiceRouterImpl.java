@@ -20,7 +20,7 @@ import tr.org.liderahenk.lider.core.api.service.ICommandContextFactory;
 import tr.org.liderahenk.lider.core.api.service.ICommandResult;
 import tr.org.liderahenk.lider.core.api.service.enums.CommandResultStatus;
 import tr.org.liderahenk.lider.core.api.taskmanager.ITaskManager;
-import tr.org.liderahenk.lider.core.api.taskmanager.TaskSubmissionFailedException;
+import tr.org.liderahenk.lider.core.api.taskmanager.exceptions.TaskExecutionFailedException;
 
 /**
  * Default implementation for {@link IServiceRouter}. ServiceRouterImpl handles
@@ -42,7 +42,7 @@ public class ServiceRouterImpl implements IServiceRouter {
 
 	@Override
 	public IRestResponse delegateRequest(ITaskRequest request, List<LdapEntry> entries)
-			throws InvalidRequestException, TaskSubmissionFailedException {
+			throws InvalidRequestException, TaskExecutionFailedException {
 
 		// Try to find related ICommand instance.
 		String key = serviceRegistry.buildKey(request.getPluginName(), request.getPluginVersion(),

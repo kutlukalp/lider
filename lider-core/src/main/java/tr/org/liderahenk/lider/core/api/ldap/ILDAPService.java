@@ -6,7 +6,7 @@ import java.util.Map;
 import org.apache.directory.api.ldap.model.entry.Entry;
 import org.apache.directory.ldap.client.api.LdapConnection;
 
-import tr.org.liderahenk.lider.core.api.exceptions.LdapException;
+import tr.org.liderahenk.lider.core.api.ldap.exceptions.LdapException;
 import tr.org.liderahenk.lider.core.api.ldap.model.IUser;
 import tr.org.liderahenk.lider.core.api.ldap.model.LdapEntry;
 import tr.org.liderahenk.lider.core.api.rest.enums.DNType;

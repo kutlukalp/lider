@@ -44,7 +44,7 @@ import tr.org.liderahenk.lider.core.api.plugin.ITaskAwareCommand;
 import tr.org.liderahenk.lider.core.api.rest.enums.DNType;
 import tr.org.liderahenk.lider.core.api.rest.requests.ITaskRequest;
 import tr.org.liderahenk.lider.core.api.taskmanager.ITaskManager;
-import tr.org.liderahenk.lider.core.api.taskmanager.TaskSubmissionFailedException;
+import tr.org.liderahenk.lider.core.api.taskmanager.exceptions.TaskExecutionFailedException;
 import tr.org.liderahenk.lider.core.api.utils.FileCopyUtils;
 
 /**
@@ -84,7 +84,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 	}
 
 	@Override
-	public void executeTask(final ITaskRequest request, List<LdapEntry> entries) throws TaskSubmissionFailedException {
+	public void executeTask(final ITaskRequest request, List<LdapEntry> entries) throws TaskExecutionFailedException {
 		try {
 			// Find related plugin
 			final IPlugin plugin = findRelatedPlugin(request.getPluginName(), request.getPluginVersion());
@@ -108,10 +108,10 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
-			if (e instanceof TaskSubmissionFailedException) {
-				throw (TaskSubmissionFailedException) e;
+			if (e instanceof TaskExecutionFailedException) {
+				throw (TaskExecutionFailedException) e;
 			}
-			throw new TaskSubmissionFailedException(e);
+			throw new TaskExecutionFailedException(e);
 		}
 	}
 
