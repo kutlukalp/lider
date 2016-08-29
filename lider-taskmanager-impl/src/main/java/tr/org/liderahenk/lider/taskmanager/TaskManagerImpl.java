@@ -219,23 +219,24 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 					try {
 						// Save command execution with result
 						result = commandDao.save(result);
-						ICommandExecutionResult origResult = result;
 						// Throw an event if the task processing finished
 						if (StatusCode.getTaskEndingStates().contains(message.getResponseCode())) {
 							Dictionary<String, Object> payload = new Hashtable<String, Object>();
 							// Task status message
 							payload.put("message", message);
 							if (ContentType.getFileContentTypes().contains(message.getContentType())) {
+								logger.info("Removing data from the result before sending!");
 								// If result contains a file, ignore the file
 								// (we should not use XMPP for file transfer!)
 								// Instead, Lider Console can query the file by
 								// its result ID.
 								result = entityFactory.createCommandExecutionResult(message, result.getId(),
 										commandExecution, agent.getId());
+							} else {
+								logger.info("Sending the result with data!");
 							}
 							// Execution result
 							payload.put("result", result);
-							payload.put("origResult", origResult);
 							eventAdmin.postEvent(new Event(LiderConstants.EVENTS.TASK_STATUS_RECEIVED, payload));
 						}
 					} catch (Exception e) {
