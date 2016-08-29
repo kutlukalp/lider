@@ -102,11 +102,20 @@ public class EntityFactoryImpl implements IEntityFactory {
 				message.getResponseCode(), message.getResponseMessage(), data, message.getContentType(), new Date());
 	}
 
+	/**
+	 * Remove data byte array!
+	 */
 	@Override
 	public ICommandExecutionResult createCommandExecutionResult(ITaskStatusMessage message, Long resultId,
 			ICommandExecution commandExecution, Long agentId) {
-		return new CommandExecutionResultImpl(resultId, (CommandExecutionImpl) commandExecution, agentId,
-				message.getResponseCode(), message.getResponseMessage(), null, message.getContentType(), new Date());
+		CommandExecutionImpl c = new CommandExecutionImpl();
+		c.setId(commandExecution.getId());
+		c.setDn(commandExecution.getDn());
+		c.setCreateDate(commandExecution.getCreateDate());
+		c.setDnType(commandExecution.getDnType());
+		c.setCommand((CommandImpl) commandExecution.getCommand());
+		return new CommandExecutionResultImpl(resultId, c, agentId, message.getResponseCode(),
+				message.getResponseMessage(), null, message.getContentType(), new Date());
 	}
 
 	@Override
