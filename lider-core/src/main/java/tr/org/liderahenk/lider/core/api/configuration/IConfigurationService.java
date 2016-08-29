@@ -163,6 +163,12 @@ public interface IConfigurationService {
 
 	Boolean getXmppUseCustomSsl();
 
+	/**
+	 * 
+	 * @return
+	 */
+	Integer getXmppPresencePriority();
+
 	//
 	// Agent configuration
 	//

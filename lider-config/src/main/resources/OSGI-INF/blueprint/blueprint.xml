@@ -38,6 +38,7 @@
 		<property name="xmppUseSsl" value="${xmpp.use.ssl}" />
 		<property name="xmppAllowSelfSignedCert" value="${xmpp.allow.self.signed.cert}" />
 		<property name="xmppUseCustomSsl" value="${xmpp.use.custom.ssl}" />
+		<property name="xmppPresencePriority" value="${xmpp.presence.priority}" />
 
 		<property name="agentLdapBaseDn" value="${agent.ldap.base.dn}" />
 		<property name="agentLdapIdAttribute" value="${agent.ldap.id.attribute}" />

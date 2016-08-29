@@ -32,6 +32,8 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.XMPPException.XMPPErrorException;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.Presence.Mode;
+import org.jivesoftware.smack.packet.Presence.Type;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
@@ -233,6 +235,9 @@ public class XMPPClientImpl {
 				} else {
 					connection.login(username, password);
 				}
+				Presence p = new Presence(Type.available, "ONLINE", configurationService.getXmppPresencePriority(),
+						Mode.available);
+				connection.sendStanza(p);
 				logger.debug("Successfully logged in to XMPP server: {}", username);
 			} catch (XMPPException e) {
 				logger.error(e.getMessage(), e);

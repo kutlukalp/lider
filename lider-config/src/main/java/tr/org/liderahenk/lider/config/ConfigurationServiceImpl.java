@@ -54,6 +54,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 	private Boolean xmppUseSsl;
 	private Boolean xmppAllowSelfSignedCert;
 	private Boolean xmppUseCustomSsl;
+	private Integer xmppPresencePriority;
 
 	// Agent configuration
 	private String agentLdapBaseDn;
@@ -117,10 +118,11 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 				+ ", xmppServiceName=" + xmppServiceName + ", xmppMaxRetryConnectionCount="
 				+ xmppMaxRetryConnectionCount + ", xmppPacketReplayTimeout=" + xmppPacketReplayTimeout
 				+ ", xmppPingTimeout=" + xmppPingTimeout + ", xmppUseSsl=" + xmppUseSsl + ", xmppAllowSelfSignedCert="
-				+ xmppAllowSelfSignedCert + ", xmppUseCustomSsl=" + xmppUseCustomSsl + ", agentLdapBaseDn="
-				+ agentLdapBaseDn + ", agentLdapIdAttribute=" + agentLdapIdAttribute + ", agentLdapJidAttribute="
-				+ agentLdapJidAttribute + ", agentLdapObjectClasses=" + agentLdapObjectClasses + ", userLdapBaseDn="
-				+ userLdapBaseDn + ", userLdapUidAttribute=" + userLdapUidAttribute + ", userLdapPrivilegeAttribute="
+				+ xmppAllowSelfSignedCert + ", xmppUseCustomSsl=" + xmppUseCustomSsl + ", xmppPresencePriority="
+				+ xmppPresencePriority + ", agentLdapBaseDn=" + agentLdapBaseDn + ", agentLdapIdAttribute="
+				+ agentLdapIdAttribute + ", agentLdapJidAttribute=" + agentLdapJidAttribute
+				+ ", agentLdapObjectClasses=" + agentLdapObjectClasses + ", userLdapBaseDn=" + userLdapBaseDn
+				+ ", userLdapUidAttribute=" + userLdapUidAttribute + ", userLdapPrivilegeAttribute="
 				+ userLdapPrivilegeAttribute + ", userLdapObjectClasses=" + userLdapObjectClasses
 				+ ", userAuthorizationEnabled=" + userAuthorizationEnabled + ", groupLdapObjectClasses="
 				+ groupLdapObjectClasses + ", taskManagerCheckFutureTask=" + taskManagerCheckFutureTask
@@ -323,6 +325,15 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 
 	public void setXmppAllowSelfSignedCert(Boolean xmppAllowSelfSignedCert) {
 		this.xmppAllowSelfSignedCert = xmppAllowSelfSignedCert;
+	}
+
+	@Override
+	public Integer getXmppPresencePriority() {
+		return xmppPresencePriority;
+	}
+
+	public void setXmppPresencePriority(Integer xmppPresencePriority) {
+		this.xmppPresencePriority = xmppPresencePriority;
 	}
 
 	@Override
