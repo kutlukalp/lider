@@ -39,6 +39,7 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 	private String ldapRootDn;
 	private Boolean ldapUseSsl;
 	private String ldapSearchAttributes;
+	private Boolean ldapAllowSelfSignedCert;
 
 	// XMPP configuration
 	private String xmppHost; // host name/server name
@@ -110,30 +111,30 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 		return "ConfigurationServiceImpl [liderDebugEnabled=" + liderDebugEnabled + ", liderLogOperations="
 				+ liderLogOperations + ", ldapServer=" + ldapServer + ", ldapPort=" + ldapPort + ", ldapUsername="
 				+ ldapUsername + ", ldapPassword=" + ldapPassword + ", ldapRootDn=" + ldapRootDn + ", ldapUseSsl="
-				+ ldapUseSsl + ", ldapSearchAttributes=" + ldapSearchAttributes + ", xmppHost=" + xmppHost
-				+ ", xmppPort=" + xmppPort + ", xmppUsername=" + xmppUsername + ", xmppPassword=" + xmppPassword
-				+ ", xmppResource=" + xmppResource + ", xmppServiceName=" + xmppServiceName
-				+ ", xmppMaxRetryConnectionCount=" + xmppMaxRetryConnectionCount + ", xmppPacketReplayTimeout="
-				+ xmppPacketReplayTimeout + ", xmppPingTimeout=" + xmppPingTimeout + ", xmppUseSsl=" + xmppUseSsl
-				+ ", xmppAllowSelfSignedCert=" + xmppAllowSelfSignedCert + ", xmppUseCustomSsl=" + xmppUseCustomSsl
-				+ ", agentLdapBaseDn=" + agentLdapBaseDn + ", agentLdapIdAttribute=" + agentLdapIdAttribute
-				+ ", agentLdapJidAttribute=" + agentLdapJidAttribute + ", agentLdapObjectClasses="
-				+ agentLdapObjectClasses + ", userLdapBaseDn=" + userLdapBaseDn + ", userLdapUidAttribute="
-				+ userLdapUidAttribute + ", userLdapPrivilegeAttribute=" + userLdapPrivilegeAttribute
-				+ ", userLdapObjectClasses=" + userLdapObjectClasses + ", userAuthorizationEnabled="
-				+ userAuthorizationEnabled + ", groupLdapObjectClasses=" + groupLdapObjectClasses
-				+ ", taskManagerCheckFutureTask=" + taskManagerCheckFutureTask + ", taskManagerFutureTaskCheckPeriod="
-				+ taskManagerFutureTaskCheckPeriod + ", alarmCheckReport=" + alarmCheckReport + ", mailAddress="
-				+ mailAddress + ", mailPassword=" + mailPassword + ", mailHost=" + mailHost + ", mailSmtpPort="
-				+ mailSmtpPort + ", mailSmtpAuth=" + mailSmtpAuth + ", mailSmtpStartTlsEnable=" + mailSmtpStartTlsEnable
-				+ ", mailSmtpSslEnable=" + mailSmtpSslEnable + ", mailSmtpConnTimeout=" + mailSmtpConnTimeout
-				+ ", mailSmtpTimeout=" + mailSmtpTimeout + ", mailSmtpWriteTimeout=" + mailSmtpWriteTimeout
-				+ ", hotDeploymentPath=" + hotDeploymentPath + ", fileServerProtocol=" + fileServerProtocol
-				+ ", fileServerHost=" + fileServerHost + ", fileServerUsername=" + fileServerUsername
-				+ ", fileServerPassword=" + fileServerPassword + ", fileServerPluginPath=" + fileServerPluginPath
-				+ ", fileServerAgreementPath=" + fileServerAgreementPath + ", fileServerAgentFilePath="
-				+ fileServerAgentFilePath + ", fileServerUrl=" + fileServerUrl + ", fileServerPort=" + fileServerPort
-				+ "]";
+				+ ldapUseSsl + ", ldapSearchAttributes=" + ldapSearchAttributes + ", ldapAllowSelfSignedCert="
+				+ ldapAllowSelfSignedCert + ", xmppHost=" + xmppHost + ", xmppPort=" + xmppPort + ", xmppUsername="
+				+ xmppUsername + ", xmppPassword=" + xmppPassword + ", xmppResource=" + xmppResource
+				+ ", xmppServiceName=" + xmppServiceName + ", xmppMaxRetryConnectionCount="
+				+ xmppMaxRetryConnectionCount + ", xmppPacketReplayTimeout=" + xmppPacketReplayTimeout
+				+ ", xmppPingTimeout=" + xmppPingTimeout + ", xmppUseSsl=" + xmppUseSsl + ", xmppAllowSelfSignedCert="
+				+ xmppAllowSelfSignedCert + ", xmppUseCustomSsl=" + xmppUseCustomSsl + ", agentLdapBaseDn="
+				+ agentLdapBaseDn + ", agentLdapIdAttribute=" + agentLdapIdAttribute + ", agentLdapJidAttribute="
+				+ agentLdapJidAttribute + ", agentLdapObjectClasses=" + agentLdapObjectClasses + ", userLdapBaseDn="
+				+ userLdapBaseDn + ", userLdapUidAttribute=" + userLdapUidAttribute + ", userLdapPrivilegeAttribute="
+				+ userLdapPrivilegeAttribute + ", userLdapObjectClasses=" + userLdapObjectClasses
+				+ ", userAuthorizationEnabled=" + userAuthorizationEnabled + ", groupLdapObjectClasses="
+				+ groupLdapObjectClasses + ", taskManagerCheckFutureTask=" + taskManagerCheckFutureTask
+				+ ", taskManagerFutureTaskCheckPeriod=" + taskManagerFutureTaskCheckPeriod + ", alarmCheckReport="
+				+ alarmCheckReport + ", mailAddress=" + mailAddress + ", mailPassword=" + mailPassword + ", mailHost="
+				+ mailHost + ", mailSmtpPort=" + mailSmtpPort + ", mailSmtpAuth=" + mailSmtpAuth
+				+ ", mailSmtpStartTlsEnable=" + mailSmtpStartTlsEnable + ", mailSmtpSslEnable=" + mailSmtpSslEnable
+				+ ", mailSmtpConnTimeout=" + mailSmtpConnTimeout + ", mailSmtpTimeout=" + mailSmtpTimeout
+				+ ", mailSmtpWriteTimeout=" + mailSmtpWriteTimeout + ", hotDeploymentPath=" + hotDeploymentPath
+				+ ", fileServerProtocol=" + fileServerProtocol + ", fileServerHost=" + fileServerHost
+				+ ", fileServerUsername=" + fileServerUsername + ", fileServerPassword=" + fileServerPassword
+				+ ", fileServerPluginPath=" + fileServerPluginPath + ", fileServerAgreementPath="
+				+ fileServerAgreementPath + ", fileServerAgentFilePath=" + fileServerAgentFilePath + ", fileServerUrl="
+				+ fileServerUrl + ", fileServerPort=" + fileServerPort + "]";
 	}
 
 	public String prettyPrintConfig() {
@@ -214,6 +215,15 @@ public class ConfigurationServiceImpl implements IConfigurationService {
 
 	public void setLdapUseSsl(Boolean ldapUseSsl) {
 		this.ldapUseSsl = ldapUseSsl;
+	}
+
+	@Override
+	public Boolean getLdapAllowSelfSignedCert() {
+		return ldapAllowSelfSignedCert;
+	}
+
+	public void setLdapAllowSelfSignedCert(Boolean ldapAllowSelfSignedCert) {
+		this.ldapAllowSelfSignedCert = ldapAllowSelfSignedCert;
 	}
 
 	@Override

@@ -1,5 +1,9 @@
 package tr.org.liderahenk.lider.ldap;
 
+import java.net.Socket;
+import java.security.Principal;
+import java.security.PrivateKey;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,6 +14,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509KeyManager;
+import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.apache.directory.api.ldap.model.cursor.EntryCursor;
@@ -76,7 +85,8 @@ public class LDAPServiceImpl implements ILDAPService {
 	private static Pattern taskPriviligePattern = Pattern.compile("\\[TASK:(.+):(.+)\\]");
 
 	/**
-	 * Pattern for report privileges (e.g. [REPORT:ONLINE-USERS-REPORT] , [REPORT:ALL] )
+	 * Pattern for report privileges (e.g. [REPORT:ONLINE-USERS-REPORT] ,
+	 * [REPORT:ALL] )
 	 */
 	private static Pattern reportPriviligePattern = Pattern.compile("\\[REPORT:([a-zA-Z0-9-]+)\\]");
 
@@ -87,8 +97,15 @@ public class LDAPServiceImpl implements ILDAPService {
 		lconfig.setLdapPort(Integer.parseInt(configurationService.getLdapPort()));
 		lconfig.setName(configurationService.getLdapUsername());
 		lconfig.setCredentials(configurationService.getLdapPassword());
-		// lconfig.setUseTls(true);
-		lconfig.setUseSsl(configurationService.getLdapUseSsl());
+		if (configurationService.getLdapUseSsl()) {
+			lconfig.setUseTls(true);
+			if (configurationService.getLdapAllowSelfSignedCert()) {
+				lconfig.setKeyManagers(createCustomKeyManagers());
+				lconfig.setTrustManagers(createCustomTrustManager());
+			}
+		} else {
+			lconfig.setUseTls(false);
+		}
 
 		// Create connection pool
 		PoolableLdapConnectionFactory factory = new PoolableLdapConnectionFactory(lconfig);
@@ -99,6 +116,57 @@ public class LDAPServiceImpl implements ILDAPService {
 		pool.setWhenExhaustedAction(GenericObjectPool.WHEN_EXHAUSTED_BLOCK);
 
 		logger.debug(this.toString());
+	}
+
+	private TrustManager createCustomTrustManager() {
+		return new X509TrustManager() {
+			public X509Certificate[] getAcceptedIssuers() {
+				return new X509Certificate[0];
+			}
+
+			public void checkClientTrusted(X509Certificate[] chain, String authType) {
+			}
+
+			public void checkServerTrusted(X509Certificate[] chain, String authType) {
+			}
+		};
+	}
+
+	private KeyManager[] createCustomKeyManagers() {
+		KeyManager[] bypassKeyManagers = new KeyManager[] { new X509KeyManager() {
+
+			@Override
+			public String chooseClientAlias(String[] arg0, Principal[] arg1, Socket arg2) {
+				return null;
+			}
+
+			@Override
+			public String chooseServerAlias(String arg0, Principal[] arg1, Socket arg2) {
+				return null;
+			}
+
+			@Override
+			public X509Certificate[] getCertificateChain(String arg0) {
+				return null;
+			}
+
+			@Override
+			public String[] getClientAliases(String arg0, Principal[] arg1) {
+				return null;
+			}
+
+			@Override
+			public PrivateKey getPrivateKey(String arg0) {
+				return null;
+			}
+
+			@Override
+			public String[] getServerAliases(String arg0, Principal[] arg1) {
+				return null;
+			}
+
+		} };
+		return bypassKeyManagers;
 	}
 
 	public void destroy() {

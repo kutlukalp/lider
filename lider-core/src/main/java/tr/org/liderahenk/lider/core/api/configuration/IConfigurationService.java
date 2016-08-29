@@ -79,6 +79,13 @@ public interface IConfigurationService {
 
 	/**
 	 * 
+	 * @return true if XMPP client accepts self-signed certificates, false
+	 *         otherwise
+	 */
+	Boolean getLdapAllowSelfSignedCert();
+
+	/**
+	 * 
 	 * @return LDAP search attributes that can be used in new search editor.
 	 */
 	String getLdapSearchAttributes();
