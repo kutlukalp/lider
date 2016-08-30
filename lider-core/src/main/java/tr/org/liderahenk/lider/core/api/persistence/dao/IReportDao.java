@@ -52,4 +52,6 @@ public interface IReportDao {
 
 	List<? extends IReportView> findViewsWithAlarm();
 
+	void resetAlarmFields(IReportView view);
+
 }

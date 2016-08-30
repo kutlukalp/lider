@@ -364,6 +364,18 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 				}
 			}
 			view = reportDao.updateView(view);
+			
+			// FIXME OpenJPA does not update NULL values (even if we use an attached object!)
+			// Note that entityFactory.createReportView() method now creates a detached object 
+			// but we also tried the scenario with an attached object with no success!
+			//
+			// See http://stackoverflow.com/questions/3869543/issue-with-updating-record-in-database-using-jpa
+			// http://stackoverflow.com/questions/3870248/setting-values-of-some-fields-to-null-using-jpa
+			// 
+			// So we forcefully update alarm-related values to null if they are null in the request:
+			if (request.getAlarmCheckPeriod() == null || request.getAlarmMail() == null || request.getAlarmRecordNumThreshold() == null) {
+				reportDao.resetAlarmFields(view);
+			}
 
 			Dictionary<String, Object> payload = new Hashtable<String, Object>();
 			payload.put("view", view);
