@@ -307,16 +307,19 @@ public class LDAPServiceImpl implements ILDAPService {
 
 	}
 
-	private void addUserPrivilege(UserImpl user, String privilege) {
-		logger.debug("Found privilege: {}", privilege);
-		Matcher tMatcher = taskPriviligePattern.matcher(privilege);
-		Matcher rMatcher = reportPriviligePattern.matcher(privilege);
-		if (tMatcher.matches()) { // Task privilege
-			user.getTaskPrivileges().add(new TaskPrivilegeImpl(tMatcher.group(1), tMatcher.group(2)));
-		} else if (rMatcher.matches()) { // Report privilege
-			user.getReportPrivileges().add(new ReportPrivilegeImpl(rMatcher.group(1)));
-		} else {
-			logger.warn("Invalid pattern in privilege => {}, pattern => {}", privilege, taskPriviligePattern);
+	private void addUserPrivilege(UserImpl user, String privilegeStr) {
+		logger.debug("Found privilege: {}", privilegeStr);
+		String[] privileges = privilegeStr.split(",");
+		for (String privilege : privileges) {
+			Matcher tMatcher = taskPriviligePattern.matcher(privilege);
+			Matcher rMatcher = reportPriviligePattern.matcher(privilege);
+			if (tMatcher.matches()) { // Task privilege
+				user.getTaskPrivileges().add(new TaskPrivilegeImpl(tMatcher.group(1), tMatcher.group(2)));
+			} else if (rMatcher.matches()) { // Report privilege
+				user.getReportPrivileges().add(new ReportPrivilegeImpl(rMatcher.group(1)));
+			} else {
+				logger.warn("Invalid pattern in privilege => {}, pattern => {}", privilege, taskPriviligePattern);
+			}
 		}
 	}
 
