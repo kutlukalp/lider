@@ -102,16 +102,19 @@ public class AlarmManager implements EventHandler {
 		else if (LiderConstants.EVENTS.REPORT_VIEW_UPDATED.equalsIgnoreCase(topic)) {
 			logger.info("Report view updated event received. Updating timer if needed.");
 			IReportView view = (IReportView) event.getProperty("view");
-			if (view.getAlarmMail() != null && timers != null) {
+			if (timers != null) {
 				Timer timer = timers.get(view.getId());
 				// It may have timer, try to find it and cancel it.
 				if (timer != null) {
 					timer.cancel();
 					timer.purge();
+					timers.remove(view.getId());
 				}
-				Timer newTimer = new Timer();
-				newTimer.schedule(new ReportAlarmListener(view), TIMER_DELAY, view.getAlarmCheckPeriod());
-				timers.put(view.getId(), newTimer);
+				if (view.getAlarmMail() != null) {
+					Timer newTimer = new Timer();
+					newTimer.schedule(new ReportAlarmListener(view), TIMER_DELAY, view.getAlarmCheckPeriod());
+					timers.put(view.getId(), newTimer);
+				}
 			}
 		}
 	}
@@ -132,6 +135,33 @@ public class AlarmManager implements EventHandler {
 		@Override
 		public void run() {
 			try {
+				////////////////////////////
+				// FIXME This is a workaround for Karaf cluster!
+				// DONT FORGET TO SET THIS PROPERTY IN ALL NODES:
+				// alarm.check.report = true
+				//
+				// The alarm manager class listens to report-related events and
+				// creates/updates/deletes report-related timer object if
+				// necessary...
+				// ...but when it comes to Karaf cluster, the node which created
+				// the timer MAY NEVER receive the delete/update event.
+				//
+				// To overcome this, we can check if the view object received is
+				// the same view object in the database.
+				IReportView actualView = reportDao.findView(view.getId());
+				// Alarm is removed from the view OR report is completely
+				// deleted:
+				if (actualView == null || actualView.getAlarmCheckPeriod() == null || actualView.getAlarmMail() == null
+						|| actualView.getAlarmRecordNumThreshold() == null) {
+					return;
+				}
+				// Alarm is updated, it will be handled by another Karaf node:
+				if (!actualView.getAlarmMail().equals(view.getAlarmMail())
+						|| !actualView.getAlarmCheckPeriod().equals(view.getAlarmCheckPeriod())
+						|| !actualView.getAlarmRecordNumThreshold().equals(view.getAlarmRecordNumThreshold())) {
+					return;
+				}
+				////////////////////////////
 				List<Object[]> resultList = reportDao.generateView(view, null);
 				if (view.getAlarmRecordNumThreshold() <= resultList.size()) {
 					String htmlContents = HTMLReportExporter.export(view, resultList);
