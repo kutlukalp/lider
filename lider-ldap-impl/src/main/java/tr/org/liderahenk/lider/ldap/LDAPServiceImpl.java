@@ -307,10 +307,10 @@ public class LDAPServiceImpl implements ILDAPService {
 
 	}
 
-	private void addUserPrivilege(UserImpl user, String privilegeStr) {
-		logger.debug("Found privilege: {}", privilegeStr);
-		String[] privileges = privilegeStr.split(",");
-		for (String privilege : privileges) {
+	private void addUserPrivilege(UserImpl user, String privilege) {
+		logger.debug("Found privilege: {}", privilege);
+//		String[] privileges = privilegeStr.split(",");
+//		for (String privilege : privileges) {
 			Matcher tMatcher = taskPriviligePattern.matcher(privilege);
 			Matcher rMatcher = reportPriviligePattern.matcher(privilege);
 			if (tMatcher.matches()) { // Task privilege
@@ -320,7 +320,7 @@ public class LDAPServiceImpl implements ILDAPService {
 			} else {
 				logger.warn("Invalid pattern in privilege => {}, pattern => {}", privilege, taskPriviligePattern);
 			}
-		}
+//		}
 	}
 
 	/**
