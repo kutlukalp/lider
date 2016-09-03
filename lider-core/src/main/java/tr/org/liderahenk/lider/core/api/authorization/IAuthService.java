@@ -3,6 +3,8 @@ package tr.org.liderahenk.lider.core.api.authorization;
 import java.util.List;
 
 import tr.org.liderahenk.lider.core.api.ldap.model.LdapEntry;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IReportView;
 
 /**
  * Provides authorization services
@@ -22,6 +24,24 @@ public interface IAuthService {
 	 * @return
 	 */
 	List<LdapEntry> getPermittedEntries(String userDn, List<LdapEntry> entries, String targetOperation);
+
+	/**
+	 * Calculate 'permitted' report templates of the specified user
+	 * 
+	 * @param userDn
+	 * @param templates
+	 * @return
+	 */
+	List<? extends IReportTemplate> getPermittedTemplates(String userDn, List<? extends IReportTemplate> templates);
+
+	/**
+	 * Calculate 'permitted' report views of the specified user
+	 * 
+	 * @param userDn
+	 * @param views
+	 * @return
+	 */
+	List<? extends IReportView> getPermittedViews(String userDn, List<? extends IReportView> views);
 
 	/**
 	 * Check if the specified user can view/generate the specified report.

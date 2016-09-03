@@ -14,6 +14,8 @@ import tr.org.liderahenk.lider.core.api.ldap.model.IReportPrivilege;
 import tr.org.liderahenk.lider.core.api.ldap.model.ITaskPrivilege;
 import tr.org.liderahenk.lider.core.api.ldap.model.IUser;
 import tr.org.liderahenk.lider.core.api.ldap.model.LdapEntry;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate;
+import tr.org.liderahenk.lider.core.api.persistence.entities.IReportView;
 
 /**
  * Default implementation of {@link IAuthService}. AuthServiceImpl handles
@@ -100,6 +102,86 @@ public class AuthServiceImpl implements IAuthService {
 	}
 
 	@Override
+	public List<? extends IReportTemplate> getPermittedTemplates(final String userDn,
+			final List<? extends IReportTemplate> targetTemplates) {
+
+		List<IReportTemplate> permittedTemplates = new ArrayList<IReportTemplate>();
+
+		try {
+			logger.debug("Authorization started for DN: {} and templates: {}",
+					new Object[] { userDn, targetTemplates });
+
+			IUser user = ldapService.getUser(userDn);
+			if (null == user) {
+				logger.warn("Authorization failed. User not found: {}", userDn);
+				return null;
+			}
+
+			List<IReportPrivilege> privileges = user.getReportPrivileges();
+			for (IReportPrivilege privilege : privileges) {
+
+				logger.debug("Checking privilege info: {}", privilege);
+
+				// If everything is permitted, return all of the templates
+				if (ALL_PERMISSION.equalsIgnoreCase(privilege.getReportCode())) {
+					return targetTemplates;
+				}
+
+				for (IReportTemplate targetTemplate : targetTemplates) {
+					if (privilege.getReportCode().equalsIgnoreCase(targetTemplate.getCode())) {
+						permittedTemplates.add(targetTemplate);
+					}
+				}
+
+			}
+
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+
+		return permittedTemplates;
+	}
+
+	@Override
+	public List<? extends IReportView> getPermittedViews(String userDn, List<? extends IReportView> targetViews) {
+
+		List<IReportView> permittedViews = new ArrayList<IReportView>();
+
+		try {
+			logger.debug("Authorization started for DN: {} and views: {}", new Object[] { userDn, targetViews });
+
+			IUser user = ldapService.getUser(userDn);
+			if (null == user) {
+				logger.warn("Authorization failed. User not found: {}", userDn);
+				return null;
+			}
+
+			List<IReportPrivilege> privileges = user.getReportPrivileges();
+			for (IReportPrivilege privilege : privileges) {
+
+				logger.debug("Checking privilege info: {}", privilege);
+
+				// If everything is permitted, return all of the templates
+				if (ALL_PERMISSION.equalsIgnoreCase(privilege.getReportCode())) {
+					return targetViews;
+				}
+
+				for (IReportView targetView : targetViews) {
+					if (privilege.getReportCode().equalsIgnoreCase(targetView.getTemplate().getCode())) {
+						permittedViews.add(targetView);
+					}
+				}
+
+			}
+
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		}
+
+		return permittedViews;
+	}
+
+	@Override
 	public boolean canGenerateReport(final String userDn, final String reportCode) {
 		try {
 
@@ -131,10 +213,18 @@ public class AuthServiceImpl implements IAuthService {
 		return false;
 	}
 
+	/**
+	 * 
+	 * @param ldapService
+	 */
 	public void setLdapService(ILDAPService ldapService) {
 		this.ldapService = ldapService;
 	}
 
+	/**
+	 * 
+	 * @param configurationService
+	 */
 	public void setConfigurationService(IConfigurationService configurationService) {
 		this.configurationService = configurationService;
 	}

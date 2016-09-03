@@ -140,6 +140,22 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 
 		// Find desired templates
 		List<? extends IReportTemplate> templates = reportDao.findTemplates(propertiesMap, null, null);
+		// Authorize templates
+		if (configService.getUserAuthorizationEnabled()) {
+			Subject currentUser = null;
+			try {
+				currentUser = SecurityUtils.getSubject();
+			} catch (Exception e) {
+				logger.error(e.getMessage(), e);
+			}
+			if (currentUser != null && currentUser.getPrincipal() != null) {
+				templates = authService.getPermittedTemplates(currentUser.getPrincipal().toString(), templates);
+			} else {
+				logger.warn("Unauthenticated user access.");
+				return responseFactory.createResponse(RestResponseStatus.ERROR,
+						Arrays.asList(new String[] { "NOT_AUTHORIZED" }));
+			}
+		}
 
 		// Construct result map
 		Map<String, Object> resultMap = new HashMap<String, Object>();
@@ -364,16 +380,22 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 				}
 			}
 			view = reportDao.updateView(view);
-			
-			// FIXME OpenJPA does not update NULL values (even if we use an attached object!)
-			// Note that entityFactory.createReportView() method now creates a detached object 
-			// but we also tried the scenario with an attached object with no success!
+
+			// FIXME OpenJPA does not update NULL values (even if we use an
+			// attached object!)
+			// Note that entityFactory.createReportView() method now creates a
+			// detached object
+			// but we also tried the scenario with an attached object with no
+			// success!
 			//
-			// See http://stackoverflow.com/questions/3869543/issue-with-updating-record-in-database-using-jpa
+			// See
+			// http://stackoverflow.com/questions/3869543/issue-with-updating-record-in-database-using-jpa
 			// http://stackoverflow.com/questions/3870248/setting-values-of-some-fields-to-null-using-jpa
-			// 
-			// So we forcefully update alarm-related values to null if they are null in the request:
-			if (request.getAlarmCheckPeriod() == null || request.getAlarmMail() == null || request.getAlarmRecordNumThreshold() == null) {
+			//
+			// So we forcefully update alarm-related values to null if they are
+			// null in the request:
+			if (request.getAlarmCheckPeriod() == null || request.getAlarmMail() == null
+					|| request.getAlarmRecordNumThreshold() == null) {
 				reportDao.resetAlarmFields(view);
 			}
 
@@ -401,6 +423,22 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 
 		// Find desired views
 		List<? extends IReportView> views = reportDao.findViews(propertiesMap, null, null);
+		// Authorize templates
+		if (configService.getUserAuthorizationEnabled()) {
+			Subject currentUser = null;
+			try {
+				currentUser = SecurityUtils.getSubject();
+			} catch (Exception e) {
+				logger.error(e.getMessage(), e);
+			}
+			if (currentUser != null && currentUser.getPrincipal() != null) {
+				views = authService.getPermittedViews(currentUser.getPrincipal().toString(), views);
+			} else {
+				logger.warn("Unauthenticated user access.");
+				return responseFactory.createResponse(RestResponseStatus.ERROR,
+						Arrays.asList(new String[] { "NOT_AUTHORIZED" }));
+			}
+		}
 
 		// Construct result map
 		Map<String, Object> resultMap = new HashMap<String, Object>();
