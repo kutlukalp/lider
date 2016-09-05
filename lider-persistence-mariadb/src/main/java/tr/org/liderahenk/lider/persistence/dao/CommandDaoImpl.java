@@ -187,7 +187,7 @@ public class CommandDaoImpl implements ICommandDao {
 		Query query = entityManager.createQuery(FIND_EXECUTION);
 		query.setParameter("dnType", dnType.getId());
 		query.setParameter("dn", dn);
-		query.setParameter("taskId", taskId); // FIXME ???
+		query.setParameter("taskId", taskId);
 		List<CommandExecutionImpl> resultList = query.setMaxResults(1).getResultList();
 		return resultList.get(0);
 	}
@@ -208,14 +208,13 @@ public class CommandDaoImpl implements ICommandDao {
 
 	private static final String FIND_TASK_COMMAND_WITH_DETAILS = "SELECT t, "
 			+ "SUM(CASE WHEN cer.responseCode = :resp_success then 1 ELSE 0 END) as success, "
-			+ "SUM(CASE WHEN cer.responseCode = :resp_received THEN 1 ELSE 0 END) as received, "
 			+ "SUM(CASE WHEN cer.responseCode = :resp_error then 1 ELSE 0 END) as error "
 			+ "FROM CommandImpl c LEFT JOIN c.commandExecutions ce LEFT JOIN ce.commandExecutionResults cer INNER JOIN c.task t INNER JOIN t.plugin p "
 			+ "##WHERE## GROUP BY t ORDER BY t.createDate DESC";
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Object[]> findTaskCommand(String pluginName, String pluginVersion, Date createDateRangeStart,
+	public List<Object[]> findTaskCommand(String pluginName, Boolean onlyFutureTasks, Date createDateRangeStart,
 			Date createDateRangeEnd, Integer status, Integer maxResults) {
 		String sql = FIND_TASK_COMMAND_WITH_DETAILS;
 		// Collect query conditions/parameters
@@ -225,9 +224,9 @@ public class CommandDaoImpl implements ICommandDao {
 			whereConditions.add("p.name LIKE :pluginName");
 			params.put("pluginName", pluginName);
 		}
-		if (pluginVersion != null && !pluginVersion.isEmpty()) {
-			whereConditions.add("p.version LIKE :pluginVersion");
-			params.put("pluginVersion", pluginVersion);
+		if (onlyFutureTasks != null && onlyFutureTasks.booleanValue()) {
+			whereConditions.add("c.activationDate IS NOT NULL AND c.activationDate > :today");
+			params.put("today", new Date());
 		}
 		if (createDateRangeStart != null && createDateRangeEnd != null) {
 			whereConditions.add("t.createDate BETWEEN :startDate AND :endDate");
@@ -242,33 +241,9 @@ public class CommandDaoImpl implements ICommandDao {
 		} else {
 			sql = sql.replaceFirst("##WHERE##", "");
 		}
-		// Append also status condition as 'HAVING' clause
-		StatusCode code = StatusCode.getType(status);
-		// FIXME openjpa bug prevents using 'HAVING' clause right now!
-		// if (code != null) {
-		// switch (code) {
-		// case TASK_PROCESSED:
-		// sql +=
-		// " HAVING SUM(CASE WHEN cer.responseCode = :resp_success THEN 1 ELSE 0
-		// END) > 0 ";
-		// break;
-		// case TASK_ERROR:
-		// sql +=
-		// " HAVING SUM(CASE WHEN cer.responseCode = :resp_error THEN 1 ELSE 0
-		// END) > 0 ";
-		// break;
-		// case TASK_RECEIVED:
-		// sql +=
-		// " HAVING SUM(CASE WHEN cer.responseCode = :resp_received THEN 1 ELSE
-		// 0 END) > 0 ";
-		// break;
-		// default:
-		// }
-		// }
 		// Add parameter values for 'CASE WHEN' statements
 		params.put("resp_success", StatusCode.TASK_PROCESSED.getId());
 		params.put("resp_error", StatusCode.TASK_ERROR.getId());
-		params.put("resp_received", StatusCode.TASK_RECEIVED.getId());
 
 		Query query = entityManager.createQuery(sql);
 		// Iterate over map and set query parameters
@@ -299,7 +274,6 @@ public class CommandDaoImpl implements ICommandDao {
 
 	private static final String FIND_POLICY_COMMAND_WITH_DETAILS = "SELECT p, "
 			+ "SUM(CASE WHEN cer.responseCode = :resp_success then 1 ELSE 0 END) as success, "
-			+ "SUM(CASE WHEN cer.responseCode = :resp_received THEN 1 ELSE 0 END) as received, "
 			+ "SUM(CASE WHEN cer.responseCode = :resp_error then 1 ELSE 0 END) as error "
 			+ "FROM CommandImpl c LEFT JOIN c.commandExecutions ce LEFT JOIN ce.commandExecutionResults cer INNER JOIN c.policy p "
 			+ "##WHERE## GROUP BY p ORDER BY p.createDate DESC";
@@ -329,33 +303,9 @@ public class CommandDaoImpl implements ICommandDao {
 		} else {
 			sql = sql.replaceFirst("##WHERE##", "");
 		}
-		// Append also status condition as 'HAVING' clause
-		StatusCode code = StatusCode.getType(status);
-		// FIXME openjpa bug prevents using 'HAVING' clause right now!
-		// if (code != null) {
-		// switch (code) {
-		// case TASK_PROCESSED:
-		// sql +=
-		// " HAVING SUM(CASE WHEN cer.responseCode = :resp_success THEN 1 ELSE 0
-		// END) > 0 ";
-		// break;
-		// case TASK_ERROR:
-		// sql +=
-		// " HAVING SUM(CASE WHEN cer.responseCode = :resp_error THEN 1 ELSE 0
-		// END) > 0 ";
-		// break;
-		// case TASK_RECEIVED:
-		// sql +=
-		// " HAVING SUM(CASE WHEN cer.responseCode = :resp_received THEN 1 ELSE
-		// 0 END) > 0 ";
-		// break;
-		// default:
-		// }
-		// }
 		// Add parameter values for 'CASE WHEN' statements
 		params.put("resp_success", StatusCode.POLICY_PROCESSED.getId());
 		params.put("resp_error", StatusCode.POLICY_ERROR.getId());
-		params.put("resp_received", StatusCode.POLICY_RECEIVED.getId());
 
 		Query query = entityManager.createQuery(sql);
 		// Iterate over map and set query parameters

@@ -89,7 +89,7 @@ public class TaskDaoImpl implements ITaskDao {
 	private static final String FIND_TASKS_WITH_ACTIVATION_DATE = 
 			"SELECT c "
 			+ "FROM CommandImpl c INNER JOIN c.task t "
-			+ "WHERE c.activationDate IS NOT NULL AND c.activationDate < :today AND "
+			+ "WHERE t.deleted = False AND c.activationDate IS NOT NULL AND c.activationDate < :today AND "
 			+ "NOT EXISTS (SELECT 1 FROM CommandImpl c2 INNER JOIN c2.commandExecutions ce WHERE c2.id =  c.id) "
 			+ "ORDER BY c.activationDate, t.createDate, t.commandClsId DESC";
 	

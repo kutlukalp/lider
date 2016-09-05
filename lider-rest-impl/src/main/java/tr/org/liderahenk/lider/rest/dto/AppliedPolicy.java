@@ -15,7 +15,7 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
  *
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ExecutedPolicy implements Serializable {
+public class AppliedPolicy implements Serializable {
 
 	private static final long serialVersionUID = -8740486474920176215L;
 
@@ -29,27 +29,22 @@ public class ExecutedPolicy implements Serializable {
 
 	private Integer errorResults;
 
-	private Integer receivedResults;
-
-	public ExecutedPolicy(IPolicy policy, Integer successResults, Integer errorResults, Integer receivedResults) {
+	public AppliedPolicy(IPolicy policy, Integer successResults, Integer errorResults) {
 		super();
 		this.id = policy.getId();
 		this.label = policy.getLabel();
 		this.createDate = policy.getCreateDate();
 		this.successResults = successResults;
 		this.errorResults = errorResults;
-		this.receivedResults = receivedResults;
 	}
 
-	public ExecutedPolicy(Long id, String label, Date createDate, Integer successResults, Integer errorResults,
-			Integer receivedResults) {
+	public AppliedPolicy(Long id, String label, Date createDate, Integer successResults, Integer errorResults) {
 		super();
 		this.id = id;
 		this.label = label;
 		this.createDate = createDate;
 		this.successResults = successResults;
 		this.errorResults = errorResults;
-		this.receivedResults = receivedResults;
 	}
 
 	public Long getId() {
@@ -90,14 +85,6 @@ public class ExecutedPolicy implements Serializable {
 
 	public void setErrorResults(Integer errorResults) {
 		this.errorResults = errorResults;
-	}
-
-	public Integer getReceivedResults() {
-		return receivedResults;
-	}
-
-	public void setReceivedResults(Integer receivedResults) {
-		this.receivedResults = receivedResults;
 	}
 
 }

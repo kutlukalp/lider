@@ -33,9 +33,9 @@ public class ExecutedTask implements Serializable {
 
 	private Integer errorResults;
 
-	private Integer receivedResults;
+	private Boolean cancelled;
 
-	public ExecutedTask(ITask task, Integer successResults, Integer errorResults, Integer receivedResults) {
+	public ExecutedTask(ITask task, Integer successResults, Integer errorResults) {
 		super();
 		this.id = task.getId();
 		this.pluginName = task.getPlugin().getName();
@@ -44,20 +44,7 @@ public class ExecutedTask implements Serializable {
 		this.createDate = task.getCreateDate();
 		this.successResults = successResults;
 		this.errorResults = errorResults;
-		this.receivedResults = receivedResults;
-	}
-
-	public ExecutedTask(Long id, String pluginName, String pluginVersion, String commandClsId, Date createDate,
-			Integer successResults, Integer errorResults, Integer receivedResults) {
-		super();
-		this.id = id;
-		this.pluginName = pluginName;
-		this.pluginVersion = pluginVersion;
-		this.commandClsId = commandClsId;
-		this.createDate = createDate;
-		this.successResults = successResults;
-		this.errorResults = errorResults;
-		this.receivedResults = receivedResults;
+		this.cancelled = task.isDeleted();
 	}
 
 	public Long getId() {
@@ -108,20 +95,20 @@ public class ExecutedTask implements Serializable {
 		this.errorResults = errorResults;
 	}
 
-	public Integer getReceivedResults() {
-		return receivedResults;
-	}
-
-	public void setReceivedResults(Integer receivedResults) {
-		this.receivedResults = receivedResults;
-	}
-
 	public Integer getSuccessResults() {
 		return successResults;
 	}
 
 	public void setSuccessResults(Integer successResults) {
 		this.successResults = successResults;
+	}
+
+	public Boolean getCancelled() {
+		return cancelled;
+	}
+
+	public void setCancelled(Boolean cancelled) {
+		this.cancelled = cancelled;
 	}
 
 }

@@ -29,7 +29,7 @@ public interface ITaskRequestProcessor {
 	 * @param maxResults
 	 * @return
 	 */
-	IRestResponse listExecutedTasks(String pluginName, String pluginVersion, Date createDateRangeStart,
+	IRestResponse listExecutedTasks(String pluginName, Boolean onlyFutureTasks, Date createDateRangeStart,
 			Date createDateRangeEnd, Integer status, Integer maxResults);
 
 	/**
@@ -52,5 +52,12 @@ public interface ITaskRequestProcessor {
 	 * @return
 	 */
 	IRestResponse getResponseData(Long commandExecutionResultId);
+
+	/**
+	 * 
+	 * @param id
+	 * @return
+	 */
+	IRestResponse cancelTask(Long id);
 
 }

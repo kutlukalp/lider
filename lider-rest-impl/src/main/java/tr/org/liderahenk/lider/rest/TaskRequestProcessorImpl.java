@@ -18,6 +18,7 @@ import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
 import tr.org.liderahenk.lider.core.api.ldap.model.LdapEntry;
 import tr.org.liderahenk.lider.core.api.persistence.dao.ICommandDao;
+import tr.org.liderahenk.lider.core.api.persistence.dao.ITaskDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecutionResult;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
@@ -50,6 +51,7 @@ public class TaskRequestProcessorImpl implements ITaskRequestProcessor {
 	private IAuthService authService;
 	private IConfigurationService configService;
 	private ILDAPService ldapService;
+	private ITaskDao taskDao;
 	private ICommandDao commandDao;
 
 	@Override
@@ -125,21 +127,30 @@ public class TaskRequestProcessorImpl implements ITaskRequestProcessor {
 	}
 
 	@Override
-	public IRestResponse listExecutedTasks(String pluginName, String pluginVersion, Date createDateRangeStart,
+	public IRestResponse cancelTask(Long id) {
+		if (id == null) {
+			throw new IllegalArgumentException("ID was null.");
+		}
+		taskDao.delete(id);
+		logger.info("Task record deleted: {}", id);
+		return responseFactory.createResponse(RestResponseStatus.OK, "Record deleted.");
+	}
+
+	@Override
+	public IRestResponse listExecutedTasks(String pluginName, Boolean onlyFutureTasks, Date createDateRangeStart,
 			Date createDateRangeEnd, Integer status, Integer maxResults) {
 		// Try to find command results
-		List<Object[]> resultList = commandDao.findTaskCommand(pluginName, pluginVersion, createDateRangeStart,
+		List<Object[]> resultList = commandDao.findTaskCommand(pluginName, onlyFutureTasks, createDateRangeStart,
 				createDateRangeEnd, status, maxResults);
 		List<ExecutedTask> tasks = null;
 		// Convert SQL result to collection of tasks.
 		if (resultList != null) {
 			tasks = new ArrayList<ExecutedTask>();
 			for (Object[] arr : resultList) {
-				if (arr.length != 4) {
+				if (arr.length != 3) {
 					continue;
 				}
-				ExecutedTask task = new ExecutedTask((ITask) arr[0], (Integer) arr[1], (Integer) arr[2],
-						(Integer) arr[3]);
+				ExecutedTask task = new ExecutedTask((ITask) arr[0], (Integer) arr[1], (Integer) arr[2]);
 				tasks.add(task);
 			}
 		}
@@ -257,6 +268,14 @@ public class TaskRequestProcessorImpl implements ITaskRequestProcessor {
 	 */
 	public void setConfigService(IConfigurationService configService) {
 		this.configService = configService;
+	}
+
+	/**
+	 * 
+	 * @param taskDao
+	 */
+	public void setTaskDao(ITaskDao taskDao) {
+		this.taskDao = taskDao;
 	}
 
 	/**

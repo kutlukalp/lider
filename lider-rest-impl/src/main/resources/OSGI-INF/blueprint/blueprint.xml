@@ -56,6 +56,7 @@
 		<property name="authService" ref="authService" />
 		<property name="configService" ref="configService" />
 		<property name="ldapService" ref="ldapService" />
+		<property name="taskDao" ref="taskDao" />
 		<property name="commandDao" ref="commandDao" />
 	</bean>
 	
@@ -90,6 +91,8 @@
 		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IProfileDao" />
 	<reference id="policyDao"
 		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IPolicyDao" />
+	<reference id="taskDao"
+		interface="tr.org.liderahenk.lider.core.api.persistence.dao.ITaskDao" />
 	<reference id="commandDao"
 		interface="tr.org.liderahenk.lider.core.api.persistence.dao.ICommandDao" />
 	<reference id="reportDao"

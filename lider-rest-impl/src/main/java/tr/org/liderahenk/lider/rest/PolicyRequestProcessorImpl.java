@@ -29,7 +29,7 @@ import tr.org.liderahenk.lider.core.api.rest.processors.IPolicyRequestProcessor;
 import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyExecutionRequest;
 import tr.org.liderahenk.lider.core.api.rest.requests.IPolicyRequest;
 import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
-import tr.org.liderahenk.lider.rest.dto.ExecutedPolicy;
+import tr.org.liderahenk.lider.rest.dto.AppliedPolicy;
 
 /**
  * Processor class for handling/processing policy data.
@@ -229,16 +229,15 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 		// Try to find command results
 		List<Object[]> resultList = commandDao.findPolicyCommand(label, createDateRangeStart, createDateRangeEnd,
 				status, maxResults);
-		List<ExecutedPolicy> policies = null;
+		List<AppliedPolicy> policies = null;
 		// Convert SQL result to collection of tasks.
 		if (resultList != null) {
-			policies = new ArrayList<ExecutedPolicy>();
+			policies = new ArrayList<AppliedPolicy>();
 			for (Object[] arr : resultList) {
-				if (arr.length != 4) {
+				if (arr.length != 3) {
 					continue;
 				}
-				ExecutedPolicy policy = new ExecutedPolicy((IPolicy) arr[0], (Integer) arr[1], (Integer) arr[2],
-						(Integer) arr[3]);
+				AppliedPolicy policy = new AppliedPolicy((IPolicy) arr[0], (Integer) arr[1], (Integer) arr[2]);
 				policies.add(policy);
 			}
 		}
