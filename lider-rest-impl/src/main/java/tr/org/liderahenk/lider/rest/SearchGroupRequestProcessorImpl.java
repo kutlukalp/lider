@@ -55,6 +55,7 @@ public class SearchGroupRequestProcessorImpl implements ISearchGroupRequestProce
 
 		// Build search criteria
 		Map<String, Object> propertiesMap = new HashMap<String, Object>();
+		propertiesMap.put("deleted", false);
 		if (name != null && !name.isEmpty()) {
 			propertiesMap.put("name", name);
 		}

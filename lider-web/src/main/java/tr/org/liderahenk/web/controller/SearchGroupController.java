@@ -67,7 +67,7 @@ public class SearchGroupController {
 	 */
 	@RequestMapping(value = "/list", method = { RequestMethod.GET })
 	@ResponseBody
-	public IRestResponse listProfiles(@RequestParam(value = "name", required = false) String name,
+	public IRestResponse listSearchGroups(@RequestParam(value = "name", required = false) String name,
 			@RequestParam(value = "maxResults", required = false) Integer maxResults, HttpServletRequest request)
 					throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/searchgroup/list?name={}&maxResults={}'",
@@ -87,7 +87,7 @@ public class SearchGroupController {
 	 */
 	@RequestMapping(value = "/{id:[\\d]+}/get", method = { RequestMethod.GET })
 	@ResponseBody
-	public IRestResponse getProfile(@PathVariable final long id, HttpServletRequest request)
+	public IRestResponse getSearchGroup(@PathVariable final long id, HttpServletRequest request)
 			throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/searchgroup/{}/get'", id);
 		IRestResponse restResponse = searchGroupProcessor.get(id);
@@ -105,7 +105,7 @@ public class SearchGroupController {
 	 */
 	@RequestMapping(value = "/{id:[\\d]+}/delete", method = { RequestMethod.GET })
 	@ResponseBody
-	public IRestResponse deleteProfile(@PathVariable final long id, HttpServletRequest request)
+	public IRestResponse deleteSearchGroup(@PathVariable final long id, HttpServletRequest request)
 			throws UnsupportedEncodingException {
 		logger.info("Request received. URL: '/lider/searchgroup/{}/delete'", id);
 		IRestResponse restResponse = searchGroupProcessor.delete(id);

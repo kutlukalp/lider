@@ -37,4 +37,6 @@ public interface ISearchGroup extends IEntity {
 
 	void addEntry(ISearchGroupEntry entry);
 
+	boolean isDeleted();
+
 }

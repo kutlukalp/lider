@@ -100,8 +100,10 @@ public class SearchGroupDaoImpl implements ISearchGroupDao {
 	@Override
 	public void delete(Long searchGroupId) {
 		SearchGroupImpl searchGroupImpl = entityManager.find(SearchGroupImpl.class, searchGroupId);
-		entityManager.remove(searchGroupImpl);
-		logger.debug("ISearchGroup object deleted: {}", searchGroupId);
+		// Never truly delete, just mark as deleted!
+		searchGroupImpl.setDeleted(true);
+		searchGroupImpl = entityManager.merge(searchGroupImpl);
+		logger.debug("ISearchGroup object marked as deleted: {}", searchGroupImpl.toString());
 	}
 
 	public void setEntityManager(EntityManager entityManager) {

@@ -69,6 +69,9 @@ public class SearchGroupImpl implements ISearchGroup {
 	@Transient
 	private Map<String, String> criteria;
 
+	@Column(name = "DELETED")
+	private boolean deleted = false;
+
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "CREATE_DATE", nullable = false)
 	private Date createDate;
@@ -80,13 +83,14 @@ public class SearchGroupImpl implements ISearchGroup {
 	}
 
 	public SearchGroupImpl(Long id, String name, boolean searchAgents, boolean searchUsers, boolean searchGroups,
-			Map<String, String> criteria, Date createDate, Set<SearchGroupEntryImpl> entries) {
+			Map<String, String> criteria, boolean deleted, Date createDate, Set<SearchGroupEntryImpl> entries) {
 		this.id = id;
 		this.name = name;
 		this.searchAgents = searchAgents;
 		this.searchUsers = searchUsers;
 		this.searchGroups = searchGroups;
 		setCriteria(criteria);
+		this.deleted = deleted;
 		this.createDate = createDate;
 		this.entries = entries;
 	}
@@ -98,6 +102,7 @@ public class SearchGroupImpl implements ISearchGroup {
 		this.searchUsers = searchGroup.isSearchUsers();
 		this.searchGroups = searchGroup.isSearchGroups();
 		setCriteria(searchGroup.getCriteria());
+		this.deleted = searchGroup.isDeleted();
 		this.createDate = searchGroup.getCreateDate();
 
 		Set<? extends ISearchGroupEntry> tmpEntries = searchGroup.getEntries();
@@ -211,6 +216,15 @@ public class SearchGroupImpl implements ISearchGroup {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
 	}
 
 	@Override

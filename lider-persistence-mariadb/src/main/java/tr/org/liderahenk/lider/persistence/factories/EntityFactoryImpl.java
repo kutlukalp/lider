@@ -345,7 +345,7 @@ public class EntityFactoryImpl implements IEntityFactory {
 	@Override
 	public ISearchGroup createSearchGroup(ISearchGroupRequest request) {
 		SearchGroupImpl searchGroupImpl = new SearchGroupImpl(null, request.getName(), request.isSearchAgents(),
-				request.isSearchUsers(), request.isSearchGroups(), request.getCriteria(), new Date(), null);
+				request.isSearchUsers(), request.isSearchGroups(), request.getCriteria(), false, new Date(), null);
 		if (request.getEntries() != null) {
 			for (ISearchGroupEntryRequest entry : request.getEntries()) {
 				searchGroupImpl
