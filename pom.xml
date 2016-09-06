@@ -186,6 +186,7 @@
 				<configuration>
 					<!-- <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile> -->
 					<show>protected</show>
+					<failOnError>false</failOnError>
 				</configuration>
 			</plugin>
 			<plugin>
