@@ -12,14 +12,9 @@ PRJ_ROOT_PATH=$(dirname $(pwd -P))
 popd > /dev/null
 echo "Project path: $PRJ_ROOT_PATH"
 
-# Build project
-echo "Building lider project..."
-cd "$PRJ_ROOT_PATH"
-mvn clean install -DskipTests
-echo "lider project built successfully."
-
 # Generate Lider packages
 echo "Generating Javadoc"
+cd "$PRJ_ROOT_PATH"
 mvn clean javadoc:aggregate
 cd "$PRJ_ROOT_PATH"/target/site
 tar -zcf lider-javadoc.tar.gz apidocs
