@@ -3,13 +3,24 @@ package tr.org.liderahenk.lider.core.api.utils;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ * @author <a href="mailto:caner.feyzullahoglu@agem.com.tr">Caner
+ *         Feyzullahoglu</a>
+ *
+ */
 public class FileCopyUtils {
 
 	private static Logger logger = LoggerFactory.getLogger(FileCopyUtils.class);
@@ -67,6 +78,57 @@ public class FileCopyUtils {
 	}
 
 	/**
+	 * Converts the given byte array to a file and sends it to remote machine.
+	 * Returns the absolute path of sent file at remote machine.
+	 * 
+	 * @param host
+	 * @param port
+	 * @param username
+	 * @param password
+	 * @param fileAsByteArr
+	 * @param destPath
+	 * @return the absolute path of sent file at remote machine.
+	 * @throws IOException
+	 * @throws InterruptedException
+	 * 
+	 * @author Caner Feyzullahoglu
+	 */
+	public String sendFile(String host, Integer port, String username, String password, byte[] fileAsByteArr,
+			String destPath) throws IOException, InterruptedException {
+		if (host == null || username == null || fileAsByteArr == null || destPath == null) {
+			throw new IllegalArgumentException(
+					"Host, username, file byte array and destination path parameters cannot be null.");
+		}
+
+		// Write to file from byte array
+		File file = write(fileAsByteArr);
+
+		logger.info("destPath: " + destPath);
+		// Copy file
+		String[] cmd = new String[] { "/usr/bin/rsync", "-az",
+				"--rsh=/usr/bin/sshpass -p " + password + " /usr/bin/ssh -p " + (port != null ? port : DEFAULT_PORT)
+						+ " -oUserKnownHostsFile=/dev/null -oPubkeyAuthentication=no -oStrictHostKeyChecking=no -l "
+						+ username,
+				file.getAbsolutePath(), username + "@" + host + ":" + destPath };
+
+		// Create directory if not exists
+		ProcessBuilder builder = new ProcessBuilder(cmd);
+		Process process = builder.start();
+		InputStream errorStream = process.getErrorStream();
+		int exitValue = process.waitFor();
+		if (exitValue != 0) {
+			String errorMessage = read(errorStream);
+			logger.error("Unexpected error occurred during execution: {}", errorMessage);
+		}
+
+		if (destPath.endsWith(File.separator)) {
+			return destPath + file.getName();
+		} else {
+			return destPath + File.separator + file.getName();
+		}
+	}
+
+	/**
 	 * 
 	 * @param file
 	 * @return
@@ -104,6 +166,65 @@ public class FileCopyUtils {
 			result.write(buffer, 0, length);
 		}
 		return result.toString("UTF-8");
+	}
+
+	/**
+	 * 
+	 * @param fileAsByteArr
+	 * @return created file
+	 * @throws IOException
+	 */
+	private static File write(byte[] fileAsByteArr) throws IOException {
+
+		FileOutputStream fileOutputStream = null;
+		String filePath;
+		File file;
+
+		try {
+			// Get md5 of file
+			String md5OfFile = getMD5ofFile(fileAsByteArr);
+			filePath = System.getProperty("java.io.tmpdir") + "/" + md5OfFile;
+
+			file = new File(filePath);
+
+			fileOutputStream = new FileOutputStream(file);
+			fileOutputStream.write(fileAsByteArr);
+
+			return file;
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			if (fileOutputStream != null) {
+				try {
+					fileOutputStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+	}
+
+	private static String getMD5ofFile(byte[] inputBytes) {
+
+		MessageDigest digest;
+		String result = null;
+		try {
+			digest = MessageDigest.getInstance("MD5");
+			byte[] hashBytes = digest.digest(inputBytes);
+
+			final StringBuilder builder = new StringBuilder();
+			for (byte b : hashBytes) {
+				builder.append(String.format("%02x", b));
+			}
+			result = builder.toString();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+
+		return result;
 	}
 
 }
