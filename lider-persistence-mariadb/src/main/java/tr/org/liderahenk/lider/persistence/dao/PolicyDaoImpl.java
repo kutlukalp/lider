@@ -170,9 +170,14 @@ public class PolicyDaoImpl implements IPolicyDao {
 		return list;
 	}
 
-	private static final String LATEST_USER_POLICY = "SELECT DISTINCT pol, ce.id " + "FROM CommandImpl c "
-			+ "INNER JOIN c.policy pol " + "INNER JOIN c.commandExecutions ce "
-			+ "WHERE ((ce.dnType = :sDnType AND ce.dn = :sDn)##WHERE##) AND (c.activationDate IS NULL OR c.activationDate < :today) "
+	private static final String LATEST_USER_POLICY = 
+			"SELECT DISTINCT pol, ce.id " 
+			+ "FROM CommandImpl c "
+			+ "INNER JOIN c.policy pol " 
+			+ "INNER JOIN c.commandExecutions ce "
+			+ "WHERE ((ce.dnType = :sDnType AND ce.dn = :sDn)##WHERE##) "
+			+ "AND (c.activationDate IS NULL OR c.activationDate < :today) "
+			+ "AND pol.deleted = False "
 			+ "ORDER BY ce.createDate DESC";
 	private static final String GROUP_CONDITION = " OR (ce.dnType = :gDnType AND ce.dn IN :gDnList)";
 
@@ -217,7 +222,15 @@ public class PolicyDaoImpl implements IPolicyDao {
 		return list;
 	}
 
-	private static final String LATEST_MACHINE_POLICY = "SELECT DISTINCT pol, ce.id FROM CommandImpl c INNER JOIN c.policy pol INNER JOIN c.commandExecutions ce WHERE ce.dnType = :dnType AND ce.dn = :dn AND (c.activationDate IS NULL OR c.activationDate < :today) ORDER BY ce.createDate DESC";
+	private static final String LATEST_MACHINE_POLICY = 
+			"SELECT DISTINCT pol, ce.id "
+			+ "FROM CommandImpl c "
+			+ "INNER JOIN c.policy pol "
+			+ "INNER JOIN c.commandExecutions ce "
+			+ "WHERE ce.dnType = :dnType AND ce.dn = :dn "
+			+ "AND (c.activationDate IS NULL OR c.activationDate < :today) "
+			+ "AND pol.deleted = False "
+			+ "ORDER BY ce.createDate DESC";
 
 	/**
 	 * Return the latest policy with its version number and child profiles iff
