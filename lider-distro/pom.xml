@@ -11,6 +11,7 @@
 
 	<properties>
 		<karaf.feature.version>4.0.5</karaf.feature.version>
+		<cellar.feature.version>4.0.1</cellar.feature.version>
 		<lider.ahenk.version>1.0.0-SNAPSHOT</lider.ahenk.version>
 	</properties>
 
@@ -42,6 +43,14 @@
 			<artifactId>spring</artifactId>
 			<classifier>features</classifier>
 			<version>${karaf.feature.version}</version>
+			<type>xml</type>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.karaf.cellar</groupId>
+			<artifactId>apache-karaf-cellar</artifactId>
+			<classifier>features</classifier>
+			<version>${cellar.feature.version}</version>
 			<type>xml</type>
 			<scope>runtime</scope>
 		</dependency>
@@ -116,6 +125,8 @@
 						<feature>ssh</feature>
 						<feature>management</feature>
 						<feature>wrap</feature>
+						<!-- Use 'cellar' feature only for clustered installations! -->
+<!-- 						<feature>cellar</feature> -->
 						<feature>lider</feature>
 					</bootFeatures>
 				</configuration>
