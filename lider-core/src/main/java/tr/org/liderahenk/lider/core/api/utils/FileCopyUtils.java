@@ -72,7 +72,7 @@ public class FileCopyUtils {
 
 		File file = new File(path);
 		byte[] data = read(file);
-		logger.debug("File bytes received: {}", data != null ? data.length : 0);
+		logger.debug("File bytes received: {}", data.length);
 
 		return data;
 	}

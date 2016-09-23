@@ -35,10 +35,6 @@
 			<groupId>org.apache.directory.api</groupId>
 			<artifactId>api-ldap-schema-data</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.jcraft</groupId>
-			<artifactId>jsch</artifactId>
-		</dependency>
 	</dependencies>
 
 	<build>

@@ -337,10 +337,10 @@ public class XMPPClientImpl {
 
 			AccountManager accountManager = AccountManager.getInstance(tempConnection);
 			accountManager.deleteAccount();
+			tempConnection.disconnect();
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
-		tempConnection.disconnect();
 	}
 
 	public void destroy() {

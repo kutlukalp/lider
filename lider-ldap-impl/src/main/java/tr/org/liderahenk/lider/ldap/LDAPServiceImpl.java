@@ -263,11 +263,9 @@ public class LDAPServiceImpl implements ILDAPService {
 						String filter = "(&(objectClass=pardusLider)(member=$1))".replace("$1", userDn);
 						cursor = connection2.search(configurationService.getLdapRootDn(), filter, SearchScope.SUBTREE);
 						while (cursor.next()) {
-
 							Entry entry = cursor.get();
-							logger.debug("Found user group: {}", entry.getDn());
-
 							if (null != entry) {
+								logger.debug("Found user group: {}", entry.getDn());
 								if (null != entry.get("liderPrivilege")) {
 									Iterator<Value<?>> iter2 = entry.get("liderPrivilege").iterator();
 									while (iter2.hasNext()) {

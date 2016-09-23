@@ -1,5 +1,10 @@
 package tr.org.liderahenk.lider.core.api.utils;
 
+/**
+ * 
+ * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ *
+ */
 public class LiderCoreUtils {
 
 	public static boolean isInteger(String s) {

@@ -67,7 +67,6 @@
 		<javax.mail.version>1.5.5</javax.mail.version>
 		<javax.mail.api.version>1.5.5</javax.mail.api.version>
 		<karaf.shell.core.version>4.0.5</karaf.shell.core.version>
-		<jsch.version>0.1.53</jsch.version>
 		<itext.version>5.5.9</itext.version>
 
 		<!--JPA -->
@@ -241,7 +240,7 @@
 							</execution>
 						</executions>
 						<configuration>
-							<failOnError>true</failOnError>
+							<failOnError>false</failOnError>
 							<excludeFilterFile>${main.basedir}/findbugs/findbugs-exclude.xml</excludeFilterFile>
 						</configuration>
 					</plugin>
@@ -552,11 +551,6 @@
 				<groupId>org.apache.karaf.shell</groupId>
 				<artifactId>org.apache.karaf.shell.core</artifactId>
 				<version>${karaf.shell.core.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.jcraft</groupId>
-				<artifactId>jsch</artifactId>
-				<version>${jsch.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.itextpdf</groupId>

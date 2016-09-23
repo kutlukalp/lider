@@ -174,8 +174,7 @@ public class DefaultRegistrationSubscriberImpl implements IRegistrationSubscribe
 		entryDN.append(message.getFrom().split("@")[0]);
 		// Append base DN
 		entryDN.append(",");
-		entryDN.append(configurationService.getAgentLdapBaseDn() == null ? configurationService.getAgentLdapBaseDn()
-				: configurationService.getAgentLdapBaseDn());
+		entryDN.append(configurationService.getAgentLdapBaseDn());
 		return entryDN.toString();
 	}
 
