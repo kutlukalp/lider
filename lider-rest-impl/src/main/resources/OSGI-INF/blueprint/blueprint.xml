@@ -82,6 +82,28 @@
 		<property name="responseFactory" ref="responseFactory" />
 		<property name="entityFactory" ref="entityFactory" />
 	</bean>
+	
+	<service ref="getTaskReportCodesCommand" interface="tr.org.liderahenk.lider.core.api.plugin.ICommand" />
+	<bean id="getTaskReportCodesCommand"
+		class="tr.org.liderahenk.lider.rest.commands.GetTaskReportCodesCommand">
+		<property name="resultFactory" ref="resultFactory" />
+		<property name="registry" ref="registry" />
+	</bean>
+	
+	<service ref="getSystemConfigCommand" interface="tr.org.liderahenk.lider.core.api.plugin.ICommand" />
+	<bean id="getSystemConfigCommand"
+		class="tr.org.liderahenk.lider.rest.commands.GetSystemConfigCommand">
+		<property name="configurationService" ref="configService" />
+		<property name="resultFactory" ref="resultFactory" />
+	</bean>
+	
+	<service ref="getLdapSearchAttrCommand" interface="tr.org.liderahenk.lider.core.api.plugin.ICommand" />
+	<bean id="getLdapSearchAttrCommand"
+		class="tr.org.liderahenk.lider.rest.commands.GetLdapSearchAttrCommand">
+		<property name="resultFactory" ref="resultFactory" />
+		<property name="configurationService" ref="configService" />
+		<property name="agentDao" ref="agentDao" />
+	</bean>
 
 	<reference id="pluginDao"
 		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IPluginDao" />
@@ -103,6 +125,8 @@
 		interface="tr.org.liderahenk.lider.core.api.rest.IRequestFactory" />
 	<reference id="responseFactory"
 		interface="tr.org.liderahenk.lider.core.api.rest.IResponseFactory" />
+	<reference id="resultFactory"
+		interface="tr.org.liderahenk.lider.core.api.service.ICommandResultFactory" />
 	<reference id="configService"
 		interface="tr.org.liderahenk.lider.core.api.configuration.IConfigurationService" />
 	<reference id="serviceRouter"
@@ -111,6 +135,8 @@
 		interface="tr.org.liderahenk.lider.core.api.authorization.IAuthService" />
 	<reference id="ldapService"
 		interface="tr.org.liderahenk.lider.core.api.ldap.ILDAPService" />
+	<reference id="registry"
+		interface="tr.org.liderahenk.lider.core.api.router.IServiceRegistry" />
 	<reference id="entityFactory"
 		interface="tr.org.liderahenk.lider.core.api.persistence.factories.IEntityFactory" />
 	<reference id="eventAdmin" interface="org.osgi.service.event.EventAdmin" />

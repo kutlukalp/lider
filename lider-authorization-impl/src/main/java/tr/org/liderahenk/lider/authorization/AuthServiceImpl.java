@@ -57,29 +57,16 @@ public class AuthServiceImpl implements IAuthService {
 
 				logger.debug("Checking privilege info: {}", privilege);
 
-				String permittedTargetDn;
-				String permittedOperations;
-
-				// Parse privilege and get target DN and operations.
-				try {
-					permittedTargetDn = privilege.getTarget();
-					// permittedOperations may contain more than one operation.
-					permittedOperations = privilege.getOperation();
-				} catch (Exception e) {
-					logger.warn("Could not parse privilege : {} ", privilege);
-					continue;
-				}
-
 				// If everything is permitted, return all entries!
-				if (configurationService.getLdapRootDn().equalsIgnoreCase(permittedTargetDn)
-						&& ALL_PERMISSION.equalsIgnoreCase(permittedOperations)) {
+				if (configurationService.getLdapRootDn().equalsIgnoreCase(privilege.getTarget())
+						&& ALL_PERMISSION.equalsIgnoreCase(privilege.getOperation())) {
 					return targetEntries;
 				}
 
 				// If permittedOperations does not contain targetOperation and
 				// is not 'ALL', then we can safely skip this privilege.
-				if (!ALL_PERMISSION.equalsIgnoreCase(permittedOperations)
-						&& !permittedOperations.contains(targetOperation)) {
+				if (!ALL_PERMISSION.equalsIgnoreCase(privilege.getOperation())
+						&& !privilege.getOperation().equalsIgnoreCase(targetOperation)) {
 					continue;
 				}
 
@@ -88,7 +75,8 @@ public class AuthServiceImpl implements IAuthService {
 				// the permitted DNs
 				for (LdapEntry entry : targetEntries) {
 					String targetDn = entry.getDistinguishedName();
-					if (permittedTargetDn.equalsIgnoreCase(targetDn) || targetDn.indexOf(permittedTargetDn) >= 0) {
+					if (privilege.getTarget().equalsIgnoreCase(targetDn)
+							|| targetDn.indexOf(privilege.getTarget()) >= 0) {
 						permittedEntries.add(entry);
 					}
 				}

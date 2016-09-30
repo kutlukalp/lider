@@ -1,4 +1,4 @@
-package tr.org.liderahenk.lider.persistence.commands;
+package tr.org.liderahenk.lider.rest.commands;
 
 import java.util.ArrayList;
 import java.util.Arrays;

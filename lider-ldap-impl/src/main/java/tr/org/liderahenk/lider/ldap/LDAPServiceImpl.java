@@ -88,7 +88,7 @@ public class LDAPServiceImpl implements ILDAPService {
 	 * Pattern for report privileges (e.g. [REPORT:ONLINE-USERS-REPORT] ,
 	 * [REPORT:ALL] )
 	 */
-	private static Pattern reportPriviligePattern = Pattern.compile("\\[REPORT:([a-zA-Z0-9-]+)\\]");
+	private static Pattern reportPriviligePattern = Pattern.compile("\\[REPORT:([a-zA-Z0-9-,]+)\\]");
 
 	public void init() throws Exception {
 
@@ -306,19 +306,28 @@ public class LDAPServiceImpl implements ILDAPService {
 	}
 
 	private void addUserPrivilege(UserImpl user, String privilege) {
+		String[] privBlocks = privilege != null ? privilege.split("\\|") : null;
 		logger.debug("Found privilege: {}", privilege);
-//		String[] privileges = privilegeStr.split(",");
-//		for (String privilege : privileges) {
-			Matcher tMatcher = taskPriviligePattern.matcher(privilege);
-			Matcher rMatcher = reportPriviligePattern.matcher(privilege);
-			if (tMatcher.matches()) { // Task privilege
-				user.getTaskPrivileges().add(new TaskPrivilegeImpl(tMatcher.group(1), tMatcher.group(2)));
-			} else if (rMatcher.matches()) { // Report privilege
-				user.getReportPrivileges().add(new ReportPrivilegeImpl(rMatcher.group(1)));
-			} else {
-				logger.warn("Invalid pattern in privilege => {}, pattern => {}", privilege, taskPriviligePattern);
+		if (privBlocks != null) {
+			for (String privBlock : privBlocks) {
+				Matcher tMatcher = taskPriviligePattern.matcher(privBlock);
+				Matcher rMatcher = reportPriviligePattern.matcher(privBlock);
+				if (tMatcher.matches()) { // Task privilege
+					String targetEntry = tMatcher.group(1);
+					String[] taskCodes = tMatcher.group(2).split(",");
+					for (String taskCode : taskCodes) {
+						user.getTaskPrivileges().add(new TaskPrivilegeImpl(targetEntry, taskCode));
+					}
+				} else if (rMatcher.matches()) { // Report privilege
+					String[] reportCodes = rMatcher.group(1).split(",");
+					for (String reportCode : reportCodes) {
+						user.getReportPrivileges().add(new ReportPrivilegeImpl(reportCode));
+					}
+				} else {
+					logger.warn("Invalid pattern in privilege => {}", privBlock);
+				}
 			}
-//		}
+		}
 	}
 
 	/**

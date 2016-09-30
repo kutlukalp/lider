@@ -81,14 +81,4 @@
 		<property name="fileServerUrl" value="${file.server.url}" />
 	</bean>
 
-	<service ref="getSystemConfigCommand" interface="tr.org.liderahenk.lider.core.api.plugin.ICommand" />
-	<bean id="getSystemConfigCommand"
-		class="tr.org.liderahenk.lider.config.commands.GetSystemConfigCommand">
-		<property name="configurationService" ref="configurationService" />
-		<property name="resultFactory" ref="resultFactory" />
-	</bean>
-
-	<reference id="resultFactory"
-		interface="tr.org.liderahenk.lider.core.api.service.ICommandResultFactory" />
-
 </blueprint>

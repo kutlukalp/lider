@@ -12,9 +12,9 @@
 		<property name="taskManager" ref="taskManager" />
 	</bean>
 
-	<bean id="registry" class="tr.org.liderahenk.lider.router.ServiceRegistryImpl">
-		<property name="registeredCommmands" ref="commands" />
-	</bean>
+	<service ref="registry"
+		interface="tr.org.liderahenk.lider.core.api.router.IServiceRegistry" />
+	<bean id="registry" class="tr.org.liderahenk.lider.router.ServiceRegistryImpl" />
 
 	<reference id="commandContextFactory"
 		interface="tr.org.liderahenk.lider.core.api.service.ICommandContextFactory" />
@@ -22,7 +22,14 @@
 		interface="tr.org.liderahenk.lider.core.api.rest.IResponseFactory" />
 	<reference id="taskManager"
 		interface="tr.org.liderahenk.lider.core.api.taskmanager.ITaskManager" />
+
 	<reference-list id="commands" availability="optional"
-		interface="tr.org.liderahenk.lider.core.api.plugin.ICommand" />
+		interface="tr.org.liderahenk.lider.core.api.plugin.ICommand">
+		<reference-listener bind-method="bindCommand" unbind-method="unbindCommand" ref="registry" />
+	</reference-list>
+	<reference-list id="templates" availability="optional"
+		interface="tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate">
+		<reference-listener bind-method="bindTemplate" unbind-method="unbindTemplate" ref="registry" />
+	</reference-list>
 
 </blueprint>

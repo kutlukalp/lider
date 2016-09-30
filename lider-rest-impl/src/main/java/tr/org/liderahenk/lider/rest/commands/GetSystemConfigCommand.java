@@ -1,4 +1,4 @@
-package tr.org.liderahenk.lider.config.commands;
+package tr.org.liderahenk.lider.rest.commands;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -48,7 +48,6 @@ public class GetSystemConfigCommand extends BaseCommand {
 		resultMap.put("ldapPassword", "TODO"); // TODO
 		resultMap.put("ldapRootDn", configurationService.getLdapRootDn());
 		resultMap.put("ldapUseSsl", configurationService.getLdapUseSsl());
-
 		logger.debug("System config: {}", resultMap);
 
 		return resultFactory.create(CommandResultStatus.OK, new ArrayList<String>(), this, resultMap);
@@ -56,7 +55,7 @@ public class GetSystemConfigCommand extends BaseCommand {
 
 	@Override
 	public ICommandResult validate(ICommandContext context) {
-		return resultFactory.create(CommandResultStatus.OK, null, this, null);
+		return resultFactory.create(CommandResultStatus.OK, null, this);
 	}
 
 	@Override

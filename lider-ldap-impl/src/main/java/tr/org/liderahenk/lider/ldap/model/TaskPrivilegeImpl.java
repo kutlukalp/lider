@@ -16,7 +16,7 @@ public class TaskPrivilegeImpl implements ITaskPrivilege {
 	private String target;
 
 	/**
-	 * operation either contains 'command class ID' or 'ALL'
+	 * operation either contains 'plugin name'/'command class ID' or 'ALL'
 	 */
 	private String operation;
 

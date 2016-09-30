@@ -1,5 +1,7 @@
 package tr.org.liderahenk.lider.core.api.router;
 
+import java.util.Set;
+
 import tr.org.liderahenk.lider.core.api.plugin.ICommand;
 
 /**
@@ -26,5 +28,17 @@ public interface IServiceRegistry {
 	 * @return
 	 */
 	public ICommand lookupCommand(String key);
+
+	/**
+	 * 
+	 * @return
+	 */
+	Set<String> getTaskCodes();
+
+	/**
+	 * 
+	 * @return
+	 */
+	Set<String> getReportCodes();
 
 }

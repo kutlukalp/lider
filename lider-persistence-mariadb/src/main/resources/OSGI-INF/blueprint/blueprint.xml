@@ -93,15 +93,8 @@
 		<jpa:context property="entityManager" unitname="lider" />
 	</bean>
 	
-	<service ref="getLdapSearchAttrCommand" interface="tr.org.liderahenk.lider.core.api.plugin.ICommand" />
-	<bean id="getLdapSearchAttrCommand"
-		class="tr.org.liderahenk.lider.persistence.commands.GetLdapSearchAttrCommand">
-		<property name="resultFactory" ref="resultFactory" />
-		<property name="configurationService" ref="configurationService" />
-		<property name="agentDao" ref="agentDao" />
-	</bean>
-	
-	<command-bundle xmlns="http://karaf.apache.org/xmlns/shell/v1.0.0">
+	<!-- Custom Karaf commands did not work reliably and as of Karaf v4.0.6 its documentation is also removed... -->
+	<!-- <command-bundle xmlns="http://karaf.apache.org/xmlns/shell/v1.0.0">
 		<command name="profile/list">
 			<action
 				class="tr.org.liderahenk.lider.karaf.commands.ProfileListCommand">
@@ -127,10 +120,6 @@
 			</action>
 		</command>
 	</command-bundle>
+	 -->
 	
-	<reference id="resultFactory"
-		interface="tr.org.liderahenk.lider.core.api.service.ICommandResultFactory" />
-	<reference id="configurationService"
-		interface="tr.org.liderahenk.lider.core.api.configuration.IConfigurationService" />
-
 </blueprint>

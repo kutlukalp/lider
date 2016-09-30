@@ -7,21 +7,27 @@
                  http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://svn.apache.org/repos/asf/aries/trunk/blueprint/blueprint-cm/src/main/resources/org/apache/aries/blueprint/compendium/cm/blueprint-cm-1.1.0.xsd
          ">
 
+	<service ref="taskTemplate" interface="tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate" />
 	<bean id="taskTemplate"
 		class="tr.org.liderahenk.lider.report.templates.ExecutedTaskReportTemplateImpl" />
 
+	<service ref="onlineUsersTemplate" interface="tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate" />
 	<bean id="onlineUsersTemplate"
 		class="tr.org.liderahenk.lider.report.templates.OnlineUsersReportTemplateImpl" />
-
+		
+	<service ref="agentInfoTemplate" interface="tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate" />
 	<bean id="agentInfoTemplate"
 		class="tr.org.liderahenk.lider.report.templates.AgentInfoReportTemplateImpl" />
 
+	<service ref="installedPluginsTemplate" interface="tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate" />
 	<bean id="installedPluginsTemplate"
 		class="tr.org.liderahenk.lider.report.templates.InstalledPluginsReportTemplateImpl" />
 
+	<service ref="agentHardwareTemplate" interface="tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate" />
 	<bean id="agentHardwareTemplate"
 		class="tr.org.liderahenk.lider.report.templates.AgentHardwareReportTemplateImpl" />
 
+	<service ref="sessionActivityTemplate" interface="tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate" />
 	<bean id="sessionActivityTemplate"
 		class="tr.org.liderahenk.lider.report.templates.SessionActivityReportTemplateImpl" />
 
