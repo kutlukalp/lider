@@ -12,6 +12,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
 import tr.org.liderahenk.lider.core.api.ldap.model.IUser;
 import tr.org.liderahenk.lider.core.api.ldap.model.LdapEntry;
@@ -50,6 +51,7 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 	private IResponseFactory responseFactory;
 	private ILDAPService ldapService;
 	private IEntityFactory entityFactory;
+	private IConfigurationService configService;
 
 	@Override
 	public IRestResponse execute(String json) {
@@ -77,7 +79,11 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 			logger.debug("Target entry list size: " + targetEntries.size());
 			if (targetEntries != null && targetEntries.size() > 0) {
 				for (LdapEntry targetEntry : targetEntries) {
-					command.addCommandExecution(entityFactory.createCommandExecution(targetEntry, command));
+					boolean isAhenk = ldapService.isAhenk(targetEntry);
+					boolean isUser = ldapService.isUser(targetEntry);
+					String uid = isAhenk ? targetEntry.get(configService.getAgentLdapJidAttribute())
+							: (isUser ? targetEntry.get(configService.getUserLdapUidAttribute()) : null);
+					command.addCommandExecution(entityFactory.createCommandExecution(targetEntry, command, uid));
 				}
 			}
 
@@ -328,6 +334,14 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 	 */
 	public void setEntityFactory(IEntityFactory entityFactory) {
 		this.entityFactory = entityFactory;
+	}
+
+	/**
+	 * 
+	 * @param configService
+	 */
+	public void setConfigService(IConfigurationService configService) {
+		this.configService = configService;
 	}
 
 }

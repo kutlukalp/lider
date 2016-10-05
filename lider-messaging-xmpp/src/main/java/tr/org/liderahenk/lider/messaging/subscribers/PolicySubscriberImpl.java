@@ -55,7 +55,7 @@ public class PolicySubscriberImpl implements IPolicySubscriber {
 		// Find user policy.
 		// (User policy can be related to either user entry or group entries
 		// which ever is the latest)
-		List<Object[]> resultList = policyDao.getLatestUserPolicy(userDn, groupsOfUser);
+		List<Object[]> resultList = policyDao.getLatestUserPolicy(userUid, groupsOfUser);
 		IPolicy userPolicy = null;
 		Long userCommandExecutionId = null;
 		if (resultList != null && !resultList.isEmpty() && resultList.get(0) != null && resultList.get(0).length == 2) {
@@ -68,7 +68,7 @@ public class PolicySubscriberImpl implements IPolicySubscriber {
 				&& !userPolicy.getPolicyVersion().equalsIgnoreCase(userPolicyVersion);
 
 		// Find agent policy.
-		resultList = policyDao.getLatestAgentPolicy(findAgentDn(agentUid));
+		resultList = policyDao.getLatestAgentPolicy(agentUid);
 		IPolicy agentPolicy = null;
 		Long agentCommandExecutionId = null;
 		if (resultList != null && !resultList.isEmpty() && resultList.get(0) != null && resultList.get(0).length == 2) {
@@ -137,18 +137,6 @@ public class PolicySubscriberImpl implements IPolicySubscriber {
 		}
 		filterAttributesList.add(new LdapSearchFilterAttribute("member", userDn, SearchFilterEnum.EQ));
 		return ldapService.search(configurationService.getLdapRootDn(), filterAttributesList, null);
-	}
-
-	/**
-	 * Find agent DN by given UID
-	 * 
-	 * @param agentUid
-	 * @return
-	 * @throws LdapException
-	 */
-	private String findAgentDn(String agentUid) throws LdapException {
-		return ldapService.getDN(configurationService.getLdapRootDn(), configurationService.getAgentLdapJidAttribute(),
-				agentUid);
 	}
 
 	/**

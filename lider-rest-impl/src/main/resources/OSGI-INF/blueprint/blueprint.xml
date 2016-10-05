@@ -17,6 +17,7 @@
 		<property name="commandDao" ref="commandDao" />
 		<property name="ldapService" ref="ldapService" />
 		<property name="entityFactory" ref="entityFactory" />
+		<property name="configService" ref="configService" />
 	</bean>
 
 	<service ref="profileRequestProcessor"
