@@ -59,17 +59,17 @@ public interface IPolicyDao extends IBaseDao<IPolicy> {
 
 	/**
 	 * 
-	 * @param userDn
+	 * @param uid
 	 * @param groupsOfUser
 	 * @return latest executed user policy with execution command ID.
 	 */
-	List<Object[]> getLatestUserPolicy(String userDn, List<LdapEntry> groupsOfUser);
+	List<Object[]> getLatestUserPolicy(String uid, List<LdapEntry> groupsOfUser);
 
 	/**
 	 * 
-	 * @param agentDn
+	 * @param uid
 	 * @return latest executed agent policy with execution command ID.
 	 */
-	List<Object[]> getLatestAgentPolicy(String agentDn);
+	List<Object[]> getLatestAgentPolicy(String uid);
 
 }

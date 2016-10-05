@@ -175,7 +175,7 @@ public class PolicyDaoImpl implements IPolicyDao {
 			+ "FROM CommandImpl c "
 			+ "INNER JOIN c.policy pol " 
 			+ "INNER JOIN c.commandExecutions ce "
-			+ "WHERE ((ce.dnType = :sDnType AND ce.dn = :sDn)##WHERE##) "
+			+ "WHERE ((ce.uid = :sUid)##WHERE##) "
 			+ "AND (c.activationDate IS NULL OR c.activationDate < :today) "
 			+ "AND pol.deleted = False "
 			+ "ORDER BY ce.createDate DESC";
@@ -187,7 +187,7 @@ public class PolicyDaoImpl implements IPolicyDao {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Object[]> getLatestUserPolicy(String userDn, List<LdapEntry> groupDns) {
+	public List<Object[]> getLatestUserPolicy(String uid, List<LdapEntry> groupDns) {
 		List<String> list = convertStringList(groupDns);
 		String sql = LATEST_USER_POLICY;
 		// User may or may not have groups! Handle 'WHERE' clause here
@@ -197,8 +197,7 @@ public class PolicyDaoImpl implements IPolicyDao {
 			sql = sql.replaceFirst("##WHERE##", "");
 		}
 		Query query = entityManager.createQuery(sql);
-		query.setParameter("sDnType", DNType.USER.getId());
-		query.setParameter("sDn", userDn);
+		query.setParameter("sUid", uid);
 		if (list != null && !list.isEmpty()) {
 			query.setParameter("gDnType", DNType.GROUP.getId());
 			query.setParameter("gDnList", list);
@@ -227,7 +226,7 @@ public class PolicyDaoImpl implements IPolicyDao {
 			+ "FROM CommandImpl c "
 			+ "INNER JOIN c.policy pol "
 			+ "INNER JOIN c.commandExecutions ce "
-			+ "WHERE ce.dnType = :dnType AND ce.dn = :dn "
+			+ "WHERE ce.uid = :uid "
 			+ "AND (c.activationDate IS NULL OR c.activationDate < :today) "
 			+ "AND pol.deleted = False "
 			+ "ORDER BY ce.createDate DESC";
@@ -238,10 +237,9 @@ public class PolicyDaoImpl implements IPolicyDao {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Object[]> getLatestAgentPolicy(String agentDn) {
+	public List<Object[]> getLatestAgentPolicy(String uid) {
 		Query query = entityManager.createQuery(LATEST_MACHINE_POLICY);
-		query.setParameter("dnType", DNType.AHENK.getId());
-		query.setParameter("dn", agentDn);
+		query.setParameter("uid", uid);
 		query.setParameter("today", new Date(), TemporalType.TIMESTAMP);
 		List<Object[]> resultList = query.setMaxResults(1).getResultList();
 		logger.debug("Agent policy result list: {}",

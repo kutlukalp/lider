@@ -34,7 +34,6 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecutionRe
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPolicy;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 import tr.org.liderahenk.lider.core.api.persistence.enums.OrderType;
-import tr.org.liderahenk.lider.core.api.rest.enums.DNType;
 import tr.org.liderahenk.lider.persistence.entities.CommandExecutionImpl;
 import tr.org.liderahenk.lider.persistence.entities.CommandExecutionResultImpl;
 import tr.org.liderahenk.lider.persistence.entities.CommandImpl;
@@ -179,14 +178,13 @@ public class CommandDaoImpl implements ICommandDao {
 		return list;
 	}
 
-	private static final String FIND_EXECUTION = "SELECT DISTINCT ce FROM CommandImpl c INNER JOIN c.commandExecutions ce INNER JOIN c.task t WHERE ce.dnType = :dnType AND ce.dn = :dn AND t.id = :taskId";
+	private static final String FIND_EXECUTION = "SELECT DISTINCT ce FROM CommandImpl c INNER JOIN c.commandExecutions ce INNER JOIN c.task t WHERE ce.uid = :uid AND t.id = :taskId";
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public ICommandExecution findExecution(Long taskId, String dn, DNType dnType) {
+	public ICommandExecution findExecution(Long taskId, String uid) {
 		Query query = entityManager.createQuery(FIND_EXECUTION);
-		query.setParameter("dnType", dnType.getId());
-		query.setParameter("dn", dn);
+		query.setParameter("uid", uid);
 		query.setParameter("taskId", taskId);
 		List<CommandExecutionImpl> resultList = query.setMaxResults(1).getResultList();
 		return resultList.get(0);

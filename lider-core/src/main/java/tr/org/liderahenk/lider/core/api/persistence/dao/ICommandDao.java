@@ -9,7 +9,6 @@ import tr.org.liderahenk.lider.core.api.persistence.PropertyOrder;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecution;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecutionResult;
-import tr.org.liderahenk.lider.core.api.rest.enums.DNType;
 
 /**
  * Provides command database operations.
@@ -83,14 +82,13 @@ public interface ICommandDao extends IBaseDao<ICommand> {
 	ICommandExecutionResult save(ICommandExecutionResult result) throws Exception;
 
 	/**
-	 * Find command execution record by given task ID and DN
+	 * Find command execution record by given task ID and UID
 	 * 
 	 * @param taskId
-	 * @param dn
-	 * @param dnType
+	 * @param uid
 	 * @return
 	 */
-	ICommandExecution findExecution(Long taskId, String dn, DNType dnType);
+	ICommandExecution findExecution(Long taskId, String uid);
 
 	/**
 	 * Find command execution record by given ID.

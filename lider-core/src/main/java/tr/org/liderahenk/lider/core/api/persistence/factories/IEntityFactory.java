@@ -111,17 +111,19 @@ public interface IEntityFactory {
 	 * @param command
 	 * @return
 	 */
-	ICommandExecution createCommandExecution(LdapEntry entry, ICommand command);
+	ICommandExecution createCommandExecution(LdapEntry entry, ICommand command, String uid);
 
 	/**
 	 * 
 	 * @param task
 	 * @param request
 	 * @param commandOwnerJid
+	 * @param uidList
 	 * @return
 	 * @throws Exception
 	 */
-	ICommand createCommand(ITask task, ICommandRequest request, String commandOwnerJid) throws Exception;
+	ICommand createCommand(ITask task, ICommandRequest request, String commandOwnerJid, List<String> uidList)
+			throws Exception;
 
 	/**
 	 * 
