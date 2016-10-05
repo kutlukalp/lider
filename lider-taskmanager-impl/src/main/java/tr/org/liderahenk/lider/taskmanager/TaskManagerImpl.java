@@ -41,7 +41,6 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 import tr.org.liderahenk.lider.core.api.persistence.enums.ContentType;
 import tr.org.liderahenk.lider.core.api.persistence.factories.IEntityFactory;
 import tr.org.liderahenk.lider.core.api.plugin.ITaskAwareCommand;
-import tr.org.liderahenk.lider.core.api.rest.enums.DNType;
 import tr.org.liderahenk.lider.core.api.rest.requests.ITaskRequest;
 import tr.org.liderahenk.lider.core.api.taskmanager.ITaskManager;
 import tr.org.liderahenk.lider.core.api.taskmanager.exceptions.TaskExecutionFailedException;
@@ -94,12 +93,12 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 			task = taskDao.save(task);
 
 			// Create & persist related command
-			ICommand command = entityFactory.createCommand(task, request, findCommandOwnerJid());
+			ICommand command = entityFactory.createCommand(task, request, findCommandOwnerJid(), buildUidList(entries));
 			command = commandDao.save(command);
 
 			// Task has an activation date, it will be sent to agent(s) on that
 			// date.
-			if (command.getActivationDate() != null /*&& command.getActivationDate().compareTo(new Date()) > 0 */) {
+			if (command.getActivationDate() != null) {
 				logger.info("Future task received. It will be executed on its activation date.");
 				return;
 			}
@@ -113,6 +112,16 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 			}
 			throw new TaskExecutionFailedException(e);
 		}
+	}
+
+	private List<String> buildUidList(List<LdapEntry> entries) {
+		List<String> uidList = new ArrayList<String>();
+		for (LdapEntry entry : entries) {
+			if (ldapService.isAhenk(entry)) {
+				uidList.add(entry.get(configurationService.getAgentLdapJidAttribute()));
+			}
+		}
+		return uidList;
 	}
 
 	/**
@@ -132,24 +141,26 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 		if (entries != null && !entries.isEmpty()) {
 			for (final LdapEntry entry : entries) {
 				boolean isAhenk = ldapService.isAhenk(entry);
+				String uid = isAhenk ? entry.get(configurationService.getAgentLdapJidAttribute()) : null;
+				logger.info("DN type: {}, UID: {}", entry.getType().toString(), uid);
 
 				// New command execution
-				ICommandExecution execution = entityFactory.createCommandExecution(entry, command);
+				ICommandExecution execution = entityFactory.createCommandExecution(entry, command, uid);
 				command.addCommandExecution(execution);
 
 				// Task message
 				ILiderMessage message = null;
 				if (isAhenk) {
 					// Set agent JID
-					String jid = entry.get(configurationService.getAgentLdapJidAttribute());
-					if (jid == null || jid.isEmpty()) {
+					// (the JID is UID of the LDAP entry)
+					if (uid == null || uid.isEmpty()) {
 						logger.error("JID was null. Ignoring task: {} for agent: {}",
 								new Object[] { task.toJson(), entry.getDistinguishedName() });
 						continue;
 					}
-					logger.info("Sending task to agent with JID: {}", jid);
-					message = messageFactory.createExecuteTaskMessage(task, jid,
-							usesFileTransfer ? configurationService.getFileServerConf(jid) : null);
+					logger.info("Sending task to agent with JID: {}", uid);
+					message = messageFactory.createExecuteTaskMessage(task, uid,
+							usesFileTransfer ? configurationService.getFileServerConf(uid) : null);
 					// Send message to agent. Responses will be handled by
 					// TaskStatusUpdateListener in XMPPClientImpl class
 					messagingService.sendMessage(message);
@@ -192,8 +203,7 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 					// Here we can use agent DN to find the execution record
 					// because (unlike policies) tasks can only be executed for
 					// agents on agents!
-					ICommandExecution commandExecution = commandDao.findExecution(message.getTaskId(), agent.getDn(),
-							DNType.AHENK);
+					ICommandExecution commandExecution = commandDao.findExecution(message.getTaskId(), jid);
 
 					ICommandExecutionResult result = null;
 					if (ContentType.getFileContentTypes().contains(message.getContentType())) {
@@ -262,13 +272,15 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 					try {
 						ITask task = relatedCommand.getTask();
 						boolean usesFileTransfer = task.getPlugin().isUsesFileTransfer();
-						List<String> dnList = relatedCommand.getDnList();
+						List<String> uidList = relatedCommand.getUidList();
 						List<LdapEntry> entries = null;
-						if (dnList != null && !dnList.isEmpty()) {
+						if (uidList != null && !uidList.isEmpty()) {
 							entries = new ArrayList<LdapEntry>();
-							for (String dn : dnList) {
-								LdapEntry entry = ldapService.getEntry(dn,
+							for (String uid : uidList) {
+								List<LdapEntry> result = ldapService.search(
+										configurationService.getAgentLdapJidAttribute(), uid,
 										new String[] { configurationService.getAgentLdapJidAttribute() });
+								LdapEntry entry = result != null && !result.isEmpty() ? result.get(0) : null;
 								if (entry != null) {
 									entries.add(entry);
 								}
@@ -320,7 +332,8 @@ public class TaskManagerImpl implements ITaskManager, ITaskStatusSubscriber {
 
 	private void hookListener() {
 		if (configurationService.getTaskManagerCheckFutureTask()) {
-			// Listen to future tasks, send them to agent(s) if activation date has
+			// Listen to future tasks, send them to agent(s) if activation date
+			// has
 			// arrived.
 			timer = new Timer();
 			timer.schedule(new FutureTaskListener(), 1000, configurationService.getTaskManagerFutureTaskCheckPeriod());
