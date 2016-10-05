@@ -36,7 +36,7 @@ import tr.org.liderahenk.lider.core.api.rest.enums.DNType;
 @JsonIgnoreProperties({ "command" })
 @Entity
 @Table(name = "C_COMMAND_EXECUTION", uniqueConstraints = @UniqueConstraint(columnNames = { "COMMAND_ID", "DN_TYPE",
-		"DN" }) )
+		"DN" }))
 public class CommandExecutionImpl implements ICommandExecution {
 
 	private static final long serialVersionUID = 298103880409529933L;
@@ -49,6 +49,10 @@ public class CommandExecutionImpl implements ICommandExecution {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "COMMAND_ID", nullable = false)
 	private CommandImpl command; // bidirectional
+
+	@Column(name = "UID")
+	private String uid; // This may be null if C_COMMAND record belongs to a
+						// policy of an Organizational Unit or User Group.
 
 	@Column(name = "DN_TYPE", length = 1)
 	private Integer dnType;
@@ -67,10 +71,11 @@ public class CommandExecutionImpl implements ICommandExecution {
 	public CommandExecutionImpl() {
 	}
 
-	public CommandExecutionImpl(Long id, CommandImpl command, DNType dnType, String dn, Date createDate,
+	public CommandExecutionImpl(Long id, CommandImpl command, String uid, DNType dnType, String dn, Date createDate,
 			List<CommandExecutionResultImpl> commandExecutionResults) {
 		this.id = id;
 		this.command = command;
+		this.uid = uid;
 		setDnType(dnType);
 		this.dn = dn;
 		this.createDate = createDate;
@@ -79,6 +84,7 @@ public class CommandExecutionImpl implements ICommandExecution {
 
 	public CommandExecutionImpl(ICommandExecution commandExecution) {
 		this.id = commandExecution.getId();
+		this.uid = commandExecution.getUid();
 		setDnType(commandExecution.getDnType());
 		this.dn = commandExecution.getDn();
 		this.createDate = commandExecution.getCreateDate();
@@ -113,6 +119,15 @@ public class CommandExecutionImpl implements ICommandExecution {
 
 	public void setCommand(CommandImpl command) {
 		this.command = command;
+	}
+
+	@Override
+	public String getUid() {
+		return uid;
+	}
+
+	public void setUid(String uid) {
+		this.uid = uid;
 	}
 
 	@Override

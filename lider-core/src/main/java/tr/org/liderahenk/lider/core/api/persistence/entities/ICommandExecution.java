@@ -15,6 +15,8 @@ public interface ICommandExecution extends IEntity {
 
 	ICommand getCommand();
 
+	String getUid();
+
 	DNType getDnType();
 
 	String getDn();
