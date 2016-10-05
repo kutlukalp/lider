@@ -40,7 +40,7 @@ import tr.org.liderahenk.lider.core.api.rest.enums.DNType;
  *
  */
 @Entity
-@Table(name = "C_COMMAND", uniqueConstraints = @UniqueConstraint(columnNames = { "POLICY_ID", "TASK_ID" }) )
+@Table(name = "C_COMMAND", uniqueConstraints = @UniqueConstraint(columnNames = { "POLICY_ID", "TASK_ID" }))
 public class CommandImpl implements ICommand {
 
 	private static final long serialVersionUID = 5691035821804595271L;
@@ -69,6 +69,10 @@ public class CommandImpl implements ICommand {
 	@Column(name = "DN_TYPE", length = 1)
 	private Integer dnType;
 
+	@Lob
+	@Column(name = "UID_LIST")
+	private String uidListJsonString;
+
 	@Column(name = "COMMAND_OWNER_UID")
 	private String commandOwnerUid;
 
@@ -86,14 +90,16 @@ public class CommandImpl implements ICommand {
 	public CommandImpl() {
 	}
 
-	public CommandImpl(Long id, IPolicy policy, ITask task, List<String> dnList, DNType dnType, String commandOwnerUid,
-			Date activationDate, Date createDate, List<CommandExecutionImpl> commandExecutions)
-					throws JsonGenerationException, JsonMappingException, IOException {
+	public CommandImpl(Long id, IPolicy policy, ITask task, List<String> dnList, DNType dnType, List<String> uidList,
+			String commandOwnerUid, Date activationDate, Date createDate, List<CommandExecutionImpl> commandExecutions)
+			throws JsonGenerationException, JsonMappingException, IOException {
 		this.id = id;
 		this.policy = (PolicyImpl) policy;
 		this.task = (TaskImpl) task;
-		this.dnListJsonString = new ObjectMapper().writeValueAsString(dnList);
+		ObjectMapper mapper = new ObjectMapper();
+		this.dnListJsonString = mapper.writeValueAsString(dnList);
 		setDnType(dnType);
+		this.uidListJsonString = uidList != null ? mapper.writeValueAsString(uidList) : null;
 		this.commandOwnerUid = commandOwnerUid;
 		this.activationDate = activationDate;
 		this.createDate = createDate;
@@ -104,8 +110,10 @@ public class CommandImpl implements ICommand {
 		this.id = command.getId();
 		this.policy = (PolicyImpl) command.getPolicy();
 		this.task = (TaskImpl) command.getTask();
-		this.dnListJsonString = new ObjectMapper().writeValueAsString(command.getDnList());
+		ObjectMapper mapper = new ObjectMapper();
+		this.dnListJsonString = mapper.writeValueAsString(command.getDnList());
 		setDnType(command.getDnType());
+		this.uidListJsonString = command.getUidList() != null ? mapper.writeValueAsString(command.getUidList()) : null;
 		this.commandOwnerUid = command.getCommandOwnerUid();
 		this.activationDate = command.getActivationDate();
 		this.createDate = command.getCreateDate();
@@ -179,6 +187,25 @@ public class CommandImpl implements ICommand {
 		} else {
 			this.dnType = dnType.getId();
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Transient
+	@Override
+	public List<String> getUidList() {
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			return (List<String>) (uidListJsonString != null
+					? mapper.readValue(uidListJsonString, new TypeReference<ArrayList<String>>() {
+					}) : null);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public void setUidListJsonString(String uidListJsonString) {
+		this.uidListJsonString = uidListJsonString;
 	}
 
 	@Override

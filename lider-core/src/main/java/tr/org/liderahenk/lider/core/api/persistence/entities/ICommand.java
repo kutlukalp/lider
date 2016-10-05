@@ -70,4 +70,6 @@ public interface ICommand extends IEntity {
 	 */
 	void addCommandExecution(ICommandExecution commandExecution);
 
+	List<String> getUidList();
+
 }
