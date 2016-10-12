@@ -6,11 +6,14 @@
 	<bean id="operationLogService" class="tr.org.liderahenk.lider.log.OperationLogServiceImpl">
 		<property name="logDao" ref="logDao" />
 		<property name="entityFactory" ref="entityFactory" />
+		<property name="responseFactory" ref="responseFactory" />
 	</bean>
 
 	<reference id="logDao"
 		interface="tr.org.liderahenk.lider.core.api.persistence.dao.IOperationLogDao" />
 	<reference id="entityFactory"
 		interface="tr.org.liderahenk.lider.core.api.persistence.factories.IEntityFactory" />
+	<reference id="responseFactory"
+		interface="tr.org.liderahenk.lider.core.api.rest.IResponseFactory" />
 
 </blueprint>

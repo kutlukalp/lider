@@ -5,6 +5,8 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
+import tr.org.liderahenk.lider.core.api.ldap.model.IUser;
+import tr.org.liderahenk.lider.core.api.log.IOperationLogService;
+import tr.org.liderahenk.lider.core.api.persistence.enums.CrudType;
 import tr.org.liderahenk.lider.core.api.rest.IResponseFactory;
 import tr.org.liderahenk.lider.core.api.rest.processors.IPolicyRequestProcessor;
 import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
@@ -38,6 +44,23 @@ public class PolicyController {
 	private IResponseFactory responseFactory;
 	@Autowired
 	private IPolicyRequestProcessor policyProcessor;
+	@Autowired
+	private IOperationLogService operationLogService;
+	@Autowired
+	private ILDAPService ldapService;
+
+	public String findUserId() {
+        try {
+            Subject currentUser = SecurityUtils.getSubject();
+            String userDn = currentUser.getPrincipal().toString();
+            logger.info(userDn);
+            IUser user = ldapService.getUser(userDn);
+            return user.getUid();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        return "";
+    } 
 
 	/**
 	 * Execute policy. 'Execution' means saving policy as command which can be
@@ -56,6 +79,8 @@ public class PolicyController {
 		logger.info("Request received. URL: '/lider/policy/execute' Body: {}", requestBodyDecoded);
 		IRestResponse restResponse = policyProcessor.execute(requestBodyDecoded);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
+		ControllerUtils.recordOperationLog(operationLogService, CrudType.CREATE,findUserId(),
+				findUserId() + " kullanıcısı politika çalıştırdı", null, request.getRemoteHost(), "log", null);
 		return restResponse;
 	}
 
@@ -75,6 +100,8 @@ public class PolicyController {
 		logger.info("Request received. URL: '/lider/policy/add' Body: {}", requestBodyDecoded);
 		IRestResponse restResponse = policyProcessor.add(requestBodyDecoded);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
+		ControllerUtils.recordOperationLog(operationLogService, CrudType.CREATE,findUserId(),
+				findUserId() + " kullanıcısı politika ekledi", null, request.getRemoteHost(), "log", null);
 		return restResponse;
 	}
 
@@ -94,6 +121,8 @@ public class PolicyController {
 		logger.info("Request received. URL: '/lider/policy/update' Body: {}", requestBodyDecoded);
 		IRestResponse restResponse = policyProcessor.update(requestBodyDecoded);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
+		ControllerUtils.recordOperationLog(operationLogService, CrudType.UPDATE,findUserId(),
+				findUserId() + " kullanıcısı bir politikayı güncelledi", null, request.getRemoteHost(), "log", null);
 		return restResponse;
 	}
 
@@ -114,6 +143,8 @@ public class PolicyController {
 		logger.info("Request received. URL: '/lider/policy/list?label={}&active={}'", new Object[] { label, active });
 		IRestResponse restResponse = policyProcessor.list(label, active);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
+		ControllerUtils.recordOperationLog(operationLogService, CrudType.READ,findUserId(),
+				findUserId() + " kullanıcısı politikaları listeledi", null, request.getRemoteHost(), "log", null);
 		return restResponse;
 	}
 
@@ -132,6 +163,8 @@ public class PolicyController {
 		logger.info("Request received. URL: '/lider/policy/{}/get'", id);
 		IRestResponse restResponse = policyProcessor.get(id);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
+		ControllerUtils.recordOperationLog(operationLogService, CrudType.READ,findUserId(),
+				findUserId() + " kullanıcısı bir politika seçti", null, request.getRemoteHost(), "log", null);
 		return restResponse;
 	}
 
@@ -150,6 +183,8 @@ public class PolicyController {
 		logger.info("Request received. URL: '/lider/policy/{}/delete'", id);
 		IRestResponse restResponse = policyProcessor.delete(id);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
+		ControllerUtils.recordOperationLog(operationLogService, CrudType.DELETE,findUserId(),
+				findUserId() + " kullanıcısı bir politika sildi", null, request.getRemoteHost(), "policyLog", id);
 		return restResponse;
 	}
 
@@ -181,6 +216,8 @@ public class PolicyController {
 				createDateRangeStart != null ? new Date(createDateRangeStart) : null,
 				createDateRangeEnd != null ? new Date(createDateRangeEnd) : null, status, maxResults);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
+		ControllerUtils.recordOperationLog(operationLogService, CrudType.READ,findUserId(),
+				findUserId() + " kullanıcısı uygulanmış politikaları listeledi", null, request.getRemoteHost(), "log", null);
 		return restResponse;
 	}
 
@@ -199,6 +236,8 @@ public class PolicyController {
 		logger.info("Request received. URL: '/lider/policy/command/{}/get'", id);
 		IRestResponse restResponse = policyProcessor.listCommands(id);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
+		ControllerUtils.recordOperationLog(operationLogService, CrudType.READ,findUserId(),
+				findUserId() + " kullanıcısı komutları listeledi", null, request.getRemoteHost(), "policyLog", id);
 		return restResponse;
 	}
 

@@ -16,6 +16,7 @@ import tr.org.liderahenk.lider.core.api.plugin.BaseReportTemplate;
  * provided.
  * 
  * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ * @author <a href="mailto:cemre.alpsoy@agem.com.tr">Cemre ALPSOY</a>
  *
  */
 public class TemplateManager {
@@ -31,6 +32,7 @@ public class TemplateManager {
 	private IReportTemplate installedPluginsTemplate;
 	private IReportTemplate agentHardwareTemplate;
 	private IReportTemplate sessionActivityTemplate;
+	private IReportTemplate operationLogTemplate;
 
 	public void init() {
 		// Check if task template already exists!
@@ -100,6 +102,18 @@ public class TemplateManager {
 			reportDao.updateTemplate(existingSessionActivityTemplate);
 		} else {
 			reportDao.saveTemplate(sessionActivityTemplate);
+		}
+		// Check if session activity template already exists!
+		List<? extends IReportTemplate> operationLogTemplates = reportDao.findTemplates("name",
+				operationLogTemplate.getName(), 1);
+		IReportTemplate existingOperationLogTemplate = operationLogTemplates != null
+				&& !operationLogTemplates.isEmpty() ? operationLogTemplates.get(0) : null;
+		if (existingOperationLogTemplate != null) {
+			existingOperationLogTemplate = entityFactory.createReportTemplate(existingOperationLogTemplate,
+					operationLogTemplate);
+			reportDao.updateTemplate(existingOperationLogTemplate);
+		} else {
+			reportDao.saveTemplate(operationLogTemplate);
 		}
 	}
 
@@ -215,6 +229,14 @@ public class TemplateManager {
 	 */
 	public void setSessionActivityTemplate(IReportTemplate sessionActivityTemplate) {
 		this.sessionActivityTemplate = sessionActivityTemplate;
+	}
+
+	public IReportTemplate getOperationLogTemplate() {
+		return operationLogTemplate;
+	}
+
+	public void setOperationLogTemplate(IReportTemplate operationLogTemplate) {
+		this.operationLogTemplate = operationLogTemplate;
 	}
 
 }

@@ -60,6 +60,7 @@
 				/lider/report/** = myAuthcAuth
 				/lider/agent/** = myAuthcAuth
 				/lider/searchgroup/** = myAuthcAuth
+				/lider/operationlog/** = myAuthcAuth
 				/** = myAuthcAuth
 			</value>
 		</property>
@@ -94,5 +95,8 @@
 
 	<osgi:reference id="responseFactory"
 		interface="tr.org.liderahenk.lider.core.api.rest.IResponseFactory" />
+
+	<osgi:reference id="ldapService"
+		interface="tr.org.liderahenk.lider.core.api.ldap.ILDAPService" />
 		
 </beans>

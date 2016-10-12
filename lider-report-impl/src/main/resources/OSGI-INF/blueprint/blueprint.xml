@@ -25,6 +25,9 @@
 	<bean id="sessionActivityTemplate"
 		class="tr.org.liderahenk.lider.report.templates.SessionActivityReportTemplateImpl" />
 
+	<bean id="operationLogTemplate"
+		class="tr.org.liderahenk.lider.report.templates.OperationLogReportTemplateImpl" />
+
 	<bean id="templateManager" class="tr.org.liderahenk.lider.report.TemplateManager" 
 		init-method="init" destroy-method="destroy">
 		<property name="reportDao" ref="reportDao" />
@@ -36,6 +39,7 @@
 		<property name="installedPluginsTemplate" ref="installedPluginsTemplate" />
 		<property name="agentHardwareTemplate" ref="agentHardwareTemplate" />
 		<property name="sessionActivityTemplate" ref="sessionActivityTemplate" />
+		<property name="operationLogTemplate" ref="operationLogTemplate" />
 	</bean>
 	
 	<service ref="alarmManager" interface="org.osgi.service.event.EventHandler">

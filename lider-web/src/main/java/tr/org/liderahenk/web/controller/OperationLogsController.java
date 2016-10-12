@@ -22,26 +22,23 @@ import tr.org.liderahenk.lider.core.api.ldap.model.IUser;
 import tr.org.liderahenk.lider.core.api.log.IOperationLogService;
 import tr.org.liderahenk.lider.core.api.persistence.enums.CrudType;
 import tr.org.liderahenk.lider.core.api.rest.IResponseFactory;
-import tr.org.liderahenk.lider.core.api.rest.processors.IPluginRequestProcessor;
 import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
 import tr.org.liderahenk.web.controller.utils.ControllerUtils;
 
 /**
- * Controller for plugin related operations.
+ * Controller for agent related operations.
  * 
- * @author <a href="mailto:emre.akkaya@agem.com.tr">Emre Akkaya</a>
+ * @author <a href="mailto:cemre.alpsoy@agem.com.tr">Cemre ALPSOY</a>
  *
  */
 @Controller
-@RequestMapping("/lider/plugin")
-public class PluginController {
+@RequestMapping("/lider/operationlog")
+public class OperationLogsController {
 
-	private static Logger logger = LoggerFactory.getLogger(PluginController.class);
+	private static Logger logger = LoggerFactory.getLogger(OperationLogsController.class);
 
 	@Autowired
 	private IResponseFactory responseFactory;
-	@Autowired
-	private IPluginRequestProcessor pluginProcessor;
 	@Autowired
 	private IOperationLogService operationLogService;
 	@Autowired
@@ -61,44 +58,43 @@ public class PluginController {
     } 
 
 	/**
-	 * List plugins according to given parameters.
+	 * List operationLogs according to given parameters.
 	 * 
-	 * @param label
-	 * @param active
-	 * @param request
+	 * @param logMessage
+	 * @param requestIp
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 */
-	@RequestMapping(value = "/list", method = { RequestMethod.GET })
+	@RequestMapping(value = "/list", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
-	public IRestResponse listPlugins(@RequestParam(value = "name", required = false) String name,
-			@RequestParam(value = "version", required = false) String version, HttpServletRequest request)
-					throws UnsupportedEncodingException {
-		logger.info("Request received. URL: '/lider/plugin/list?name={}&version={}'", new Object[] { name, version });
-		IRestResponse restResponse = pluginProcessor.list(name, version);
+	public IRestResponse listOperationLogs(@RequestParam(value = "logMessage", required = false) String logMessage,
+			@RequestParam(value = "requestIp", required = false) String requestIp, HttpServletRequest request)
+			throws UnsupportedEncodingException {
+		logger.info("Request received. URL: '/lider/operationlog/list?logMessage={}&requestIp={}'", new Object[] { logMessage, requestIp});
+		IRestResponse restResponse = operationLogService.list(logMessage, requestIp);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		ControllerUtils.recordOperationLog(operationLogService, CrudType.READ,findUserId(),
-				findUserId() + " kullanıcısı eklentileri listeledi", null, request.getRemoteHost(), "log", null);
+				findUserId() + " kullanıcısı işlem loglarını listeledi", null, request.getRemoteHost(), "log", null);
 		return restResponse;
 	}
 
 	/**
-	 * Retrieve plugin specified by id
+	 * Retrieve operation log specified by id
 	 * 
 	 * @param id
 	 * @param request
 	 * @return
 	 * @throws UnsupportedEncodingException
 	 */
-	@RequestMapping(value = "/{id:[\\d]+}/get", method = { RequestMethod.GET })
+	@RequestMapping(value = "/{id:[\\d]+}/get", method = { RequestMethod.GET, RequestMethod.POST })
 	@ResponseBody
-	public IRestResponse getPlugin(@PathVariable final long id, HttpServletRequest request)
+	public IRestResponse getOperationLog(@PathVariable final long id, HttpServletRequest request)
 			throws UnsupportedEncodingException {
-		logger.info("Request received. URL: '/lider/plugin/{}/get'", id);
-		IRestResponse restResponse = pluginProcessor.get(id);
+		logger.info("Request received. URL: '/lider/agent/{}/get'", id);
+		IRestResponse restResponse = operationLogService.get(id);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		ControllerUtils.recordOperationLog(operationLogService, CrudType.READ,findUserId(),
-				findUserId() + " kullanıcısı bir eklentiyi seçti", null, request.getRemoteHost(), "log", null);
+				findUserId() + " kullanıcısı bir işlem logunu seçti", null, request.getRemoteHost(), "log", null);
 		return restResponse;
 	}
 

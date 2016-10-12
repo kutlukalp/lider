@@ -4,6 +4,8 @@ import java.io.UnsupportedEncodingException;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
+import tr.org.liderahenk.lider.core.api.ldap.model.IUser;
+import tr.org.liderahenk.lider.core.api.log.IOperationLogService;
+import tr.org.liderahenk.lider.core.api.persistence.enums.CrudType;
 import tr.org.liderahenk.lider.core.api.rest.IResponseFactory;
 import tr.org.liderahenk.lider.core.api.rest.processors.IAgentRequestProcessor;
 import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
@@ -36,6 +42,23 @@ public class AgentController {
 	private IResponseFactory responseFactory;
 	@Autowired
 	private IAgentRequestProcessor agentProcessor;
+	@Autowired
+	private IOperationLogService operationLogService;
+	@Autowired
+	private ILDAPService ldapService;
+
+	public String findUserId() {
+        try {
+            Subject currentUser = SecurityUtils.getSubject();
+            String userDn = currentUser.getPrincipal().toString();
+            logger.info(userDn);
+            IUser user = ldapService.getUser(userDn);
+            return user.getUid();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        return "";
+    } 
 
 	/**
 	 * List agents according to given parameters.
@@ -55,6 +78,8 @@ public class AgentController {
 		logger.info("Request received. URL: '/lider/agent/list?hostname={}&dn={}&uid={}'", new Object[] { hostname, dn, uid });
 		IRestResponse restResponse = agentProcessor.list(hostname, dn, uid);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
+		ControllerUtils.recordOperationLog(operationLogService, CrudType.READ,findUserId(),
+				findUserId() + " kullanıcısı ajanları listeledi", null, request.getRemoteHost(), "log", null);
 		return restResponse;
 	}
 
@@ -73,6 +98,8 @@ public class AgentController {
 		logger.info("Request received. URL: '/lider/agent/{}/get'", id);
 		IRestResponse restResponse = agentProcessor.get(id);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
+		ControllerUtils.recordOperationLog(operationLogService, CrudType.READ,findUserId(),
+				findUserId() + " kullanıcısı bir ajanı seçti", null, request.getRemoteHost(), "log", null);
 		return restResponse;
 	}
 
@@ -89,6 +116,8 @@ public class AgentController {
 		logger.info("Request received. URL: '/lider/agent/{}/onlineusers'", dn);
 		IRestResponse restResponse = agentProcessor.getOnlineUsers(dn);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
+		ControllerUtils.recordOperationLog(operationLogService, CrudType.READ,findUserId(),
+				findUserId() + " kullanıcısı bir dn'deki çevrimiçi kullanıcıları listeledi", null, request.getRemoteHost(), "log", null);
 		return restResponse;
 	}
 
@@ -105,6 +134,8 @@ public class AgentController {
 		logger.info("Request received. URL: '/lider/agent/onlineusers'");
 		IRestResponse restResponse = agentProcessor.getAllOnlineUsers();
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
+		ControllerUtils.recordOperationLog(operationLogService, CrudType.READ,findUserId(),
+				findUserId() + " kullanıcısı tüm çevrimiçi kullanıcıları listeledi", null, request.getRemoteHost(), "log", null);
 		return restResponse;
 	}
 

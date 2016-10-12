@@ -2,9 +2,12 @@ package tr.org.liderahenk.lider.core.api.log;
 
 import tr.org.liderahenk.lider.core.api.persistence.entities.IOperationLog;
 import tr.org.liderahenk.lider.core.api.persistence.enums.CrudType;
+import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
 
 public interface IOperationLogService {
 
+	IRestResponse list(String logMessage, String requestIp);
+	IRestResponse get(Long id);
 	/**
 	 * 
 	 * @param userId

@@ -4,6 +4,8 @@ import java.io.UnsupportedEncodingException;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
+import tr.org.liderahenk.lider.core.api.ldap.model.IUser;
+import tr.org.liderahenk.lider.core.api.log.IOperationLogService;
+import tr.org.liderahenk.lider.core.api.persistence.enums.CrudType;
 import tr.org.liderahenk.lider.core.api.rest.IResponseFactory;
 import tr.org.liderahenk.lider.core.api.rest.processors.IReportRequestProcessor;
 import tr.org.liderahenk.lider.core.api.rest.responses.IRestResponse;
@@ -37,6 +43,23 @@ public class ReportController {
 	private IResponseFactory responseFactory;
 	@Autowired
 	private IReportRequestProcessor reportProcessor;
+	@Autowired
+	private IOperationLogService operationLogService;
+	@Autowired
+	private ILDAPService ldapService;
+
+	public String findUserId() {
+        try {
+            Subject currentUser = SecurityUtils.getSubject();
+            String userDn = currentUser.getPrincipal().toString();
+            logger.info(userDn);
+            IUser user = ldapService.getUser(userDn);
+            return user.getUid();
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+        return "";
+    } 
 
 	/**
 	 * Validate provided template.
@@ -73,6 +96,8 @@ public class ReportController {
 		logger.info("Request received. URL: '/lider/report/template/add' Body: {}", requestBodyDecoded);
 		IRestResponse restResponse = reportProcessor.addTemplate(requestBodyDecoded);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
+		ControllerUtils.recordOperationLog(operationLogService,
+				CrudType.CREATE, findUserId(), findUserId() + " kullanıcısı yeni bir rapor şablonu oluşturdu", null, request.getRemoteHost(), "log", null);
 		return restResponse;
 	}
 
@@ -92,6 +117,8 @@ public class ReportController {
 		logger.info("Request received. URL: '/lider/report/template/update' Body: {}", requestBodyDecoded);
 		IRestResponse restResponse = reportProcessor.updateTemplate(requestBodyDecoded);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
+		ControllerUtils.recordOperationLog(operationLogService,
+				CrudType.UPDATE, findUserId(), findUserId() + " kullanıcısı bir rapor şablonunu güncelledi", null, request.getRemoteHost(), "log", null);
 		return restResponse;
 	}
 
@@ -111,6 +138,8 @@ public class ReportController {
 		logger.info("Request received. URL: '/lider/report/template/list?name={}'", name);
 		IRestResponse restResponse = reportProcessor.listTemplates(name);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
+		ControllerUtils.recordOperationLog(operationLogService,
+				CrudType.READ, findUserId(), findUserId() + " kullanıcısı rapor şablonlarını listeledi", null, request.getRemoteHost(), "log", null);
 		return restResponse;
 	}
 
@@ -129,6 +158,8 @@ public class ReportController {
 		logger.info("Request received. URL: '/lider/report/template/{}/get'", id);
 		IRestResponse restResponse = reportProcessor.getTemplate(id);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
+		ControllerUtils.recordOperationLog(operationLogService, CrudType.READ,findUserId(),
+				findUserId() + " kullanıcısı bir rapor şablonu seçti", null, request.getRemoteHost(), "log", null);
 		return restResponse;
 	}
 
@@ -147,6 +178,8 @@ public class ReportController {
 		logger.info("Request received. URL: '/lider/report/template/{}/delete'", id);
 		IRestResponse restResponse = reportProcessor.deleteTemplate(id);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
+		ControllerUtils.recordOperationLog(operationLogService,
+				CrudType.DELETE, findUserId(), findUserId() + " kullanıcısı bir rapor şablonunu sildi", null, request.getRemoteHost(), "log", null);
 		return restResponse;
 	}
 
@@ -166,6 +199,8 @@ public class ReportController {
 		logger.info("Request received. URL: '/lider/report/export/pdf' Body: {}", requestBodyDecoded);
 		IRestResponse restResponse = reportProcessor.exportPdf(requestBodyDecoded);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
+		ControllerUtils.recordOperationLog(operationLogService, CrudType.READ,findUserId(),
+				findUserId() + " kullanıcısı raporu pdf çıktısı olarak aldı", null, request.getRemoteHost(), "log", null);
 		return restResponse;
 	}
 
@@ -185,6 +220,8 @@ public class ReportController {
 		logger.info("Request received. URL: '/lider/report/view/generate' Body: {}", requestBodyDecoded);
 		IRestResponse restResponse = reportProcessor.generateView(requestBodyDecoded);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
+		ControllerUtils.recordOperationLog(operationLogService,
+				CrudType.CREATE, findUserId(), findUserId() + " kullanıcısı bir rapor tanımı oluşturdu", null, request.getRemoteHost(), "log", null);
 		return restResponse;
 	}
 
@@ -204,6 +241,8 @@ public class ReportController {
 		logger.info("Request received. URL: '/lider/report/view/add' Body: {}", requestBodyDecoded);
 		IRestResponse restResponse = reportProcessor.addView(requestBodyDecoded);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
+		ControllerUtils.recordOperationLog(operationLogService,
+				CrudType.CREATE, findUserId(), findUserId() + " kullanıcısı bir rapor tanımı ekledi", null, request.getRemoteHost(), "log", null);
 		return restResponse;
 	}
 
@@ -223,6 +262,8 @@ public class ReportController {
 		logger.info("Request received. URL: '/lider/report/view/update' Body: {}", requestBodyDecoded);
 		IRestResponse restResponse = reportProcessor.updateView(requestBodyDecoded);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
+		ControllerUtils.recordOperationLog(operationLogService,
+				CrudType.UPDATE, findUserId(), findUserId() + " kullanıcısı var olan bir rapor tanımını güncelledi", null, request.getRemoteHost(), "log", null);
 		return restResponse;
 	}
 
@@ -242,6 +283,8 @@ public class ReportController {
 		logger.info("Request received. URL: '/lider/report/view/list?name={}'", name);
 		IRestResponse restResponse = reportProcessor.listViews(name);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
+		ControllerUtils.recordOperationLog(operationLogService,
+				CrudType.READ, findUserId(), findUserId() + " kullanıcısı rapor tanımlarını listeledi", null, request.getRemoteHost(), "log", null);
 		return restResponse;
 	}
 
@@ -260,6 +303,8 @@ public class ReportController {
 		logger.info("Request received. URL: '/lider/report/view/{}/get'", id);
 		IRestResponse restResponse = reportProcessor.getView(id);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
+		ControllerUtils.recordOperationLog(operationLogService, CrudType.READ,findUserId(),
+				findUserId() + " kullanıcısı bir rapor tanımını seçti", null, request.getRemoteHost(), "log", null);
 		return restResponse;
 	}
 
@@ -278,6 +323,8 @@ public class ReportController {
 		logger.info("Request received. URL: '/lider/report/view/{}/delete'", id);
 		IRestResponse restResponse = reportProcessor.deleteView(id);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
+		ControllerUtils.recordOperationLog(operationLogService,
+				CrudType.DELETE, findUserId(), findUserId() + " kullanıcısı bir rapor tanımını sildi", null, request.getRemoteHost(), "log", null);
 		return restResponse;
 	}
 
