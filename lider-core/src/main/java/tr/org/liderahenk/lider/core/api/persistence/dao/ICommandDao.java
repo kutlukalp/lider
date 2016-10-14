@@ -104,14 +104,15 @@ public interface ICommandDao extends IBaseDao<ICommand> {
 	 * 
 	 * @param pluginName
 	 * @param onlyFutureTasks
+	 * @param onlyScheduledTasks
 	 * @param createDateRangeStart
 	 * @param createDateRangeEnd
 	 * @param status
 	 * @param maxResults
 	 * @return
 	 */
-	List<Object[]> findTaskCommand(String pluginName, Boolean onlyFutureTasks, Date createDateRangeStart,
-			Date createDateRangeEnd, Integer status, Integer maxResults);
+	List<Object[]> findTaskCommand(String pluginName, Boolean onlyFutureTasks, Boolean onlyScheduledTasks,
+			Date createDateRangeStart, Date createDateRangeEnd, Integer status, Integer maxResults);
 
 	/**
 	 * Find command with its details (policy, command execution, command

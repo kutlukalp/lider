@@ -49,7 +49,7 @@ public class TaskController {
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
 		return restResponse;
 	}
-	
+
 	@RequestMapping(value = "/{id:[\\d]+}/cancel", method = { RequestMethod.GET })
 	@ResponseBody
 	public IRestResponse cancelTask(@PathVariable final long id, HttpServletRequest request)
@@ -77,16 +77,17 @@ public class TaskController {
 	@ResponseBody
 	public IRestResponse listExecutedTasks(@RequestParam(value = "pluginName", required = false) String pluginName,
 			@RequestParam(value = "onlyFutureTasks", required = false, defaultValue = "false") Boolean onlyFutureTasks,
+			@RequestParam(value = "onlyScheduledTasks", required = false, defaultValue = "false") Boolean onlyScheduledTasks,
 			@RequestParam(value = "createDateRangeStart", required = false) Long createDateRangeStart,
 			@RequestParam(value = "createDateRangeEnd", required = false) Long createDateRangeEnd,
 			@RequestParam(value = "status", required = false) Integer status,
 			@RequestParam(value = "maxResults", required = false) Integer maxResults, HttpServletRequest request)
 			throws UnsupportedEncodingException {
 		logger.debug(
-				"Request received. URL: '/lider/task/list/executed?pluginName={}&onlyFutureTasks={}&createDateRangeStart={}&createDateRangeEnd={}&status={}&maxResults={}'",
-				new Object[] { pluginName, onlyFutureTasks, createDateRangeStart, createDateRangeEnd, status,
-						maxResults });
-		IRestResponse restResponse = taskProcessor.listExecutedTasks(pluginName, onlyFutureTasks,
+				"Request received. URL: '/lider/task/list/executed?pluginName={}&onlyFutureTasks={}&onlyScheduledTasks={}&createDateRangeStart={}&createDateRangeEnd={}&status={}&maxResults={}'",
+				new Object[] { pluginName, onlyFutureTasks, onlyScheduledTasks, createDateRangeStart,
+						createDateRangeEnd, status, maxResults });
+		IRestResponse restResponse = taskProcessor.listExecutedTasks(pluginName, onlyFutureTasks, onlyScheduledTasks,
 				createDateRangeStart != null ? new Date(createDateRangeStart) : null,
 				createDateRangeEnd != null ? new Date(createDateRangeEnd) : null, status, maxResults);
 		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());

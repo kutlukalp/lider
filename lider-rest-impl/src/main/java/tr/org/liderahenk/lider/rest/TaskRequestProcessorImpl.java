@@ -131,17 +131,19 @@ public class TaskRequestProcessorImpl implements ITaskRequestProcessor {
 		if (id == null) {
 			throw new IllegalArgumentException("ID was null.");
 		}
+		// If this is a scheduled task, send message to related agent(s) as well
+		// TODO
 		taskDao.delete(id);
 		logger.info("Task record deleted: {}", id);
 		return responseFactory.createResponse(RestResponseStatus.OK, "Record deleted.");
 	}
 
 	@Override
-	public IRestResponse listExecutedTasks(String pluginName, Boolean onlyFutureTasks, Date createDateRangeStart,
-			Date createDateRangeEnd, Integer status, Integer maxResults) {
+	public IRestResponse listExecutedTasks(String pluginName, Boolean onlyFutureTasks, Boolean onlyScheduledTasks,
+			Date createDateRangeStart, Date createDateRangeEnd, Integer status, Integer maxResults) {
 		// Try to find command results
-		List<Object[]> resultList = commandDao.findTaskCommand(pluginName, onlyFutureTasks, createDateRangeStart,
-				createDateRangeEnd, status, maxResults);
+		List<Object[]> resultList = commandDao.findTaskCommand(pluginName, onlyFutureTasks, onlyScheduledTasks,
+				createDateRangeStart, createDateRangeEnd, status, maxResults);
 		List<ExecutedTask> tasks = null;
 		// Convert SQL result to collection of tasks.
 		if (resultList != null) {

@@ -70,7 +70,7 @@ public interface ICommand {
 	String getCommandId();
 
 	/**
-	 * @return true if this command needs agent interaction to fulfil its job,
+	 * @return true if this command needs agent interaction to fulfill its job,
 	 *         false otherwise.
 	 */
 	Boolean executeOnAgent();

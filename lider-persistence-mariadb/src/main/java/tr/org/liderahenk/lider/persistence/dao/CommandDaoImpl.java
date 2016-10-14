@@ -212,8 +212,8 @@ public class CommandDaoImpl implements ICommandDao {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Object[]> findTaskCommand(String pluginName, Boolean onlyFutureTasks, Date createDateRangeStart,
-			Date createDateRangeEnd, Integer status, Integer maxResults) {
+	public List<Object[]> findTaskCommand(String pluginName, Boolean onlyFutureTasks, Boolean onlyScheduledTasks,
+			Date createDateRangeStart, Date createDateRangeEnd, Integer status, Integer maxResults) {
 		String sql = FIND_TASK_COMMAND_WITH_DETAILS;
 		// Collect query conditions/parameters
 		List<String> whereConditions = new ArrayList<String>();
@@ -225,6 +225,9 @@ public class CommandDaoImpl implements ICommandDao {
 		if (onlyFutureTasks != null && onlyFutureTasks.booleanValue()) {
 			whereConditions.add("c.activationDate IS NOT NULL AND c.activationDate > :today");
 			params.put("today", new Date());
+		}
+		if (onlyScheduledTasks != null && onlyScheduledTasks.booleanValue()) {
+			whereConditions.add("t.cronExpression IS NOT NULL");
 		}
 		if (createDateRangeStart != null && createDateRangeEnd != null) {
 			whereConditions.add("t.createDate BETWEEN :startDate AND :endDate");

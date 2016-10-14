@@ -22,15 +22,16 @@ public interface ITaskRequestProcessor {
 	/**
 	 * 
 	 * @param pluginName
-	 * @param pluginVersion
+	 * @param onlyFutureTasks
+	 * @param onlyScheduledTasks
 	 * @param createDateRangeStart
 	 * @param createDateRangeEnd
 	 * @param status
 	 * @param maxResults
 	 * @return
 	 */
-	IRestResponse listExecutedTasks(String pluginName, Boolean onlyFutureTasks, Date createDateRangeStart,
-			Date createDateRangeEnd, Integer status, Integer maxResults);
+	IRestResponse listExecutedTasks(String pluginName, Boolean onlyFutureTasks, Boolean onlyScheduledTasks,
+			Date createDateRangeStart, Date createDateRangeEnd, Integer status, Integer maxResults);
 
 	/**
 	 * 

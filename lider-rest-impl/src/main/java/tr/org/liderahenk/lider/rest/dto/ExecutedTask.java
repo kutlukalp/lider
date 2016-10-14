@@ -35,6 +35,8 @@ public class ExecutedTask implements Serializable {
 
 	private Boolean cancelled;
 
+	private Boolean scheduled;
+
 	public ExecutedTask(ITask task, Integer successResults, Integer errorResults) {
 		super();
 		this.id = task.getId();
@@ -45,6 +47,7 @@ public class ExecutedTask implements Serializable {
 		this.successResults = successResults;
 		this.errorResults = errorResults;
 		this.cancelled = task.isDeleted();
+		this.scheduled = task.getCronExpression() != null && !task.getCronExpression().isEmpty();
 	}
 
 	public Long getId() {
@@ -109,6 +112,14 @@ public class ExecutedTask implements Serializable {
 
 	public void setCancelled(Boolean cancelled) {
 		this.cancelled = cancelled;
+	}
+
+	public Boolean getScheduled() {
+		return scheduled;
+	}
+
+	public void setScheduled(Boolean scheduled) {
+		this.scheduled = scheduled;
 	}
 
 }
