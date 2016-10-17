@@ -18,6 +18,7 @@ import tr.org.liderahenk.lider.core.api.messaging.messages.IInstallPluginMessage
 import tr.org.liderahenk.lider.core.api.messaging.messages.IPluginNotFoundMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IRegistrationResponseMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IResponseAgreementMessage;
+import tr.org.liderahenk.lider.core.api.messaging.messages.IUpdateScheduledTaskMessage;
 import tr.org.liderahenk.lider.core.api.messaging.notifications.ITaskNotification;
 import tr.org.liderahenk.lider.core.api.messaging.notifications.ITaskStatusNotification;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
@@ -32,6 +33,7 @@ import tr.org.liderahenk.lider.messaging.messages.InstallPluginMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.PluginNotFoundMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.RegistrationResponseMessageImpl;
 import tr.org.liderahenk.lider.messaging.messages.ResponseAgreementMessageImpl;
+import tr.org.liderahenk.lider.messaging.messages.UpdateScheduledTaskMessageImpl;
 import tr.org.liderahenk.lider.messaging.notifications.TaskNotificationImpl;
 import tr.org.liderahenk.lider.messaging.notifications.TaskStatusNotificationImpl;
 
@@ -108,6 +110,12 @@ public class MessageFactoryImpl implements IMessageFactory {
 	public IResponseAgreementMessage createResponseAgreementMessage(String from, Map<String, Object> parameterMap,
 			Protocol protocol) {
 		return new ResponseAgreementMessageImpl(from, parameterMap, protocol, new Date());
+	}
+
+	@Override
+	public IUpdateScheduledTaskMessage createUpdateScheduledTaskMessage(String recipient, Long taskId,
+			String cronExpression) {
+		return new UpdateScheduledTaskMessageImpl(recipient, taskId, cronExpression, new Date());
 	}
 
 }

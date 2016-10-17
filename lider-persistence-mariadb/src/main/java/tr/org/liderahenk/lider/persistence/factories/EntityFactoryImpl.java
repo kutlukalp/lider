@@ -361,4 +361,12 @@ public class EntityFactoryImpl implements IEntityFactory {
 		return new AgreementStatusImpl(null, (AgentImpl) agent, username, md5, accepted, new Date());
 	}
 
+	@Override
+	public ITask createTask(ITask task, String cronExpression) {
+		TaskImpl taskImpl = new TaskImpl(task);
+		taskImpl.setCronExpression(cronExpression);
+		taskImpl.setModifyDate(new Date());
+		return taskImpl;
+	}
+
 }

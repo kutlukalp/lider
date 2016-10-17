@@ -280,4 +280,6 @@ public interface IEntityFactory {
 	ICommandExecutionResult createCommandExecutionResult(ITaskStatusMessage message, Long resultId,
 			ICommandExecution commandExecution, Long agentId);
 
+	ITask createTask(ITask task, String cronExpression);
+
 }

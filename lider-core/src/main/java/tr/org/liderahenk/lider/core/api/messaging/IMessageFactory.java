@@ -14,6 +14,7 @@ import tr.org.liderahenk.lider.core.api.messaging.messages.ILiderMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IPluginNotFoundMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IRegistrationResponseMessage;
 import tr.org.liderahenk.lider.core.api.messaging.messages.IResponseAgreementMessage;
+import tr.org.liderahenk.lider.core.api.messaging.messages.IUpdateScheduledTaskMessage;
 import tr.org.liderahenk.lider.core.api.messaging.notifications.ITaskNotification;
 import tr.org.liderahenk.lider.core.api.messaging.notifications.ITaskStatusNotification;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
@@ -133,5 +134,14 @@ public interface IMessageFactory {
 	 */
 	IRegistrationResponseMessage createRegistrationResponseMessage(String recipient, StatusCode status, String message,
 			String agentDn);
+
+	/**
+	 * 
+	 * @param recipient
+	 * @param taskId
+	 * @param cronExpression
+	 * @return
+	 */
+	IUpdateScheduledTaskMessage createUpdateScheduledTaskMessage(String recipient, Long taskId, String cronExpression);
 
 }

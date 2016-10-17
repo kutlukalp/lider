@@ -61,4 +61,12 @@ public interface ITaskRequestProcessor {
 	 */
 	IRestResponse cancelTask(Long id);
 
+	/**
+	 * 
+	 * @param id
+	 * @param cronExpression
+	 * @return
+	 */
+	IRestResponse rescheduleTask(Long id, String cronExpression);
+
 }
