@@ -17,11 +17,14 @@ import tr.org.liderahenk.lider.core.api.authorization.IAuthService;
 import tr.org.liderahenk.lider.core.api.configuration.IConfigurationService;
 import tr.org.liderahenk.lider.core.api.ldap.ILDAPService;
 import tr.org.liderahenk.lider.core.api.ldap.model.LdapEntry;
+import tr.org.liderahenk.lider.core.api.messaging.IMessageFactory;
+import tr.org.liderahenk.lider.core.api.messaging.IMessagingService;
 import tr.org.liderahenk.lider.core.api.persistence.dao.ICommandDao;
 import tr.org.liderahenk.lider.core.api.persistence.dao.ITaskDao;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommand;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecutionResult;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
+import tr.org.liderahenk.lider.core.api.persistence.factories.IEntityFactory;
 import tr.org.liderahenk.lider.core.api.rest.IRequestFactory;
 import tr.org.liderahenk.lider.core.api.rest.IResponseFactory;
 import tr.org.liderahenk.lider.core.api.rest.enums.RestResponseStatus;
@@ -53,6 +56,9 @@ public class TaskRequestProcessorImpl implements ITaskRequestProcessor {
 	private ILDAPService ldapService;
 	private ITaskDao taskDao;
 	private ICommandDao commandDao;
+	private IMessagingService messagingService;
+	private IMessageFactory messageFactory;
+	private IEntityFactory entityFactory;
 
 	@Override
 	public IRestResponse execute(String json) {
@@ -131,11 +137,66 @@ public class TaskRequestProcessorImpl implements ITaskRequestProcessor {
 		if (id == null) {
 			throw new IllegalArgumentException("ID was null.");
 		}
-		// If this is a scheduled task, send message to related agent(s) as well
-		// TODO
+		List<? extends ICommand> result = commandDao.findByProperty(ICommand.class, "task.id", id, 1);
+		ICommand command = result != null && !result.isEmpty() ? result.get(0) : null;
+		if (command == null) {
+			throw new IllegalStateException("Couldn't find related command record while rescheduling task");
+		}
+		// If this is a scheduled task, send message to related agent(s) as
+		// well
+		if (command.getTask().getCronExpression() != null) {
+			List<String> uidList = command.getUidList();
+			if (uidList != null) {
+				for (String uid : uidList) {
+					try {
+						messagingService.sendMessage(messageFactory.createUpdateScheduledTaskMessage(uid, id, null));
+					} catch (Exception e) {
+						logger.error(e.getMessage(), e);
+					}
+				}
+			}
+		}
 		taskDao.delete(id);
-		logger.info("Task record deleted: {}", id);
-		return responseFactory.createResponse(RestResponseStatus.OK, "Record deleted.");
+		logger.info("Task record deleted and related agents notified: {}", id);
+		return responseFactory.createResponse(RestResponseStatus.OK, "Task cancelled.");
+	}
+
+	@Override
+	public IRestResponse rescheduleTask(Long id, String cronExpression) {
+		if (id == null) {
+			throw new IllegalArgumentException("ID was null.");
+		}
+		if (cronExpression == null) {
+			throw new IllegalArgumentException("Cron expression was null.");
+		}
+		List<? extends ICommand> result = commandDao.findByProperty(ICommand.class, "task.id", id, 1);
+		ICommand command = result != null && !result.isEmpty() ? result.get(0) : null;
+		if (command == null) {
+			throw new IllegalStateException("Couldn't find related command record while rescheduling task.");
+		}
+		if (command.getTask().getCronExpression() == null) {
+			throw new IllegalStateException("Cannot reschedule tasks without cron expression.");
+		}
+		List<String> uidList = command.getUidList();
+		if (uidList != null) {
+			for (String uid : uidList) {
+				try {
+					messagingService
+							.sendMessage(messageFactory.createUpdateScheduledTaskMessage(uid, id, cronExpression));
+				} catch (Exception e) {
+					logger.error(e.getMessage(), e);
+				}
+			}
+		}
+		try {
+			taskDao.update(entityFactory.createTask(command.getTask(), cronExpression));
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			return responseFactory.createResponse(RestResponseStatus.ERROR,
+					Arrays.asList(new String[] { "Error occurred while rescheduling task." }));
+		}
+		logger.info("Task record updated and related agents rescheduled: {}", id);
+		return responseFactory.createResponse(RestResponseStatus.OK, "Task rescheduled.");
 	}
 
 	@Override
@@ -286,6 +347,30 @@ public class TaskRequestProcessorImpl implements ITaskRequestProcessor {
 	 */
 	public void setCommandDao(ICommandDao commandDao) {
 		this.commandDao = commandDao;
+	}
+
+	/**
+	 * 
+	 * @param messagingService
+	 */
+	public void setMessagingService(IMessagingService messagingService) {
+		this.messagingService = messagingService;
+	}
+
+	/**
+	 * 
+	 * @param messageFactory
+	 */
+	public void setMessageFactory(IMessageFactory messageFactory) {
+		this.messageFactory = messageFactory;
+	}
+
+	/**
+	 * 
+	 * @param entityFactory
+	 */
+	public void setEntityFactory(IEntityFactory entityFactory) {
+		this.entityFactory = entityFactory;
 	}
 
 }

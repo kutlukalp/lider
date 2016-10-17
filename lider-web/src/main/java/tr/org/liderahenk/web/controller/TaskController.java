@@ -60,6 +60,18 @@ public class TaskController {
 		return restResponse;
 	}
 
+	@RequestMapping(value = "/{id:[\\d]+}/reschedule", method = { RequestMethod.GET })
+	@ResponseBody
+	public IRestResponse rescheduleTask(@PathVariable final long id,
+			@RequestParam(value = "cronExpression", required = true) String cronExpression, HttpServletRequest request)
+			throws UnsupportedEncodingException {
+		logger.info("Request received. URL: '/lider/task/{}/reschedule?cronExpression={}'",
+				new Object[] { id, cronExpression });
+		IRestResponse restResponse = taskProcessor.rescheduleTask(id, cronExpression);
+		logger.debug("Completed processing request, returning result: {}", restResponse.toJson());
+		return restResponse;
+	}
+
 	/**
 	 * List commands according to given parameters.
 	 * 
