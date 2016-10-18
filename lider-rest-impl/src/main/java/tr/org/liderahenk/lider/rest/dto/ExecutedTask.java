@@ -31,13 +31,15 @@ public class ExecutedTask implements Serializable {
 
 	private Integer successResults;
 
+	private Integer warningResults;
+
 	private Integer errorResults;
 
 	private Boolean cancelled;
 
 	private Boolean scheduled;
 
-	public ExecutedTask(ITask task, Integer successResults, Integer errorResults) {
+	public ExecutedTask(ITask task, Integer successResults, Integer warningResults, Integer errorResults) {
 		super();
 		this.id = task.getId();
 		this.pluginName = task.getPlugin().getName();
@@ -45,6 +47,7 @@ public class ExecutedTask implements Serializable {
 		this.commandClsId = task.getCommandClsId();
 		this.createDate = task.getCreateDate();
 		this.successResults = successResults;
+		this.warningResults = warningResults;
 		this.errorResults = errorResults;
 		this.cancelled = task.isDeleted();
 		this.scheduled = task.getCronExpression() != null && !task.getCronExpression().isEmpty();
@@ -104,6 +107,14 @@ public class ExecutedTask implements Serializable {
 
 	public void setSuccessResults(Integer successResults) {
 		this.successResults = successResults;
+	}
+
+	public Integer getWarningResults() {
+		return warningResults;
+	}
+
+	public void setWarningResults(Integer warningResults) {
+		this.warningResults = warningResults;
 	}
 
 	public Boolean getCancelled() {

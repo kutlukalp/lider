@@ -27,23 +27,17 @@ public class AppliedPolicy implements Serializable {
 
 	private Integer successResults;
 
+	private Integer warningResults;
+
 	private Integer errorResults;
 
-	public AppliedPolicy(IPolicy policy, Integer successResults, Integer errorResults) {
+	public AppliedPolicy(IPolicy policy, Integer successResults, Integer warningResults, Integer errorResults) {
 		super();
 		this.id = policy.getId();
 		this.label = policy.getLabel();
 		this.createDate = policy.getCreateDate();
 		this.successResults = successResults;
-		this.errorResults = errorResults;
-	}
-
-	public AppliedPolicy(Long id, String label, Date createDate, Integer successResults, Integer errorResults) {
-		super();
-		this.id = id;
-		this.label = label;
-		this.createDate = createDate;
-		this.successResults = successResults;
+		this.warningResults = warningResults;
 		this.errorResults = errorResults;
 	}
 
@@ -85,6 +79,14 @@ public class AppliedPolicy implements Serializable {
 
 	public void setErrorResults(Integer errorResults) {
 		this.errorResults = errorResults;
+	}
+
+	public Integer getWarningResults() {
+		return warningResults;
+	}
+
+	public void setWarningResults(Integer warningResults) {
+		this.warningResults = warningResults;
 	}
 
 }

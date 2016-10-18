@@ -240,10 +240,10 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 		if (resultList != null) {
 			policies = new ArrayList<AppliedPolicy>();
 			for (Object[] arr : resultList) {
-				if (arr.length != 3) {
+				if (arr.length != 4) {
 					continue;
 				}
-				AppliedPolicy policy = new AppliedPolicy((IPolicy) arr[0], (Integer) arr[1], (Integer) arr[2]);
+				AppliedPolicy policy = new AppliedPolicy((IPolicy) arr[0], (Integer) arr[1], (Integer) arr[2], (Integer) arr[3]);
 				policies.add(policy);
 			}
 		}

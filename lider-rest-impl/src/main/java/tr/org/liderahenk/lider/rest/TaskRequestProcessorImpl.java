@@ -210,10 +210,10 @@ public class TaskRequestProcessorImpl implements ITaskRequestProcessor {
 		if (resultList != null) {
 			tasks = new ArrayList<ExecutedTask>();
 			for (Object[] arr : resultList) {
-				if (arr.length != 3) {
+				if (arr.length != 4) {
 					continue;
 				}
-				ExecutedTask task = new ExecutedTask((ITask) arr[0], (Integer) arr[1], (Integer) arr[2]);
+				ExecutedTask task = new ExecutedTask((ITask) arr[0], (Integer) arr[1], (Integer) arr[2], (Integer) arr[3]);
 				tasks.add(task);
 			}
 		}

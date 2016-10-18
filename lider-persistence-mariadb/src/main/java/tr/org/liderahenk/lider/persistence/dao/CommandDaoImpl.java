@@ -206,6 +206,7 @@ public class CommandDaoImpl implements ICommandDao {
 
 	private static final String FIND_TASK_COMMAND_WITH_DETAILS = "SELECT t, "
 			+ "SUM(CASE WHEN cer.responseCode = :resp_success then 1 ELSE 0 END) as success, "
+			+ "SUM(CASE WHEN cer.responseCode = :resp_warning then 1 ELSE 0 END) as warning, "
 			+ "SUM(CASE WHEN cer.responseCode = :resp_error then 1 ELSE 0 END) as error "
 			+ "FROM CommandImpl c LEFT JOIN c.commandExecutions ce LEFT JOIN ce.commandExecutionResults cer INNER JOIN c.task t INNER JOIN t.plugin p "
 			+ "##WHERE## GROUP BY t ORDER BY t.createDate DESC";
@@ -244,6 +245,7 @@ public class CommandDaoImpl implements ICommandDao {
 		}
 		// Add parameter values for 'CASE WHEN' statements
 		params.put("resp_success", StatusCode.TASK_PROCESSED.getId());
+		params.put("resp_warning", StatusCode.TASK_WARNING.getId());
 		params.put("resp_error", StatusCode.TASK_ERROR.getId());
 
 		Query query = entityManager.createQuery(sql);
@@ -275,6 +277,7 @@ public class CommandDaoImpl implements ICommandDao {
 
 	private static final String FIND_POLICY_COMMAND_WITH_DETAILS = "SELECT p, "
 			+ "SUM(CASE WHEN cer.responseCode = :resp_success then 1 ELSE 0 END) as success, "
+			+ "SUM(CASE WHEN cer.responseCode = :resp_warning then 1 ELSE 0 END) as warning, "
 			+ "SUM(CASE WHEN cer.responseCode = :resp_error then 1 ELSE 0 END) as error "
 			+ "FROM CommandImpl c LEFT JOIN c.commandExecutions ce LEFT JOIN ce.commandExecutionResults cer INNER JOIN c.policy p "
 			+ "##WHERE## GROUP BY p ORDER BY p.createDate DESC";
@@ -306,6 +309,7 @@ public class CommandDaoImpl implements ICommandDao {
 		}
 		// Add parameter values for 'CASE WHEN' statements
 		params.put("resp_success", StatusCode.POLICY_PROCESSED.getId());
+		params.put("resp_warning", StatusCode.TASK_WARNING.getId());
 		params.put("resp_error", StatusCode.POLICY_ERROR.getId());
 
 		Query query = entityManager.createQuery(sql);
