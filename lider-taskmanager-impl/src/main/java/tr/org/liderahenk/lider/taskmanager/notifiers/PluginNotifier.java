@@ -1,6 +1,7 @@
 package tr.org.liderahenk.lider.taskmanager.notifiers;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Locale;
 
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import tr.org.liderahenk.lider.core.api.messaging.messages.ITaskStatusMessage;
 import tr.org.liderahenk.lider.core.api.persistence.entities.ICommandExecutionResult;
+import tr.org.liderahenk.lider.core.api.persistence.entities.ITask;
 import tr.org.liderahenk.lider.core.api.plugin.ITaskAwareCommand;
 
 /**
@@ -23,9 +25,53 @@ public class PluginNotifier implements EventHandler {
 
 	private static Logger logger = LoggerFactory.getLogger(PluginNotifier.class);
 
-	private List<ITaskAwareCommand> taskAwareCommands;
-	// TODO improvement. get plugin name, version & command cls id from task
-	// and notify only its related subscriber.
+	/**
+	 * A map to store all available commands. Key format of the key is as
+	 * follows:<br/>
+	 * {PLUGIN_NAME}:{PLUGIN_VERSION}:{COMMAND_ID}
+	 */
+	private HashMap<String, ITaskAwareCommand> subscribers;
+
+	/**
+	 * 
+	 * @param command
+	 */
+	public void bindCommand(ITaskAwareCommand command) {
+		if (subscribers == null) {
+			subscribers = new HashMap<String, ITaskAwareCommand>();
+		}
+		String key = buildKey(command.getPluginName(), command.getPluginVersion(), command.getCommandId());
+		subscribers.put(key, command);
+		logger.info("Registered command: {}", key);
+	}
+
+	/**
+	 * 
+	 * @param command
+	 */
+	public void unbindCommand(ITaskAwareCommand command) {
+		if (subscribers == null)
+			return;
+		String key = buildKey(command.getPluginName(), command.getPluginVersion(), command.getCommandId());
+		subscribers.remove(key);
+		logger.info("Unregistered command: {}", key);
+	}
+
+	/**
+	 * Builds key string from provided parameters. Key format is as follows:
+	 * <br/>
+	 * {PLUGIN_NAME}:{PLUGIN_VERSION}:{COMMAND_ID}
+	 * 
+	 * @param pluginName
+	 * @param pluginVersion
+	 * @param commandId
+	 * @return
+	 */
+	public String buildKey(String pluginName, String pluginVersion, String commandId) {
+		StringBuilder key = new StringBuilder();
+		key.append(pluginName).append(":").append(pluginVersion).append(":").append(commandId);
+		return key.toString().toUpperCase(Locale.ENGLISH);
+	}
 
 	@Override
 	public void handleEvent(Event event) {
@@ -37,9 +83,12 @@ public class PluginNotifier implements EventHandler {
 		logger.info("Sending task status message to plugins. Task: {} Status: {}",
 				new Object[] { message.getTaskId(), message.getResponseCode() });
 
-		for (ITaskAwareCommand subscriber : taskAwareCommands) {
+		ITask task = result.getCommandExecution().getCommand().getTask();
+		String key = buildKey(task.getPlugin().getName(), task.getPlugin().getVersion(), task.getCommandClsId());
+
+		ITaskAwareCommand subscriber = subscribers.get(key.toUpperCase(Locale.ENGLISH));
+		if (subscriber != null) {
 			try {
-				// TODO notify asynchronously!
 				subscriber.onTaskUpdate(result);
 				logger.debug("Notified subscriber: {} with task status: {}", new Object[] { subscriber, message });
 			} catch (Throwable e) {
@@ -48,14 +97,6 @@ public class PluginNotifier implements EventHandler {
 		}
 
 		logger.info("Handled task status.");
-	}
-
-	/**
-	 * 
-	 * @param taskAwareCommands
-	 */
-	public void setTaskAwareCommands(List<ITaskAwareCommand> taskAwareCommands) {
-		this.taskAwareCommands = taskAwareCommands;
 	}
 
 }

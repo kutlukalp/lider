@@ -35,7 +35,6 @@
 	</service>
 	<bean id="pluginNotifier"
 		class="tr.org.liderahenk.lider.taskmanager.notifiers.PluginNotifier">
-		<property name="taskAwareCommands" ref="taskAwareCommands" />
 	</bean>
 	
 	<!-- Task status notifier for Lider Console -->
@@ -68,7 +67,9 @@
 		interface="tr.org.liderahenk.lider.core.api.persistence.factories.IEntityFactory" />
 	<reference-list id="taskAwareCommands"
 		interface="tr.org.liderahenk.lider.core.api.plugin.ITaskAwareCommand"
-		availability="optional" />
+		availability="optional">
+		<reference-listener bind-method="bindCommand" unbind-method="unbindCommand" ref="pluginNotifier" />
+	</reference-list>
 	<reference id="configurationService"
 		interface="tr.org.liderahenk.lider.core.api.configuration.IConfigurationService" />
 	<reference id="eventAdmin" interface="org.osgi.service.event.EventAdmin" />
