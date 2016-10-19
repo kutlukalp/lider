@@ -62,73 +62,73 @@
 
 	<feature name="lider-plugin-bundles" description="${project.name}"
 		version="${project.version}">
-		<configfile finalname="/etc/tr.org.liderahenk.remote.access.cfg">mvn:${groupId}/lider-remote-access/1.0.0/cfg</configfile>
+		<configfile finalname="/etc/tr.org.liderahenk.remote.access.cfg" override="true">mvn:${groupId}/lider-remote-access/1.0.0/cfg</configfile>
 		<bundle start-level="90">mvn:${groupId}/lider-remote-access/1.0.0</bundle>
 		
-		<configfile finalname="/etc/tr.org.liderahenk.packagemanager.cfg">mvn:${groupId}/lider-package-manager/1.0.0/cfg</configfile>
+		<configfile finalname="/etc/tr.org.liderahenk.packagemanager.cfg" override="true">mvn:${groupId}/lider-package-manager/1.0.0/cfg</configfile>
 		<bundle start-level="90">mvn:${groupId}/lider-package-manager/1.0.0</bundle>
 		<bundle start-level="90">mvn:${groupId}/lider-package-manager-db/1.0.0</bundle>
 		
-		<configfile finalname="/etc/tr.org.liderahenk.resourceusage.cfg">mvn:${groupId}/lider-resource-usage/1.0.0/cfg</configfile>
+		<configfile finalname="/etc/tr.org.liderahenk.resourceusage.cfg" override="true">mvn:${groupId}/lider-resource-usage/1.0.0/cfg</configfile>
 		<bundle start-level="90">mvn:${groupId}/lider-resource-usage/1.0.0</bundle>
 		
-		<configfile finalname="/etc/tr.org.liderahenk.disk.quota.cfg">mvn:${groupId}/lider-disk-quota/1.0.0/cfg</configfile>
+		<configfile finalname="/etc/tr.org.liderahenk.disk.quota.cfg" override="true">mvn:${groupId}/lider-disk-quota/1.0.0/cfg</configfile>
 		<bundle start-level="90">mvn:${groupId}/lider-disk-quota/1.0.0</bundle>
 		
-		<configfile finalname="/etc/tr.org.liderahenk.screenshot.cfg">mvn:${groupId}/lider-screenshot/1.0.0/cfg</configfile>
+		<configfile finalname="/etc/tr.org.liderahenk.screenshot.cfg" override="true">mvn:${groupId}/lider-screenshot/1.0.0/cfg</configfile>
 		<bundle start-level="90">mvn:${groupId}/lider-screenshot/1.0.0</bundle>
 		
-		<configfile finalname="/etc/tr.org.liderahenk.conky.cfg">mvn:${groupId}/lider-conky/1.0.0/cfg</configfile>
+		<configfile finalname="/etc/tr.org.liderahenk.conky.cfg" override="true">mvn:${groupId}/lider-conky/1.0.0/cfg</configfile>
 		<bundle start-level="90">mvn:${groupId}/lider-conky/1.0.0</bundle>
 		
-		<configfile finalname="/etc/tr.org.liderahenk.browser.cfg">mvn:${groupId}/lider-browser/1.0.0/cfg</configfile>
+		<configfile finalname="/etc/tr.org.liderahenk.browser.cfg" override="true">mvn:${groupId}/lider-browser/1.0.0/cfg</configfile>
 		<bundle start-level="90">mvn:${groupId}/lider-browser/1.0.0</bundle>
 		
-		<configfile finalname="/etc/tr.org.liderahenk.biosupdater.cfg">mvn:${groupId}/lider-bios-updater/1.0.0/cfg</configfile>
+		<configfile finalname="/etc/tr.org.liderahenk.biosupdater.cfg" override="true">mvn:${groupId}/lider-bios-updater/1.0.0/cfg</configfile>
 		<bundle start-level="90">mvn:${groupId}/lider-bios-updater/1.0.0</bundle>
 		
-		<configfile finalname="/etc/tr.org.liderahenk.backup.cfg">mvn:${groupId}/lider-backup/1.0.0/cfg</configfile>
+		<configfile finalname="/etc/tr.org.liderahenk.backup.cfg" override="true">mvn:${groupId}/lider-backup/1.0.0/cfg</configfile>
 		<bundle start-level="90">mvn:${groupId}/lider-backup/1.0.0</bundle>
 		
-		<configfile finalname="/etc/tr.org.liderahenk.loginmanager.cfg">mvn:${groupId}/lider-login-manager/1.0.0/cfg</configfile>
+		<configfile finalname="/etc/tr.org.liderahenk.loginmanager.cfg" override="true">mvn:${groupId}/lider-login-manager/1.0.0/cfg</configfile>
 		<bundle start-level="90">mvn:${groupId}/lider-login-manager/1.0.0</bundle>
 		
-		<configfile finalname="/etc/tr.org.liderahenk.network.inventory.cfg">mvn:${groupId}/lider-network-inventory/1.0.0/cfg</configfile>
+		<configfile finalname="/etc/tr.org.liderahenk.network.inventory.cfg" override="true">mvn:${groupId}/lider-network-inventory/1.0.0/cfg</configfile>
 		<bundle start-level="90">mvn:${groupId}/lider-network-inventory/1.0.0</bundle>
 		<bundle start-level="90">mvn:${groupId}/lider-network-inventory-db/1.0.0</bundle>
 		
-		<configfile finalname="/etc/tr.org.liderahenk.rsyslog.cfg">mvn:${groupId}/lider-rsyslog/1.0.0/cfg</configfile>
+		<configfile finalname="/etc/tr.org.liderahenk.rsyslog.cfg" override="true">mvn:${groupId}/lider-rsyslog/1.0.0/cfg</configfile>
 		<bundle start-level="90">mvn:${groupId}/lider-rsyslog/1.0.0</bundle>
 		
-		<configfile finalname="/etc/tr.org.liderahenk.screensaver.cfg">mvn:${groupId}/lider-screensaver/1.0.0/cfg</configfile>
+		<configfile finalname="/etc/tr.org.liderahenk.screensaver.cfg" override="true">mvn:${groupId}/lider-screensaver/1.0.0/cfg</configfile>
 		<bundle start-level="90">mvn:${groupId}/lider-screensaver/1.0.0</bundle>
 		
-		<configfile finalname="/etc/tr.org.liderahenk.screenshot.cfg">mvn:${groupId}/lider-screenshot/1.0.0/cfg</configfile>
+		<configfile finalname="/etc/tr.org.liderahenk.screenshot.cfg" override="true">mvn:${groupId}/lider-screenshot/1.0.0/cfg</configfile>
 		<bundle start-level="90">mvn:${groupId}/lider-screenshot/1.0.0</bundle>
 		
-		<configfile finalname="/etc/tr.org.liderahenk.script.cfg">mvn:${groupId}/lider-script/1.0.0/cfg</configfile>
+		<configfile finalname="/etc/tr.org.liderahenk.script.cfg" override="true">mvn:${groupId}/lider-script/1.0.0/cfg</configfile>
 		<bundle start-level="90">mvn:${groupId}/lider-script/1.0.0</bundle>
 		<bundle start-level="90">mvn:${groupId}/lider-script-db/1.0.0</bundle>
 		
-		<configfile finalname="/etc/tr.org.liderahenk.usb.cfg">mvn:${groupId}/lider-usb/1.0.0/cfg</configfile>
+		<configfile finalname="/etc/tr.org.liderahenk.usb.cfg" override="true">mvn:${groupId}/lider-usb/1.0.0/cfg</configfile>
 		<bundle start-level="90">mvn:${groupId}/lider-usb/1.0.0</bundle>
 		
-		<configfile finalname="/etc/tr.org.liderahenk.user.privilege.cfg">mvn:${groupId}/lider-user-privilege/1.0.0/cfg</configfile>
+		<configfile finalname="/etc/tr.org.liderahenk.user.privilege.cfg" override="true">mvn:${groupId}/lider-user-privilege/1.0.0/cfg</configfile>
 		<bundle start-level="90">mvn:${groupId}/lider-user-privilege/1.0.0</bundle>
 		
-		<configfile finalname="/etc/tr.org.liderahenk.wol.cfg">mvn:${groupId}/lider-wol/1.0.0/cfg</configfile>
+		<configfile finalname="/etc/tr.org.liderahenk.wol.cfg" override="true">mvn:${groupId}/lider-wol/1.0.0/cfg</configfile>
 		<bundle start-level="90">mvn:${groupId}/lider-wol/1.0.0</bundle>
 		
-		<configfile finalname="/etc/tr.org.liderahenk.antivirus.cfg">mvn:${groupId}/lider-antivirus/1.0.0/cfg</configfile>
+		<configfile finalname="/etc/tr.org.liderahenk.antivirus.cfg" override="true">mvn:${groupId}/lider-antivirus/1.0.0/cfg</configfile>
 		<bundle start-level="90">mvn:${groupId}/lider-antivirus/1.0.0</bundle>
 		
-		<configfile finalname="/etc/tr.org.liderahenk.service.cfg">mvn:${groupId}/lider-service/1.0.0/cfg</configfile>
+		<configfile finalname="/etc/tr.org.liderahenk.service.cfg" override="true">mvn:${groupId}/lider-service/1.0.0/cfg</configfile>
 		<bundle start-level="90">mvn:${groupId}/lider-service/1.0.0</bundle>
 		
-		<configfile finalname="/etc/tr.org.liderahenk.localuser.cfg">mvn:${groupId}/lider-local-user/1.0.0/cfg</configfile>
+		<configfile finalname="/etc/tr.org.liderahenk.localuser.cfg" override="true">mvn:${groupId}/lider-local-user/1.0.0/cfg</configfile>
 		<bundle start-level="90">mvn:${groupId}/lider-local-user/1.0.0</bundle>
 		
-		<configfile finalname="/etc/tr.org.liderahenk.firewall.cfg">mvn:${groupId}/lider-firewall/1.0.0/cfg</configfile>
+		<configfile finalname="/etc/tr.org.liderahenk.firewall.cfg" override="true">mvn:${groupId}/lider-firewall/1.0.0/cfg</configfile>
 		<bundle start-level="90">mvn:${groupId}/lider-firewall/1.0.0</bundle>
 	</feature>
 
