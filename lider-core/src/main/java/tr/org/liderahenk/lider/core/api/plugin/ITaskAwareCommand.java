@@ -24,4 +24,24 @@ public interface ITaskAwareCommand {
 	 * 
 	 */
 	void onTaskUpdate(ICommandExecutionResult result);
+
+	/**
+	 * 
+	 * @return id of the plugin implementing this command.
+	 */
+	String getPluginName();
+
+	/**
+	 * 
+	 * @return version of the plugin implementing this command.
+	 */
+	String getPluginVersion();
+
+	/**
+	 * Unique identifier of this command.
+	 * 
+	 * @return
+	 */
+	String getCommandId();
+
 }
