@@ -16,7 +16,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplateColumn;
@@ -237,17 +236,6 @@ public class ReportTemplateImpl implements IReportTemplate {
 			columnImpl.setTemplate(this);
 		}
 		templateColumns.add(columnImpl);
-	}
-
-	@Override
-	public String toJson() {
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			return mapper.writeValueAsString(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
 	}
 
 	@Override

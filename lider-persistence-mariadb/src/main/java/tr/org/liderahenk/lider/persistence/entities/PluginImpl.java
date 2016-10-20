@@ -17,7 +17,6 @@ import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import tr.org.liderahenk.lider.core.api.persistence.entities.IPlugin;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
@@ -31,7 +30,7 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IProfile;
  */
 @JsonIgnoreProperties({ "profiles", "distroParamsBlob" })
 @Entity
-@Table(name = "C_PLUGIN", uniqueConstraints = @UniqueConstraint(columnNames = { "PLUGIN_NAME", "PLUGIN_VERSION" }) )
+@Table(name = "C_PLUGIN", uniqueConstraints = @UniqueConstraint(columnNames = { "PLUGIN_NAME", "PLUGIN_VERSION" }))
 public class PluginImpl implements IPlugin {
 
 	private static final long serialVersionUID = -6297900066220421421L;
@@ -283,17 +282,6 @@ public class PluginImpl implements IPlugin {
 
 	public void setUsesFileTransfer(boolean usesFileTransfer) {
 		this.usesFileTransfer = usesFileTransfer;
-	}
-
-	@Override
-	public String toJson() {
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			return mapper.writeValueAsString(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
 	}
 
 	@Override

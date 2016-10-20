@@ -17,8 +17,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.codehaus.jackson.map.ObjectMapper;
-
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportView;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportViewColumn;
 import tr.org.liderahenk.lider.core.api.persistence.entities.IReportViewParameter;
@@ -270,17 +268,6 @@ public class ReportViewImpl implements IReportView {
 			columnImpl.setView(this);
 		}
 		viewColumns.add(columnImpl);
-	}
-
-	@Override
-	public String toJson() {
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			return mapper.writeValueAsString(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
 	}
 
 	@Override

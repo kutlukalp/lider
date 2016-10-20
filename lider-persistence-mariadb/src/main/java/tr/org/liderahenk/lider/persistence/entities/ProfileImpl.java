@@ -254,17 +254,6 @@ public class ProfileImpl implements IProfile {
 	}
 
 	@Override
-	public String toJson() {
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			return mapper.writeValueAsString(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	@Override
 	public String toString() {
 		return "ProfileImpl [id=" + id + ", plugin=" + (plugin != null) + ", label=" + label + ", description="
 				+ description + ", overridable=" + overridable + ", active=" + active + ", deleted=" + deleted

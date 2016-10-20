@@ -263,17 +263,6 @@ public class SearchGroupImpl implements ISearchGroup {
 	}
 
 	@Override
-	public String toJson() {
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			return mapper.writeValueAsString(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	@Override
 	public String toString() {
 		return "SearchGroupImpl [id=" + id + ", name=" + name + ", searchAgents=" + searchAgents + ", searchUsers="
 				+ searchUsers + ", searchGroups=" + searchGroups + ", criteria=" + criteria + ", createDate="
