@@ -8,7 +8,6 @@ import java.util.Map;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -128,7 +127,7 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 			policy = policyDao.save(policy);
 
 			Map<String, Object> resultMap = new HashMap<String, Object>();
-			resultMap.put("policy", policy.toJson());
+			resultMap.put("policy", policy);
 
 			return responseFactory.createResponse(RestResponseStatus.OK, "Record saved.", resultMap);
 		} catch (Exception e) {
@@ -157,7 +156,7 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 			policy = policyDao.update(policy);
 
 			Map<String, Object> resultMap = new HashMap<String, Object>();
-			resultMap.put("policy", policy.toJson());
+			resultMap.put("policy", policy);
 
 			return responseFactory.createResponse(RestResponseStatus.OK, "Record updated.", resultMap);
 		} catch (Exception e) {
@@ -198,9 +197,8 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 
 		// Construct result map
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		ObjectMapper mapper = new ObjectMapper();
 		try {
-			resultMap.put("policies", mapper.writeValueAsString(policies));
+			resultMap.put("policies", policies);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -215,7 +213,7 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 		}
 		IPolicy policy = policyDao.find(new Long(id));
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		resultMap.put("policy", policy.toJson());
+		resultMap.put("policy", policy);
 		return responseFactory.createResponse(RestResponseStatus.OK, "Record retrieved.", resultMap);
 	}
 
@@ -243,16 +241,16 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 				if (arr.length != 4) {
 					continue;
 				}
-				AppliedPolicy policy = new AppliedPolicy((IPolicy) arr[0], (Integer) arr[1], (Integer) arr[2], (Integer) arr[3]);
+				AppliedPolicy policy = new AppliedPolicy((IPolicy) arr[0], (Integer) arr[1], (Integer) arr[2],
+						(Integer) arr[3]);
 				policies.add(policy);
 			}
 		}
 
 		// Construct result map
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		ObjectMapper mapper = new ObjectMapper();
 		try {
-			resultMap.put("policies", mapper.writeValueAsString(policies));
+			resultMap.put("policies", policies);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -271,9 +269,8 @@ public class PolicyRequestProcessorImpl implements IPolicyRequestProcessor {
 		// Explicitly write object as json string, it will handled by
 		// related rest utility class in Lider Console
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		ObjectMapper mapper = new ObjectMapper();
 		try {
-			resultMap.put("commands", mapper.writeValueAsString(commands));
+			resultMap.put("commands", commands);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}

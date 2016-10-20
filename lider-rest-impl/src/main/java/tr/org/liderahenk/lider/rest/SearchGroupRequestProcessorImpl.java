@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +40,7 @@ public class SearchGroupRequestProcessorImpl implements ISearchGroupRequestProce
 			searchGroup = searchGroupDao.save(searchGroup);
 
 			Map<String, Object> resultMap = new HashMap<String, Object>();
-			resultMap.put("searchGroup", searchGroup.toJson());
+			resultMap.put("searchGroup", searchGroup);
 
 			return responseFactory.createResponse(RestResponseStatus.OK, "Record saved.", resultMap);
 		} catch (Exception e) {
@@ -67,7 +66,7 @@ public class SearchGroupRequestProcessorImpl implements ISearchGroupRequestProce
 		// Construct result map
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		try {
-			resultMap.put("searchGroups", new ObjectMapper().writeValueAsString(searchGroups));
+			resultMap.put("searchGroups", searchGroups);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -82,7 +81,7 @@ public class SearchGroupRequestProcessorImpl implements ISearchGroupRequestProce
 		}
 		ISearchGroup searchGroup = searchGroupDao.find(id);
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		resultMap.put("searchGroup", searchGroup.toJson());
+		resultMap.put("searchGroup", searchGroup);
 		return responseFactory.createResponse(RestResponseStatus.OK, "Record retrieved.", resultMap);
 	}
 

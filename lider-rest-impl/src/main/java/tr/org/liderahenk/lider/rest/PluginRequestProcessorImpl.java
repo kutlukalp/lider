@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,9 +44,8 @@ public class PluginRequestProcessorImpl implements IPluginRequestProcessor {
 
 		// Construct result map
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		ObjectMapper mapper = new ObjectMapper();
 		try {
-			resultMap.put("plugins", mapper.writeValueAsString(plugins));
+			resultMap.put("plugins", plugins);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -62,7 +60,7 @@ public class PluginRequestProcessorImpl implements IPluginRequestProcessor {
 		}
 		IPlugin plugin = pluginDao.find(new Long(id));
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		resultMap.put("plugin", plugin.toJson());
+		resultMap.put("plugin", plugin);
 		return responseFactory.createResponse(RestResponseStatus.OK, "Record retrieved.", resultMap);
 	}
 

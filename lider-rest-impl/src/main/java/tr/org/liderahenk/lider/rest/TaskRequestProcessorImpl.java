@@ -9,7 +9,6 @@ import java.util.Map;
 
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -213,16 +212,16 @@ public class TaskRequestProcessorImpl implements ITaskRequestProcessor {
 				if (arr.length != 4) {
 					continue;
 				}
-				ExecutedTask task = new ExecutedTask((ITask) arr[0], (Integer) arr[1], (Integer) arr[2], (Integer) arr[3]);
+				ExecutedTask task = new ExecutedTask((ITask) arr[0], (Integer) arr[1], (Integer) arr[2],
+						(Integer) arr[3]);
 				tasks.add(task);
 			}
 		}
 
 		// Construct result map
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		ObjectMapper mapper = new ObjectMapper();
 		try {
-			resultMap.put("tasks", mapper.writeValueAsString(tasks));
+			resultMap.put("tasks", tasks);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -242,10 +241,8 @@ public class TaskRequestProcessorImpl implements ITaskRequestProcessor {
 		propertiesMap.put("task.id", taskId);
 		List<? extends ICommand> commands = commandDao.findByProperties(ICommand.class, propertiesMap, null, 1);
 		ICommand command = commands.get(0);
-		// Explicitly write object as json string, it will handled by
-		// related rest utility class in Lider Console
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		resultMap.put("command", command.toJson());
+		resultMap.put("command", command);
 		return responseFactory.createResponse(RestResponseStatus.OK, "Record retrieved.", resultMap);
 	}
 
@@ -257,7 +254,7 @@ public class TaskRequestProcessorImpl implements ITaskRequestProcessor {
 		// Construct result map
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		try {
-			resultMap.put("commands", new ObjectMapper().writeValueAsString(commands));
+			resultMap.put("commands", commands);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -277,7 +274,7 @@ public class TaskRequestProcessorImpl implements ITaskRequestProcessor {
 		// Construct result map
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		try {
-			resultMap.put("responseData", new ObjectMapper().writeValueAsString(executionResult.getResponseData()));
+			resultMap.put("responseData", executionResult.getResponseData());
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}

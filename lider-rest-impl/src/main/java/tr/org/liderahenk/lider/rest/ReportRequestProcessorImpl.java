@@ -103,7 +103,7 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 			template = reportDao.saveTemplate(template);
 
 			Map<String, Object> resultMap = new HashMap<String, Object>();
-			resultMap.put("template", template.toJson());
+			resultMap.put("template", template);
 
 			return responseFactory.createResponse(RestResponseStatus.OK, "Record saved.", resultMap);
 		} catch (Exception e) {
@@ -121,7 +121,7 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 			template = reportDao.updateTemplate(template);
 
 			Map<String, Object> resultMap = new HashMap<String, Object>();
-			resultMap.put("template", template.toJson());
+			resultMap.put("template", template);
 
 			return responseFactory.createResponse(RestResponseStatus.OK, "Record updated.", resultMap);
 		} catch (Exception e) {
@@ -159,9 +159,8 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 
 		// Construct result map
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		ObjectMapper mapper = new ObjectMapper();
 		try {
-			resultMap.put("templates", mapper.writeValueAsString(templates));
+			resultMap.put("templates", templates);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -176,7 +175,7 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 		}
 		IReportTemplate template = reportDao.findTemplate(new Long(id));
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		resultMap.put("template", template.toJson());
+		resultMap.put("template", template);
 		return responseFactory.createResponse(RestResponseStatus.OK, "Record retrieved.", resultMap);
 	}
 
@@ -349,7 +348,7 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 			eventAdmin.postEvent(new Event(LiderConstants.EVENTS.REPORT_VIEW_CREATED, payload));
 
 			Map<String, Object> resultMap = new HashMap<String, Object>();
-			resultMap.put("view", view.toJson());
+			resultMap.put("view", view);
 
 			return responseFactory.createResponse(RestResponseStatus.OK, "Record saved.", resultMap);
 		} catch (Exception e) {
@@ -404,7 +403,7 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 			eventAdmin.postEvent(new Event(LiderConstants.EVENTS.REPORT_VIEW_UPDATED, payload));
 
 			Map<String, Object> resultMap = new HashMap<String, Object>();
-			resultMap.put("view", view.toJson());
+			resultMap.put("view", view);
 
 			return responseFactory.createResponse(RestResponseStatus.OK, "Record updated.", resultMap);
 		} catch (Exception e) {
@@ -442,9 +441,8 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 
 		// Construct result map
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		ObjectMapper mapper = new ObjectMapper();
 		try {
-			resultMap.put("views", mapper.writeValueAsString(views));
+			resultMap.put("views", views);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
@@ -459,7 +457,7 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 		}
 		IReportView view = reportDao.findView(new Long(id));
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		resultMap.put("view", view.toJson());
+		resultMap.put("view", view);
 		return responseFactory.createResponse(RestResponseStatus.OK, "Record retrieved.", resultMap);
 	}
 

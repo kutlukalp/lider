@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +50,7 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 			profile = profileDao.save(profile);
 
 			Map<String, Object> resultMap = new HashMap<String, Object>();
-			resultMap.put("profile", profile.toJson());
+			resultMap.put("profile", profile);
 
 			return responseFactory.createResponse(RestResponseStatus.OK, "Record saved.", resultMap);
 		} catch (Exception e) {
@@ -82,7 +81,7 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 			}
 
 			Map<String, Object> resultMap = new HashMap<String, Object>();
-			resultMap.put("profile", profile.toJson());
+			resultMap.put("profile", profile);
 
 			return responseFactory.createResponse(RestResponseStatus.OK, "Record updated.", resultMap);
 		} catch (Exception e) {
@@ -114,9 +113,7 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 		// Construct result map
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		try {
-			// Explicitly write object as json string, it will handled by
-			// related rest utility class in Lider Console
-			resultMap.put("profiles", new ObjectMapper().writeValueAsString(profiles));
+			resultMap.put("profiles", profiles);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			return responseFactory.createResponse(RestResponseStatus.ERROR, e.getMessage());
@@ -132,9 +129,7 @@ public class ProfileRequestProcessorImpl implements IProfileRequestProcessor {
 		}
 		IProfile profile = profileDao.find(new Long(id));
 		Map<String, Object> resultMap = new HashMap<String, Object>();
-		// Explicitly write object as json string, it will handled by
-		// related rest utility class in Lider Console
-		resultMap.put("profile", profile.toJson());
+		resultMap.put("profile", profile);
 		return responseFactory.createResponse(RestResponseStatus.OK, "Record retrieved.", resultMap);
 	}
 
