@@ -33,8 +33,6 @@ public interface ISearchGroup extends IEntity {
 
 	Map<String, String> getCriteria();
 
-	Object toJson();
-
 	void addEntry(ISearchGroupEntry entry);
 
 	boolean isDeleted();

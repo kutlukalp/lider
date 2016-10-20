@@ -53,12 +53,6 @@ public interface ICommand extends IEntity {
 
 	/**
 	 * 
-	 * @return JSON string representation of this instance
-	 */
-	String toJson();
-
-	/**
-	 * 
 	 * @return a collection of ICommandExecution instances
 	 */
 	List<? extends ICommandExecution> getCommandExecutions();

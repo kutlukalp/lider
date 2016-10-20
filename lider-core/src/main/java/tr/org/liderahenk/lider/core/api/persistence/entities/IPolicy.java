@@ -50,12 +50,6 @@ public interface IPolicy extends IEntity {
 
 	/**
 	 * 
-	 * @return JSON string representation of this instance
-	 */
-	String toJson();
-
-	/**
-	 * 
 	 * @return record modification date
 	 */
 	Date getModifyDate();

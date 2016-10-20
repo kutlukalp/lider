@@ -40,12 +40,6 @@ public interface IReportTemplate extends IEntity {
 	void addTemplateColumn(IReportTemplateColumn column);
 
 	/**
-	 * 
-	 * @return JSON string representation of this instance
-	 */
-	String toJson();
-
-	/**
 	 * Unique report code
 	 * 
 	 * @return report code which is used in report privileges

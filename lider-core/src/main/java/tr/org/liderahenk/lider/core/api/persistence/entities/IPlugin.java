@@ -97,10 +97,4 @@ public interface IPlugin extends IEntity {
 	 */
 	Date getModifyDate();
 
-	/**
-	 * 
-	 * @return JSON string representation of this instance
-	 */
-	String toJson();
-
 }

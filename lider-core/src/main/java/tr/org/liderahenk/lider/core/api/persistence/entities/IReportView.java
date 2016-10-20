@@ -30,8 +30,6 @@ public interface IReportView extends IEntity {
 
 	Date getModifyDate();
 
-	String toJson();
-
 	Long getAlarmCheckPeriod();
 
 	Long getAlarmRecordNumThreshold();

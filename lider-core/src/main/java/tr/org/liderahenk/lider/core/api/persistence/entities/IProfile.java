@@ -55,18 +55,12 @@ public interface IProfile extends IEntity {
 	 * @return profile data sent from Lider Console
 	 */
 	Map<String, Object> getProfileData();
-	
+
 	/**
 	 * 
 	 * @return profile data sent from Lider Console as json byte array
 	 */
 	byte[] getProfileDataBlob();
-
-	/**
-	 * 
-	 * @return JSON string representation of this instance
-	 */
-	String toJson();
 
 	/**
 	 * 
