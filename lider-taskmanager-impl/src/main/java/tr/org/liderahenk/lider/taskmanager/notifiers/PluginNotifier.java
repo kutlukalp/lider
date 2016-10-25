@@ -86,7 +86,7 @@ public class PluginNotifier implements EventHandler {
 		ITask task = result.getCommandExecution().getCommand().getTask();
 		String key = buildKey(task.getPlugin().getName(), task.getPlugin().getVersion(), task.getCommandClsId());
 
-		ITaskAwareCommand subscriber = subscribers.get(key.toUpperCase(Locale.ENGLISH));
+		ITaskAwareCommand subscriber = subscribers != null ? subscribers.get(key.toUpperCase(Locale.ENGLISH)) : null;
 		if (subscriber != null) {
 			try {
 				subscriber.onTaskUpdate(result);
