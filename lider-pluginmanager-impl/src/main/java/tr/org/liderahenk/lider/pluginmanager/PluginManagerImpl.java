@@ -73,11 +73,11 @@ public class PluginManagerImpl {
 					for (IProfile profile : profiles) {
 						plugin.addProfile(profile);
 					}
-				} else {
-					plugin = entityFactory.createPlugin(pluginInfo);
-					plugin = pluginDao.save(plugin);
 				}
 				plugin = pluginDao.update(plugin);
+			} else {
+				plugin = entityFactory.createPlugin(pluginInfo);
+				plugin = pluginDao.save(plugin);
 			}
 			plugins.put(key, pluginInfo);
 			logger.info("Registered plugin: {}", key);
