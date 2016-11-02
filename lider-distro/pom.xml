@@ -10,7 +10,7 @@
 	<packaging>karaf-assembly</packaging>
 
 	<properties>
-		<karaf.feature.version>4.0.5</karaf.feature.version>
+		<karaf.feature.version>4.0.7</karaf.feature.version>
 		<cellar.feature.version>4.0.1</cellar.feature.version>
 		<lider.ahenk.version>1.0.0-SNAPSHOT</lider.ahenk.version>
 	</properties>

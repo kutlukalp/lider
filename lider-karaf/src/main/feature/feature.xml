@@ -29,7 +29,7 @@
 		<feature>lider-dependent-bundles</feature>
 		<feature>lider-core-bundles</feature>
 		<!-- Use 'lider-plugin-bundles' feature only to pre-install plugins on Karaf -->
-<!-- 		<feature>lider-plugin-bundles</feature> -->
+<!--  		<feature>lider-plugin-bundles</feature> -->
 	</feature>
 
 	<feature name="lider-core-bundles" description="${project.name}"
@@ -94,6 +94,7 @@
 		<bundle start-level="90">mvn:${groupId}/lider-login-manager/1.0.0</bundle>
 		
 		<configfile finalname="/etc/tr.org.liderahenk.network.inventory.cfg" override="true">mvn:${groupId}/lider-network-inventory/1.0.0/cfg</configfile>
+		<bundle start-level="90">wrap:mvn:com.jcraft/jsch/0.1.53</bundle>
 		<bundle start-level="90">mvn:${groupId}/lider-network-inventory/1.0.0</bundle>
 		<bundle start-level="90">mvn:${groupId}/lider-network-inventory-db/1.0.0</bundle>
 		
