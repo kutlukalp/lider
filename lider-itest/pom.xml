@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>tr.org.liderahenk</groupId>
 		<artifactId>lider-parent</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.0.0-alfa</version>
 	</parent>
 	<artifactId>lider-itest</artifactId>
 	<name>lider-itest</name>
@@ -15,7 +15,7 @@
 		<version.pax-exam>4.8.0</version.pax-exam>
 		<junit.version>4.11</junit.version>
 		<karaf.version>4.0.4</karaf.version>
-		<lider.version>1.0.0-SNAPSHOT</lider.version>
+		<lider.version>1.0.0-alfa</lider.version>
 		<lider.test.version>1.0.0-SNAPSHOT</lider.test.version>
 		<maven.dependency.plugin.version>2.10</maven.dependency.plugin.version>
 		<maven.antrun.plugin.version>1.8</maven.antrun.plugin.version>

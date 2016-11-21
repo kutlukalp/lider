@@ -6,13 +6,13 @@
 
 	<groupId>tr.org.liderahenk</groupId>
 	<artifactId>lider-distro</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0-alfa</version>
 	<packaging>karaf-assembly</packaging>
 
 	<properties>
 		<karaf.feature.version>4.0.7</karaf.feature.version>
 		<cellar.feature.version>4.0.1</cellar.feature.version>
-		<lider.ahenk.version>1.0.0-SNAPSHOT</lider.ahenk.version>
+		<lider.ahenk.version>1.0.0-alfa</lider.ahenk.version>
 	</properties>
 
 	<dependencies>
