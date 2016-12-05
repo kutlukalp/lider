@@ -26,10 +26,13 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfPageEventHelper;
 import com.itextpdf.text.pdf.PdfWriter;
 
 import tr.org.liderahenk.lider.core.api.authorization.IAuthService;
@@ -45,6 +48,7 @@ import tr.org.liderahenk.lider.core.api.persistence.entities.IReportViewParamete
 import tr.org.liderahenk.lider.core.api.persistence.factories.IEntityFactory;
 import tr.org.liderahenk.lider.core.api.rest.IRequestFactory;
 import tr.org.liderahenk.lider.core.api.rest.IResponseFactory;
+import tr.org.liderahenk.lider.core.api.rest.enums.PdfReportParamType;
 import tr.org.liderahenk.lider.core.api.rest.enums.RestResponseStatus;
 import tr.org.liderahenk.lider.core.api.rest.processors.IReportRequestProcessor;
 import tr.org.liderahenk.lider.core.api.rest.requests.IReportGenerationRequest;
@@ -206,17 +210,18 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 			// Determine temporary report path
 			String fileName = view.getName() + new Date().getTime() + ".pdf";
 			String filePath = Files.createTempDirectory("lidertmp-").toAbsolutePath() + "/" + fileName;
-
-			// Create report document
-			Document doc = new Document();
-			PdfWriter.getInstance(doc, new FileOutputStream(new File(filePath)));
-			doc.open();
-
+			
 			// Fonts
 			FontFactory.defaultEncoding = DEFAULT_ENCODING;
 			Font titleFont = FontFactory.getFont(DEFAULT_FONT, DEFAULT_ENCODING, 12, Font.BOLD);
 			Font headerFont = FontFactory.getFont(DEFAULT_FONT, DEFAULT_ENCODING, 10, Font.BOLD);
 			Font cellFont = FontFactory.getFont(DEFAULT_FONT, DEFAULT_ENCODING, 7, Font.NORMAL);
+
+			// Create report document
+			Document doc = new Document(PageSize.A4, 20, 20, 50, 25);
+			PdfWriter writer = PdfWriter.getInstance(doc, new FileOutputStream(new File(filePath)));
+			writer.setPageEvent(new HeaderFooterPageEvent(request, cellFont));
+			doc.open();
 
 			// Title & header
 			doc.addTitle(view.getName());
@@ -266,6 +271,65 @@ public class ReportRequestProcessorImpl implements IReportRequestProcessor {
 			logger.error(e.getMessage(), e);
 			return responseFactory.createResponse(RestResponseStatus.ERROR, e.getMessage());
 		}
+	}
+
+	public class HeaderFooterPageEvent extends PdfPageEventHelper {
+
+		private IReportGenerationRequest request;
+		private Font font;
+
+		public HeaderFooterPageEvent(IReportGenerationRequest request, Font font) {
+			this.request = request;
+			this.font = font;
+		}
+
+		public void onStartPage(PdfWriter writer, Document document) {
+			if (request.getTopLeft() != null) {
+				ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_CENTER,
+						new Phrase(getPhrase(request.getTopLeft(), request.getTopLeftText(), document.getPageNumber()), font),
+						50, 800, 0);
+			}
+			if (request.getTopRight() != null) {
+				ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_CENTER,
+						new Phrase(
+								getPhrase(request.getTopRight(), request.getTopRightText(), document.getPageNumber()), font),
+						550, 800, 0);
+			}
+		}
+
+		public void onEndPage(PdfWriter writer, Document document) {
+			if (request.getBottomLeft() != null) {
+				ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_CENTER, new Phrase(
+						getPhrase(request.getBottomLeft(), request.getBottomLeftText(), document.getPageNumber()), font), 60,
+						30, 0);
+			}
+			if (request.getBottomRight() != null) {
+				ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_CENTER, new Phrase(
+						getPhrase(request.getBottomRight(), request.getBottomRightText(), document.getPageNumber()), font),
+						550, 30, 0);
+			}
+		}
+
+		private String getPhrase(PdfReportParamType type, String text, int pageNumber) {
+			String phrase = "";
+			if (type != null) {
+				switch (type) {
+				case DATE:
+					phrase = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+					break;
+				case PAGE_NO:
+					phrase = pageNumber + "";
+					break;
+				case TEXT:
+					phrase = text;
+					break;
+				default:
+					break;
+				}
+			}
+			return phrase;
+		}
+
 	}
 
 	@Override
