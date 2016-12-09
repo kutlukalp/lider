@@ -31,6 +31,7 @@ public class TemplateManager {
 	private IReportTemplate installedPluginsTemplate;
 	private IReportTemplate agentHardwareTemplate;
 	private IReportTemplate sessionActivityTemplate;
+	private IReportTemplate biosDistroChart;
 
 	public void init() {
 		// Check if task template already exists!
@@ -100,6 +101,18 @@ public class TemplateManager {
 			reportDao.updateTemplate(existingSessionActivityTemplate);
 		} else {
 			reportDao.saveTemplate(sessionActivityTemplate);
+		}
+		// Check if bios distro template already exists!
+		List<? extends IReportTemplate> biosDistroTemplates = reportDao.findTemplates("name", biosDistroChart.getName(),
+				1);
+		IReportTemplate existingBiosDistroTemplate = biosDistroTemplates != null && !biosDistroTemplates.isEmpty()
+				? biosDistroTemplates.get(0) : null;
+		if (existingBiosDistroTemplate != null) {
+			existingBiosDistroTemplate = entityFactory.createReportTemplate(existingBiosDistroTemplate,
+					biosDistroChart);
+			reportDao.updateTemplate(existingBiosDistroTemplate);
+		} else {
+			reportDao.saveTemplate(biosDistroChart);
 		}
 	}
 
@@ -215,6 +228,14 @@ public class TemplateManager {
 	 */
 	public void setSessionActivityTemplate(IReportTemplate sessionActivityTemplate) {
 		this.sessionActivityTemplate = sessionActivityTemplate;
+	}
+
+	/**
+	 * 
+	 * @param biosDistroChart
+	 */
+	public void setBiosDistroChart(IReportTemplate biosDistroChart) {
+		this.biosDistroChart = biosDistroChart;
 	}
 
 }
