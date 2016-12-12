@@ -7,6 +7,10 @@
                  http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.1.0 http://svn.apache.org/repos/asf/aries/trunk/blueprint/blueprint-cm/src/main/resources/org/apache/aries/blueprint/compendium/cm/blueprint-cm-1.1.0.xsd
          ">
 
+	<service ref="biosDistroChart" interface="tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate" />
+	<bean id="biosDistroChart"
+		class="tr.org.liderahenk.lider.report.templates.BiosDistributionChartTemplateImpl" />
+
 	<service ref="taskTemplate" interface="tr.org.liderahenk.lider.core.api.persistence.entities.IReportTemplate" />
 	<bean id="taskTemplate"
 		class="tr.org.liderahenk.lider.report.templates.ExecutedTaskReportTemplateImpl" />
@@ -42,6 +46,7 @@
 		<property name="installedPluginsTemplate" ref="installedPluginsTemplate" />
 		<property name="agentHardwareTemplate" ref="agentHardwareTemplate" />
 		<property name="sessionActivityTemplate" ref="sessionActivityTemplate" />
+		<property name="biosDistroChart" ref="biosDistroChart" />
 	</bean>
 	
 	<service ref="alarmManager" interface="org.osgi.service.event.EventHandler">
